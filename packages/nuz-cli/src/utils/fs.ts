@@ -13,6 +13,7 @@ export const copySync = (src: string, dist: string, options?) =>
   fs.copySync(src, dist, options)
 
 export const read = (path: string) => fs.readFileSync(path)
+export const readJson = (path: string) => fs.readJson(path)
 
 export const ensureFileSync = (file: string) => fs.ensureFileSync(file)
 export const ensureDir = (dir: string) => fs.ensureDir(dir)

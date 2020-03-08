@@ -24,3 +24,5 @@ export const CHANGES_EMOJI = [
   '😱',
   '💩',
 ]
+
+export const STATS_FILENAME = 'stats.json'

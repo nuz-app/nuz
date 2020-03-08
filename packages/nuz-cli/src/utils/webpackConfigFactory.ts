@@ -15,6 +15,7 @@ import {
   JS_EXTENSIONS,
   LESS_EXTENSIONS,
   SASS_EXTENSIONS,
+  STATS_FILENAME,
   TS_EXTENSIONS,
 } from '../lib/const'
 
@@ -36,7 +37,7 @@ const ruleFactory = (test: RegExp, exclude?: RegExp) => ({
 })
 
 const defaultConfig = {
-  domain: '/',
+  publicPath: '/',
   format: 'umd' as webpack.LibraryTarget,
   devtool: 'eval-source-map' as webpack.Options.Devtool,
   externals: {},
@@ -53,7 +54,7 @@ const webpackConfigFactory = (
     input,
     externals,
     output,
-    domain,
+    publicPath,
     analyzer,
     webpack: customWebpack,
   } = Object.assign({}, defaultConfig, moduleConfig)
@@ -71,7 +72,7 @@ const webpackConfigFactory = (
   const globalObject = `(typeof self !== 'undefined' ? self : this)`
   const mainFields = ['browser', 'module', 'main']
   const resolveModules = ['node_modules']
-  const statsFilename = 'stats.json'
+  const statsFilename = STATS_FILENAME
   const packageJsonTool = getPackageJsonTool() || {}
 
   const extensions = feature.typescript
@@ -97,7 +98,7 @@ const webpackConfigFactory = (
       library,
       umdNamedDefine,
       globalObject,
-      publicPath: domain,
+      publicPath,
       path: distPath,
       filename: distFile,
       libraryTarget: format,

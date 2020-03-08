@@ -97,6 +97,7 @@ const generateTemplate = async (dir: string, { name, version, library }) => {
   // Write `nuz.config.js` config file for module
   const moduleConfig = {
     feature: true,
+    publicPath: '/',
   }
   const dataConfig = CONFIG_FILE.replace(
     '{content}',

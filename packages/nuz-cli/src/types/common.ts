@@ -6,6 +6,12 @@ export enum CommandTypes {
   dev = 'dev',
   build = 'build',
   serve = 'serve',
+  publish = 'publish',
+}
+
+export interface PublishConfig {
+  token: string
+  endpoint: string
 }
 
 export interface CommandConfig<C = unknown> {
@@ -35,6 +41,10 @@ export interface ModuleConfig {
    */
   name: string
   /**
+   * Version of module
+   */
+  version: string
+  /**
    * Library name
    */
   library: string
@@ -46,6 +56,10 @@ export interface ModuleConfig {
    * Output file
    */
   output: string
+  /**
+   * Public path using in build, default: '/'
+   */
+  publicPath: string
   /**
    * Extends externals module
    */
@@ -62,6 +76,10 @@ export interface ModuleConfig {
    * Allow to custom webpack config
    */
   webpack?: (config: webpack.Configuration) => webpack.Configuration
+  /**
+   * Publish config
+   */
+  publishConfig?: PublishConfig
 }
 
 export interface FeatureConfig {
