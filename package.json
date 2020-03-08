@@ -1,5 +1,7 @@
 {
+  "name": "nuz",
   "private": true,
+  "description": "Ecosystems includes cli, tool, registry and more to supports implements micro-frontends with high scalable",
   "author": {
     "email": "lamhieu.vk@gmail.com",
     "name": "Hieu Lam",
