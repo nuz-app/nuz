@@ -1,11 +1,17 @@
 import { Express } from 'express'
+
 import ModelDB from '../classes/ModelDB'
 
-export default (app: Express, db: ModelDB) => {
-  app.get('/', async (request, response) => {
-    const config = await db.getConfig()
+import onRoute from '../utils/onRoute'
 
-    response.json(config)
-    return true
-  })
+export default (app: Express, db: ModelDB) => {
+  app.get(
+    '/',
+    onRoute(async (request, response) => {
+      const config = await db.getConfig()
+
+      response.json(config)
+      return true
+    }),
+  )
 }

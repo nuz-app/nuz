@@ -47,6 +47,7 @@ class MongoDB implements ModelDB {
   }
 
   private async verifyModule(token: string, name: string) {
+    console.log({ token, name })
     const permission = await this.db.Permission.findOne({
       _id: token,
       scope: name,

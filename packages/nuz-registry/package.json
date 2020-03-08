@@ -16,10 +16,9 @@
   "dependencies": {
     "@nuz/utils": "^0.0.1",
     "@types/nedb": "^1.8.9",
+    "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "got": "^10.6.0",
-    "mini-css-extract-plugin": "^0.9.0",
     "mongoose": "^5.9.3",
     "nedb": "^1.8.0"
   },
