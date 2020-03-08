@@ -8,7 +8,6 @@ const linkFactory = (
   url: string,
   { isExternal, integrity, ...rest }: PreloadConfig,
 ) => {
-  console.log({ document })
   const link = document.createElement('link')
 
   Object.assign(link, rest, { integrity })
