@@ -22,16 +22,25 @@ export const ensure = (dir: string) => {
   }
 }
 
+const REQUIRED_FIELDS = ['name', 'version', 'library', 'input', 'output']
+
 export const extract = (dir: string): ModuleConfig | null => {
   try {
     const { name, version, library, source, main } = getPackageJsonInDir(dir)
-    const config = require(require.resolve(get(dir)))
 
-    return Object.assign(
+    const config = require(require.resolve(get(dir)))
+    const full = Object.assign(
       {},
       { name, version, library, input: source, output: main },
       config,
     )
+
+    const isInvalid = !REQUIRED_FIELDS.every(field => !!full[field])
+    if (isInvalid) {
+      return null
+    }
+
+    return full
   } catch (error) {
     return null
   }

@@ -15,7 +15,7 @@ import * as logs from './logs'
 import publish from './publish'
 
 // @ts-ignore
-const execute = async ({ clean }: Argv<{ clean: true }>) => {
+const execute = async ({ fallback }: Argv<{ fallback: true }>) => {
   const moduleDir = paths.cwd
 
   const configIsExisted = configHelpers.exists(moduleDir)
@@ -31,6 +31,11 @@ const execute = async ({ clean }: Argv<{ clean: true }>) => {
   }
 
   const { name, version, output, library, publishConfig } = moduleConfig
+
+  if (!publishConfig.token || !publishConfig.endpoint) {
+    logs.publishConfigIsInvalid()
+    return exit(1)
+  }
 
   clearConsole()
   logs.notifyOnStart(name, version)
@@ -64,12 +69,16 @@ const execute = async ({ clean }: Argv<{ clean: true }>) => {
   }
 
   try {
-    await publish(publishConfig, {
-      name,
-      version,
-      library,
-      resolve,
-    })
+    await publish(
+      publishConfig,
+      {
+        name,
+        version,
+        library,
+        resolve,
+      },
+      { fallback },
+    )
   } catch (error) {
     logs.publishFailed(error)
     return exit(1)
@@ -83,7 +92,13 @@ const execute = async ({ clean }: Argv<{ clean: true }>) => {
 const config: CommandConfig<{}> = {
   type: CommandTypes.publish,
   description: 'Publish version for module',
-  transform: yargs => yargs,
+  transform: yargs =>
+    yargs.option('fallback', {
+      alias: 'f',
+      describe: 'Set fallback for new version',
+      default: true,
+      required: true,
+    }),
   execute,
 }
 

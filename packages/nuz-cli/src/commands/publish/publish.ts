@@ -2,13 +2,14 @@ import axios from 'axios'
 
 import { PublishConfig } from '../../types'
 
-const publish = async (config: PublishConfig, info) => {
+const publish = async (config: PublishConfig, info, options) => {
   const { token, endpoint } = config
 
   const { statusText, data, response } = await axios
     .post(endpoint, {
       token,
       info,
+      options,
     })
     .catch(e => e)
 
