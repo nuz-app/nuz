@@ -1,8 +1,7 @@
-import { checkIsObject } from '@nuz/utils'
+import { checkIsObject, jsonHelpers } from '@nuz/utils'
 
 import {
   BaseItemConfig,
-  ExternalItemConfig,
   InstallConfig,
   ModuleItemConfig,
   RuntimePlatforms,
@@ -16,7 +15,6 @@ import getRuntimePlatform from '../utils/getRuntimePlatform'
 import getScript from '../utils/getScript'
 import * as hasher from '../utils/hasher'
 import interopRequireDefault from '../utils/interopRequireDefault'
-import * as jsonHelpers from '../utils/jsonHelpers'
 import * as moduleHelpers from '../utils/moduleHelpers'
 import * as requireHelpers from '../utils/requireHelpers'
 

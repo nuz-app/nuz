@@ -1,3 +1,4 @@
+import { jsonHelpers } from '@nuz/utils'
 import _merge from 'lodash/merge'
 
 import { BootstrapConfig, UpstreamConfig } from './types'
@@ -6,7 +7,6 @@ import bootstrap from './bootstrap'
 
 import { FetchOptions } from './utils/fetchWithTimeout'
 import getUpstreamConfig from './utils/getUpstreamConfig'
-import * as jsonHelpers from './utils/jsonHelpers'
 import * as validator from './utils/validator'
 
 export interface BootstrapCallbacks {

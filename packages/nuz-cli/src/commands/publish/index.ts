@@ -46,6 +46,8 @@ const execute = async ({ fallback }: Argv<{ fallback: true }>) => {
     return exit(1)
   }
 
+  logs.moduleIsPushling()
+
   const statsPath = path.join(distPath, STATS_FILENAME)
   if (!fs.exists(statsPath)) {
     logs.statsIsNotFound(statsPath)

@@ -1,11 +1,10 @@
-// tslint:disable-next-line: max-line-length
-// https://api.github.com/repos/lamhieu-vk/nuz/contents/templates/${name}/package.json
+import { GITHUB_BRANCH, GITHUB_REPO, GITHUB_USERNAME } from '../lib/const'
 
 export const templatePackageJson = (name: string) =>
-  `https://api.github.com/repos/zeit/next.js/contents/examples/${name}/package.json`
+  `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/templates/${name}/package.json`
 
-export const repoTarFile = (branch: string = 'canary') =>
-  `https://codeload.github.com/zeit/next.js/tar.gz/${branch}`
+export const repoTarFile = () =>
+  `https://codeload.github.com/${GITHUB_USERNAME}/${GITHUB_REPO}/tar.gz/${GITHUB_BRANCH}`
 
 export const resolvePathTemplte = (name: string) =>
-  `next.js-canary/examples/${name}`
+  `${GITHUB_REPO}-${GITHUB_BRANCH}/templates/${name}`

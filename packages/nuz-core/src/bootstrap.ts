@@ -1,3 +1,5 @@
+import { jsonHelpers } from '@nuz/utils'
+
 import { BootstrapConfig, EventTypes } from './types'
 
 import { emitter } from './events'
@@ -6,7 +8,6 @@ import checkIsFunction from './utils/checkIsFunction'
 import { mark as markIsInitialized } from './utils/checkIsInitialized'
 import { initConfig } from './utils/effects/getConfig'
 import getModules, { initModules } from './utils/effects/getModules'
-import * as jsonHelpers from './utils/jsonHelpers'
 import * as validator from './utils/validator'
 
 export interface BootstrapCallbacks {

@@ -16,9 +16,9 @@ export const notifyOnStart = (name: string, version: string) => {
   )
 }
 
-// export const moduleIsBuilding = () => {
-//   info(`Module is building...`)
-// }
+export const moduleIsPushling = () => {
+  info(`Module is pushling...`)
+}
 
 export const distIsNotFound = (path: string) => {
   error(`Not found bundle folder at ${print.link(path)}.`)

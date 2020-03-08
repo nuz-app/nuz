@@ -1,6 +1,7 @@
-import axios from 'axios'
 import crypto from 'crypto'
 import fs from 'fs'
+
+import got from './got'
 
 const DEFAULT_ALGORITHM = 'sha256'
 const DEFAULT_TIMEOUT = 60000
@@ -24,13 +25,12 @@ export const url = async (
   link: string,
   algorithm: string = DEFAULT_ALGORITHM,
 ) => {
-  const response = await axios
-    .get(link, {
-      timeout: DEFAULT_TIMEOUT,
-      responseType: 'arraybuffer',
-      maxRedirects: 10,
-    })
-    .catch(e => e)
+  const response = await got({
+    url: link,
+    timeout: DEFAULT_TIMEOUT,
+    responseType: 'arraybuffer',
+    maxRedirects: 10,
+  })
 
   if (!response.data) {
     return null

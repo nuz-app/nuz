@@ -1,26 +1,10 @@
-import axios from 'axios'
+import { got } from '@nuz/utils'
+
+import _get from 'lodash/get'
 
 import { PublishConfig } from '../../types'
 
-const publish = async (config: PublishConfig, info, options) => {
-  const { token, endpoint } = config
-
-  const { statusText, data, response } = await axios
-    .post(endpoint, {
-      token,
-      info,
-      options,
-    })
-    .catch(e => e)
-
-  if (statusText === 'OK') {
-    return data
-  }
-
-  throw new Error(
-    response.data.error.message ||
-      'Have an error while publish version for module',
-  )
-}
+const publish = ({ endpoint, token }: PublishConfig, info, options) =>
+  got({ method: 'get', url: endpoint, data: { token, info, options } })
 
 export default publish

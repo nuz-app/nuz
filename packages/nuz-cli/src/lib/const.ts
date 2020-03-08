@@ -26,3 +26,7 @@ export const CHANGES_EMOJI = [
 ]
 
 export const STATS_FILENAME = 'stats.json'
+
+export const GITHUB_USERNAME = 'lamhieu-vk'
+export const GITHUB_REPO = 'nuz'
+export const GITHUB_BRANCH = 'master'
