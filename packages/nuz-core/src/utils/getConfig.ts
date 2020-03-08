@@ -5,27 +5,32 @@ const defaultConfig = {
   headers: { 'content-type': 'application/json' },
 }
 
-const getUpstreamConfig = async <T = unknown>(
+const getConfig = async <T = unknown>(
   url: string,
-  config?: FetchOptions,
+  config: FetchOptions = {},
+  retries: number = 0,
 ): Promise<T> => {
   const mergedConfig = Object.assign({}, defaultConfig, config)
 
-  let result
+  let content
   try {
     const response = await fetchWithTimeout(url, mergedConfig)
     if (!response.ok) {
       throw new Error(`Response from ${url} is invalid, response: ${response}`)
     }
 
-    result = await response.json()
+    content = await response.json()
   } catch (error) {
-    throw new Error(
-      `Cannot get config from ${url}, details: ${error.message || error}`,
-    )
+    if (retries > 0) {
+      content = await getConfig(url, config, retries - 1)
+    } else {
+      throw new Error(
+        `Cannot get config from ${url}, details: ${error.message || error}`,
+      )
+    }
   }
 
-  return result
+  return content
 }
 
-export default getUpstreamConfig
+export default getConfig

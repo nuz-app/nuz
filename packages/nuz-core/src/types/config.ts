@@ -26,7 +26,7 @@ export interface BootstrapConfig {
   preload?: string[]
 }
 
-export interface UpstreamConfig {
+export interface LiveConfig {
   url: string
   integrity?: string
   timeout?: number
