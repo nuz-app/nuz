@@ -1,6 +1,6 @@
 {
   "name": "@nuz/cli",
-  "description": "",
+  "description": "A cli to supports create, dev, build, serve and publish a module using nuz ecosystems",
   "version": "0.0.1",
   "repository": {
     "type": "git",
