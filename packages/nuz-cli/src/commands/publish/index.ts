@@ -70,8 +70,9 @@ const execute = async ({ fallback }: Argv<{ fallback: true }>) => {
     styles,
   }
 
+  let result
   try {
-    await publish(
+    result = await publish(
       publishConfig,
       {
         name,
@@ -86,7 +87,8 @@ const execute = async ({ fallback }: Argv<{ fallback: true }>) => {
     return exit(1)
   }
 
-  logs.publishedIsDone(name, version)
+  const { name: _name, updated, tags, updatedAt } = result.data
+  logs.publishedIsDone(name, version, { name: _name, updated, tags, updatedAt })
 
   return exit(0)
 }

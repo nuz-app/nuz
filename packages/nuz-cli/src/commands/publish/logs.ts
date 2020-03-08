@@ -1,3 +1,4 @@
+import { response } from 'express'
 import print, {
   common,
   error,
@@ -32,12 +33,13 @@ export const statsIsNotFound = (path: string) => {
   error(`Not found stats file at ${print.link(path)}.`)
 }
 
-export const publishedIsDone = (name: string, version: string) => {
+export const publishedIsDone = (name: string, version: string, data) => {
   success(
     `Version ${print.cyan(version)} of ${print.name(
       name,
     )} module was published !`,
   )
+  info(`Details of response:`, print.magenta(JSON.stringify(data, null, 2)))
   log()
 }
 
