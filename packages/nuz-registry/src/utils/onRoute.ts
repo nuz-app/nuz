@@ -3,7 +3,9 @@ const onRoute = fn => async (request, response, next) => {
     return await fn(request, response, next)
   } catch (error) {
     return response.status(500).json({
-      error,
+      error: {
+        message: error.message,
+      },
     })
   }
 }
