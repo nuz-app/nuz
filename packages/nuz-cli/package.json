@@ -2,6 +2,10 @@
   "name": "@nuz/cli",
   "description": "",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lamhieu-vk/nuz.git"
+  },
   "bin": {
     "nuz": "dist/cli.js"
   },
@@ -24,7 +28,6 @@
     "@babel/preset-env": "^7.8.6",
     "@babel/preset-react": "^7.8.3",
     "@nuz/utils": "^0.0.1",
-    "axios": "^0.19.2",
     "babel-loader": "^8.0.6",
     "cache-loader": "^4.1.0",
     "chalk": "^3.0.0",
@@ -40,7 +43,6 @@
     "mongoose": "^5.9.3",
     "node-sass": "^4.13.1",
     "postcss-loader": "^3.0.0",
-    "promisepipe": "^3.0.0",
     "react-dev-utils": "^10.2.0",
     "rimraf": "^3.0.2",
     "sass-loader": "^8.0.2",

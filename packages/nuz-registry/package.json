@@ -2,6 +2,10 @@
   "name": "@nuz/registry",
   "description": "",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lamhieu-vk/nuz.git"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -16,7 +20,6 @@
   "dependencies": {
     "@nuz/utils": "^0.0.1",
     "@types/nedb": "^1.8.9",
-    "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "mongoose": "^5.9.3",

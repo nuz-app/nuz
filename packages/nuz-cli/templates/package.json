@@ -1,0 +1,19 @@
+{
+  "name": "name",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "nuz dev --port 4001",
+    "build": "nuz build",
+    "serve": "nuz serve"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/react": "^16.9.23",
+    "@types/react-dom": "^16.9.5",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "peerDependencies": {
+    "@nuz/core": "latest"
+  }
+}

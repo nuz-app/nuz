@@ -5,6 +5,10 @@
     "name": "Hieu Lam",
     "url": "https://lamhieu.info"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lamhieu-vk/nuz.git"
+  },
   "scripts": {
     "postinstall": "lerna bootstrap",
     "reinstall": "find . -name \"node_modules\" -type d -prune -exec rm -rf '{}' + && yarn",
