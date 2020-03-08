@@ -189,8 +189,13 @@ class MongoDB implements ModelDB {
       [`versions.${versionName}`]: versionInfo,
     }
     if (fallback) {
-      updateFields['tags.fallback'] =
-        fallback === true ? pkg.tags.upstream : fallback
+      const fallbackTag = fallback === true ? pkg.tags.upstream : fallback
+      updateFields['tags.fallback'] = fallbackTag
+
+      const fallbackVersion = versionHelpers.encode(fallbackTag)
+      if (!pkg.versions[fallbackVersion]) {
+        throw new Error('Fallback version is not existed!')
+      }
     }
 
     const { nModified: updated } = await this.db.Module.updateOne(
