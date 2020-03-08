@@ -4,7 +4,9 @@ import ModelDB from '../classes/ModelDB'
 
 import onRoute from '../utils/onRoute'
 
-export default (app: Express, db: ModelDB) => {
+export const name = 'removeScope'
+
+export const execute = (app: Express, db: ModelDB, options) => {
   app.delete(
     '/permission/scope',
     onRoute(async (request, response) => {

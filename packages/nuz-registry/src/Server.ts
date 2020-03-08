@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser'
 import express, { Express } from 'express'
 
-import { DBTypes, ServerOptions } from './types'
+import { DBTypes, ServerlessOptions, ServerOptions } from './types'
 
 import ModelDB from './classes/ModelDB'
 import MongoDB from './classes/MongoDB'
@@ -15,6 +15,7 @@ const dbMaps = {
 class Server {
   private readonly db: ModelDB
   private readonly app: Express
+  private readonly serverless: ServerlessOptions
 
   constructor(options: ServerOptions) {
     const { key, db } = options
@@ -29,6 +30,9 @@ class Server {
 
     // Init app to listen requests
     this.app = express()
+
+    // Set serverless config
+    this.serverless = options.serverless || {}
   }
 
   async middlewares(fn) {
@@ -42,7 +46,7 @@ class Server {
     this.app.use(bodyParser.json())
 
     for (const route of serverless) {
-      route(this.app, this.db)
+      route.execute(this.app, this.db, this.serverless[route.name] || {})
     }
   }
 
