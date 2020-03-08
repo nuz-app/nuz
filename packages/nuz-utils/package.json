@@ -14,10 +14,7 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "got": "^10.6.0",
-    "mongoose": "^5.9.3"
+    "axios": "^0.19.2"
   },
-  "devDependencies": {
-    "@types/mongoose": "^5.7.3"
-  }
+  "devDependencies": {}
 }

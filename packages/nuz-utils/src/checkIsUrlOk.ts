@@ -1,8 +1,8 @@
-import got from 'got'
+import axios from 'axios'
 
 async function checkIsUrlOk(url: string) {
-  const response = await got(url).catch(e => e)
-  return response.statusCode === 200
+  const response = await axios.get(url).catch(e => e)
+  return response.statusText === 'OK'
 }
 
 export default checkIsUrlOk
