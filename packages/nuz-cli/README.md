@@ -6,7 +6,7 @@
 * **Create** create a module by a templates or auto generate new templates based on requirements.
 * **Dev** run development mode for mode.
 * **Build** bundle and optimization module.
-* **Serve** serve static resource in moudle, the same [serve](https://github.com/zeit/serve) but based on nuz config.
+* **Serve** file serving and directory listing in moudle, the same [serve](https://github.com/zeit/serve) but based on nuz config.
 * **Publish** if you using [@nuz/registry](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-registry) to host and manament the modules, this command will help you publish to your registry.
 
 * ****
@@ -158,7 +158,7 @@ Options:
 ```bash
 $ nuz serve
 
-Serve static resource in module
+File serving and directory listing in module
 
 Options:
   --port, -p  Port to bind on                                           [number]

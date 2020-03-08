@@ -68,7 +68,10 @@ export const guide = (name: string, useYarn: boolean) => {
     print.cyan(getCliScript('build', useYarn)),
   )
   log()
-  log(`Serve static resource:`, print.cyan(getCliScript('serve', useYarn)))
+  log(
+    `File serving and directory listing:`,
+    print.cyan(getCliScript('serve', useYarn)),
+  )
   log()
   log(
     'We suggest that you begin by typing:',

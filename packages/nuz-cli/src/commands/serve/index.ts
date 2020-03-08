@@ -53,7 +53,7 @@ const execute = async ({ port: _port }: Argv<DevConfig>) => {
 
 const config: CommandConfig = {
   type: CommandTypes.serve,
-  description: 'Serve static resource in module',
+  description: 'File serving and directory listing in module',
   transform: yargs =>
     yargs.option('port', {
       alias: 'p',
