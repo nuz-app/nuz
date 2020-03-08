@@ -8,8 +8,8 @@ export default (app: Express, db: ModelDB) => {
   app.post(
     '/module',
     onRoute(async (request, response) => {
-      const { token, info } = request.body
-      const item = await db.publishModule(token, info, {})
+      const { token, info, options } = request.body
+      const item = await db.publishModule(token, info, options)
 
       response.json(item)
       return true
