@@ -1,0 +1,31 @@
+{
+  "name": "@nuz/registry",
+  "description": "",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "lint": "tslint --config tslint.json '**/*.ts{,x}' --exclude '**/+(dist|node_modules|coverage)/**'",
+    "lint:fix": "yarn lint --fix",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "clean": "rimraf ./dist ./coverage",
+    "dev": "tsc -p tsconfig.json -w",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@nuz/utils": "^0.0.1",
+    "@types/nedb": "^1.8.9",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "got": "^10.6.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "mongoose": "^5.9.3",
+    "nedb": "^1.8.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.3",
+    "@types/got": "^9.6.9",
+    "@types/mongoose": "^5.7.3"
+  }
+}

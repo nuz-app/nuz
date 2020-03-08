@@ -1,0 +1,14 @@
+{
+  "eslint.enable": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.tslint": true
+  },
+  "editor.rulers": [
+    80
+  ],
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/dist": true
+  },
+}

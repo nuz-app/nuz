@@ -1,0 +1,34 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended",
+    "tslint-plugin-prettier",
+    "tslint-config-prettier"
+  ],
+  "jsRules": {
+    "no-unused-expression": true
+  },
+  "linterOptions": {
+    "exclude": ["**/templates/**"]
+  },
+  "rules": {
+    "prettier": [
+      true,
+      {
+        "trailingComma": "all",
+        "singleQuote": true,
+        "semi": false,
+        "tabWidth": 2,
+        "printWidth": 80
+      }
+    ],
+    "quotemark": [true, "single"],
+    "trailing-comma": [true],
+    "semicolon": [true, "never"],
+    "ordered-imports": [true],
+    "max-line-length": [true, { "code": 80, "comments": 100, "tabWidth": 2, "ignoreUrls": true }],
+    "no-console": false,
+    "object-literal-sort-keys": false
+  },
+  "rulesDirectory": []
+}

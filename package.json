@@ -1,0 +1,34 @@
+{
+  "private": true,
+  "author": {
+    "email": "lamhieu.vk@gmail.com",
+    "name": "Hieu Lam",
+    "url": "https://lamhieu.info"
+  },
+  "scripts": {
+    "postinstall": "lerna bootstrap",
+    "reinstall": "find . -name \"node_modules\" -type d -prune -exec rm -rf '{}' + && yarn",
+    "clean": "lerna run clean",
+    "build": "lerna run build",
+    "test": "lerna run test",
+    "lint": "lerna run lint",
+    "lint:fix": "lerna run lint:fix"
+  },
+  "engines": {
+    "node": ">= 8.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.1.3",
+    "@types/node": "^13.7.4",
+    "jest": "^25.1.0",
+    "lerna": "^2.5.1",
+    "prettier": "^1.19.1",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^25.2.0",
+    "tslint": "^6.0.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.1.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {}
+}
