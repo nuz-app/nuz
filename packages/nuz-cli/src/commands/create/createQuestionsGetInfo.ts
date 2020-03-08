@@ -49,13 +49,15 @@ const createQuestionsGetInfo = async ({
     return null
   }
 
-  const { library, template = _template, version } = await createQuestions<
-    Omit<InfoResults, 'name'>
-  >([
+  const restQuestions = [
     !_template && getTemplateQuestion(),
     getLibraryQuestion(_upperFirst(_camelCase(name))),
     getVersionQuestion(),
-  ])
+  ].filter(Boolean)
+
+  const { library, template = _template, version } = await createQuestions<
+    Omit<InfoResults, 'name'>
+  >(restQuestions)
 
   return { name, library, template, version }
 }
