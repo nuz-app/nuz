@@ -5,6 +5,6 @@ import _get from 'lodash/get'
 import { PublishConfig } from '../../types'
 
 const publish = ({ endpoint, token }: PublishConfig, info, options) =>
-  got({ method: 'get', url: endpoint, data: { token, info, options } })
+  got({ method: 'post', url: endpoint, data: { token, info, options } })
 
 export default publish
