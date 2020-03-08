@@ -1,7 +1,7 @@
 ## @nuz/cli
 ***
 
-**@nuz/cli** is a cli to supports [create](#), [dev](#), [build](#), [serve](#) and [publish](#) a module using nuz ecosystems.
+**@nuz/cli** is a cli to supports [create](#create), [dev](#dev), [build](#build), [serve](#serve) and [publish](#publish) a module using nuz ecosystems.
 
 * **Create** create a module by a templates or auto generate new templates based on requirements.
 * **Dev** run development mode for mode.
@@ -36,7 +36,7 @@ $ nuz --version
 ### Concepts
 
 * **nuz module** is a module using **@nuz/cli** to work, having `nuz.config.js` file to config module.
-* **nuz config** is a config file as name `nuz.config.js` in root folder of module. Read more at [here](#).
+* **nuz config** is a config file as name `nuz.config.js` in root folder of module. Read more at [here](#file-config).
 
 ### Documentation
 
@@ -151,7 +151,7 @@ Options:
   --clean, -c  Clean dist folder before run build       [number] [default: true]
 ```
 
-**build** command to bundle module into `output` file. In production mode, code of module is optimized to using with [@nuz/core](#).
+**build** command to bundle module into `output` file. In production mode, code of module is optimized to using with [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-core).
 
 ### Serve
 
