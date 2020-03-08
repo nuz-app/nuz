@@ -7,7 +7,6 @@ const got = async (config: AxiosRequestConfig): Promise<any> => {
     const response = await axios(config)
     return response
   } catch (error) {
-    // Error 😨
     if (error.response) {
       /*
        * The request was made and the server responded with a

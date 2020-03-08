@@ -26,6 +26,7 @@ export const url = async (
   algorithm: string = DEFAULT_ALGORITHM,
 ) => {
   const response = await got({
+    method: 'get',
     url: link,
     timeout: DEFAULT_TIMEOUT,
     responseType: 'arraybuffer',
