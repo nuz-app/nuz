@@ -42,7 +42,7 @@ export const publishedIsDone = (name: string, version: string) => {
 }
 
 export const publishFailed = err => {
-  error(`Have an error while bundle module`)
+  error(`Have an error while publishing module`)
   log(err)
 }
 
