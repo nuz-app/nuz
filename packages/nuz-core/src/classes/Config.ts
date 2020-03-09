@@ -1,18 +1,16 @@
 import {
   BaseItemConfig,
   BootstrapConfig,
-  ExternalItemConfig,
-  ExternalsConfig,
   ModuleFormats,
-  ModuleItemConfig,
   ModulesConfig,
+  VendorsConfig,
 } from '../types'
 
 const setDefaultIfUnset = <T extends BaseItemConfig>(
+  name: string,
   item: T,
-  isExternal: boolean,
 ): T => {
-  const cloned = { ...item, isExternal }
+  const cloned = { ...item, name }
 
   if (cloned.preferLocal === undefined) {
     cloned.preferLocal = true
@@ -31,28 +29,21 @@ const setDefaultIfUnset = <T extends BaseItemConfig>(
   return cloned
 }
 
-const checkIsExistedInModules = <T = string>(item: T, list: T[]): boolean =>
-  list.includes(item)
-
-const transform = <T>(items, isExternal: boolean): T =>
-  (items || []).filter(Boolean).map(item => setDefaultIfUnset(item, isExternal))
-
 class Config {
-  private _externals: ExternalsConfig
+  private _vendors: VendorsConfig
   private _modules: ModulesConfig
   private _locked: boolean
 
   constructor({
-    externals,
+    vendors,
     modules,
-  }: Pick<BootstrapConfig, 'externals' | 'modules'>) {
-    this._externals = []
-    this._modules = []
+  }: Pick<BootstrapConfig, 'vendors' | 'modules'>) {
+    this._vendors = {}
+    this._modules = {}
     this._locked = false
 
-    this.setExternals(externals)
+    this.setVendors(vendors)
     this.setModules(modules)
-    console.log({ modules, xxx: this._modules })
   }
 
   lock() {
@@ -63,21 +54,16 @@ class Config {
     return (this._locked = false)
   }
 
-  getExternals() {
-    return this._externals
+  getVendors() {
+    return this._vendors
   }
 
-  setExternals(externals: ExternalsConfig) {
+  setVendors(vendors: VendorsConfig) {
     if (this._locked) {
-      throw new Error('Can not set externals because config was locked!')
+      throw new Error('Can not set vendors because config was locked!')
     }
 
-    const transformed = transform<ExternalsConfig>(externals, true)
-    this._externals.push(...transformed)
-  }
-
-  setExternal(external: ExternalItemConfig) {
-    return this.setExternals([external])
+    Object.assign(this._vendors, vendors)
   }
 
   getModules() {
@@ -89,16 +75,15 @@ class Config {
       throw new Error('Can not set modules because config was locked!')
     }
 
-    const names = this._modules.map(i => i.name)
-    const transformed = transform<ModulesConfig>(modules, false).filter(
-      item => !checkIsExistedInModules(item.name, names),
+    const keys = Object.keys(modules)
+    const transformed = keys.reduce(
+      (acc, key) =>
+        Object.assign(acc, {
+          [key]: setDefaultIfUnset(key, modules[key]),
+        }),
+      {},
     )
-
-    this._modules.push(...transformed)
-  }
-
-  setModule(module: ModuleItemConfig) {
-    return this.setModules([module])
+    Object.assign(this._modules, transformed)
   }
 }
 

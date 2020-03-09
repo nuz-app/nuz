@@ -23,6 +23,10 @@ class Globals {
   set(key, value) {
     return (this.globals[key] = value)
   }
+
+  has(key) {
+    return !!this.globals[key]
+  }
 }
 
 export default Globals

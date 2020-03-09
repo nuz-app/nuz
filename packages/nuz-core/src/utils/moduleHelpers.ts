@@ -5,11 +5,13 @@ export interface ExportedConfig {
   upstream?: boolean
   local?: boolean
   fallback?: boolean
+  vendor?: boolean
 }
 
 const definedKeys = {
   module: '__esModule',
   local: '__isLocal',
+  vendor: '__isVendor',
   upstream: '__isUpstream',
   fallback: '__isFallback',
 }

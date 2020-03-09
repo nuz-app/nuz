@@ -6,10 +6,13 @@ export interface InstallConfig {
 }
 
 export type ModuleItemConfig = BaseItemConfig
-export type ModulesConfig = BaseItemConfig[]
+export interface ModulesConfig {
+  [name: string]: ModuleItemConfig
+}
 
-export type ExternalItemConfig = BaseItemConfig
-export type ExternalsConfig = BaseItemConfig[]
+export interface VendorsConfig {
+  [dependency: string]: any
+}
 
 export interface BootstrapConfig {
   /**
@@ -17,9 +20,9 @@ export interface BootstrapConfig {
    */
   modules?: ModulesConfig
   /**
-   * Defined externals to resolve in runtime
+   * Defined vendors dependencies
    */
-  externals?: ExternalsConfig
+  vendors?: VendorsConfig
   /**
    * Allow preload modules in runtime, only support in browser
    */

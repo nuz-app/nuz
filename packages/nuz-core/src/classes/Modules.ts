@@ -52,7 +52,6 @@ class Modules {
   private readonly _config: Config
   private readonly _platform: RuntimePlatforms
   private readonly _globals: Globals
-  private readonly _resolvedExternals: Caches<string, LoadResults<any>>
   private readonly _resolvedModules: Caches<string, LoadResults<any>>
   private readonly _pingResources: Caches<
     string,
@@ -68,8 +67,7 @@ class Modules {
     this._platform = getRuntimePlatform()
     this._globals = new Globals(this._platform)
 
-    // Init resolved caches for externals and modules
-    this._resolvedExternals = new Caches()
+    // Init resolved cache and ping resources
     this._resolvedModules = new Caches()
     this._pingResources = new Caches()
   }
@@ -90,20 +88,22 @@ class Modules {
     return !!(local || requireHelpers.local(name, this._globals))
   }
 
-  private findItemByName(
-    name: string,
-    includes = {} as { modules: boolean; externals: boolean },
-  ) {
-    const externals = !includes.externals ? [] : this._config.getExternals()
-    const modules = !includes.modules ? [] : this._config.getModules()
-    const all = [...externals, ...modules]
-
-    const result = all.find(item => item.name === name)
-    return result
-  }
-
   private createContext() {
     return Object.create(this._globals.get())
+  }
+
+  private bindVendors() {
+    const vendors = this._config.getVendors()
+
+    const keys = Object.keys(vendors)
+    keys.forEach(key => {
+      const vendor = interopRequireDefault(vendors[key])
+      const exportsModule = moduleHelpers.define(vendor, {
+        module: true,
+        vendor: true,
+      })
+      this._globals.set(key, exportsModule)
+    })
   }
 
   private ping(item: BaseItemConfig) {
@@ -119,25 +119,20 @@ class Modules {
 
     const key = this.getKey(item)
     const called =
-      this._pingResources.has(key) ||
-      this._resolvedExternals.has(key) ||
-      this._resolvedModules.has(key)
+      this._pingResources.has(key) || this._resolvedModules.has(key)
     if (called) {
       return true
     }
 
-    const { isExternal, upstream } = item
-    const resolveUrls = requireHelpers.parse(upstream, this._platform)
-    console.log({ item, upstream })
+    const { upstream } = item
 
+    const resolveUrls = requireHelpers.parse(upstream, this._platform)
     const preloadScript = DOMHelpers.preloadScript(resolveUrls.main.url, {
-      ...resolveUrls.main,
-      isExternal,
+      integrity: resolveUrls.main.integrity,
     })
     const preloadStyles = resolveUrls.styles.map(style =>
       DOMHelpers.preloadStyle(style.url, {
-        ...style,
-        isExternal,
+        integrity: style.integrity,
       }),
     )
 
@@ -219,20 +214,30 @@ class Modules {
   }
 
   private async resolveInLocal(item: BaseItemConfig, options?: InstallConfig) {
-    const { name, local, preferLocal } = item
+    const { name, local, preferLocal, alias, exportsOnly } = item
 
     if (preferLocal) {
       const resolvedInLocal = local || requireHelpers.local(name, this._globals)
-      if (resolvedInLocal) {
-        const localModule = moduleHelpers.define(resolvedInLocal, {
-          module: true,
-          local: true,
-        })
+      if (!resolvedInLocal) {
+        return null
+      }
 
-        return {
-          module: localModule,
-          styles: [],
-        }
+      let exportsModule = Object.assign(
+        {},
+        interopRequireDefault(resolvedInLocal),
+      )
+      exportsModule = moduleHelpers.transform(exportsModule, {
+        alias,
+        exportsOnly,
+      })
+      exportsModule = moduleHelpers.define(exportsModule, {
+        module: true,
+        local: true,
+      })
+
+      return {
+        module: exportsModule,
+        styles: [],
       }
     }
 
@@ -274,61 +279,45 @@ class Modules {
     item: BaseItemConfig,
     options?: InstallConfig,
   ): Promise<LoadResults<M>> {
-    const { isExternal } = item
+    const { name } = item
 
-    const resolvedCaches = isExternal
-      ? this._resolvedExternals
-      : this._resolvedModules
+    if (!name) {
+      throw new Error('Not found name in item config')
+    }
+
+    const resolvedCache = this._resolvedModules
 
     const key = this.getKey(item)
-    if (resolvedCaches.has(key)) {
-      return resolvedCaches.get(key)
+    if (resolvedCache.has(key)) {
+      return resolvedCache.get(key)
     }
 
     const resolvedModule = await this.resolve(item, options)
+    resolvedCache.set(key, resolvedModule)
 
-    if (isExternal) {
-      const exportedKeys = Object.keys(resolvedModule.module)
-      exportedKeys.forEach((field: string) => {
-        this._globals.set(field, resolvedModule.module[field])
-      })
-    }
-
-    resolvedCaches.set(key, resolvedModule)
     return resolvedModule
   }
 
   async prepare() {
-    await this.loadExternals()
+    this.bindVendors()
   }
 
   async preload(names: string[]) {
-    const externals = this._config.getExternals()
     const modules = this._config.getModules()
-    const all = [...externals, ...modules]
-    const matches = all.filter(item => names.includes(item.name))
 
+    const matches = names.map(name => modules[name]).filter(Boolean)
     return matches.map(match => this.ping(match))
   }
 
-  async loadExternals() {
-    const externals = this._config.getExternals()
-
-    externals.map(item => this.ping(item))
-    const promises = Promise.all(
-      externals.map(item => this.load(item, item.options)),
-    )
-    return await promises
-  }
-
   async requireByName<T = unknown>(name: string): Promise<T> {
-    console.log({ name })
     const resolved = await this.loadByName<T>(name)
     return resolved.module
   }
 
   async loadByName<M = unknown>(name: string): Promise<LoadResults<M>> {
-    const item = this.findItemByName(name, { externals: true, modules: true })
+    const modules = this._config.getModules()
+
+    const item = modules[name]
     if (!item) {
       throw new Error(`Cannot load module by name: ${name}.`)
     }

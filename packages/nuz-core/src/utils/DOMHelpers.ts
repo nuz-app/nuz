@@ -1,19 +1,15 @@
 interface PreloadConfig {
   [attr: string]: string | boolean
-  isExternal: boolean
   integrity: string | null
 }
 
-const linkFactory = (
-  url: string,
-  { isExternal, integrity, ...rest }: PreloadConfig,
-) => {
+const linkFactory = (url: string, { integrity, ...rest }: PreloadConfig) => {
   const link = document.createElement('link')
 
   Object.assign(link, rest, { integrity })
   link.rel = 'preload'
   // @ts-ignore
-  link.importance = isExternal ? 'high' : 'auto'
+  link.importance = 'auto'
   link.href = url
 
   return link

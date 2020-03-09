@@ -27,16 +27,12 @@ const bootstrap = async (
     )
   }
 
-  const {
-    preload,
-    externals: definedExternals,
-    modules: definedModules,
-  } = config
+  const { preload, vendors: definedVendors, modules: definedModules } = config
 
   console.log({ config })
-  // Set externals and modules to config, using in modules manager
+  // Set vendors and modules to config, using in modules manager
   initConfig({
-    externals: definedExternals,
+    vendors: definedVendors,
     modules: definedModules,
   })
   markIsInitialized()
