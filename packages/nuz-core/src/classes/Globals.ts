@@ -27,6 +27,10 @@ class Globals {
   has(key) {
     return !!this.globals[key]
   }
+
+  clear() {
+    this.globals = undefined
+  }
 }
 
 export default Globals
