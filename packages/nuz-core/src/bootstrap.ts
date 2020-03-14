@@ -55,7 +55,7 @@ const bootstrap = async (
 
   // Preload resource if `preload` field is provided
   if (preload) {
-    modules.preload(preload)
+    await modules.preload(preload)
   }
 
   // Emit a ready event

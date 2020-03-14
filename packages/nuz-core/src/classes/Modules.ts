@@ -83,14 +83,18 @@ class Modules {
       : 'm:' + (item as ModuleItemConfig).name
   }
 
-  private canUseLocal(item: BaseItemConfig) {
+  private async canUseLocal(item: BaseItemConfig) {
     const { name, local, preferLocal } = item
 
     if (!preferLocal) {
       return false
     }
 
-    return !!(local || requireHelpers.local(name, this._globals))
+    return !!(
+      local ||
+      requireHelpers.local(name, this._globals) ||
+      (await this._linked.isOk(name))
+    )
   }
 
   private createContext() {
@@ -111,13 +115,13 @@ class Modules {
     }
   }
 
-  private ping(item: BaseItemConfig) {
+  private async ping(item: BaseItemConfig) {
     const isNode = this._platform === RuntimePlatforms.node
     if (isNode) {
       return false
     }
 
-    const canUseLocal = this.canUseLocal(item)
+    const canUseLocal = await this.canUseLocal(item)
     if (canUseLocal) {
       return false
     }
@@ -274,6 +278,8 @@ class Modules {
       : styles.map(style =>
           DOMHelpers.loadStyle(style.url, { integrity: style.integrity }),
         )
+
+    this._linked.watch([item.name])
 
     return {
       module: exportsModule,
