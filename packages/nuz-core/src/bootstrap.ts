@@ -1,6 +1,6 @@
 import { jsonHelpers } from '@nuz/utils'
 
-import { BootstrapConfig, EventTypes } from './types'
+import { BootstrapConfig, EventTypes, RegistryConfig } from './types'
 
 import { emitter } from './events'
 
@@ -8,7 +8,18 @@ import checkIsFunction from './utils/checkIsFunction'
 import { mark as markIsInitialized } from './utils/checkIsInitialized'
 import { initConfig } from './utils/effects/getConfig'
 import getModules, { initModules } from './utils/effects/getModules'
+import getConfig from './utils/getConfig'
+import uniq from './utils/uniq'
 import * as validator from './utils/validator'
+
+const mergeConfig = (
+  localConfig: BootstrapConfig,
+  { modules, preload }: BootstrapConfig = {},
+): BootstrapConfig =>
+  Object.assign({}, localConfig, {
+    preload: uniq(preload, localConfig.preload),
+    modules: Object.assign({}, modules, localConfig.modules),
+  })
 
 export interface BootstrapCallbacks {
   render: () => Promise<void>
@@ -27,14 +38,32 @@ const bootstrap = async (
     )
   }
 
+  let configOnRegistry
+  const registryIsDefined = !!config.registry
+  if (registryIsDefined) {
+    const registryConfig = (config.registry || {}) as RegistryConfig
+    const registryUrl =
+      typeof config.registry === 'string'
+        ? config.registry
+        : config.registry.url
+
+    configOnRegistry = await getConfig<BootstrapConfig>(
+      registryUrl,
+      {
+        timeout: registryConfig.timeout || -1,
+        integrity: registryConfig.integrity || '',
+      },
+      registryConfig.retries || 1,
+    )
+  }
+
   const {
     preload,
     linked: definedLinked,
     vendors: definedVendors,
     modules: definedModules,
-  } = config
+  } = mergeConfig(config, configOnRegistry)
 
-  console.log({ config })
   // Set vendors and modules to config, using in modules manager
   initConfig({
     linked: definedLinked,

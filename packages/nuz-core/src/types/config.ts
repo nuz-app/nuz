@@ -14,9 +14,20 @@ export interface VendorsConfig {
   [dependency: string]: any
 }
 
+export interface RegistryConfig {
+  url: string
+  timeout?: number
+  retries?: number
+  integrity?: string
+}
+
 export interface BootstrapConfig {
   /**
-   * Linked info
+   * Config registry to resolve
+   */
+  registry?: string | RegistryConfig
+  /**
+   * Linked info, use for workspace
    */
   linked?: {
     port: number
