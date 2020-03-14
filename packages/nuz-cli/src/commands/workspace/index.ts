@@ -16,7 +16,7 @@ import getFeatureConfig from '../../utils/getFeatureConfig'
 import * as paths from '../../utils/paths'
 import { exit, onExit } from '../../utils/process'
 import serve from '../../utils/serve'
-import startWatchMode from '../../utils/startWatchMode'
+import runWatchMode from '../../utils/runWatchMode'
 import webpackConfigFactory from '../../utils/webpackConfigFactory'
 
 import * as logs from './logs'
@@ -154,7 +154,7 @@ const execute = async ({
     io.emit(constants.CHANGE_EVENT, { modules })
 
   // Build and watching modules
-  const watcher = await startWatchMode(webpackConfigs, ({ data }) => {
+  const watcher = await runWatchMode(webpackConfigs, ({ data }) => {
     const { children } = data
 
     const modules = children.map(child => compilerName.extract(child.name))

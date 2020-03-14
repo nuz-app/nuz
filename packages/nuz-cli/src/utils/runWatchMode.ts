@@ -3,7 +3,7 @@ import getBundleInfo from './getBundleInfo'
 import { common } from './print'
 import * as webpackCompiler from './webpackCompiler'
 
-const startWatchMode = async (
+const runWatchMode = async (
   config: webpackCompiler.AllowWebpackConfig,
   onChange?: any,
 ) => {
@@ -37,4 +37,4 @@ const startWatchMode = async (
   return watcher
 }
 
-export default startWatchMode
+export default runWatchMode

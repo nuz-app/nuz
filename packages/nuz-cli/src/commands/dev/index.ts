@@ -9,7 +9,7 @@ import getFeatureConfig from '../../utils/getFeatureConfig'
 import * as paths from '../../utils/paths'
 import { exit, onExit } from '../../utils/process'
 import serve from '../../utils/serve'
-import startWatchMode from '../../utils/startWatchMode'
+import runWatchMode from '../../utils/runWatchMode'
 import webpackConfigFactory from '../../utils/webpackConfigFactory'
 
 import * as logs from './logs'
@@ -50,7 +50,7 @@ const execute = async ({ port: _port }: yargs.Argv<DevCommand>) => {
     featureConfig,
   )
 
-  const watcher = await startWatchMode(buildConfig)
+  const watcher = await runWatchMode(buildConfig)
   const port = _port || 4000
   const server = serve({
     port,
