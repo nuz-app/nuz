@@ -1,11 +1,11 @@
-import * as integrityHelpers0 from './integrityHelpers'
-export const integrityHelpers = integrityHelpers0
+import * as integrityHelpers from './integrityHelpers'
+import * as jsonHelpers from './jsonHelpers'
+import * as linkedUrls from './linkedUrls'
 
-import * as jsonHelpers0 from './jsonHelpers'
-export const jsonHelpers = jsonHelpers0
+export { integrityHelpers, jsonHelpers, linkedUrls }
 
-import * as linkedUrls0 from './linkedUrls'
-export const linkedUrls = linkedUrls0
+import * as linkedConst from './const/linked'
+export const constants = Object.assign({}, linkedConst)
 
 export { default as checkIsObject } from './checkIsObject'
 export { default as checkIsUrlOk } from './checkIsUrlOk'
