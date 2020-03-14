@@ -11,6 +11,7 @@ const serve = ({ port, dir }): http.Server => {
     return handler(request, response, {
       public: dir,
       symlinks: true,
+      etag: true,
     })
   })
 
