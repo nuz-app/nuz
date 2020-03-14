@@ -9,7 +9,7 @@
     "no-unused-expression": true
   },
   "linterOptions": {
-    "exclude": ["**/templates/**"]
+    "exclude": ["**/templates/**", "**/examples/**"]
   },
   "rules": {
     "prettier": [
