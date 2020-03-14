@@ -1,5 +1,7 @@
 import chalk, { Chalk } from 'chalk'
 
+import { CHANGES_EMOJI } from '../lib/const'
+
 interface Printer extends Chalk {
   link: Chalk['green']
   name: Chalk['green']
@@ -48,6 +50,30 @@ export const common = {
       )}`,
     )
     log()
+  },
+  waitingForChanges: (time: number) => {
+    const idx = Math.floor(Math.random() * CHANGES_EMOJI.length)
+    const emoji = CHANGES_EMOJI[idx]
+    const text = isNaN(time) ? '' : ` in ${printer.bold(`${time}ms`)}`
+
+    log(printer.dim(`[👀] build done${text}! watching for changes...`, emoji))
+  },
+
+  buildFailed: errorDetails => {
+    error(`Have an error while bundle module, details:`)
+    log(errorDetails)
+  },
+
+  showErrorsAndWarnings: ({ errors, warnings }) => {
+    if (errors.length > 0) {
+      error('Have some errors from stats of bundle')
+      errors.forEach(item => log(item))
+    }
+
+    if (warnings.length > 0) {
+      warn('Have some warnings from stats of bundle')
+      warnings.forEach(item => log(item))
+    }
   },
 }
 

@@ -24,7 +24,10 @@ export const ensure = (dir: string) => {
 
 const REQUIRED_FIELDS = ['name', 'version', 'library', 'input', 'output']
 
-export const extract = (dir: string): ModuleConfig | null => {
+export const extract = (
+  dir: string,
+  required: boolean = true,
+): ModuleConfig | null => {
   try {
     const { name, version, library, source, main } = getPackageJsonInDir(dir)
 
@@ -36,7 +39,7 @@ export const extract = (dir: string): ModuleConfig | null => {
     )
 
     const isInvalid = !REQUIRED_FIELDS.every(field => !!full[field])
-    if (isInvalid) {
+    if (required && isInvalid) {
       return null
     }
 

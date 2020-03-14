@@ -1,7 +1,7 @@
 import path from 'path'
-import { Argv } from 'yargs'
+import * as yargs from 'yargs'
 
-import { CommandConfig, CommandTypes, DevConfig } from '../../types/common'
+import { CommandConfig, CommandTypes, ServeCommand } from '../../types/common'
 
 import clearConsole from '../../utils/clearConsole'
 import * as configHelpers from '../../utils/configHelpers'
@@ -12,7 +12,7 @@ import serve from '../../utils/serve'
 import * as logs from './logs'
 
 // @ts-ignore
-const execute = async ({ port: _port }: Argv<DevConfig>) => {
+const execute = async ({ port: _port }: yargs.Argv<ServeCommand>) => {
   const moduleDir = paths.cwd
 
   const configIsExisted = configHelpers.exists(moduleDir)
@@ -54,10 +54,10 @@ const execute = async ({ port: _port }: Argv<DevConfig>) => {
 const config: CommandConfig = {
   type: CommandTypes.serve,
   description: 'File serving and directory listing in module',
-  transform: yargs =>
-    yargs.option('port', {
+  transform: yarg =>
+    yarg.option('port', {
       alias: 'p',
-      describe: 'Port to bind on',
+      describe: 'Set port listen for server',
       type: 'number',
       required: false,
     }),

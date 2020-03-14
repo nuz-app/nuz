@@ -39,6 +39,8 @@ const ruleFactory = (test: RegExp, exclude?: RegExp) => ({
 const defaultConfig = {
   publicPath: '/',
   format: 'umd' as webpack.LibraryTarget,
+  // ref: https://github.com/webpack/webpack/issues/2145#issuecomment-294361203
+  // suggested: `cheap-module-source-map`
   devtool: 'eval-source-map' as webpack.Options.Devtool,
   externals: {},
 }
@@ -272,16 +274,16 @@ const webpackConfigFactory = (
       entrypoints: true,
       assets: true,
     })
-    config.plugins.push(
-      new BundleAnalyzerPlugin({
-        statsFilename,
-        generateStatsFile: true,
-        analyzerMode: 'static',
-        analyzerPort: 'auto',
-        statsOptions,
-        openAnalyzer: !!analyzerConfig.open,
-      }),
-    )
+    // config.plugins.push(
+    //   new BundleAnalyzerPlugin({
+    //     statsFilename,
+    //     generateStatsFile: true,
+    //     analyzerMode: 'static',
+    //     analyzerPort: 'auto',
+    //     statsOptions,
+    //     openAnalyzer: !!analyzerConfig.open,
+    //   }),
+    // )
 
     Object.assign(config.optimization, {
       minimizer: [

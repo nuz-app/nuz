@@ -1,6 +1,6 @@
-import { Argv } from 'yargs'
+import * as yargs from 'yargs'
 
-import { CommandConfig, CommandTypes, CreateConfig } from '../../types/common'
+import { CommandConfig, CommandTypes, CreateCommand } from '../../types/common'
 
 import checkIsOnline from '../../utils/checkIsOnline'
 import checkIsTemplateExisted from '../../utils/checkIsTemplateExisted'
@@ -25,7 +25,7 @@ const execute = async ({
   name: _name,
   // @ts-ignore
   template: _template,
-}: Argv<CreateConfig>) => {
+}: yargs.Argv<CreateCommand>) => {
   const isOnline = await checkIsOnline()
   if (!isOnline) {
     logs.networkNotAvailable()
@@ -101,8 +101,8 @@ const execute = async ({
 const config: CommandConfig = {
   type: CommandTypes.create,
   description: 'Create a module for micro frontends project',
-  transform: yargs =>
-    yargs
+  transform: yarg =>
+    yarg
       .option('name', {
         alias: 'n',
         describe: 'Module name',

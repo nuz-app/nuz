@@ -9,7 +9,7 @@ const filesMap = {
 }
 
 const cloneFilesIfNotFound = (dir: string, files: string[]) =>
-  Promise.all(
+  Promise.all<any>(
     files.map(file => {
       const filePath = path.join(dir, file)
       const isExisted = fs.exists(filePath)

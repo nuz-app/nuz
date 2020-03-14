@@ -1,5 +1,5 @@
 import webpack = require('webpack')
-import { Argv } from 'yargs'
+import * as yargs from 'yargs'
 
 export enum CommandTypes {
   create = 'create',
@@ -7,6 +7,7 @@ export enum CommandTypes {
   build = 'build',
   serve = 'serve',
   publish = 'publish',
+  workspace = 'workspace',
 }
 
 export interface PublishConfig {
@@ -18,16 +19,32 @@ export interface CommandConfig<C = unknown> {
   type: CommandTypes
   description: string
   transform: (yargs: any) => any
-  execute: (yargs: Argv<C>) => Promise<any>
+  execute: (yargs: yargs.Argv<C>) => Promise<any>
 }
 
-export interface CreateConfig {
-  name: string
-  template: string
+export interface CreateCommand {
+  name?: string
+  template?: string
 }
 
-export interface DevConfig {
-  port: number
+export interface PublishCommand {
+  fallback?: boolean
+}
+
+export interface BuildCommand {
+  clean?: boolean
+}
+
+export interface DevCommand {
+  port?: number
+}
+
+export interface ServeCommand {
+  port?: number
+}
+
+export interface WorkspaceCommand {
+  workspace?: string[]
 }
 
 export interface AnalyzerConfig {
@@ -80,6 +97,10 @@ export interface ModuleConfig {
    * Publish config
    */
   publishConfig?: PublishConfig
+  /**
+   * Workspace paths
+   */
+  workspace?: string[]
 }
 
 export interface FeatureConfig {

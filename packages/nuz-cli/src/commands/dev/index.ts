@@ -1,22 +1,21 @@
-import { Argv } from 'yargs'
+import * as yargs from 'yargs'
 
-import { CommandConfig, CommandTypes, DevConfig } from '../../types/common'
+import { CommandConfig, CommandTypes, DevCommand } from '../../types'
 
 import clearConsole from '../../utils/clearConsole'
 import * as configHelpers from '../../utils/configHelpers'
 import exitIfModuleInsufficient from '../../utils/exitIfModuleInsufficient'
-import getBundleInfo from '../../utils/getBundleInfo'
 import getFeatureConfig from '../../utils/getFeatureConfig'
 import * as paths from '../../utils/paths'
 import { exit, onExit } from '../../utils/process'
 import serve from '../../utils/serve'
-import * as webpackCompiler from '../../utils/webpackCompiler'
+import startWatchMode from '../../utils/startWatchMode'
 import webpackConfigFactory from '../../utils/webpackConfigFactory'
 
 import * as logs from './logs'
 
 // @ts-ignore
-const execute = async ({ port: _port }: Argv<DevConfig>) => {
+const execute = async ({ port: _port }: yargs.Argv<DevCommand>) => {
   const moduleDir = paths.cwd
 
   const configIsExisted = configHelpers.exists(moduleDir)
@@ -32,7 +31,6 @@ const execute = async ({ port: _port }: Argv<DevConfig>) => {
   }
 
   exitIfModuleInsufficient(moduleConfig)
-
   const { name } = moduleConfig
 
   const featureConfig = getFeatureConfig(moduleDir, moduleConfig)
@@ -52,40 +50,16 @@ const execute = async ({ port: _port }: Argv<DevConfig>) => {
     featureConfig,
   )
 
-  let isFirstTimes = true
-
-  const watcher = await webpackCompiler.watch(buildConfig, (error, stats) => {
-    if (!isFirstTimes) {
-      clearConsole()
-    } else {
-      isFirstTimes = false
-    }
-
-    if (error) {
-      logs.buildFailed(error)
-      return
-    }
-
-    const bundleInfo = getBundleInfo(stats)
-    if (!bundleInfo.done) {
-      logs.showErrorsAndWarnings(bundleInfo)
-      return
-    }
-
-    const buildTime = stats.endTime - stats.startTime
-    logs.waitingForChanges(buildTime)
-  })
-
+  const watcher = await startWatchMode(buildConfig)
   const port = _port || 4000
   const server = serve({
     port,
     dir: buildConfig.output.path,
   })
 
-  const host = `http://localhost:${port}/${buildConfig.output.filename}`
-
+  const upstreamUrl = `http://localhost:${port}/${buildConfig.output.filename}`
   logs.guide({
-    host,
+    upstream: upstreamUrl,
     port,
     name: moduleConfig.name,
     library: moduleConfig.library,
@@ -101,10 +75,10 @@ const execute = async ({ port: _port }: Argv<DevConfig>) => {
 const config: CommandConfig = {
   type: CommandTypes.dev,
   description: 'Run development mode',
-  transform: yargs =>
-    yargs.option('port', {
+  transform: yarg =>
+    yarg.option('port', {
       alias: 'p',
-      describe: 'Port to bind on',
+      describe: 'Set port listen for server',
       type: 'number',
       required: false,
     }),

@@ -1,9 +1,9 @@
 import { integrityHelpers } from '@nuz/utils'
 import path from 'path'
-import { Argv } from 'yargs'
+import * as yargs from 'yargs'
 
 import { STATS_FILENAME } from '../../lib/const'
-import { CommandConfig, CommandTypes } from '../../types/common'
+import { CommandConfig, CommandTypes, PublishCommand } from '../../types/common'
 
 import clearConsole from '../../utils/clearConsole'
 import * as configHelpers from '../../utils/configHelpers'
@@ -15,7 +15,7 @@ import * as logs from './logs'
 import publish from './publish'
 
 // @ts-ignore
-const execute = async ({ fallback }: Argv<{ fallback: true }>) => {
+const execute = async ({ fallback }: yargs.Argv<PublishCommand>) => {
   const moduleDir = paths.cwd
 
   const configIsExisted = configHelpers.exists(moduleDir)
@@ -96,8 +96,8 @@ const execute = async ({ fallback }: Argv<{ fallback: true }>) => {
 const config: CommandConfig<{}> = {
   type: CommandTypes.publish,
   description: 'Publish version for module',
-  transform: yargs =>
-    yargs.option('fallback', {
+  transform: yarg =>
+    yarg.option('fallback', {
       alias: 'f',
       describe: 'Set fallback for new version',
       default: true,

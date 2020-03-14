@@ -1,8 +1,10 @@
 import webpack from 'webpack'
 
-export const get = (config: webpack.Configuration) => webpack(config)
+export type AllowWebpackConfig = webpack.Configuration | webpack.Configuration[]
 
-export const run = (config: webpack.Configuration) =>
+export const get = (config: AllowWebpackConfig) => webpack(config as any)
+
+export const run = (config: AllowWebpackConfig): Promise<webpack.Stats> =>
   new Promise((resolve, reject) => {
     const compiler = get(config)
     compiler.run((error, stats) => {
@@ -14,10 +16,13 @@ export const run = (config: webpack.Configuration) =>
     })
   })
 
-export const watch = (config: webpack.Configuration, callback) =>
+export const watch = (
+  config: AllowWebpackConfig,
+  callback,
+): Promise<webpack.Compiler.Watching> =>
   new Promise(resolve => {
     const compiler = get(config)
-    const watching = compiler.watch(
+    const watcher = compiler.watch(
       {
         aggregateTimeout: 500,
         poll: 500,
@@ -26,5 +31,5 @@ export const watch = (config: webpack.Configuration, callback) =>
       callback,
     )
 
-    return resolve(watching)
+    return resolve(watcher)
   })

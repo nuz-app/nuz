@@ -8,6 +8,8 @@ export const tool = fs.realpathSync(path.join(__dirname, '../../'))
 
 export const cwd = fs.realpathSync(process.cwd())
 
+export const nuz = (dir: string, ...rest) => path.join(dir, '.nuz', ...rest)
+
 export const app = (name: string) => [cwd, name].join('/')
 
 export const config = (root: string, ext: string = '*') =>

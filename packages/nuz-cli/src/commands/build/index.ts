@@ -1,8 +1,8 @@
 import { integrityHelpers } from '@nuz/utils'
 import path from 'path'
-import { Argv } from 'yargs'
+import * as yargs from 'yargs'
 
-import { CommandConfig, CommandTypes } from '../../types/common'
+import { BuildCommand, CommandConfig, CommandTypes } from '../../types'
 
 import clearConsole from '../../utils/clearConsole'
 import * as configHelpers from '../../utils/configHelpers'
@@ -14,11 +14,10 @@ import { exit } from '../../utils/process'
 import * as webpackCompiler from '../../utils/webpackCompiler'
 import webpackConfigFactory from '../../utils/webpackConfigFactory'
 
-// import bundle from './bundle'
 import * as logs from './logs'
 
 // @ts-ignore
-const execute = async ({ clean }: Argv<{ clean: true }>) => {
+const execute = async ({ clean }: yargs.Argv<BuildCommand>) => {
   const moduleDir = paths.cwd
 
   const configIsExisted = configHelpers.exists(moduleDir)
@@ -83,8 +82,8 @@ const execute = async ({ clean }: Argv<{ clean: true }>) => {
 const config: CommandConfig<{ clean: true }> = {
   type: CommandTypes.build,
   description: 'Run build production mode',
-  transform: yargs =>
-    yargs.option('clean', {
+  transform: yarg =>
+    yarg.option('clean', {
       alias: 'c',
       describe: 'Clean dist folder before run build',
       type: 'number',

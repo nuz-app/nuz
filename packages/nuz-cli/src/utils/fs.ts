@@ -2,6 +2,11 @@ import fs from 'fs-extra'
 import os from 'os'
 import rimraf from 'rimraf'
 
+export const realpathSync = fs.realpathSync
+export const ensureSymlinkSync = fs.ensureSymlinkSync
+export const symlinkSync = fs.symlinkSync
+export const symlink = fs.symlink
+
 export const remove = (path: string) => rimraf.sync(path)
 
 export const create = (path: string) => fs.mkdirSync(path)
