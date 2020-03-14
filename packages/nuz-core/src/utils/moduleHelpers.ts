@@ -11,7 +11,7 @@ export interface ExportedConfig {
 
 const definedKeys = {
   module: '__esModule',
-  linkde: '__isLinked',
+  linked: '__isLinked',
   local: '__isLocal',
   vendor: '__isVendor',
   upstream: '__isUpstream',
@@ -19,13 +19,13 @@ const definedKeys = {
 }
 
 export const define = (module, config?: ExportedConfig) => {
-  const keysOfConfig = Object.keys(config)
-  keysOfConfig.forEach(key => {
+  // tslint:disable-next-line: forin
+  for (const key in config) {
     const defined = definedKeys[key]
-    if (defined) {
+    if (config[key] && defined) {
       Object.defineProperty(module, defined, { value: true })
     }
-  })
+  }
 
   return module
 }
