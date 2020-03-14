@@ -3,7 +3,10 @@ import getBundleInfo from './getBundleInfo'
 import { common } from './print'
 import * as webpackCompiler from './webpackCompiler'
 
-const startWatchMode = async (config: webpackCompiler.AllowWebpackConfig) => {
+const startWatchMode = async (
+  config: webpackCompiler.AllowWebpackConfig,
+  onChange?: any,
+) => {
   let isFirstBuild = false
   const watcher = await webpackCompiler.watch(config, (error, stats) => {
     if (!isFirstBuild) {
@@ -25,6 +28,10 @@ const startWatchMode = async (config: webpackCompiler.AllowWebpackConfig) => {
 
     const buildTime = stats.endTime - stats.startTime
     common.waitingForChanges(buildTime)
+
+    if (typeof onChange === 'function') {
+      onChange(bundleInfo)
+    }
   })
 
   return watcher
