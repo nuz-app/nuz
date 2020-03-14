@@ -1,3 +1,4 @@
+import { linkedUrls } from '@nuz/utils'
 import glob from 'glob'
 import path from 'path'
 import * as webpack from 'webpack'
@@ -44,9 +45,17 @@ const execute = async ({
     return exit(1)
   }
 
+  const port = _port || 4000
+  const linkedUrl = linkedUrls.modules(port)
+
   // Clear console and log to notify starting workspace mode
   clearConsole()
   logs.notifyOnStart()
+
+  // Create build directory for worksapce
+  const buildDir = paths.nuz(moduleDir, 'modules')
+  const publicPath = linkedUrl + '/'
+  fs.ensureDir(buildDir)
 
   // Check and get modules paths in workspace
   const workspacePaths = workspace.reduce<string[]>(
@@ -69,6 +78,9 @@ const execute = async ({
       return exit(1)
     }
 
+    // Get module name
+    const moduleName = configOfModule.name
+
     // Break if not having some important fields in module
     exitIfModuleInsufficient(configOfModule)
     const featureOfModule = getFeatureConfig(realPath, configOfModule)
@@ -78,20 +90,26 @@ const execute = async ({
       {
         dev: true,
         cache: true,
+        module: moduleName,
         dir: realPath,
         config: configOfModule,
       },
       featureOfModule,
     )
 
-    // Get module name and info
-    const moduleName = configOfModule.name
+    // Create dist info
+    const distDir = path.join(buildDir, moduleName)
+    const distFilename = 'index.js'
+
+    // Override webpack config with new dist info
+    webpackConfig.output.path = distDir
+    webpackConfig.output.filename = distFilename
+    webpackConfig.output.publicPath = publicPath + moduleName + '/'
+
+    // Create module info
     const moduleInfo = {
       dir: realPath,
-      distFile: path.join(
-        webpackConfig.output.path,
-        webpackConfig.output.filename as string,
-      ),
+      distFile: path.join(distDir, distFilename),
       config: configOfModule,
       feature: featureOfModule,
       webpack: webpackConfig,
@@ -115,22 +133,11 @@ const execute = async ({
       return moduleInfo.webpack
     },
   )
+
+  // Build and watching modules
   const watcher = await startWatchMode(webpackConfigs)
 
-  // Create build directory for worksapce
-  const buildDir = paths.nuz(moduleDir, 'modules')
-  fs.ensureDir(buildDir)
-
-  // Create symlinks dir for modules in workspace
-  for (const moduleName of modulesKeys) {
-    const infoOfModule = modulesConfig[moduleName]
-    const symlinksDirInWorkspace = path.join(buildDir, moduleName)
-    await fs.remove(symlinksDirInWorkspace)
-    await fs.symlinkSync(infoOfModule.distFile, symlinksDirInWorkspace)
-  }
-
   // Create server to serve file serving and directory listing in workspace
-  const port = _port || 4000
   const server = serve({
     port,
     dir: buildDir,

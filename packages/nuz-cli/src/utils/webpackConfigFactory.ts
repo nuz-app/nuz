@@ -19,11 +19,12 @@ import {
   TS_EXTENSIONS,
 } from '../lib/const'
 
-import getPackageJsonTool from './getPackageJsonTool'
+import * as compilerName from './compilerName'
 import * as paths from './paths'
 
 export interface FactoryConfig {
   ci?: boolean
+  module?: string
   dir: string
   dev: boolean
   cache: boolean
@@ -46,7 +47,14 @@ const defaultConfig = {
 }
 
 const webpackConfigFactory = (
-  { dev, dir, cache, ci = false, config: moduleConfig }: FactoryConfig,
+  {
+    dev,
+    dir,
+    cache,
+    ci = false,
+    module = '~',
+    config: moduleConfig,
+  }: FactoryConfig,
   feature: Partial<FeatureConfig> = {},
 ) => {
   const {
@@ -75,7 +83,7 @@ const webpackConfigFactory = (
   const mainFields = ['browser', 'module', 'main']
   const resolveModules = ['node_modules']
   const statsFilename = STATS_FILENAME
-  const packageJsonTool = getPackageJsonTool() || {}
+  const name = compilerName.get(module)
 
   const extensions = feature.typescript
     ? [...TS_EXTENSIONS, ...JS_EXTENSIONS, ...JSON_EXTENSIONS]
@@ -88,7 +96,7 @@ const webpackConfigFactory = (
   }
 
   const config: webpack.Configuration = {
-    name: packageJsonTool.name + '-webpack',
+    name,
     bail,
     mode,
     target,
@@ -125,7 +133,7 @@ const webpackConfigFactory = (
   // Push process bar handler to plugins
   config.plugins.push(
     new WebpackProcessBar({
-      name: packageJsonTool.name,
+      name,
       fancy: !ci,
     }),
   )
@@ -274,16 +282,16 @@ const webpackConfigFactory = (
       entrypoints: true,
       assets: true,
     })
-    // config.plugins.push(
-    //   new BundleAnalyzerPlugin({
-    //     statsFilename,
-    //     generateStatsFile: true,
-    //     analyzerMode: 'static',
-    //     analyzerPort: 'auto',
-    //     statsOptions,
-    //     openAnalyzer: !!analyzerConfig.open,
-    //   }),
-    // )
+    config.plugins.push(
+      new BundleAnalyzerPlugin({
+        statsFilename,
+        generateStatsFile: true,
+        analyzerMode: 'static',
+        analyzerPort: 'auto',
+        statsOptions,
+        openAnalyzer: !!analyzerConfig.open,
+      }),
+    )
 
     Object.assign(config.optimization, {
       minimizer: [
