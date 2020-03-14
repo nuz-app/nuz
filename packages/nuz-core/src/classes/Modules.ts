@@ -20,6 +20,7 @@ import * as requireHelpers from '../utils/requireHelpers'
 
 import Caches from './Caches'
 import Globals from './Globals'
+import Linked from './Linked'
 import Script from './Script'
 
 const ensureInstallConfig = ({ timeout, retries }: InstallConfig = {}) => ({
@@ -52,6 +53,7 @@ class Modules {
   private readonly _config: Config
   private readonly _platform: RuntimePlatforms
   private readonly _globals: Globals
+  private readonly _linked: Linked
   private readonly _resolvedModules: Caches<string, LoadResults<any>>
   private readonly _pingResources: Caches<
     string,
@@ -70,6 +72,9 @@ class Modules {
     // Init resolved cache and ping resources
     this._resolvedModules = new Caches()
     this._pingResources = new Caches()
+
+    // Create linked
+    this._linked = new Linked(this._config.getLinked())
   }
 
   private getKey(item: BaseItemConfig) {
@@ -96,14 +101,14 @@ class Modules {
     const vendors = this._config.getVendors()
 
     const keys = Object.keys(vendors)
-    keys.forEach(key => {
+    for (const key of keys) {
       const vendor = interopRequireDefault(vendors[key])
       const exportsModule = moduleHelpers.define(vendor, {
         module: true,
         vendor: true,
       })
       this._globals.set(key, exportsModule)
-    })
+    }
   }
 
   private ping(item: BaseItemConfig) {
@@ -144,6 +149,57 @@ class Modules {
     return true
   }
 
+  private async runScript(
+    { code, format, library, alias, exportsOnly },
+    {
+      upstream = false,
+      linked = false,
+    }: Partial<{ upstream: boolean; linked: boolean }>,
+  ) {
+    const isNode = this._platform === RuntimePlatforms.node
+    const context = this.createContext()
+
+    try {
+      const script = new Script(code, {
+        format,
+      })
+
+      if (isNode) {
+        await script.runInContext(context)
+      } else {
+        await script.runInScript(context)
+      }
+    } catch (error) {
+      console.error(
+        `Module installed uncaught error: ${error.message || error}`,
+      )
+      throw error
+    }
+
+    const moduleInContext = library ? context[library] : context
+
+    let exportsModule = Object.assign(
+      {},
+      interopRequireDefault(moduleInContext),
+      moduleInContext,
+    )
+    exportsModule = moduleHelpers.transform(exportsModule, {
+      alias,
+      exportsOnly,
+    })
+    exportsModule = moduleHelpers.define(exportsModule, {
+      module: true,
+      upstream,
+      linked,
+    })
+
+    if (!checkIsFunction(exportsModule.default)) {
+      throw new Error('Module is not exported!')
+    }
+
+    return exportsModule
+  }
+
   private async resolveOnUpstream(
     item: BaseItemConfig,
     options?: InstallConfig,
@@ -165,47 +221,59 @@ class Modules {
       retries,
     )
 
-    const context = this.createContext()
-
-    try {
-      const script = new Script(moduleScript, {
+    const exportsModule = await this.runScript(
+      {
+        code: moduleScript,
         format,
-      })
-
-      if (isNode) {
-        await script.runInContext(context)
-      } else {
-        await script.runInScript(context)
-      }
-    } catch (error) {
-      console.error(
-        `Module installed uncaught error: ${error.message || error}`,
-      )
-      throw error
-    }
-
-    const moduleInContext = library ? context[library] : context
-    let exportsModule = Object.assign(
-      {},
-      interopRequireDefault(moduleInContext),
-      moduleInContext,
+        library,
+        alias,
+        exportsOnly,
+      },
+      {
+        upstream: true,
+      },
     )
-    exportsModule = moduleHelpers.transform(exportsModule, {
-      alias,
-      exportsOnly,
-    })
-    exportsModule = moduleHelpers.define(exportsModule, {
-      module: true,
-      upstream: true,
-    })
 
-    if (!checkIsFunction(exportsModule.default)) {
-      throw new Error('Module is not exported!')
+    const moduleStyles = isNode
+      ? []
+      : styles.map(style =>
+          DOMHelpers.loadStyle(style.url, { integrity: style.integrity }),
+        )
+
+    return {
+      module: exportsModule,
+      styles: moduleStyles,
     }
+  }
 
-    const moduleStyles = styles.map(style =>
-      DOMHelpers.loadStyle(style.url, { integrity: style.integrity }),
+  private async resolveInLinked(item: BaseItemConfig, options?: InstallConfig) {
+    const isNode = this._platform === RuntimePlatforms.node
+
+    const { upstream } = item
+    const { library, format, alias, exportsOnly } = pickIfSet(upstream, item)
+
+    const { styles } = requireHelpers.parse(upstream, this._platform)
+
+    const moduleScript = await this._linked.getScript(item.name)
+
+    const exportsModule = await this.runScript(
+      {
+        code: moduleScript,
+        format,
+        library,
+        alias,
+        exportsOnly,
+      },
+      {
+        linked: true,
+      },
     )
+
+    const moduleStyles = isNode
+      ? []
+      : styles.map(style =>
+          DOMHelpers.loadStyle(style.url, { integrity: style.integrity }),
+        )
 
     return {
       module: exportsModule,
@@ -249,6 +317,11 @@ class Modules {
     if (resolveInLocal) {
       return resolveInLocal
     }
+
+    try {
+      const resolvedLinked = await this.resolveInLinked(item, options)
+      return resolvedLinked
+    } catch (error) {}
 
     try {
       const resolvedOnUpstream = await this.resolveOnUpstream(item, options)

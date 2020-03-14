@@ -32,14 +32,17 @@ const setDefaultIfUnset = <T extends BaseItemConfig>(
 class Config {
   private _vendors: VendorsConfig
   private _modules: ModulesConfig
+  private _linked: BootstrapConfig['linked']
   private _locked: boolean
 
   constructor({
     vendors,
     modules,
-  }: Pick<BootstrapConfig, 'vendors' | 'modules'>) {
+    linked,
+  }: Pick<BootstrapConfig, 'vendors' | 'modules' | 'linked'>) {
     this._vendors = {}
     this._modules = {}
+    this._linked = linked
     this._locked = false
 
     this.setVendors(vendors)
@@ -52,6 +55,10 @@ class Config {
 
   unlock() {
     return (this._locked = false)
+  }
+
+  getLinked() {
+    return this._linked
   }
 
   getVendors() {

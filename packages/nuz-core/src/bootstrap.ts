@@ -27,11 +27,17 @@ const bootstrap = async (
     )
   }
 
-  const { preload, vendors: definedVendors, modules: definedModules } = config
+  const {
+    preload,
+    linked: definedLinked,
+    vendors: definedVendors,
+    modules: definedModules,
+  } = config
 
   console.log({ config })
   // Set vendors and modules to config, using in modules manager
   initConfig({
+    linked: definedLinked,
     vendors: definedVendors,
     modules: definedModules,
   })

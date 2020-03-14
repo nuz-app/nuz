@@ -10,7 +10,7 @@ export { default as Config } from '../../classes/Config'
 export let refConfig = selfHelpers.get()[CONFIG_KEY]
 
 export const initConfig = (
-  config?: Pick<BootstrapConfig, 'vendors' | 'modules'>,
+  config?: Pick<BootstrapConfig, 'linked' | 'vendors' | 'modules'>,
 ) => {
   if (!refConfig) {
     refConfig = new Config(config)

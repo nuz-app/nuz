@@ -6,10 +6,12 @@ export interface ExportedConfig {
   local?: boolean
   fallback?: boolean
   vendor?: boolean
+  linked?: boolean
 }
 
 const definedKeys = {
   module: '__esModule',
+  linkde: '__isLinked',
   local: '__isLocal',
   vendor: '__isVendor',
   upstream: '__isUpstream',

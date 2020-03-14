@@ -16,6 +16,12 @@ export interface VendorsConfig {
 
 export interface BootstrapConfig {
   /**
+   * Linked info
+   */
+  linked?: {
+    port: number
+  }
+  /**
    * Defined modules to resolve in runtime
    */
   modules?: ModulesConfig
