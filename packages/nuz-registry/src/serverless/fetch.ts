@@ -11,7 +11,11 @@ const CACHE_KEY = Symbol.for('serverless.fetch')
 
 export const name = 'fetch'
 
-export const execute = (app: Express, db: ModelDB, options: FetchRouteOptions) => {
+export const execute = (
+  app: Express,
+  db: ModelDB,
+  options: FetchRouteOptions,
+) => {
   app.get(
     '/',
     onRoute(async (request, response) => {

@@ -55,14 +55,34 @@ declare class ModelDB {
    * @param name package name
    */
   getModule(name: string): Promise<any>
+  /**
+   * Publish module
+   * @param token token
+   * @param publishInfo module info
+   * @param options publish options
+   */
   publishModule(
     token: string,
     publishInfo: PublishInfo,
     options: PublishOptions,
   ): Promise<any>
+
+  /**
+   * Lock module
+   * @param token token
+   * @param name module name
+   */
   lockModule(token: string, name: string): Promise<any>
+  /**
+   * Unlock module
+   * @param token token
+   * @param name module name
+   */
   unlockModule(token: string, name: string): Promise<any>
 
+  /**
+   * Get config
+   */
   getConfig(): Promise<any>
 }
 

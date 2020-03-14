@@ -218,7 +218,8 @@ class MongoDB implements ModelDB {
 
   async getConfig() {
     const modules = await this.getModules()
-    const transformed = modules.map(({ name, tags, versions }) => {
+
+    const transformed = modules.reduce((acc, { name, tags, versions }) => {
       const upstreamTag = versionHelpers.encode(tags.upstream)
       const upstream =
         upstreamTag && Object.assign({ host: 'self' }, versions[upstreamTag])
@@ -227,12 +228,8 @@ class MongoDB implements ModelDB {
       const fallback =
         fallbackTag && Object.assign({ host: 'self' }, versions[fallbackTag])
 
-      return {
-        name,
-        upstream,
-        fallback,
-      }
-    })
+      return Object.assign(acc, { [name]: { upstream, fallback } })
+    }, {})
 
     return {
       modules: transformed,
