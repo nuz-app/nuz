@@ -1,12 +1,14 @@
-import { linkedUrls } from '@nuz/utils'
+import { constants, linkedUrls } from '@nuz/utils'
 import glob from 'glob'
 import path from 'path'
+import socket from 'socket.io'
 import * as webpack from 'webpack'
 import * as yargs from 'yargs'
 
 import { CommandConfig, CommandTypes, WorkspaceCommand } from '../../types'
 
 import clearConsole from '../../utils/clearConsole'
+import * as compilerName from '../../utils/compilerName'
 import * as configHelpers from '../../utils/configHelpers'
 import exitIfModuleInsufficient from '../../utils/exitIfModuleInsufficient'
 import * as fs from '../../utils/fs'
@@ -134,13 +136,29 @@ const execute = async ({
     },
   )
 
-  // Build and watching modules
-  const watcher = await startWatchMode(webpackConfigs)
-
   // Create server to serve file serving and directory listing in workspace
   const server = serve({
     port,
     dir: buildDir,
+  })
+
+  // Create socket to watching changes and reload
+  const io = socket(server, {
+    path: linkedUrls.watch(port).path,
+    serveClient: false,
+    cookie: false,
+  })
+
+  // Create change helper for socket
+  const change = (modules: string[]) =>
+    io.emit(constants.CHANGE_EVENT, { modules })
+
+  // Build and watching modules
+  const watcher = await startWatchMode(webpackConfigs, ({ data }) => {
+    const { children } = data
+
+    const modules = children.map(child => compilerName.extract(child.name))
+    change(modules)
   })
 
   onExit(() => {
