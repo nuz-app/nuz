@@ -1,4 +1,5 @@
-import { constants, linkedUrls } from '@nuz/utils'
+import { CHANGE_EVENT } from '@nuz/shared'
+import { linkedUrls } from '@nuz/utils'
 import glob from 'glob'
 import path from 'path'
 import socket from 'socket.io'
@@ -151,7 +152,7 @@ const execute = async ({
 
   // Create change helper for socket
   const change = (modules: string[]) =>
-    io.emit(constants.CHANGE_EVENT, { modules })
+    io.emit(CHANGE_EVENT, { modules })
 
   // Build and watching modules
   const watcher = await runWatchMode(webpackConfigs, ({ data }) => {

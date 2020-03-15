@@ -1,5 +1,4 @@
 import { jsonHelpers } from '@nuz/utils'
-import _merge from 'lodash/merge'
 
 import { BootstrapConfig, LiveConfig } from './types'
 

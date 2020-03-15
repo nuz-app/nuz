@@ -1,4 +1,4 @@
-import { ROOT as ROOT_KEY } from './lib/symbols'
+import { ROOT_KEY } from '@nuz/shared'
 
 import * as selfHelpers from './utils/selfHelpers'
 

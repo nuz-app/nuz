@@ -1,4 +1,5 @@
-import { checkIsUrlOk, constants, linkedUrls } from '@nuz/utils'
+import { CHANGE_EVENT } from '@nuz/shared'
+import { checkIsUrlOk, linkedUrls } from '@nuz/utils'
 import socket from 'socket.io-client'
 
 import { BootstrapConfig } from '../types'
@@ -30,8 +31,7 @@ class Linked {
     this.watching = []
 
     // Listen change event from server
-    console.log(constants.CHANGE_EVENT, 'constants.CHANGE_EVENT')
-    this.io.on(constants.CHANGE_EVENT, ({ modules }) => {
+    this.io.on(CHANGE_EVENT, ({ modules }) => {
       const isChanged = modules.some(module => this.watching.includes(module))
       console.log({ modules, isChanged })
       if (isChanged) {

@@ -1,6 +1,6 @@
-import { RuntimePlatforms } from '../types/common'
+import { GLBOALS_KEY } from '@nuz/shared'
 
-import { GLBOALS as GLBOALS_KEY } from '../lib/symbols'
+import { RuntimePlatforms } from '../types/common'
 
 class Globals {
   private globals: Window | typeof globalThis

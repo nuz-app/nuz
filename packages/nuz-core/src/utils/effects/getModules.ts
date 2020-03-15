@@ -1,4 +1,4 @@
-import { MODULES as MODULES_KEY } from '../../lib/symbols'
+import { MODULES_KEY } from '@nuz/shared'
 
 import Modules from '../../classes/Modules'
 

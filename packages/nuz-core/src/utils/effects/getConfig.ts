@@ -1,6 +1,6 @@
-import { BootstrapConfig } from '../../types'
+import { CONFIG_KEY } from '@nuz/shared'
 
-import { CONFIG as CONFIG_KEY } from '../../lib/symbols'
+import { BootstrapConfig } from '../../types'
 
 import Config from '../../classes/Config'
 import * as selfHelpers from '../selfHelpers'
