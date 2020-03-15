@@ -1,6 +1,6 @@
 {
   "name": "@nuz/registry",
-  "description": "",
+  "description": "Registry server support manage modules and related things",
   "version": "0.0.1",
   "repository": {
     "type": "git",
@@ -19,15 +19,12 @@
   },
   "dependencies": {
     "@nuz/utils": "^0.0.1",
-    "@types/nedb": "^1.8.9",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "mongoose": "^5.9.3",
-    "nedb": "^1.8.0"
+    "mongoose": "^5.9.3"
   },
   "devDependencies": {
     "@types/express": "^4.17.3",
-    "@types/got": "^9.6.9",
     "@types/mongoose": "^5.7.3"
   }
 }

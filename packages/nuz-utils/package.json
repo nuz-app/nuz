@@ -1,6 +1,6 @@
 {
   "name": "@nuz/utils",
-  "description": "",
+  "description": "Includes utils using in nuz packages",
   "version": "0.0.1",
   "repository": {
     "type": "git",
@@ -18,7 +18,8 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "axios": "^0.19.2"
+    "axios": "^0.19.2",
+    "internal-ip": "^6.0.0"
   },
   "devDependencies": {}
 }
