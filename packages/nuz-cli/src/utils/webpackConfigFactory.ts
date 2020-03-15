@@ -22,6 +22,8 @@ import {
 import * as compilerName from './compilerName'
 import * as paths from './paths'
 
+import PeerDepsExternalsPlugin from './webpack/PeerDepsExternalsPlugin'
+
 export interface FactoryConfig {
   ci?: boolean
   module?: string
@@ -120,7 +122,7 @@ const webpackConfigFactory = (
       mainFields,
       modules: resolveModules,
     },
-    externals: { ...externals },
+    externals: [externals],
     module: {
       rules: [],
     },
@@ -139,9 +141,10 @@ const webpackConfigFactory = (
   )
 
   if (feature.react) {
-    Object.assign(config.externals, {
-      react: 'React',
-      'react-dom': 'ReactDOM',
+    // tslint:disable-next-line: prettier
+    (config.externals as webpack.ExternalsElement[]).push({
+      react: 'react',
+      'react-dom': 'react-dom',
     })
   }
 
@@ -271,6 +274,9 @@ const webpackConfigFactory = (
     // Push styles rule to config
     config.module.rules.push(ruleOfStyles)
   }
+
+  // Set peers deps as externals
+  config.plugins.push(new PeerDepsExternalsPlugin(dir))
 
   // Config optimization for production mode
   if (!dev) {
