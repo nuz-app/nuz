@@ -251,12 +251,8 @@ class Modules {
   }
 
   private async resolveInLinked(item: BaseItemConfig, options?: InstallConfig) {
-    const isNode = this._platform === RuntimePlatforms.node
-
     const { upstream } = item
     const { library, format, alias, exportsOnly } = pickIfSet(upstream, item)
-
-    const { styles } = requireHelpers.parse(upstream, this._platform)
 
     const moduleScript = await this._linked.getScript(item.name)
 
@@ -273,17 +269,11 @@ class Modules {
       },
     )
 
-    const moduleStyles = isNode
-      ? []
-      : styles.map(style =>
-          DOMHelpers.loadStyle(style.url, { integrity: style.integrity }),
-        )
-
     this._linked.watch([item.name])
 
     return {
       module: exportsModule,
-      styles: moduleStyles,
+      styles: [],
     }
   }
 
@@ -316,6 +306,7 @@ class Modules {
 
   private async resolve(item: BaseItemConfig, options?: InstallConfig) {
     // In development mode, allowed to resolve in local and linked
+    console.log(this._dev, 'this._dev')
     if (this._dev) {
       const resolveInLocal = await this.resolveInLocal(item, options)
       if (resolveInLocal) {
@@ -324,8 +315,11 @@ class Modules {
 
       try {
         const resolvedLinked = await this.resolveInLinked(item, options)
+        console.log({ resolvedLinked })
         return resolvedLinked
-      } catch (error) {}
+      } catch (error) {
+        console.log(error, 'error')
+      }
     }
 
     try {
