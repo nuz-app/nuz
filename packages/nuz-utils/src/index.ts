@@ -7,3 +7,4 @@ export { integrityHelpers, jsonHelpers, linkedUrls }
 export { default as checkIsObject } from './checkIsObject'
 export { default as checkIsUrlOk } from './checkIsUrlOk'
 export { default as got } from './got'
+export { default as getPackageJsonInDir } from './getPackageJsonInDir'
