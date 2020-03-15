@@ -54,6 +54,7 @@ class Modules {
   private readonly _platform: RuntimePlatforms
   private readonly _globals: Globals
   private readonly _linked: Linked
+  private readonly _dev: boolean
   private readonly _resolvedModules: Caches<string, LoadResults<any>>
   private readonly _pingResources: Caches<
     string,
@@ -69,12 +70,15 @@ class Modules {
     this._platform = getRuntimePlatform()
     this._globals = new Globals(this._platform)
 
+    // Set is development mode
+    this._dev = this._config.isDev()
+
     // Init resolved cache and ping resources
     this._resolvedModules = new Caches()
     this._pingResources = new Caches()
 
     // Create linked
-    this._linked = new Linked(this._config.getLinked())
+    this._linked = this._dev && new Linked(this._config.getLinked())
   }
 
   private getKey(item: BaseItemConfig) {
@@ -84,11 +88,7 @@ class Modules {
   }
 
   private async canUseLocal(item: BaseItemConfig) {
-    const { name, local, preferLocal } = item
-
-    if (!preferLocal) {
-      return false
-    }
+    const { name, local } = item
 
     return !!(
       local ||
@@ -121,7 +121,7 @@ class Modules {
       return false
     }
 
-    const canUseLocal = await this.canUseLocal(item)
+    const canUseLocal = this._dev && (await this.canUseLocal(item))
     if (canUseLocal) {
       return false
     }
@@ -288,46 +288,45 @@ class Modules {
   }
 
   private async resolveInLocal(item: BaseItemConfig, options?: InstallConfig) {
-    const { name, local, preferLocal, alias, exportsOnly } = item
+    const { name, local, alias, exportsOnly } = item
 
-    if (preferLocal) {
-      const resolvedInLocal = local || requireHelpers.local(name, this._globals)
-      if (!resolvedInLocal) {
-        return null
-      }
-
-      let exportsModule = Object.assign(
-        {},
-        interopRequireDefault(resolvedInLocal),
-      )
-      exportsModule = moduleHelpers.transform(exportsModule, {
-        alias,
-        exportsOnly,
-      })
-      exportsModule = moduleHelpers.define(exportsModule, {
-        module: true,
-        local: true,
-      })
-
-      return {
-        module: exportsModule,
-        styles: [],
-      }
+    const resolvedInLocal = local || requireHelpers.local(name, this._globals)
+    if (!resolvedInLocal) {
+      return null
     }
 
-    return null
+    let exportsModule = Object.assign(
+      {},
+      interopRequireDefault(resolvedInLocal),
+    )
+    exportsModule = moduleHelpers.transform(exportsModule, {
+      alias,
+      exportsOnly,
+    })
+    exportsModule = moduleHelpers.define(exportsModule, {
+      module: true,
+      local: true,
+    })
+
+    return {
+      module: exportsModule,
+      styles: [],
+    }
   }
 
   private async resolve(item: BaseItemConfig, options?: InstallConfig) {
-    const resolveInLocal = await this.resolveInLocal(item, options)
-    if (resolveInLocal) {
-      return resolveInLocal
-    }
+    // In development mode, allowed to resolve in local and linked
+    if (this._dev) {
+      const resolveInLocal = await this.resolveInLocal(item, options)
+      if (resolveInLocal) {
+        return resolveInLocal
+      }
 
-    try {
-      const resolvedLinked = await this.resolveInLinked(item, options)
-      return resolvedLinked
-    } catch (error) {}
+      try {
+        const resolvedLinked = await this.resolveInLinked(item, options)
+        return resolvedLinked
+      } catch (error) {}
+    }
 
     try {
       const resolvedOnUpstream = await this.resolveOnUpstream(item, options)

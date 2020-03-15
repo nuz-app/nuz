@@ -6,6 +6,8 @@ import {
   VendorsConfig,
 } from '../types'
 
+import checkIsProduction from '../utils/checkIsProduction'
+
 const setDefaultIfUnset = <T extends BaseItemConfig>(
   name: string,
   item: T,
@@ -34,14 +36,17 @@ class Config {
   private _modules: ModulesConfig
   private _linked: BootstrapConfig['linked']
   private _locked: boolean
+  private _dev: boolean
 
   constructor({
+    dev,
     vendors,
     modules,
     linked,
-  }: Pick<BootstrapConfig, 'vendors' | 'modules' | 'linked'>) {
+  }: Pick<BootstrapConfig, 'dev' | 'vendors' | 'modules' | 'linked'>) {
     this._vendors = {}
     this._modules = {}
+    this._dev = typeof dev === 'boolean' ? dev : !checkIsProduction()
     this._linked = linked
     this._locked = false
 
@@ -55,6 +60,10 @@ class Config {
 
   unlock() {
     return (this._locked = false)
+  }
+
+  isDev() {
+    return this._dev
   }
 
   getLinked() {

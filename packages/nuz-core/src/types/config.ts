@@ -23,6 +23,10 @@ export interface RegistryConfig {
 
 export interface BootstrapConfig {
   /**
+   * Set development mode
+   */
+  dev?: boolean
+  /**
    * Config registry to resolve
    */
   registry?: string | RegistryConfig

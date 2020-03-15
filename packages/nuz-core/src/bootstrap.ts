@@ -58,6 +58,7 @@ const bootstrap = async (
   }
 
   const {
+    dev,
     preload,
     linked: definedLinked,
     vendors: definedVendors,
@@ -66,6 +67,7 @@ const bootstrap = async (
 
   // Set vendors and modules to config, using in modules manager
   initConfig({
+    dev,
     linked: definedLinked,
     vendors: definedVendors,
     modules: definedModules,

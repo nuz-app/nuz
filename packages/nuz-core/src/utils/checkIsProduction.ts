@@ -1,1 +1,1 @@
-export default (): boolean => false
+export default (): boolean => process.env.NODE_ENV === 'production'
