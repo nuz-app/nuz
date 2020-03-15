@@ -1,8 +1,7 @@
-import os from 'os'
+import { getPackageJsonInDir } from '@nuz/utils'
 import path from 'path'
 
 import * as fs from '../../utils/fs'
-import getPackageJsonInDir from '../../utils/getPackageJsonInDir'
 
 interface ModuleInfo {
   name: string

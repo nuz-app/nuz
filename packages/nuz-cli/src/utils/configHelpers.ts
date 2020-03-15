@@ -1,10 +1,10 @@
+import { getPackageJsonInDir } from '@nuz/utils'
 import glob from 'glob'
 
 import { ModuleConfig } from '../types/common'
 
 import * as fs from '../utils/fs'
 import * as paths from '../utils/paths'
-import getPackageJsonInDir from './getPackageJsonInDir'
 
 export const get = (dir: string): string => {
   const matches = glob.sync(paths.config(dir))
