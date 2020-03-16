@@ -14,10 +14,6 @@ const setDefaultIfUnset = <T extends BaseItemConfig>(
 ): T => {
   const cloned = { ...item, name }
 
-  if (cloned.preferLocal === undefined) {
-    cloned.preferLocal = true
-  }
-
   if (!cloned.alias) {
     cloned.alias = {}
   }
@@ -74,23 +70,28 @@ class Config {
     return this._vendors
   }
 
-  setVendors(vendors: VendorsConfig) {
+  setVendors(vendors: VendorsConfig): VendorsConfig {
     if (this._locked) {
       throw new Error('Can not set vendors because config was locked!')
     }
 
-    Object.assign(this._vendors, vendors)
+    return Object.assign(this._vendors, vendors)
   }
 
   getModules() {
     return this._modules
   }
 
-  setModules(modules: ModulesConfig) {
+  setModules(modules: ModulesConfig): ModulesConfig {
     if (this._locked) {
       throw new Error('Can not set modules because config was locked!')
     }
 
+    const transformed = this.defineModules(modules)
+    return Object.assign(this._modules, transformed)
+  }
+
+  defineModules(modules: ModulesConfig): ModulesConfig {
     const keys = Object.keys(modules)
     const transformed = keys.reduce(
       (acc, key) =>
@@ -99,7 +100,8 @@ class Config {
         }),
       {},
     )
-    Object.assign(this._modules, transformed)
+
+    return transformed
   }
 }
 

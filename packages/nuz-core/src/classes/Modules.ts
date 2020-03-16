@@ -34,9 +34,10 @@ const pickIfSet = (upstream, config) => {
     return config
   }
 
-  const { library, alias, format, exportsOnly } = config
+  const { library, alias, format, exportsOnly, ...rest } = config
 
   return {
+    ...rest,
     library: upstream.library || library,
     alias: upstream.alias || alias,
     format: upstream.format || format,
@@ -53,13 +54,14 @@ class Modules {
   private readonly _config: Config
   private readonly _platform: RuntimePlatforms
   private readonly _globals: Globals
-  private readonly _linked: Linked
   private readonly _dev: boolean
   private readonly _resolvedModules: Caches<string, LoadResults<any>>
   private readonly _pingResources: Caches<
     string,
     { script: Element; styles: Element[] }
   >
+
+  private _linked: Linked
 
   constructor() {
     if (!checkIsInitialized()) {
@@ -76,9 +78,32 @@ class Modules {
     // Init resolved cache and ping resources
     this._resolvedModules = new Caches()
     this._pingResources = new Caches()
+  }
 
-    // Create linked
-    this._linked = this._dev && new Linked(this._config.getLinked())
+  private async linkModules() {
+    if (!this._dev) {
+      return false
+    }
+
+    // Create linked instance with bootstrap config
+    this._linked = new Linked(this._config.getLinked())
+
+    // Prepare: wait socket ready, binding events,...
+    await this._linked.prepare()
+
+    return true
+  }
+
+  private getAllModules() {
+    const definedModules = Object.assign({}, this._config.getModules())
+
+    // In development mode, extends modules config with linked modules
+    if (this._dev) {
+      const linkedModules = this._linked.getModules()
+      Object.assign(definedModules, this._config.defineModules(linkedModules))
+    }
+
+    return definedModules
   }
 
   private getKey(item: BaseItemConfig) {
@@ -93,7 +118,7 @@ class Modules {
     return !!(
       local ||
       requireHelpers.local(name, this._globals) ||
-      (await this._linked.isOk(name))
+      (await this._linked.exists(name))
     )
   }
 
@@ -210,7 +235,7 @@ class Modules {
   ) {
     const isNode = this._platform === RuntimePlatforms.node
 
-    const { upstream } = item
+    const { name, upstream } = item
     const { library, format, alias, exportsOnly } = pickIfSet(upstream, item)
     const { timeout, retries } = ensureInstallConfig(options)
 
@@ -225,6 +250,9 @@ class Modules {
       retries,
     )
 
+    // Check if this is linked module
+    const linked = !this._dev ? false : this._linked.exists(name)
+
     const exportsModule = await this.runScript(
       {
         code: moduleScript,
@@ -234,7 +262,8 @@ class Modules {
         exportsOnly,
       },
       {
-        upstream: true,
+        linked,
+        upstream: !linked,
       },
     )
 
@@ -244,38 +273,43 @@ class Modules {
           DOMHelpers.loadStyle(style.url, { integrity: style.integrity }),
         )
 
+    // If linked, watch to reload if module is changed
+    if (linked) {
+      this._linked.watch([name])
+    }
+
     return {
       module: exportsModule,
       styles: moduleStyles,
     }
   }
 
-  private async resolveInLinked(item: BaseItemConfig, options?: InstallConfig) {
-    const { upstream } = item
-    const { library, format, alias, exportsOnly } = pickIfSet(upstream, item)
+  // private async resolveInLinked(item: BaseItemConfig, options?: InstallConfig) {
+  //   const { upstream } = item
+  //   const { library, format, alias, exportsOnly } = pickIfSet(upstream, item)
 
-    const moduleScript = await this._linked.getScript(item.name)
+  //   const moduleScript = await this._linked.getScript(item.name)
 
-    const exportsModule = await this.runScript(
-      {
-        code: moduleScript,
-        format,
-        library,
-        alias,
-        exportsOnly,
-      },
-      {
-        linked: true,
-      },
-    )
+  //   const exportsModule = await this.runScript(
+  //     {
+  //       code: moduleScript,
+  //       format,
+  //       library,
+  //       alias,
+  //       exportsOnly,
+  //     },
+  //     {
+  //       linked: true,
+  //     },
+  //   )
 
-    this._linked.watch([item.name])
+  //   this._linked.watch([item.name])
 
-    return {
-      module: exportsModule,
-      styles: [],
-    }
-  }
+  //   return {
+  //     module: exportsModule,
+  //     styles: [],
+  //   }
+  // }
 
   private async resolveInLocal(item: BaseItemConfig, options?: InstallConfig) {
     const { name, local, alias, exportsOnly } = item
@@ -306,24 +340,16 @@ class Modules {
 
   private async resolve(item: BaseItemConfig, options?: InstallConfig) {
     // In development mode, allowed to resolve in local and linked
-    console.log(this._dev, 'this._dev')
     if (this._dev) {
       const resolveInLocal = await this.resolveInLocal(item, options)
       if (resolveInLocal) {
         return resolveInLocal
       }
-
-      try {
-        const resolvedLinked = await this.resolveInLinked(item, options)
-        console.log({ resolvedLinked })
-        return resolvedLinked
-      } catch (error) {
-        console.log(error, 'error')
-      }
     }
 
     try {
       const resolvedOnUpstream = await this.resolveOnUpstream(item, options)
+      console.log({ resolvedOnUpstream })
       return resolvedOnUpstream
     } catch (error) {
       console.error(
@@ -372,10 +398,13 @@ class Modules {
 
   async prepare() {
     this.bindVendors()
+
+    // Call to check and use linked modules if availability
+    await this.linkModules()
   }
 
   async preload(names: string[]) {
-    const modules = this._config.getModules()
+    const modules = this.getAllModules()
 
     const matches = names.map(name => modules[name]).filter(Boolean)
     return matches.map(match => this.ping(match))
@@ -387,7 +416,7 @@ class Modules {
   }
 
   async loadByName<M = unknown>(name: string): Promise<LoadResults<M>> {
-    const modules = this._config.getModules()
+    const modules = this.getAllModules()
 
     const item = modules[name]
     if (!item) {

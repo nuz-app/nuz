@@ -21,6 +21,10 @@ export interface RegistryConfig {
   integrity?: string
 }
 
+export interface LinkedConfig {
+  port: number
+}
+
 export interface BootstrapConfig {
   /**
    * Set development mode
@@ -33,9 +37,7 @@ export interface BootstrapConfig {
   /**
    * Linked info, use for workspace
    */
-  linked?: {
-    port: number
-  }
+  linked?: LinkedConfig
   /**
    * Defined modules to resolve in runtime
    */
