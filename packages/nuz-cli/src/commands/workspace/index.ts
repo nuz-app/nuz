@@ -1,8 +1,8 @@
-import { CHANGE_EVENT } from '@nuz/shared'
+import { LINKED_CHANGE_EVENT, LINKED_DEFINE_EVENT } from '@nuz/shared'
 import { linkedUrls } from '@nuz/utils'
 import glob from 'glob'
 import path from 'path'
-import socket from 'socket.io'
+import io from 'socket.io'
 import * as webpack from 'webpack'
 import * as yargs from 'yargs'
 
@@ -15,9 +15,10 @@ import exitIfModuleInsufficient from '../../utils/exitIfModuleInsufficient'
 import * as fs from '../../utils/fs'
 import getFeatureConfig from '../../utils/getFeatureConfig'
 import * as paths from '../../utils/paths'
+import pickAssetsFromStats from '../../utils/pickAssetsFromStats'
 import { exit, onExit } from '../../utils/process'
-import serve from '../../utils/serve'
 import runWatchMode from '../../utils/runWatchMode'
+import serve from '../../utils/serve'
 import webpackConfigFactory from '../../utils/webpackConfigFactory'
 
 import * as logs from './logs'
@@ -56,8 +57,9 @@ const execute = async ({
   logs.notifyOnStart()
 
   // Create build directory for worksapce
+  const publicPath = `${linkedUrl.href}/`
+
   const buildDir = paths.nuz(moduleDir, 'modules')
-  const publicPath = linkedUrl + '/'
   fs.ensureDir(buildDir)
 
   // Check and get modules paths in workspace
@@ -143,24 +145,68 @@ const execute = async ({
     dir: buildDir,
   })
 
+  const watchUrl = linkedUrls.watch(port)
+  const store = { linkedModules: undefined }
+
   // Create socket to watching changes and reload
-  const io = socket(server, {
-    path: linkedUrls.watch(port).path,
+  const socket = io(server, {
+    path: watchUrl.pathname,
     serveClient: false,
     cookie: false,
   })
 
-  // Create change helper for socket
-  const change = (modules: string[]) =>
-    io.emit(CHANGE_EVENT, { modules })
+  // Create socket helpers
+  const emitOnChange = (modules: string[]) =>
+    socket.emit(LINKED_CHANGE_EVENT, { modules })
+
+  socket.on('connection', client => {
+    const isReady = !!store.linkedModules
+    client.emit(LINKED_DEFINE_EVENT, {
+      ready: isReady,
+      modules: store.linkedModules,
+    })
+  })
 
   // Build and watching modules
-  const watcher = await runWatchMode(webpackConfigs, ({ data }) => {
-    const { children } = data
+  const watcher = await runWatchMode(
+    webpackConfigs,
+    { clearConsole: false },
+    ({ data }, { isFirstBuild }) => {
+      const { children } = data
 
-    const modules = children.map(child => compilerName.extract(child.name))
-    change(modules)
-  })
+      const linkedModules = children.reduce((acc, item) => {
+        const arrOutputPath = item.outputPath.split('/')
+        const name = arrOutputPath[arrOutputPath.length - 1]
+        const moduleInfo = modulesConfig[name]
+        if (!moduleInfo) {
+          //
+        }
+
+        const moduleAssets = pickAssetsFromStats(item)
+        const moduleResolve = {
+          main: moduleAssets.main.url,
+          styles: moduleAssets.styles.map(style => style.url),
+        }
+
+        return Object.assign(acc, {
+          [name]: {
+            library: moduleInfo.webpack.output.library,
+            format: moduleInfo.webpack.output.libraryTarget,
+            upstream: {
+              host: 'self',
+              resolve: moduleResolve,
+            },
+          },
+        })
+      }, {})
+      store.linkedModules = linkedModules
+
+      const changedModulesName = children.map(child =>
+        compilerName.extract(child.name),
+      )
+      emitOnChange(changedModulesName)
+    },
+  )
 
   onExit(() => {
     server.close()

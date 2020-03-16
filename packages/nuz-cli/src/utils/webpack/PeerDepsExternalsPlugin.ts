@@ -5,7 +5,6 @@ function getPeerDependencies(dir: string) {
   try {
     const { resolve } = require('path')
     const pkg = require(resolve(dir || process.cwd(), 'package.json'))
-    console.log({ xxx: pkg.peerDependencies, cwd: dir || process.cwd() })
     return Object.keys(pkg.peerDependencies)
   } catch (err) {
     return []

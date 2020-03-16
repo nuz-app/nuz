@@ -9,6 +9,7 @@ import clearConsole from '../../utils/clearConsole'
 import * as configHelpers from '../../utils/configHelpers'
 import * as fs from '../../utils/fs'
 import * as paths from '../../utils/paths'
+import pickAssetsFromStats from '../../utils/pickAssetsFromStats'
 import { exit } from '../../utils/process'
 
 import * as logs from './logs'
@@ -55,20 +56,7 @@ const execute = async ({ fallback }: yargs.Argv<PublishCommand>) => {
   }
 
   const stats = await fs.readJson(statsPath)
-  const { publicPath, entrypoints } = stats
-  const { assets } = entrypoints.main
-
-  const transformAsset = (filename: string) => ({
-    url: publicPath + filename,
-    integrity: integrityHelpers.file(path.join(distPath, filename)),
-  })
-
-  const main = transformAsset(assets.find(item => /\.js$/.test(item)))
-  const styles = assets.filter(item => /\.css$/.test(item)).map(transformAsset)
-  const resolve = {
-    main,
-    styles,
-  }
+  const resolve = pickAssetsFromStats(stats, { useIntegrity: true })
 
   let result
   try {

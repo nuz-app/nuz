@@ -1,19 +1,29 @@
 import clearConsole from './clearConsole'
-import getBundleInfo from './getBundleInfo'
+import getBundleInfo, { BundleInfoOutput } from './getBundleInfo'
 import { common } from './print'
 import * as webpackCompiler from './webpackCompiler'
 
+interface WatchModeOptions {
+  clearConsole?: boolean
+}
+
 const runWatchMode = async (
   config: webpackCompiler.AllowWebpackConfig,
-  onChange?: any,
+  options: WatchModeOptions = { clearConsole: true },
+  onChange?: (
+    bundleInfo: BundleInfoOutput,
+    other: { isFirstBuild: boolean },
+  ) => void,
 ) => {
-  let isFirstBuild = false
+  let isFirstBuild = true
+
   const watcher = await webpackCompiler.watch(config, (error, stats) => {
-    if (!isFirstBuild) {
+    const shouldClean = !isFirstBuild && options.clearConsole
+    if (shouldClean) {
       clearConsole()
-    } else {
-      isFirstBuild = false
     }
+
+    isFirstBuild = false
 
     if (error) {
       common.buildFailed(error)
@@ -30,7 +40,7 @@ const runWatchMode = async (
     common.waitingForChanges(buildTime)
 
     if (typeof onChange === 'function') {
-      onChange(bundleInfo)
+      onChange(bundleInfo, { isFirstBuild })
     }
   })
 
