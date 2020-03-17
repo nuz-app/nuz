@@ -60,15 +60,17 @@ const bootstrap = async (
   const {
     dev,
     preload,
+    shared,
     linked: definedLinked,
     vendors: definedVendors,
     modules: definedModules,
   } = mergeConfig(config, configOnRegistry)
 
   // Set vendors and modules to config, using in modules manager
-  initConfig({
+  const _config = initConfig({
     dev,
     preload,
+    shared,
     linked: definedLinked,
     vendors: definedVendors,
     modules: definedModules,
@@ -84,6 +86,9 @@ const bootstrap = async (
   // Prepare externals and preload modules if it defined
   const modules = getModules()
   await modules.prepare()
+
+  // Lock config
+  _config.lock()
 
   // Emit a ready event
   emitter.emit(EventTypes.ready)

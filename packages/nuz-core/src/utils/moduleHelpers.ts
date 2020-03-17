@@ -7,6 +7,7 @@ export interface ExportedConfig {
   fallback?: boolean
   vendor?: boolean
   linked?: boolean
+  shared?: boolean
 }
 
 const definedKeys = {
@@ -16,6 +17,7 @@ const definedKeys = {
   vendor: '__isVendor',
   upstream: '__isUpstream',
   fallback: '__isFallback',
+  shared: '__isShared',
 }
 
 export const define = (module, config?: ExportedConfig) => {

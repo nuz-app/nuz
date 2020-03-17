@@ -1,11 +1,6 @@
 import { checkIsObject, jsonHelpers } from '@nuz/utils'
 
-import {
-  BaseItemConfig,
-  InstallConfig,
-  ModuleItemConfig,
-  RuntimePlatforms,
-} from '../types'
+import { BaseItemConfig, InstallConfig, RuntimePlatforms } from '../types'
 
 import checkIsFunction from '../utils/checkIsFunction'
 import checkIsInitialized from '../utils/checkIsInitialized'
@@ -13,7 +8,6 @@ import * as DOMHelpers from '../utils/DOMHelpers'
 import getConfig, { Config } from '../utils/effects/getConfig'
 import getRuntimePlatform from '../utils/getRuntimePlatform'
 import getScript from '../utils/getScript'
-import * as hasher from '../utils/hasher'
 import interopRequireDefault from '../utils/interopRequireDefault'
 import * as moduleHelpers from '../utils/moduleHelpers'
 import * as requireHelpers from '../utils/requireHelpers'
@@ -23,7 +17,13 @@ import Globals from './Globals'
 import Linked from './Linked'
 import Script from './Script'
 
-const getUrlOrigin = (url: string) => new URL(url).origin
+const getUrlOrigin = (url: string) => {
+  try {
+    return new URL(url).origin
+  } catch {
+    return null
+  }
+}
 
 const ensureInstallConfig = ({
   timeout,
@@ -63,6 +63,7 @@ class Modules {
   private readonly _globals: Globals
   private readonly _dev: boolean
   private readonly _resolvedModules: Caches<string, LoadResults<any>>
+  private readonly _resolvedDependencies: Caches<string, any>
   private readonly _pingResources: Caches<
     string,
     { script: Element; styles: Element[] }
@@ -82,8 +83,9 @@ class Modules {
     // Set is development mode
     this._dev = this._config.isDev()
 
-    // Init resolved cache and ping resources
+    // Init maps for resolved modules, shared and ping resources
     this._resolvedModules = new Caches()
+    this._resolvedDependencies = new Caches()
     this._pingResources = new Caches()
   }
 
@@ -110,9 +112,7 @@ class Modules {
   }
 
   private getKey(item: BaseItemConfig) {
-    return item.isExternal
-      ? 'e:' + hasher.moduleId(item)
-      : 'm:' + (item as ModuleItemConfig).name
+    return item && item.name
   }
 
   private async canUseLocal(item: BaseItemConfig) {
@@ -126,7 +126,7 @@ class Modules {
   }
 
   private createContext() {
-    return Object.create(this._globals.get())
+    return Object.create(this._globals.getContext())
   }
 
   private bindVendors() {
@@ -139,7 +139,7 @@ class Modules {
         module: true,
         vendor: true,
       })
-      this._globals.set(key, exportsModule)
+      this._globals.setDependency(key, exportsModule)
     }
   }
 
@@ -181,6 +181,37 @@ class Modules {
     return true
   }
 
+  private async loadDependency(name: string) {
+    if (this._resolvedDependencies.has(name)) {
+      return this._resolvedDependencies.get(name)
+    }
+
+    const sharedDependencies = this._config.getShared()
+    const dependencyFactory = sharedDependencies[name]
+    if (!dependencyFactory) {
+      throw new Error(`Can not found shared dependency by name ${name}`)
+    }
+
+    if (!checkIsFunction(dependencyFactory)) {
+      throw new Error(`Dependency factory of ${name} is invalid`)
+    }
+
+    const resolvedDependency = await Promise.resolve(dependencyFactory())
+
+    const exportsModule = moduleHelpers.define(resolvedDependency, {
+      module: true,
+      shared: true,
+    })
+    this._globals.setDependency(name, exportsModule)
+
+    this._resolvedDependencies.set(name, exportsModule)
+    return resolvedDependency
+  }
+
+  private async loadDependencies(shared: string[]) {
+    return shared.map(item => this.loadDependency(item))
+  }
+
   private async runScript({ code, format, library, alias, exportsOnly }) {
     const isNode = this._platform === RuntimePlatforms.node
     const context = this.createContext()
@@ -196,9 +227,7 @@ class Modules {
         await script.runInScript(context)
       }
     } catch (error) {
-      console.error(
-        `Module installed uncaught error: ${error.message || error}`,
-      )
+      console.error(`Module installed uncaught error, details:`, error)
       throw error
     }
 
@@ -311,16 +340,18 @@ class Modules {
   }
 
   private async resolve(item: BaseItemConfig, options?: InstallConfig) {
+    await this.loadDependencies(item.shared)
+
     // In development mode, allowed to resolve in local and linked
     if (this._dev) {
-      const resolveInLocal = await this.resolveInLocal(item, options)
-      if (resolveInLocal) {
-        return resolveInLocal
+      const resolvedInLocal = await this.resolveInLocal(item, options)
+      if (resolvedInLocal) {
+        return resolvedInLocal
       }
 
-      const resolveInlinked = await this.resolveInLinked(item, options)
-      if (resolveInlinked) {
-        return resolveInlinked
+      const resolvedInlinked = await this.resolveInLinked(item, options)
+      if (resolvedInlinked) {
+        return resolvedInlinked
       }
     }
 
@@ -338,7 +369,7 @@ class Modules {
       }
 
       const cloned = { ...item, upstream: item.fallback, fallback: undefined }
-      console.log(
+      console.warn(
         `Try to use fallback as backup module: ${jsonHelpers.stringify(
           cloned,
         )}`,

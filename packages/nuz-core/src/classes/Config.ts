@@ -3,6 +3,7 @@ import {
   BootstrapConfig,
   ModuleFormats,
   ModulesConfig,
+  SharedConfig,
   VendorsConfig,
 } from '../types'
 
@@ -18,6 +19,10 @@ const setDefaultIfUnset = <T extends BaseItemConfig>(
     cloned.alias = {}
   }
 
+  if (!cloned.shared) {
+    cloned.shared = []
+  }
+
   if (!cloned.format) {
     cloned.format = ModuleFormats.umd
   }
@@ -29,28 +34,38 @@ const setDefaultIfUnset = <T extends BaseItemConfig>(
 
 export type ConfigInitial = Pick<
   BootstrapConfig,
-  'preload' | 'dev' | 'vendors' | 'modules' | 'linked'
+  'shared' | 'preload' | 'dev' | 'vendors' | 'modules' | 'linked'
 >
 
 class Config {
   private _vendors: VendorsConfig
   private _modules: ModulesConfig
+  private _shared: SharedConfig
   private _linked: BootstrapConfig['linked']
   private _preload: BootstrapConfig['preload']
   private _locked: boolean
   private _dev: boolean
 
-  constructor({ dev, preload, vendors, modules, linked }: ConfigInitial) {
+  constructor({
+    dev,
+    preload,
+    vendors,
+    modules,
+    shared,
+    linked,
+  }: ConfigInitial) {
     this._dev = typeof dev === 'boolean' ? dev : !checkIsProduction()
 
     this._vendors = {}
     this._modules = {}
+    this._shared = {}
     this._linked = linked
     this._preload = preload || []
     this._locked = false
 
     this.setVendors(vendors)
     this.setModules(modules)
+    this.setShared(shared)
   }
 
   lock() {
@@ -71,6 +86,18 @@ class Config {
 
   getPreload() {
     return this._preload
+  }
+
+  getShared() {
+    return this._shared
+  }
+
+  setShared(shared: SharedConfig): SharedConfig {
+    if (this._locked) {
+      throw new Error('Can not set shared because config was locked!')
+    }
+
+    return Object.assign(this._shared, shared)
   }
 
   getVendors() {

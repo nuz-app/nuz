@@ -12,6 +12,11 @@ export enum ModuleFormats {
   umd = 'umd',
 }
 
+export interface InstallConfig {
+  timeout?: number
+  retries?: number
+}
+
 export type LoadedModule<T = unknown> = {
   [name: string]: any
   default?: any
@@ -91,17 +96,13 @@ export type BaseItemConfig = {
    */
   exportsOnly?: string[]
   /**
-   * Prefer to resolve local module if it was installed
-   */
-  preferLocal?: boolean
-  /**
-   * Is external or module item
-   */
-  isExternal?: boolean
-  /**
    * Install options
    */
-  options?: any
+  options?: InstallConfig
+  /**
+   * Shared dependencies module used
+   */
+  shared?: string[]
 }
 
 export enum EventTypes {

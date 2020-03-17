@@ -1,7 +1,5 @@
 import { CONFIG_KEY } from '@nuz/shared'
 
-import { BootstrapConfig } from '../../types'
-
 import Config, { ConfigInitial } from '../../classes/Config'
 import * as selfHelpers from '../selfHelpers'
 
@@ -14,6 +12,8 @@ export const initConfig = (config?: ConfigInitial) => {
     refConfig = new Config(config)
     selfHelpers.set(CONFIG_KEY, refConfig)
   }
+
+  return refConfig
 }
 
 const getConfig = (): Config => refConfig

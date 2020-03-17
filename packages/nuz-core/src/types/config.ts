@@ -1,10 +1,5 @@
 import { BaseItemConfig } from './common'
 
-export interface InstallConfig {
-  timeout?: number
-  retries?: number
-}
-
 export type ModuleItemConfig = BaseItemConfig
 export interface ModulesConfig {
   [name: string]: ModuleItemConfig
@@ -23,6 +18,10 @@ export interface RegistryConfig {
 
 export interface LinkedConfig {
   port: number
+}
+
+export interface SharedConfig {
+  [name: string]: any
 }
 
 export interface BootstrapConfig {
@@ -46,6 +45,10 @@ export interface BootstrapConfig {
    * Defined vendors dependencies
    */
   vendors?: VendorsConfig
+  /**
+   * Defined shared dependencies
+   */
+  shared?: SharedConfig
   /**
    * Allow preload modules in runtime, only support in browser
    */

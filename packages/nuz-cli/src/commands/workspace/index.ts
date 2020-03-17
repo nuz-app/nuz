@@ -190,6 +190,7 @@ const execute = async ({
 
         return Object.assign(acc, {
           [name]: {
+            shared: moduleInfo.config.shared,
             library: moduleInfo.webpack.output.library,
             format: moduleInfo.webpack.output.libraryTarget,
             upstream: {

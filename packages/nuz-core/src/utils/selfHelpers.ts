@@ -1,9 +1,4 @@
-import { RuntimePlatforms } from '../types/common'
-
-import getRuntimePlatform from './getRuntimePlatform'
-
-export const get = () =>
-  getRuntimePlatform() === RuntimePlatforms.node ? global : window
+export const get = () => (typeof self !== 'undefined' ? self : this)
 
 export const set = (key, value) => Object.defineProperty(get(), key, { value })
 

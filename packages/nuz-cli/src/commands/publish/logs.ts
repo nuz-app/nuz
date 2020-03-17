@@ -1,4 +1,3 @@
-import { response } from 'express'
 import print, {
   common,
   error,
@@ -25,10 +24,6 @@ export const distIsNotFound = (path: string) => {
   error(`Not found bundle folder at ${print.link(path)}.`)
 }
 
-export const publishConfigIsInvalid = () => {
-  error(`Publish config is invalid, it's required token and enpoint fields!`)
-}
-
 export const statsIsNotFound = (path: string) => {
   error(`Not found stats file at ${print.link(path)}.`)
 }
@@ -50,3 +45,4 @@ export const publishFailed = err => {
 
 export const configIsNotFound = common.configIsNotFound
 export const configIsInvalid = common.configIsInvalid
+export const registryConfigIsInvalid = common.registryConfigIsInvalid

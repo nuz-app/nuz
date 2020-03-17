@@ -75,6 +75,10 @@ export const common = {
       warnings.forEach(item => log(item))
     }
   },
+
+  registryConfigIsInvalid: () => {
+    error(`Registry config is invalid, it's required token and enpoint fields!`)
+  },
 }
 
 export default printer as Printer

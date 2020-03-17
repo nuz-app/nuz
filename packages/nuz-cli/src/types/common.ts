@@ -10,8 +10,14 @@ export enum CommandTypes {
   workspace = 'workspace',
 }
 
-export interface PublishConfig {
+export interface RegistryConfig {
+  /**
+   * Access token
+   */
   token: string
+  /**
+   * Registry endpoint
+   */
   endpoint: string
 }
 
@@ -96,11 +102,15 @@ export interface ModuleConfig {
   /**
    * Publish config
    */
-  publishConfig?: PublishConfig
+  registry?: RegistryConfig
   /**
    * Workspace paths
    */
   workspace?: string[]
+  /**
+   * Shared dependencies module used
+   */
+  shared?: string[]
 }
 
 export interface FeatureConfig {

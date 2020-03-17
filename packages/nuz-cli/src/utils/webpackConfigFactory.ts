@@ -1,3 +1,4 @@
+import { DEPENDENCIES_KEY } from '@nuz/shared'
 import os from 'os'
 import path from 'path'
 import webpack from 'webpack'
@@ -39,6 +40,12 @@ const ruleFactory = (test: RegExp, exclude?: RegExp) => ({
   use: [],
 })
 
+const setExternals = (name: string) => ({
+  commonjs: [DEPENDENCIES_KEY, name],
+  commonjs2: [DEPENDENCIES_KEY, name],
+  root: [DEPENDENCIES_KEY, name],
+})
+
 const defaultConfig = {
   publicPath: '/',
   format: 'umd' as webpack.LibraryTarget,
@@ -69,6 +76,7 @@ const webpackConfigFactory = (
     publicPath,
     analyzer,
     webpack: customWebpack,
+    shared,
   } = Object.assign({}, defaultConfig, moduleConfig)
 
   const target = 'web'
@@ -143,9 +151,19 @@ const webpackConfigFactory = (
   if (feature.react) {
     // tslint:disable-next-line: prettier
     (config.externals as webpack.ExternalsElement[]).push({
-      react: 'react',
-      'react-dom': 'react-dom',
+      react: setExternals('react'),
+      'react-dom': setExternals('react-dom'),
     })
+  }
+
+  if (Array.isArray(shared) && shared.length > 0) {
+    const sharedExternals = shared.reduce(
+      (acc, item) => Object.assign(acc, { [item]: setExternals(item) }),
+      {},
+    )
+
+    // @ts-ignore
+    config.externals.push(sharedExternals)
   }
 
   // Config babel and typescript to transplie scripts
