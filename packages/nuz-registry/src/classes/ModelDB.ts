@@ -1,4 +1,4 @@
-import { PublishInfo, PublishOptions } from '../types'
+import { PublishInfo, PublishOptions, RollbackInfo } from '../types'
 
 declare class ModelDB {
   prepage(): Promise<any>
@@ -66,6 +66,20 @@ declare class ModelDB {
     publishInfo: PublishInfo,
     options: PublishOptions,
   ): Promise<any>
+  /**
+   * Rollback module
+   * @param token token
+   * @param publishInfo module info
+   */
+  rollbackModule(
+    token: string,
+    rollbackInfo: RollbackInfo,
+  ): Promise<{
+    _id: any
+    name: string
+    rollbacked: RollbackInfo
+    updated: number
+  }>
 
   /**
    * Lock module

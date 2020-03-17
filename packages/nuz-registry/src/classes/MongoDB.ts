@@ -1,6 +1,13 @@
 import { Connection } from 'mongoose'
 
-import { Models, ModuleModel, PublishInfo, PublishOptions } from '../types'
+import {
+  Models,
+  ModuleDocument,
+  ModuleModel,
+  PublishInfo,
+  PublishOptions,
+  RollbackInfo,
+} from '../types'
 
 import { createModels } from '../models'
 import createMongoConnection from '../utils/createMongoConnection'
@@ -9,6 +16,13 @@ import getEmptyPackage from '../utils/getEmptyPackage'
 import * as versionHelpers from '../utils/versionHelpers'
 
 import ModelDB from './ModelDB'
+
+const checkIsVersionExisted = (pkg: ModuleDocument, version: string) =>
+  !!(
+    pkg &&
+    pkg.versions &&
+    pkg.versions[version && versionHelpers.encode(version)]
+  )
 
 class MongoDB implements ModelDB {
   private readonly connection: Connection
@@ -155,11 +169,7 @@ class MongoDB implements ModelDB {
       resolve,
     })
 
-    const versionIsDuplicated = !!(
-      pkg &&
-      pkg.versions &&
-      pkg.versions[versionName]
-    )
+    const versionIsDuplicated = checkIsVersionExisted(pkg, version)
     if (versionIsDuplicated) {
       throw new Error(`Cannot publish an existed version`)
     }
@@ -198,7 +208,7 @@ class MongoDB implements ModelDB {
     }
 
     const { nModified: updated } = await this.db.Module.updateOne(
-      { name },
+      { _id: pkg._id },
       {
         $set: updateFields,
       },
@@ -210,6 +220,48 @@ class MongoDB implements ModelDB {
       version: pkg.versions,
       updatedAt: pkg.updatedAt,
       tags: pkg.tags,
+      updated,
+    }
+  }
+  async rollbackModule(token: string, rollbackInfo: RollbackInfo) {
+    const { name, upstream, fallback } = rollbackInfo
+
+    // Verify token and scope is included package
+    await this.verifyModule(token, name)
+
+    const pkg = await this.getModule(name)
+
+    const upstreamVersionIsExisted = checkIsVersionExisted(pkg, upstream)
+    if (!upstreamVersionIsExisted) {
+      throw new Error(
+        `Can not set undefined version for upstream by ${upstream}.`,
+      )
+    }
+
+    const fallbackVersionIsExisted =
+      fallback && checkIsVersionExisted(pkg, fallback)
+    if (fallback && !fallbackVersionIsExisted) {
+      throw new Error(
+        `Can not set undefined version for fallback by ${fallback}.`,
+      )
+    }
+
+    const updateFields = {
+      'tags.upstream': upstream,
+      'tags.fallback': fallback,
+    }
+
+    const { nModified: updated } = await this.db.Module.updateOne(
+      { _id: pkg._id },
+      {
+        $set: updateFields,
+      },
+    )
+
+    return {
+      _id: pkg._id,
+      name: pkg.name,
+      rollbacked: rollbackInfo,
       updated,
     }
   }

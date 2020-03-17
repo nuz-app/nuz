@@ -5,6 +5,7 @@ import * as fetch from './fetch'
 import * as health from './health'
 import * as publishModule from './publishModule'
 import * as removeScope from './removeScope'
+import * as rollbackModule from './rollbackModule'
 import * as setScope from './setScope'
 
 export default [
@@ -16,4 +17,5 @@ export default [
   removeScope,
   setScope,
   publishModule,
+  rollbackModule,
 ]

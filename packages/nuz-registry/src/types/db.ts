@@ -18,6 +18,12 @@ export interface PublishOptions {
   schedule?: any
 }
 
+export interface RollbackInfo {
+  name: string
+  upstream: string
+  fallback?: string
+}
+
 export interface PermissionModel {
   scope: string[]
 }
