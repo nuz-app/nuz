@@ -33,6 +33,16 @@ export const preloadScript = (url: string, config: PreloadConfig) => {
   return link
 }
 
+export const dnsPrefetch = (url: string) => {
+  const link = document.createElement('link')
+
+  link.rel = 'dns-prefetch'
+  link.href = url
+
+  appendToHead(link)
+  return link
+}
+
 interface StyleConfig {
   [attr: string]: string | boolean
   integrity: string | null

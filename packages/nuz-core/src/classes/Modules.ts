@@ -23,7 +23,14 @@ import Globals from './Globals'
 import Linked from './Linked'
 import Script from './Script'
 
-const ensureInstallConfig = ({ timeout, retries }: InstallConfig = {}) => ({
+const getUrlOrigin = (url: string) => new URL(url).origin
+
+const ensureInstallConfig = ({
+  timeout,
+  retries,
+  ...rest
+}: InstallConfig = {}) => ({
+  ...rest,
   timeout: timeout || 60000,
   retries: retries || 1,
 })
@@ -81,10 +88,6 @@ class Modules {
   }
 
   private async linkModules() {
-    if (!this._dev) {
-      return false
-    }
-
     // Create linked instance with bootstrap config
     this._linked = new Linked(this._config.getLinked())
 
@@ -178,13 +181,7 @@ class Modules {
     return true
   }
 
-  private async runScript(
-    { code, format, library, alias, exportsOnly },
-    {
-      upstream = false,
-      linked = false,
-    }: Partial<{ upstream: boolean; linked: boolean }>,
-  ) {
+  private async runScript({ code, format, library, alias, exportsOnly }) {
     const isNode = this._platform === RuntimePlatforms.node
     const context = this.createContext()
 
@@ -218,8 +215,7 @@ class Modules {
     })
     exportsModule = moduleHelpers.define(exportsModule, {
       module: true,
-      upstream,
-      linked,
+      upstream: true,
     })
 
     if (!checkIsFunction(exportsModule.default)) {
@@ -250,22 +246,13 @@ class Modules {
       retries,
     )
 
-    // Check if this is linked module
-    const linked = !this._dev ? false : this._linked.exists(name)
-
-    const exportsModule = await this.runScript(
-      {
-        code: moduleScript,
-        format,
-        library,
-        alias,
-        exportsOnly,
-      },
-      {
-        linked,
-        upstream: !linked,
-      },
-    )
+    const exportsModule = await this.runScript({
+      code: moduleScript,
+      format,
+      library,
+      alias,
+      exportsOnly,
+    })
 
     const moduleStyles = isNode
       ? []
@@ -273,43 +260,28 @@ class Modules {
           DOMHelpers.loadStyle(style.url, { integrity: style.integrity }),
         )
 
-    // If linked, watch to reload if module is changed
-    if (linked) {
-      this._linked.watch([name])
-    }
-
     return {
       module: exportsModule,
       styles: moduleStyles,
     }
   }
 
-  // private async resolveInLinked(item: BaseItemConfig, options?: InstallConfig) {
-  //   const { upstream } = item
-  //   const { library, format, alias, exportsOnly } = pickIfSet(upstream, item)
+  private async resolveInLinked(item: BaseItemConfig, options?: InstallConfig) {
+    if (!this._linked.exists(item.name)) {
+      return null
+    }
 
-  //   const moduleScript = await this._linked.getScript(item.name)
+    const resolved = await this.resolveOnUpstream(item, options)
 
-  //   const exportsModule = await this.runScript(
-  //     {
-  //       code: moduleScript,
-  //       format,
-  //       library,
-  //       alias,
-  //       exportsOnly,
-  //     },
-  //     {
-  //       linked: true,
-  //     },
-  //   )
+    moduleHelpers.define(resolved.module, {
+      linked: true,
+    })
 
-  //   this._linked.watch([item.name])
+    //  Watch and reload if module was changed
+    this._linked.watch([item.name])
 
-  //   return {
-  //     module: exportsModule,
-  //     styles: [],
-  //   }
-  // }
+    return resolved
+  }
 
   private async resolveInLocal(item: BaseItemConfig, options?: InstallConfig) {
     const { name, local, alias, exportsOnly } = item
@@ -345,11 +317,15 @@ class Modules {
       if (resolveInLocal) {
         return resolveInLocal
       }
+
+      const resolveInlinked = await this.resolveInLinked(item, options)
+      if (resolveInlinked) {
+        return resolveInlinked
+      }
     }
 
     try {
       const resolvedOnUpstream = await this.resolveOnUpstream(item, options)
-      console.log({ resolvedOnUpstream })
       return resolvedOnUpstream
     } catch (error) {
       console.error(
@@ -396,18 +372,57 @@ class Modules {
     return resolvedModule
   }
 
+  private optimizeConnection() {
+    const modules = this.getAllModules()
+    const modulesKeys = Object.keys(modules)
+
+    const urls = modulesKeys.reduce((acc, key) => {
+      const item = modules[key]
+
+      const { main, styles } = requireHelpers.parse(
+        item.upstream,
+        this._platform,
+      )
+
+      return acc.concat(
+        getUrlOrigin(main.url),
+        ...styles.map(style => getUrlOrigin(style.url)),
+      )
+    }, [])
+
+    const deduplicated = Array.from(new Set(urls))
+    const dnsPrefetchs = deduplicated.map(item => DOMHelpers.dnsPrefetch(item))
+    return dnsPrefetchs
+  }
+
   async prepare() {
     this.bindVendors()
 
-    // Call to check and use linked modules if availability
-    await this.linkModules()
+    if (this._dev) {
+      // Call to check and use linked modules if availability
+      await this.linkModules()
+    }
+
+    // Check and prepare connections for resources
+    this.optimizeConnection()
+
+    // Preload resources
+    await this.preload()
   }
 
-  async preload(names: string[]) {
+  async preload() {
     const modules = this.getAllModules()
+    const preload = this._config.getPreload()
 
-    const matches = names.map(name => modules[name]).filter(Boolean)
-    return matches.map(match => this.ping(match))
+    const pings: Promise<boolean>[] = []
+    for (const name of preload) {
+      const item = modules[name]
+      if (item) {
+        pings.push(this.ping(item))
+      }
+    }
+
+    return pings
   }
 
   async requireByName<T = unknown>(name: string): Promise<T> {

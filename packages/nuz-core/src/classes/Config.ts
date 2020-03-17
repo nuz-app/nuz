@@ -27,23 +27,26 @@ const setDefaultIfUnset = <T extends BaseItemConfig>(
   return cloned
 }
 
+export type ConfigInitial = Pick<
+  BootstrapConfig,
+  'preload' | 'dev' | 'vendors' | 'modules' | 'linked'
+>
+
 class Config {
   private _vendors: VendorsConfig
   private _modules: ModulesConfig
   private _linked: BootstrapConfig['linked']
+  private _preload: BootstrapConfig['preload']
   private _locked: boolean
   private _dev: boolean
 
-  constructor({
-    dev,
-    vendors,
-    modules,
-    linked,
-  }: Pick<BootstrapConfig, 'dev' | 'vendors' | 'modules' | 'linked'>) {
+  constructor({ dev, preload, vendors, modules, linked }: ConfigInitial) {
+    this._dev = typeof dev === 'boolean' ? dev : !checkIsProduction()
+
     this._vendors = {}
     this._modules = {}
-    this._dev = typeof dev === 'boolean' ? dev : !checkIsProduction()
     this._linked = linked
+    this._preload = preload || []
     this._locked = false
 
     this.setVendors(vendors)
@@ -64,6 +67,10 @@ class Config {
 
   getLinked() {
     return this._linked
+  }
+
+  getPreload() {
+    return this._preload
   }
 
   getVendors() {

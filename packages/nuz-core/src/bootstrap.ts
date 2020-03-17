@@ -68,6 +68,7 @@ const bootstrap = async (
   // Set vendors and modules to config, using in modules manager
   initConfig({
     dev,
+    preload,
     linked: definedLinked,
     vendors: definedVendors,
     modules: definedModules,
@@ -83,11 +84,6 @@ const bootstrap = async (
   // Prepare externals and preload modules if it defined
   const modules = getModules()
   await modules.prepare()
-
-  // Preload resource if `preload` field is provided
-  if (preload) {
-    await modules.preload(preload)
-  }
 
   // Emit a ready event
   emitter.emit(EventTypes.ready)
