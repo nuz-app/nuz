@@ -63,9 +63,9 @@ class Config {
     this._preload = preload || []
     this._locked = false
 
-    this.setVendors(vendors)
-    this.setModules(modules)
-    this.setShared(shared)
+    this.setVendors(vendors || {})
+    this.setModules(modules || {})
+    this.setShared(shared || {})
   }
 
   lock() {
@@ -81,15 +81,15 @@ class Config {
   }
 
   getLinked() {
-    return this._linked
+    return this._linked || {}
   }
 
   getPreload() {
-    return this._preload
+    return this._preload || []
   }
 
   getShared() {
-    return this._shared
+    return this._shared || {}
   }
 
   setShared(shared: SharedConfig): SharedConfig {
@@ -126,7 +126,7 @@ class Config {
   }
 
   defineModules(modules: ModulesConfig): ModulesConfig {
-    const keys = Object.keys(modules)
+    const keys = Object.keys(modules || {})
     const transformed = keys.reduce(
       (acc, key) =>
         Object.assign(acc, {

@@ -66,7 +66,7 @@ export type BaseItemConfig = {
   /**
    * Module name, it's using to resolve local if module was installed
    */
-  name: string
+  name?: string
   /**
    * Upstream is resolve info of module
    */

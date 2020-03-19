@@ -6,7 +6,7 @@ import onRoute from '../utils/onRoute'
 
 export const name = 'rollbackModule'
 
-export const execute = (app: Express, db: ModelDB, options) => {
+export const execute = (app: Express, db: ModelDB) => {
   app.put(
     '/module/rollback',
     onRoute(async (request, response) => {

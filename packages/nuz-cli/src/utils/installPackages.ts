@@ -6,7 +6,7 @@ export interface InstallPackagesConfig {
   useYarn: boolean
 }
 
-const getBin = useYarn => {
+const getBin = (useYarn: boolean) => {
   const yarnIsExisted = useYarn || checkIsYarnInstalled()
   return yarnIsExisted ? 'yarn' : 'npm'
 }

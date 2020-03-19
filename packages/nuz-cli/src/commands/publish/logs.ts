@@ -28,7 +28,7 @@ export const statsIsNotFound = (path: string) => {
   error(`Not found stats file at ${print.link(path)}.`)
 }
 
-export const publishedIsDone = (name: string, version: string, data) => {
+export const publishedIsDone = (name: string, version: string, data: any) => {
   success(
     `Version ${print.cyan(version)} of ${print.name(
       name,
@@ -38,9 +38,9 @@ export const publishedIsDone = (name: string, version: string, data) => {
   log()
 }
 
-export const publishFailed = err => {
+export const publishFailed = (errorDetails: string) => {
   error(`Have an error while publishing module`)
-  log(err)
+  log(errorDetails)
 }
 
 export const configIsNotFound = common.configIsNotFound

@@ -1,7 +1,7 @@
 import http from 'http'
 import handler from 'serve-handler'
 
-const serve = ({ port, dir }): http.Server => {
+const serve = ({ port, dir }: { port: number; dir: string }): http.Server => {
   const server = http.createServer((request, response) => {
     response.setHeader('Access-Control-Allow-Origin', '*')
     response.setHeader('Access-Control-Request-Method', '*')

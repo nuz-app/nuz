@@ -34,7 +34,14 @@ const getQuestions = (name: string) => [
   },
 ]
 
-const generateTemplate = async (dir: string, { name, version, library }) => {
+const generateTemplate = async (
+  dir: string,
+  {
+    name,
+    version,
+    library,
+  }: { name: string; version: string; library: string },
+) => {
   const questions = getQuestions(name)
   const results = await createQuestions<{ language: string; style: string }>(
     questions,

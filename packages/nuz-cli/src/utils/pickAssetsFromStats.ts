@@ -9,11 +9,11 @@ export interface PickOptions {
 export interface PickOutput {
   main: {
     url: string
-    integrity: string
+    integrity: string | undefined
   }
   styles: {
     url: string
-    integrity: string
+    integrity: string | undefined
   }[]
 }
 
@@ -22,14 +22,24 @@ const pickAssetsFromStats = (
   options: PickOptions = {},
 ): PickOutput => {
   const { outputPath, publicPath, entrypoints } = stats
-  const { assets } = entrypoints.main
+  const { assets } = (entrypoints || {}).main
 
-  const transformAsset = (filename: string) => ({
-    url: publicPath + filename,
-    integrity: !options.useIntegrity
-      ? undefined
-      : integrityHelpers.file(path.join(outputPath, filename)),
-  })
+  if (!outputPath || !assets) {
+    throw new Error('Not found outputPath or assets in stats')
+  }
+
+  const transformAsset = (filename: string | undefined) => {
+    if (!filename) {
+      throw new Error(`Can not transform asset because filename is undefined`)
+    }
+
+    return {
+      url: publicPath + filename,
+      integrity: !options.useIntegrity
+        ? undefined
+        : integrityHelpers.file(path.join(outputPath, filename)),
+    }
+  }
 
   const main = transformAsset(assets.find(item => /\.js$/.test(item)))
   const styles = assets.filter(item => /\.css$/.test(item)).map(transformAsset)

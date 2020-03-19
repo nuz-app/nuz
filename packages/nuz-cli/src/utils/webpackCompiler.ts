@@ -18,7 +18,7 @@ export const run = (config: AllowWebpackConfig): Promise<webpack.Stats> =>
 
 export const watch = (
   config: AllowWebpackConfig,
-  callback,
+  callback: webpack.ICompiler.Handler,
 ): Promise<webpack.Compiler.Watching> =>
   new Promise(resolve => {
     const compiler = get(config)

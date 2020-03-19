@@ -1,5 +1,7 @@
+import * as selfHelpers from './selfHelpers'
+
 const key = Symbol.for('@nuz/module.initialized')
 
-export const mark = () => (this[key] = true)
+export const mark = () => selfHelpers.set(key, true)
 
-export default () => !!this[key]
+export default () => selfHelpers.has(key)

@@ -1,6 +1,6 @@
 export enum DBTypes {
   mongodb = 'mongodb',
-  nedb = 'nedb',
+  // nedb = 'nedb',
 }
 
 export type DBOptions = LocalDBOptions & {

@@ -12,7 +12,7 @@ export const file = (path: string, algorithm: string = DEFAULT_ALGORITHM) => {
   return data(content, algorithm)
 }
 
-export const data = (content, algorithm: string = DEFAULT_ALGORITHM) => {
+export const data = (content: any, algorithm: string = DEFAULT_ALGORITHM) => {
   const digest = crypto
     .createHash(algorithm)
     .update(content)

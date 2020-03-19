@@ -4,7 +4,17 @@ export const notifyOnStart = (name: string) => {
   info(`Starting development mode for ${print.name(name)} module!`)
 }
 
-export const guide = ({ port, library, name, upstream }) => {
+export const guide = ({
+  port,
+  library,
+  name,
+  upstream,
+}: {
+  port: number
+  library: string
+  name: string
+  upstream: string
+}) => {
   success(`Module ${print.name(name)} listening on port ${port}!`)
   log()
   log(

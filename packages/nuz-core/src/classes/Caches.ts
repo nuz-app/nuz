@@ -1,7 +1,7 @@
 class Caches<K = string, V = unknown> {
   private readonly _data: Map<K, V>
 
-  constructor(init?) {
+  constructor(init?: [K, V][]) {
     this._data = new Map(init)
   }
 

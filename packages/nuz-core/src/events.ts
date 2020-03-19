@@ -3,6 +3,6 @@ import Events from './classes/Events'
 export const emitter = new Events()
 
 export default {
-  on: (type, ...rest) => emitter.on(type, ...rest),
-  off: (type, ...rest) => emitter.off(type, ...rest),
+  on: (type: string, ...rest: any[]) => emitter.on(type, ...rest),
+  off: (type: string, ...rest: any[]) => emitter.off(type, ...rest),
 }

@@ -98,7 +98,14 @@ export interface ModuleConfig {
   /**
    * Allow to custom webpack config
    */
-  webpack?: (config: webpack.Configuration) => webpack.Configuration
+  webpack?: (
+    config: webpack.Configuration,
+  ) => Required<
+    Pick<
+      webpack.Configuration,
+      'name' | 'mode' | 'target' | 'entry' | 'output' | 'module'
+    >
+  >
   /**
    * Publish config
    */

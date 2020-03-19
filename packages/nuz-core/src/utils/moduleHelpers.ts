@@ -18,13 +18,13 @@ const definedKeys = {
   upstream: '__isUpstream',
   fallback: '__isFallback',
   shared: '__isShared',
-}
+} as { [name: string]: any }
 
-export const define = (module, config?: ExportedConfig) => {
+export const define = (module: any, config: ExportedConfig) => {
   // tslint:disable-next-line: forin
   for (const key in config) {
     const defined = definedKeys[key]
-    if (config[key] && defined) {
+    if ((config as any)[key] && defined) {
       Object.defineProperty(module, defined, { value: true })
     }
   }
@@ -33,10 +33,10 @@ export const define = (module, config?: ExportedConfig) => {
 }
 
 export const transform = (
-  exportsModule,
+  exportsModule: any,
   config?: Pick<BaseItemConfig, 'exportsOnly' | 'alias'>,
 ) => {
-  const { alias = {}, exportsOnly } = config
+  const { alias = {}, exportsOnly } = config || ({} as any)
 
   const checkIsExport = (n: string) => !exportsOnly || exportsOnly.includes(n)
 

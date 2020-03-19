@@ -1,5 +1,7 @@
 import { integrityHelpers } from '@nuz/utils'
 
+import { PublishInfo } from '../types'
+
 const getOrVerifyIntegrity = async (
   item: string | { url: string; integrity: string },
 ) => {
@@ -29,7 +31,10 @@ const ensureVersion = async ({
   alias,
   exportsOnly,
   resolve: _resolve,
-}) => {
+}: Pick<
+  PublishInfo,
+  'version' | 'library' | 'alias' | 'exportsOnly' | 'resolve'
+>) => {
   const urls = [_resolve.main, ...(_resolve.styles || [])].filter(Boolean)
   const promises = urls.map(getOrVerifyIntegrity)
   const [main, ...styles] = await Promise.all(promises.filter(Boolean))

@@ -37,7 +37,7 @@ export interface FactoryConfig {
 const ruleFactory = (test: RegExp, exclude?: RegExp) => ({
   test,
   exclude,
-  use: [],
+  use: [] as any[],
 })
 
 const setExternals = (name: string) => ({
@@ -75,7 +75,7 @@ const webpackConfigFactory = (
     output,
     publicPath,
     analyzer,
-    webpack: customWebpack,
+    webpack: webpackCustomer,
     shared,
   } = Object.assign({}, defaultConfig, moduleConfig)
 
@@ -101,11 +101,11 @@ const webpackConfigFactory = (
 
   const cacheConfig = cache && {
     type: 'filesystem',
-    cacheDirectory: paths.cache('webpack'),
+    cacheDirectory: (paths as any).cache('webpack'),
     hashAlgorithm: 'md4',
   }
 
-  const config: webpack.Configuration = {
+  const config = {
     name,
     bail,
     mode,
@@ -132,9 +132,9 @@ const webpackConfigFactory = (
     },
     externals: [externals],
     module: {
-      rules: [],
+      rules: [] as any[],
     },
-    plugins: [],
+    plugins: [] as any[],
     optimization: {
       namedModules: true,
     },
@@ -144,7 +144,7 @@ const webpackConfigFactory = (
   config.plugins.push(
     new WebpackProcessBar({
       name,
-      fancy: !ci,
+      color: 'green',
     }),
   )
 
@@ -224,7 +224,7 @@ const webpackConfigFactory = (
     feature.postcss,
   ].some(Boolean)
   if (shouldUseIncludeStyles) {
-    const stylesExt = []
+    const stylesExt = ([] as any[])
       .concat(
         feature.css && CSS_EXTENSIONS, // always true
         feature.sass && SASS_EXTENSIONS,
@@ -352,8 +352,17 @@ const webpackConfigFactory = (
     })
   }
 
-  const customIsFn = typeof customWebpack === 'function'
-  return customIsFn ? customWebpack(config) : config
+  if (typeof webpackCustomer === 'function') {
+    const customConfig = webpackCustomer(config as webpack.Configuration)
+
+    if (!customConfig.output) {
+      throw new Error('Webpack config is missing output field')
+    }
+
+    return customConfig
+  }
+
+  return config
 }
 
 export default webpackConfigFactory

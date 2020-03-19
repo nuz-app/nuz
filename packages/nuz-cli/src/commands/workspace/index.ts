@@ -31,19 +31,22 @@ const execute = async ({
 }: yargs.Argv<WorkspaceCommand>) => {
   const moduleDir = paths.cwd
 
-  const configIsExisted = configHelpers.exists(moduleDir)
+  const configIsExisted = _workspace ? true : configHelpers.exists(moduleDir)
   if (!configIsExisted) {
     logs.configIsNotFound()
     return exit(1)
   }
 
-  const moduleConfig = configHelpers.extract(moduleDir, false)
+  const moduleConfig = _workspace
+    ? ({} as any)
+    : configHelpers.extract(moduleDir, false)
   if (!moduleConfig) {
     logs.configIsInvalid()
     return exit(1)
   }
 
-  const workspace: string[] = _workspace || moduleConfig.workspace
+  const workspace: string[] =
+    _workspace || (moduleConfig && moduleConfig.workspace)
   if (!workspace) {
     logs.workspaceIsNotFound()
     return exit(1)
@@ -91,7 +94,7 @@ const execute = async ({
     const featureOfModule = getFeatureConfig(realPath, configOfModule)
 
     // Factory webpack config for module
-    const webpackConfig: webpack.Configuration = webpackConfigFactory(
+    const webpackConfig = webpackConfigFactory(
       {
         dev: true,
         cache: true,
@@ -101,6 +104,10 @@ const execute = async ({
       },
       featureOfModule,
     )
+
+    if (!webpackConfig.output) {
+      throw new Error('Webpack output is not defined')
+    }
 
     // Create dist info
     const distDir = path.join(buildDir, moduleName)
@@ -122,7 +129,7 @@ const execute = async ({
 
     // Merge with other modules config
     return Object.assign(acc, { [moduleName]: moduleInfo })
-  }, {})
+  }, {} as { [name: string]: any })
 
   const modulesKeys = Object.keys(modulesConfig)
   logs.workspaceIsBuilding(modulesKeys)
@@ -146,7 +153,7 @@ const execute = async ({
   })
 
   const watchUrl = linkedUrls.watch(port)
-  const store = { linkedModules: undefined }
+  const store = { linkedModules: null as any }
 
   // Create socket to watching changes and reload
   const socket = io(server, {
@@ -172,10 +179,10 @@ const execute = async ({
     webpackConfigs,
     { clearConsole: false },
     ({ data }, { isFirstBuild }) => {
-      const { children } = data
+      const { children = [] } = data || {}
 
       const linkedModules = children.reduce((acc, item) => {
-        const arrOutputPath = item.outputPath.split('/')
+        const arrOutputPath = (item.outputPath as string).split('/')
         const name = arrOutputPath[arrOutputPath.length - 1]
         const moduleInfo = modulesConfig[name]
         if (!moduleInfo) {
@@ -203,7 +210,7 @@ const execute = async ({
       store.linkedModules = linkedModules
 
       const changedModulesName = children.map(child =>
-        compilerName.extract(child.name),
+        compilerName.extract((child as any).name),
       )
       emitOnChange(changedModulesName)
     },

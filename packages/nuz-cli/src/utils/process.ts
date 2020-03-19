@@ -1,6 +1,6 @@
 export const exit = (code?: number) => process.exit(code)
 
-export const onExit = fn => {
+export const onExit = (fn: NodeJS.ExitListener) => {
   process.on('exit', fn)
 }
 

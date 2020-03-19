@@ -6,7 +6,7 @@ import onRoute from '../utils/onRoute'
 
 export const name = 'extendScope'
 
-export const execute = (app: Express, db: ModelDB, options) => {
+export const execute = (app: Express, db: ModelDB) => {
   app.put(
     '/permission/scope',
     onRoute(async (request, response) => {

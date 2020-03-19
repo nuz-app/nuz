@@ -6,7 +6,7 @@ import onRoute from '../utils/onRoute'
 
 export const name = 'health'
 
-export const execute = (app: Express, db: ModelDB, options) => {
+export const execute = (app: Express, db: ModelDB) => {
   app.get(
     '/health',
     onRoute(async (request, response) => {

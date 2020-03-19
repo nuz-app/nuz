@@ -18,7 +18,8 @@
     "build": "lerna run build",
     "test": "lerna run test",
     "lint": "lerna run lint",
-    "lint:fix": "lerna run lint:fix"
+    "lint:fix": "lerna run lint:fix",
+    "dev": "tsc --build --watch tsconfig.dev.json"
   },
   "engines": {
     "node": ">= 8.3"

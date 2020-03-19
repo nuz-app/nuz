@@ -6,7 +6,7 @@ export const notifyOnStart = () => {
   log()
 }
 
-export const foundModulesConfig = modulesConfig => {
+export const foundModulesConfig = (modulesConfig: any[]) => {
   info(`Found ${print.bold(modulesConfig.length)} modules config...`)
 }
 
@@ -18,7 +18,7 @@ export const moduleConfigIsInvalid = (dir: string) => {
   info(`Found invalid config, check at ${print.link(dir)}`)
 }
 
-export const moduleConfigIsFactoring = ({ config, dir }) => {
+export const moduleConfigIsFactoring = ({ config, dir }: { config: any, dir: string }) => {
   info(
     `Found module ${print.name(config.name)}, library ${print.name(
       config.library,
@@ -26,7 +26,7 @@ export const moduleConfigIsFactoring = ({ config, dir }) => {
   )
 }
 
-export const workspaceIsBuilding = keys => {
+export const workspaceIsBuilding = (keys: string[]) => {
   const length = keys.length
 
   log()

@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "removeComments": true,
+    "target": "es6",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "importHelpers": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "composite": true,
+    "noEmitOnError": true
+  },
+  "references": []
+}

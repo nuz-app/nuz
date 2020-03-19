@@ -1,5 +1,6 @@
 import { integrityHelpers } from '@nuz/utils'
 import path from 'path'
+import webpack from 'webpack'
 import * as yargs from 'yargs'
 
 import { BuildCommand, CommandConfig, CommandTypes } from '../../types'
@@ -60,7 +61,7 @@ const execute = async ({ clean }: yargs.Argv<BuildCommand>) => {
 
   let result
   try {
-    result = await webpackCompiler.run(buildConfig)
+    result = await webpackCompiler.run(buildConfig as webpack.Configuration)
   } catch (error) {
     logs.buildFailed(error)
     return exit(1)

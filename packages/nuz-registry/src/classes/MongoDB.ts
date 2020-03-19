@@ -17,6 +17,10 @@ import * as versionHelpers from '../utils/versionHelpers'
 
 import ModelDB from './ModelDB'
 
+export interface MongoOptions {
+  url: string
+}
+
 const checkIsVersionExisted = (pkg: ModuleDocument, version: string) =>
   !!(
     pkg &&
@@ -28,7 +32,10 @@ class MongoDB implements ModelDB {
   private readonly connection: Connection
   private readonly db: Models
 
-  constructor(private readonly secretKey: string, options) {
+  constructor(
+    private readonly secretKey: string | undefined,
+    options: MongoOptions,
+  ) {
     const { url } = options
 
     // Check if url is not provided
@@ -43,7 +50,7 @@ class MongoDB implements ModelDB {
     this.db = createModels(this.connection)
   }
 
-  private verifySecretKey(secretKey: string) {
+  private verifySecretKey(secretKey: string | undefined) {
     if (secretKey === this.secretKey) {
       return true
     }
@@ -74,7 +81,7 @@ class MongoDB implements ModelDB {
 
   async prepage() {}
 
-  async createToken(secretKey: string, scope: string[]) {
+  async createToken(secretKey: string | undefined, scope: string[]) {
     this.verifySecretKey(secretKey)
 
     const permission = new this.db.Permission({ scope })
@@ -84,17 +91,21 @@ class MongoDB implements ModelDB {
     return { token }
   }
 
-  async deleteToken(secretKey: string, token: string) {
+  async deleteToken(secretKey: string | undefined, token: string) {
     this.verifySecretKey(secretKey)
 
-    const { deletedCount: deleted } = await this.db.Permission.deleteOne({
+    const { deletedCount: deleted = 0 } = await this.db.Permission.deleteOne({
       _id: token,
     })
 
     return { deleted }
   }
 
-  async setScope(secretKey: string, token: string, scope: string[]) {
+  async setScope(
+    secretKey: string | undefined,
+    token: string,
+    scope: string[],
+  ) {
     this.verifySecretKey(secretKey)
     await this.verifyToken(token)
 
@@ -106,7 +117,11 @@ class MongoDB implements ModelDB {
     return { updated }
   }
 
-  async removeScope(secretKey: string, token: string, scope: string[]) {
+  async removeScope(
+    secretKey: string | undefined,
+    token: string,
+    scope: string[],
+  ) {
     this.verifySecretKey(secretKey)
     await this.verifyToken(token)
 
@@ -118,7 +133,11 @@ class MongoDB implements ModelDB {
     return { updated }
   }
 
-  async extendScope(secretKey: string, token: string, scope: string[]) {
+  async extendScope(
+    secretKey: string | undefined,
+    token: string,
+    scope: string[],
+  ) {
     this.verifySecretKey(secretKey)
     await this.verifyToken(token)
 
@@ -136,7 +155,7 @@ class MongoDB implements ModelDB {
   }
 
   async getModules(fields?: ModuleModel) {
-    const modules = await this.db.Module.find(fields)
+    const modules = await this.db.Module.find({}, fields)
     return modules
   }
 
@@ -160,6 +179,10 @@ class MongoDB implements ModelDB {
     await this.verifyModule(token, name)
 
     const pkg = await this.getModule(name)
+    if (!pkg) {
+      throw new Error(`Can not found module by name ${name}`)
+    }
+
     const versionName = versionHelpers.encode(version)
     const versionInfo = await ensureVersion({
       version,
@@ -175,7 +198,7 @@ class MongoDB implements ModelDB {
     }
 
     if (!pkg) {
-      const data = getEmptyPackage()
+      const data = getEmptyPackage() as any
       data.name = name
       data.tags.upstream = version
       data.versions[versionName] = versionInfo
@@ -230,6 +253,9 @@ class MongoDB implements ModelDB {
     await this.verifyModule(token, name)
 
     const pkg = await this.getModule(name)
+    if (!pkg) {
+      throw new Error(`Can not found module by name ${name}`)
+    }
 
     const upstreamVersionIsExisted = checkIsVersionExisted(pkg, upstream)
     if (!upstreamVersionIsExisted) {
@@ -271,17 +297,20 @@ class MongoDB implements ModelDB {
   async getConfig() {
     const modules = await this.getModules()
 
-    const transformed = modules.reduce((acc, { name, tags, versions }) => {
-      const upstreamTag = versionHelpers.encode(tags.upstream)
-      const upstream =
-        upstreamTag && Object.assign({ host: 'self' }, versions[upstreamTag])
+    const transformed = modules.reduce(
+      (acc: any, { name, tags, versions }: any) => {
+        const upstreamTag = versionHelpers.encode(tags.upstream)
+        const upstream =
+          upstreamTag && Object.assign({ host: 'self' }, versions[upstreamTag])
 
-      const fallbackTag = versionHelpers.encode(tags.fallback)
-      const fallback =
-        fallbackTag && Object.assign({ host: 'self' }, versions[fallbackTag])
+        const fallbackTag = versionHelpers.encode(tags.fallback)
+        const fallback =
+          fallbackTag && Object.assign({ host: 'self' }, versions[fallbackTag])
 
-      return Object.assign(acc, { [name]: { upstream, fallback } })
-    }, {})
+        return Object.assign(acc, { [name]: { upstream, fallback } })
+      },
+      {},
+    )
 
     return {
       modules: transformed,

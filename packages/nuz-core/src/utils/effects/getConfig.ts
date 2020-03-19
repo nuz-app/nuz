@@ -5,9 +5,9 @@ import * as selfHelpers from '../selfHelpers'
 
 export { default as Config } from '../../classes/Config'
 
-export let refConfig = selfHelpers.get()[CONFIG_KEY]
+export let refConfig = (selfHelpers.get() as any)[CONFIG_KEY]
 
-export const initConfig = (config?: ConfigInitial) => {
+export const initConfig = (config: ConfigInitial) => {
   if (!refConfig) {
     refConfig = new Config(config)
     selfHelpers.set(CONFIG_KEY, refConfig)

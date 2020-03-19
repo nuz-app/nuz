@@ -1,1 +1,1 @@
-export const error = (...rest) => console.error(...rest)
+export const error = (...rest: any[]) => console.error(...rest)

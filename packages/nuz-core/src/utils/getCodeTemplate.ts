@@ -13,7 +13,7 @@ export enum TemplateTypes {
   context = 'context',
 }
 
-type Defined = { [field: string]: string }
+export type Defined = { [field: string]: string }
 
 export function setVariables(template: string, defined: Defined) {
   let result = template || ''

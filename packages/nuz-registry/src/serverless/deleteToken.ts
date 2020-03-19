@@ -6,7 +6,7 @@ import onRoute from '../utils/onRoute'
 
 export const name = 'deleteToken'
 
-export const execute = (app: Express, db: ModelDB, options) => {
+export const execute = (app: Express, db: ModelDB) => {
   app.delete(
     '/token',
     onRoute(async (request, response) => {

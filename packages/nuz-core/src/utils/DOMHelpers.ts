@@ -1,6 +1,6 @@
 interface PreloadConfig {
-  [attr: string]: string | boolean
-  integrity: string | null
+  [attr: string]: any
+  integrity: string | undefined
 }
 
 const linkFactory = (url: string, { integrity, ...rest }: PreloadConfig) => {
@@ -44,8 +44,8 @@ export const dnsPrefetch = (url: string) => {
 }
 
 interface StyleConfig {
-  [attr: string]: string | boolean
-  integrity: string | null
+  integrity: string | undefined
+  [attr: string]: any
 }
 
 export const loadStyle = (url: string, config?: StyleConfig) => {

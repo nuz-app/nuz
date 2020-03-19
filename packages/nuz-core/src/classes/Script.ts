@@ -2,6 +2,7 @@ import vm from 'vm'
 
 import { ModuleFormats } from '../types/common'
 import getCodeTemplate, {
+  Defined,
   setVariables,
   TemplateTypes,
 } from '../utils/getCodeTemplate'
@@ -35,14 +36,14 @@ class Script {
     return name
   }
 
-  getContextTemplate(defined) {
+  getContextTemplate(defined: Defined) {
     return setVariables(
       getCodeTemplate(TemplateTypes.context, this._config.format),
       defined,
     )
   }
 
-  async runInContext(context) {
+  async runInContext(context: any) {
     const name = this.generateId()
     const code = this.getContextTemplate({
       name,
@@ -56,14 +57,14 @@ class Script {
     return context
   }
 
-  getScriptTemplate(defined) {
+  getScriptTemplate(defined: Defined) {
     return setVariables(
       getCodeTemplate(TemplateTypes.script, this._config.format),
       defined,
     )
   }
 
-  async runInScript(context) {
+  async runInScript(context: any) {
     const name = this.generateId()
     const code = this.getScriptTemplate({
       name,

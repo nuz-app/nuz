@@ -17,7 +17,7 @@ export const local = (name: string, globals: Globals) => {
   } catch (error) {}
 
   try {
-    return globals.get()[name]
+    return (globals.get() as any)[name]
     // tslint:disable-next-line: no-empty
   } catch (error) {}
 
@@ -26,11 +26,11 @@ export const local = (name: string, globals: Globals) => {
 
 type Resource = {
   url: string
-  integrity: string
+  integrity: string | undefined
 }
 
 const ensureResolve = (
-  domain: string,
+  domain: string | undefined,
   resource: string | UpstreamResolveResource,
 ): Resource => {
   const left =
@@ -43,16 +43,16 @@ const ensureResolve = (
 
   return {
     url,
-    integrity: (resource && (resource as any).integrity) as string | null,
+    integrity: (resource && (resource as any).integrity) as string | undefined,
   }
 }
 
 const resolveByDomain = (
   resolve: UpstreamFullConfig['resolve'],
-  domain: string | null,
+  domain: string | undefined,
   isNode: boolean,
 ) => {
-  const resolveUrls = { main: null as Resource, styles: [] as Resource[] }
+  const resolveUrls = { main: null as any, styles: [] as Resource[] }
 
   if (typeof resolve === 'string') {
     // For example: resolve is 'react' -> https://unpkg.com/react
@@ -76,7 +76,7 @@ const resolveByDomain = (
 
 const HOSTS = {
   [UpstreamHosts.unpkg]: 'https://unpkg.com',
-  [UpstreamHosts.self]: null,
+  [UpstreamHosts.self]: undefined,
 }
 
 export const parse = (
@@ -85,7 +85,7 @@ export const parse = (
 ) => {
   const isNode = platform === RuntimePlatforms.node
   const resolveUrls = {
-    main: null as Resource,
+    main: undefined as any,
     styles: [] as Resource[],
   }
 

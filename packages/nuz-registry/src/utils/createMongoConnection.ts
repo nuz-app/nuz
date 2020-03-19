@@ -1,6 +1,9 @@
 import mongoose from 'mongoose'
 
-const createMongoConnection = (url: string, options?) => {
+const createMongoConnection = (
+  url: string,
+  options?: mongoose.ConnectionOptions,
+) => {
   const conn = mongoose.createConnection(
     url,
     Object.assign(

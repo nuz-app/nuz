@@ -1,6 +1,11 @@
 import { checkIsObject, jsonHelpers } from '@nuz/utils'
 
-import { BaseItemConfig, InstallConfig, RuntimePlatforms } from '../types'
+import {
+  BaseItemConfig,
+  InstallConfig,
+  ModuleFormats,
+  RuntimePlatforms,
+} from '../types'
 
 import checkIsFunction from '../utils/checkIsFunction'
 import checkIsInitialized from '../utils/checkIsInitialized'
@@ -16,6 +21,14 @@ import Caches from './Caches'
 import Globals from './Globals'
 import Linked from './Linked'
 import Script from './Script'
+
+export type RequiredBaseItem = BaseItemConfig &
+  Required<
+    Pick<
+      BaseItemConfig,
+      'name' | 'local' | 'alias' | 'exportsOnly' | 'upstream'
+    >
+  >
 
 const getUrlOrigin = (url: string) => {
   try {
@@ -35,7 +48,7 @@ const ensureInstallConfig = ({
   retries: retries || 1,
 })
 
-const pickIfSet = (upstream, config) => {
+const pickIfSet = (upstream: any, config: RequiredBaseItem) => {
   const isObject = checkIsObject(upstream)
   if (!isObject) {
     return config
@@ -69,6 +82,7 @@ class Modules {
     { script: Element; styles: Element[] }
   >
 
+  // @ts-ignore
   private _linked: Linked
 
   constructor() {
@@ -91,7 +105,8 @@ class Modules {
 
   private async linkModules() {
     // Create linked instance with bootstrap config
-    this._linked = new Linked(this._config.getLinked())
+    const config = this._config.getLinked()
+    this._linked = new Linked(config)
 
     // Prepare: wait socket ready, binding events,...
     await this._linked.prepare()
@@ -111,11 +126,11 @@ class Modules {
     return definedModules
   }
 
-  private getKey(item: BaseItemConfig) {
-    return item && item.name
+  private getKey(item: RequiredBaseItem): string {
+    return (item && item.name) as string
   }
 
-  private async canUseLocal(item: BaseItemConfig) {
+  private async canUseLocal(item: RequiredBaseItem) {
     const { name, local } = item
 
     return !!(
@@ -143,7 +158,7 @@ class Modules {
     }
   }
 
-  private async ping(item: BaseItemConfig) {
+  private async ping(item: RequiredBaseItem) {
     const isNode = this._platform === RuntimePlatforms.node
     if (isNode) {
       return false
@@ -163,11 +178,13 @@ class Modules {
 
     const { upstream } = item
 
-    const resolveUrls = requireHelpers.parse(upstream, this._platform)
-    const preloadScript = DOMHelpers.preloadScript(resolveUrls.main.url, {
-      integrity: resolveUrls.main.integrity,
+    const resolveUrls = requireHelpers.parse(upstream, this._platform) || {}
+    const { main, styles } = resolveUrls || ({} as any)
+
+    const preloadScript = DOMHelpers.preloadScript(main.url, {
+      integrity: main.integrity,
     })
-    const preloadStyles = resolveUrls.styles.map(style =>
+    const preloadStyles = styles.map((style: any) =>
       DOMHelpers.preloadStyle(style.url, {
         integrity: style.integrity,
       }),
@@ -212,7 +229,13 @@ class Modules {
     return shared.map(item => this.loadDependency(item))
   }
 
-  private async runScript({ code, format, library, alias, exportsOnly }) {
+  private async runScript({
+    code,
+    format,
+    library,
+    alias,
+    exportsOnly,
+  }: BaseItemConfig & { format: ModuleFormats; code: string }) {
     const isNode = this._platform === RuntimePlatforms.node
     const context = this.createContext()
 
@@ -255,7 +278,7 @@ class Modules {
   }
 
   private async resolveOnUpstream(
-    item: BaseItemConfig,
+    item: RequiredBaseItem,
     options?: InstallConfig,
   ) {
     const isNode = this._platform === RuntimePlatforms.node
@@ -264,7 +287,8 @@ class Modules {
     const { library, format, alias, exportsOnly } = pickIfSet(upstream, item)
     const { timeout, retries } = ensureInstallConfig(options)
 
-    const { main, styles } = requireHelpers.parse(upstream, this._platform)
+    const { main, styles } =
+      requireHelpers.parse(upstream, this._platform) || {}
 
     const moduleScript = await getScript(
       main.url,
@@ -285,7 +309,7 @@ class Modules {
 
     const moduleStyles = isNode
       ? []
-      : styles.map(style =>
+      : (styles || []).map(style =>
           DOMHelpers.loadStyle(style.url, { integrity: style.integrity }),
         )
 
@@ -295,7 +319,10 @@ class Modules {
     }
   }
 
-  private async resolveInLinked(item: BaseItemConfig, options?: InstallConfig) {
+  private async resolveInLinked(
+    item: RequiredBaseItem,
+    options?: InstallConfig,
+  ) {
     if (!this._linked.exists(item.name)) {
       return null
     }
@@ -312,7 +339,12 @@ class Modules {
     return resolved
   }
 
-  private async resolveInLocal(item: BaseItemConfig, options?: InstallConfig) {
+  private async resolveInLocal(
+    item: Required<
+      Pick<BaseItemConfig, 'name' | 'local' | 'alias' | 'exportsOnly'>
+    >,
+    options?: InstallConfig,
+  ) {
     const { name, local, alias, exportsOnly } = item
 
     const resolvedInLocal = local || requireHelpers.local(name, this._globals)
@@ -339,8 +371,8 @@ class Modules {
     }
   }
 
-  private async resolve(item: BaseItemConfig, options?: InstallConfig) {
-    await this.loadDependencies(item.shared)
+  private async resolve(item: RequiredBaseItem, options?: InstallConfig) {
+    await this.loadDependencies((item as any).shared)
 
     // In development mode, allowed to resolve in local and linked
     if (this._dev) {
@@ -368,7 +400,11 @@ class Modules {
         throw error
       }
 
-      const cloned = { ...item, upstream: item.fallback, fallback: undefined }
+      const cloned = {
+        ...item,
+        upstream: item.fallback,
+        fallback: undefined,
+      } as RequiredBaseItem
       console.warn(
         `Try to use fallback as backup module: ${jsonHelpers.stringify(
           cloned,
@@ -381,7 +417,7 @@ class Modules {
   }
 
   private async load<M = unknown>(
-    item: BaseItemConfig,
+    item: RequiredBaseItem,
     options?: InstallConfig,
   ): Promise<LoadResults<M>> {
     const { name } = item
@@ -394,7 +430,7 @@ class Modules {
 
     const key = this.getKey(item)
     if (resolvedCache.has(key)) {
-      return resolvedCache.get(key)
+      return resolvedCache.get(key) as any
     }
 
     const resolvedModule = await this.resolve(item, options)
@@ -410,16 +446,16 @@ class Modules {
     const urls = modulesKeys.reduce((acc, key) => {
       const item = modules[key]
 
-      const { main, styles } = requireHelpers.parse(
-        item.upstream,
-        this._platform,
-      )
+      const { main, styles } =
+        requireHelpers.parse(item.upstream as any, this._platform) || {}
 
       return acc.concat(
-        getUrlOrigin(main.url),
-        ...styles.map(style => getUrlOrigin(style.url)),
+        getUrlOrigin(main.url) as string,
+        ...(styles || []).map(
+          (style: any) => getUrlOrigin(style.url) as string,
+        ),
       )
-    }, [])
+    }, [] as string[])
 
     const deduplicated = Array.from(new Set(urls))
     const dnsPrefetchs = deduplicated.map(item => DOMHelpers.dnsPrefetch(item))
@@ -447,7 +483,7 @@ class Modules {
 
     const pings: Promise<boolean>[] = []
     for (const name of preload) {
-      const item = modules[name]
+      const item = modules[name] as RequiredBaseItem
       if (item) {
         pings.push(this.ping(item))
       }
@@ -464,7 +500,7 @@ class Modules {
   async loadByName<M = unknown>(name: string): Promise<LoadResults<M>> {
     const modules = this.getAllModules()
 
-    const item = modules[name]
+    const item = modules[name] as RequiredBaseItem
     if (!item) {
       throw new Error(`Cannot load module by name: ${name}.`)
     }

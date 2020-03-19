@@ -32,10 +32,16 @@ const execute = async ({
     return exit(1)
   }
 
-  const { name, template, version, library } = await createQuestionsGetInfo({
+  const answerInfo = await createQuestionsGetInfo({
     name: _name,
     template: _template,
   })
+
+  if (!answerInfo) {
+    throw new Error('Not have required info to create module!')
+  }
+
+  const { name, template, version, library } = answerInfo
 
   const moduleDir = paths.app(name)
 

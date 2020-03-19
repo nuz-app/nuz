@@ -1,0 +1,20 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/nuz-cli/tsconfig.json"
+    },
+    {
+      "path": "./packages/nuz-core/tsconfig.json"
+    },
+    {
+      "path": "./packages/nuz-registry/tsconfig.json"
+    },
+    {
+      "path": "./packages/nuz-shared/tsconfig.json"
+    },
+    {
+      "path": "./packages/nuz-utils/tsconfig.json"
+    }
+  ]
+}

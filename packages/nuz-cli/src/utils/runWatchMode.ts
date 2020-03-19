@@ -26,7 +26,7 @@ const runWatchMode = async (
     isFirstBuild = false
 
     if (error) {
-      common.buildFailed(error)
+      common.buildFailed(error.message)
       return
     }
 
@@ -36,7 +36,8 @@ const runWatchMode = async (
       return
     }
 
-    const buildTime = stats.endTime - stats.startTime
+    const buildTime =
+      ((stats || {}) as any).endTime - ((stats || {}) as any).startTime
     common.waitingForChanges(buildTime)
 
     if (typeof onChange === 'function') {

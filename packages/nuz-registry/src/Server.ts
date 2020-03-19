@@ -1,5 +1,5 @@
 import bodyParser from 'body-parser'
-import express, { Express } from 'express'
+import express from 'express'
 
 import { DBTypes, ServerlessOptions, ServerOptions } from './types'
 
@@ -13,8 +13,9 @@ const dbMaps = {
 }
 
 class Server {
+  private readonly key: string
   private readonly db: ModelDB
-  private readonly app: Express
+  private readonly app: express.Express
   private readonly serverless: ServerlessOptions
 
   constructor(options: ServerOptions) {
@@ -26,7 +27,8 @@ class Server {
       throw new Error('Received type of db field is invalid!')
     }
 
-    this.db = new Database(key, db)
+    this.key = key
+    this.db = new Database(this.key, db as any)
 
     // Init app to listen requests
     this.app = express()
@@ -35,7 +37,7 @@ class Server {
     this.serverless = options.serverless || {}
   }
 
-  async middlewares(fn) {
+  async middlewares(fn: (app: express.Express) => Promise<any>) {
     return fn(this.app)
   }
 
@@ -46,7 +48,11 @@ class Server {
     this.app.use(bodyParser.json())
 
     for (const route of serverless) {
-      route.execute(this.app, this.db, this.serverless[route.name] || {})
+      route.execute(
+        this.app,
+        this.db,
+        (this.serverless as any)[route.name] || {},
+      )
     }
   }
 

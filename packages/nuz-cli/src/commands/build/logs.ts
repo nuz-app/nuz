@@ -26,7 +26,13 @@ export const bundleIsDone = (name: string, integrity: string) => {
   log()
 }
 
-export const showErrorsAndWarnings = ({ errors, warnings }) => {
+export const showErrorsAndWarnings = ({
+  errors,
+  warnings,
+}: {
+  errors: string[]
+  warnings: string[]
+}) => {
   if (errors.length > 0) {
     error('Have some errors from stats of bundle')
     errors.forEach(item => log(item))
@@ -38,9 +44,9 @@ export const showErrorsAndWarnings = ({ errors, warnings }) => {
   }
 }
 
-export const buildFailed = err => {
+export const buildFailed = (errorDetails: string) => {
   error(`Have an error while bundle module`)
-  log(err)
+  log(errorDetails)
 }
 
 export const configIsNotFound = common.configIsNotFound

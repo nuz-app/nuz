@@ -1,8 +1,8 @@
 const getEmptyPackage = () => ({
-  name: null,
+  name: undefined,
   tags: {
-    upstream: null,
-    fallback: null,
+    upstream: undefined,
+    fallback: undefined,
   },
   schedule: {},
   versions: {},

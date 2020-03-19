@@ -4,36 +4,39 @@ import io from 'socket.io-client'
 
 import { LinkedConfig, ModulesConfig } from '../types'
 
-import fetchWithTimeout from '../utils/fetchWithTimeout'
-
 const createSocket = (url: URL) =>
   io.connect(url.host, {
     path: url.pathname,
   })
 
 class Linked {
-  private readonly _socket: SocketIOClient.Socket
+  private readonly _socket: SocketIOClient.Socket | undefined
   private readonly _watching: string[]
   private _modules: ModulesConfig
 
   constructor(private readonly linked: LinkedConfig) {
-    const { port } = this.linked
+    const { port } = this.linked || {}
 
-    const watchUrl = linkedUrls.watch(port)
-    console.log({ watchUrl })
+    const isUnused = !this.linked || !port
+
+    const watchUrl = !isUnused && linkedUrls.watch(port as any)
 
     // Create connection and save io and get linked watch info
-    this._socket = createSocket(watchUrl)
-
-    console.log(this._socket, 'this._socket')
+    this._socket = !watchUrl ? undefined : createSocket(watchUrl)
 
     // Create empty watching list
     this._watching = []
+
+    this._modules = {}
   }
 
   private async waitConnect() {
     return new Promise((resolve, reject) => {
-      this._socket.on('connect', error => {
+      if (!this._socket) {
+        return resolve(true)
+      }
+
+      this._socket.on('connect', (error: Error) => {
         if (error) {
           reject(error)
         } else {
@@ -47,11 +50,16 @@ class Linked {
     window.location.reload()
   }
 
-  private bindEvents(dfPromise: DeferedPromise) {
+  private async bindEvents(dfPromise: DeferedPromise<any>) {
+    if (!this._socket) {
+      dfPromise.resolve(true)
+      return
+    }
+
     // Bind event on `define`, received modules as linked modules
     this._socket.on(
       LINKED_DEFINE_EVENT,
-      ({ ready, modules: linkedModules }) => {
+      ({ ready, modules: linkedModules }: any) => {
         console.log({ ready, linkedModules })
         this._modules = linkedModules
 
@@ -63,8 +71,8 @@ class Linked {
     )
 
     // Bind event on `change`, received modules as changed modules
-    this._socket.on(LINKED_CHANGE_EVENT, ({ modules: changedModules }) => {
-      const includingModulesChanged = changedModules.some(name =>
+    this._socket.on(LINKED_CHANGE_EVENT, ({ modules: changedModules }: any) => {
+      const includingModulesChanged = changedModules.some((name: any) =>
         this._watching.includes(name),
       )
       if (includingModulesChanged) {
@@ -74,10 +82,13 @@ class Linked {
   }
 
   async prepare() {
+    const connectPromise = this.waitConnect()
+
     const dfPromise = deferedPromise()
+    await dfPromise.ready
+
     this.bindEvents(dfPromise)
 
-    const connectPromise = this.waitConnect()
     console.log('done!!')
 
     return await Promise.all([dfPromise, connectPromise])

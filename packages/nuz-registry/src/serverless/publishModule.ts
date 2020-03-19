@@ -6,7 +6,7 @@ import onRoute from '../utils/onRoute'
 
 export const name = 'publishModule'
 
-export const execute = (app: Express, db: ModelDB, options) => {
+export const execute = (app: Express, db: ModelDB) => {
   app.post(
     '/module',
     onRoute(async (request, response) => {

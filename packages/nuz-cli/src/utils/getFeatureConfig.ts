@@ -14,7 +14,7 @@ const stylesExtensions = [
   ...SASS_EXTENSIONS,
 ]
 
-const useIfOk = (value: boolean | undefined, checker: () => boolean) => {
+const useIfOk = <T>(value: T, checker: () => T): T => {
   if (typeof value === 'boolean' || checkIsObject(value)) {
     return value
   }
@@ -42,7 +42,8 @@ const getFeatureConfig = (dir: string, config: ModuleConfig): FeatureConfig => {
 
   const useReact = useIfOk(
     options.react,
-    () => (glob.sync(path.join(dir, 'src/**/*{.tsx,.jsx}')) || []).length > 0,
+    (): boolean =>
+      (glob.sync(path.join(dir, 'src/**/*{.tsx,.jsx}')) || []).length > 0,
   )
 
   const useCss = useIfOk(

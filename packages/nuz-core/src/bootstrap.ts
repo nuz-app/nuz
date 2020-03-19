@@ -45,7 +45,7 @@ const bootstrap = async (
     const registryUrl =
       typeof config.registry === 'string'
         ? config.registry
-        : config.registry.url
+        : (config.registry as any).url
 
     configOnRegistry = await getConfig<BootstrapConfig>(
       registryUrl,

@@ -4,7 +4,7 @@ import Modules from '../../classes/Modules'
 
 import * as selfHelpers from '../selfHelpers'
 
-export let refModules = selfHelpers.get()[MODULES_KEY]
+export let refModules = (selfHelpers.get() as any)[MODULES_KEY]
 
 export const initModules = () => {
   if (!refModules) {

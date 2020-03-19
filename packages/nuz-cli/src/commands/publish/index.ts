@@ -33,7 +33,7 @@ const execute = async ({ fallback }: yargs.Argv<PublishCommand>) => {
 
   const { name, version, output, library, registry } = moduleConfig
 
-  if (!registry.token || !registry.endpoint) {
+  if (!registry || !registry.token || !registry.endpoint) {
     logs.registryConfigIsInvalid()
     return exit(1)
   }
@@ -71,7 +71,7 @@ const execute = async ({ fallback }: yargs.Argv<PublishCommand>) => {
       { fallback },
     )
   } catch (error) {
-    logs.publishFailed(error)
+    logs.publishFailed(error.message)
     return exit(1)
   }
 

@@ -6,28 +6,28 @@ import createQuestions from '../../utils/createQuestions'
 const getNameQuestion = () => ({
   type: 'string',
   name: 'name',
-  message: `Module name:`,
-  validate: value => !!value,
+  message: `What is your module named?`,
+  validate: (value: string) => !!value,
 })
 
 const getLibraryQuestion = (defaultValue: string) => ({
   type: 'string',
   name: 'library',
-  message: `Library name (exported name):`,
+  message: `Set library name (exported name)`,
   default: defaultValue,
 })
 
 const getVersionQuestion = () => ({
   type: 'string',
   name: 'version',
-  message: `Version:`,
+  message: `Version`,
   default: '0.1.0',
 })
 
 const getTemplateQuestion = () => ({
   type: 'string',
   name: 'template',
-  message: `Template using:`,
+  message: `What template you want to use?`,
   default: false,
 })
 
@@ -41,19 +41,24 @@ interface InfoResults {
 const createQuestionsGetInfo = async ({
   name: _name,
   template: _template,
-}: Pick<InfoResults, 'name' | 'template'>): Promise<InfoResults> => {
+}: Pick<InfoResults, 'name' | 'template'>): Promise<
+  InfoResults | undefined
+> => {
   const { name } =
     (_name && { name: _name }) ||
     (await createQuestions<Pick<InfoResults, 'name'>>([getNameQuestion()]))
   if (!name) {
-    return null
+    return undefined
   }
 
   const restQuestions = [
-    !_template && getTemplateQuestion(),
     getLibraryQuestion(_upperFirst(_camelCase(name))),
     getVersionQuestion(),
-  ].filter(Boolean)
+  ]
+
+  if (!_template) {
+    restQuestions.unshift(getTemplateQuestion() as any)
+  }
 
   const { library, template = _template, version } = await createQuestions<
     Omit<InfoResults, 'name'>

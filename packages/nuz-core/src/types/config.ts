@@ -17,7 +17,7 @@ export interface RegistryConfig {
 }
 
 export interface LinkedConfig {
-  port: number
+  port?: number
 }
 
 export interface SharedConfig {

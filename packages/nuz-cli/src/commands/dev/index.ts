@@ -8,8 +8,9 @@ import exitIfModuleInsufficient from '../../utils/exitIfModuleInsufficient'
 import getFeatureConfig from '../../utils/getFeatureConfig'
 import * as paths from '../../utils/paths'
 import { exit, onExit } from '../../utils/process'
-import serve from '../../utils/serve'
 import runWatchMode from '../../utils/runWatchMode'
+import serve from '../../utils/serve'
+import * as webpackCompiler from '../../utils/webpackCompiler'
 import webpackConfigFactory from '../../utils/webpackConfigFactory'
 
 import * as logs from './logs'
@@ -50,11 +51,13 @@ const execute = async ({ port: _port }: yargs.Argv<DevCommand>) => {
     featureConfig,
   )
 
-  const watcher = await runWatchMode(buildConfig)
+  const watcher = await runWatchMode(
+    buildConfig as webpackCompiler.AllowWebpackConfig,
+  )
   const port = _port || 4000
   const server = serve({
     port,
-    dir: buildConfig.output.path,
+    dir: buildConfig.output.path as string,
   })
 
   const upstreamUrl = `http://localhost:${port}/${buildConfig.output.filename}`

@@ -6,7 +6,7 @@ import onRoute from '../utils/onRoute'
 
 export const name = 'removeScope'
 
-export const execute = (app: Express, db: ModelDB, options) => {
+export const execute = (app: Express, db: ModelDB) => {
   app.delete(
     '/permission/scope',
     onRoute(async (request, response) => {

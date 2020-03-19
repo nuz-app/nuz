@@ -8,13 +8,19 @@ declare class ModelDB {
    * @param secretKey serect key
    * @param scope scope
    */
-  createToken(secretKey: string, scope: string[]): Promise<{ token: string }>
+  createToken(
+    secretKey: string | undefined,
+    scope: string[],
+  ): Promise<{ token: string }>
   /**
    *  Delete a token
    * @param secretKey serect key
    * @param token token
    */
-  deleteToken(secretKey: string, token: string): Promise<{ deleted: number }>
+  deleteToken(
+    secretKey: string | undefined,
+    token: string,
+  ): Promise<{ deleted: number }>
 
   /**
    * Set scope by token
@@ -23,7 +29,7 @@ declare class ModelDB {
    * @param scope scope
    */
   setScope(
-    secretKey: string,
+    secretKey: string | undefined,
     token: string,
     scope: string[],
   ): Promise<{ updated: number }>
@@ -34,7 +40,7 @@ declare class ModelDB {
    * @param scope scope
    */
   removeScope(
-    secretKey: string,
+    secretKey: string | undefined,
     token: string,
     scope: string[],
   ): Promise<{ updated: number }>
@@ -45,7 +51,7 @@ declare class ModelDB {
    * @param scope scope
    */
   extendScope(
-    secretKey: string,
+    secretKey: string | undefined,
     token: string,
     scope: string[],
   ): Promise<{ updated: number }>
