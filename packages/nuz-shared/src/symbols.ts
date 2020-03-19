@@ -16,5 +16,9 @@ export const ROOT_KEY = !symbolSupported
   ? '@nuz/core.root'
   : Symbol.for('@nuz/core.root')
 
+export const INIT_KEY = !symbolSupported
+  ? '@nuz/module.initialized'
+  : Symbol.for('@nuz/module.initialized')
+
 // Must be a string
 export const DEPENDENCIES_KEY = '@nuz/core.dependencies'

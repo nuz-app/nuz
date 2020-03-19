@@ -5,4 +5,4 @@ export const get = () =>
 export const set = (key: any, value: any) =>
   Object.defineProperty(get(), key, { value })
 
-export const has = (key: any) => (!!get() as any)[key]
+export const has = (key: any) => !!(get() as any)[key]

@@ -1,7 +1,7 @@
+import { INIT_KEY } from '@nuz/shared'
+
 import * as selfHelpers from './selfHelpers'
 
-const key = Symbol.for('@nuz/module.initialized')
+export const mark = () => selfHelpers.set(INIT_KEY, true)
 
-export const mark = () => selfHelpers.set(key, true)
-
-export default () => selfHelpers.has(key)
+export default () => selfHelpers.has(INIT_KEY)
