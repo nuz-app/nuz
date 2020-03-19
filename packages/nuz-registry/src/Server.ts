@@ -1,5 +1,8 @@
 import bodyParser from 'body-parser'
+import compression from 'compression'
 import express from 'express'
+import http from 'http'
+import spdy from 'spdy'
 
 import { DBTypes, ServerlessOptions, ServerOptions } from './types'
 
@@ -7,6 +10,8 @@ import ModelDB from './classes/ModelDB'
 import MongoDB from './classes/MongoDB'
 
 import serverless from './serverless'
+
+import loadCertificateDefault from './utils/loadCertificateDefault'
 
 const dbMaps = {
   [DBTypes.mongodb]: MongoDB,
@@ -16,10 +21,11 @@ class Server {
   private readonly key: string
   private readonly db: ModelDB
   private readonly app: express.Express
+  private readonly server: http.Server
   private readonly serverless: ServerlessOptions
 
   constructor(options: ServerOptions) {
-    const { key, db } = options
+    const { https, key, db, compression: compress } = options
 
     // Init db to manage config
     const Database = dbMaps[db.type]
@@ -32,6 +38,20 @@ class Server {
 
     // Init app to listen requests
     this.app = express()
+
+    // Check if using secure connection
+    if (https) {
+      const httpsConfig =
+        https === true ? Object.assign({}, loadCertificateDefault()) : https
+      this.server = spdy.createServer(httpsConfig, this.app)
+    } else {
+      this.server = http.createServer(this.app)
+    }
+
+    if (compress) {
+      const compressionConfig = compress === true ? {} : compress
+      this.app.use(compression(compressionConfig))
+    }
 
     // Set serverless config
     this.serverless = options.serverless || {}
@@ -57,7 +77,7 @@ class Server {
   }
 
   async listen(port: number) {
-    this.app.listen(port, () =>
+    this.server.listen(port, () =>
       console.log(`Registry server listening on port ${port}!`),
     )
   }
