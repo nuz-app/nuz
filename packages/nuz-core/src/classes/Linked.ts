@@ -5,7 +5,7 @@ import io from 'socket.io-client'
 import { LinkedConfig, ModulesConfig } from '../types'
 
 const createSocket = (url: URL) =>
-  io.connect(url.host, {
+  io.connect(url.origin, {
     path: url.pathname,
   })
 
