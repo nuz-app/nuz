@@ -10,11 +10,11 @@ import {
 } from '../types'
 
 export const local = (name: string, globals: Globals) => {
-  try {
-    const moduleId = require.resolve(name)
-    return require(moduleId)
-    // tslint:disable-next-line: no-empty
-  } catch (error) {}
+  // try {
+  //   const moduleId = require.resolve(name)
+  //   return require(moduleId)
+  //   // tslint:disable-next-line: no-empty
+  // } catch (error) {}
 
   try {
     return (globals.get() as any)[name]
