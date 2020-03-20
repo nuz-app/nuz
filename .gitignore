@@ -90,3 +90,6 @@ typings/
 
 # Other
 .git-backup
+
+# Keys
+keys/
