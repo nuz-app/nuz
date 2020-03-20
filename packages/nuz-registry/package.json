@@ -23,6 +23,7 @@
     "compression": "^1.7.4",
     "express": "^4.17.1",
     "mongoose": "^5.9.3",
+    "selfsigned": "^1.10.7",
     "spdy": "^4.0.1"
   },
   "devDependencies": {
