@@ -1,4 +1,9 @@
-import { checkIsObject, jsonHelpers } from '@nuz/utils'
+import {
+  checkIsObject,
+  deferedPromise,
+  DeferedPromise,
+  jsonHelpers,
+} from '@nuz/utils'
 
 import {
   BaseItemConfig,
@@ -71,6 +76,7 @@ export interface LoadResults<M = unknown> {
 }
 
 class Modules {
+  private readonly _readyPromise: DeferedPromise<boolean>
   private readonly _config: Config
   private readonly _platform: RuntimePlatforms
   private readonly _globals: Globals
@@ -101,6 +107,9 @@ class Modules {
     this._resolvedModules = new Caches()
     this._resolvedDependencies = new Caches()
     this._pingResources = new Caches()
+
+    // Something great
+    this._readyPromise = deferedPromise<boolean>()
   }
 
   private async linkModules() {
@@ -440,6 +449,11 @@ class Modules {
   }
 
   private optimizeConnection() {
+    const isNode = this._platform === RuntimePlatforms.node
+    if (isNode) {
+      return false
+    }
+
     const modules = this.getAllModules()
     const modulesKeys = Object.keys(modules)
 
@@ -475,9 +489,20 @@ class Modules {
 
     // Preload resources
     await this.preload()
+
+    this._readyPromise.resolve(true)
+  }
+
+  async ready() {
+    return await Promise.all([this._readyPromise.ready, this._readyPromise])
   }
 
   async preload() {
+    const isNode = this._platform === RuntimePlatforms.node
+    if (isNode) {
+      return false
+    }
+
     const modules = this.getAllModules()
     const preload = this._config.getPreload()
 
@@ -498,6 +523,8 @@ class Modules {
   }
 
   async loadByName<M = unknown>(name: string): Promise<LoadResults<M>> {
+    await this.ready()
+
     const modules = this.getAllModules()
 
     const item = modules[name] as RequiredBaseItem
