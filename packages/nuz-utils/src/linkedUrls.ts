@@ -1,8 +1,6 @@
-import internalIp from 'internal-ip'
-
 const LOCAL_HOST = 'localhost'
 
-export const ipv4 = () => internalIp.v4.sync() || LOCAL_HOST
+export const ipv4 = () => LOCAL_HOST
 
 export const modules = (port: number): URL => {
   const protocol = 'http'

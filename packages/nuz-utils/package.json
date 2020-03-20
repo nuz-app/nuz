@@ -18,8 +18,7 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "axios": "^0.19.2",
-    "internal-ip": "^6.0.0"
+    "axios": "^0.19.2"
   },
   "devDependencies": {}
 }
