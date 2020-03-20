@@ -49,10 +49,10 @@ const setExternals = (name: string) => ({
 const defaultConfig = {
   publicPath: '/',
   format: 'umd' as webpack.LibraryTarget,
-  // ref: https://github.com/webpack/webpack/issues/2145#issuecomment-294361203
-  // suggested: `cheap-module-source-map`
-  devtool: 'eval-source-map' as webpack.Options.Devtool,
   externals: {},
+  // ref: https://github.com/webpack/webpack/issues/2145#issuecomment-294361203
+  // suggested: `eval-source-map` (dev), `hidden-source-map` (pro)
+  // devtool: 'eval-source-map' as webpack.Options.Devtool,
 }
 
 const webpackConfigFactory = (
@@ -69,19 +69,24 @@ const webpackConfigFactory = (
   const {
     library,
     format,
-    devtool,
     input,
     externals,
     output,
     publicPath,
     analyzer,
-    webpack: webpackCustomer,
     shared,
+    webpack: webpackCustomer,
+    devtool: devtoolCustomer,
   } = Object.assign({}, defaultConfig, moduleConfig)
 
   const target = 'web'
-  const sourceMap = !!devtool
   const mode = dev ? 'development' : 'production'
+  const devtool = !devtoolCustomer
+    ? mode
+      ? 'eval-source-map'
+      : 'hidden-source-map'
+    : devtoolCustomer
+  const sourceMap = !!devtool
   const bail = !dev
   const inputFile = path.join(dir, input)
   const distPath = path.join(dir, path.dirname(output))
