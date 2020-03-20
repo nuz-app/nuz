@@ -8,6 +8,7 @@ const linkFactory = (url: string, { integrity, ...rest }: PreloadConfig) => {
 
   Object.assign(link, rest, { integrity })
   link.rel = 'preload'
+  link.crossOrigin = 'anonymous'
   // @ts-ignore
   link.importance = 'auto'
   link.href = url

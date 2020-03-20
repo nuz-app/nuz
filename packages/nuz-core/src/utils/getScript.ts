@@ -2,7 +2,6 @@ import fetchWithTimeout, { FetchOptions } from './fetchWithTimeout'
 
 const defaultConfig = {
   cache: 'default',
-  headers: { 'content-type': 'text/javascript' },
 }
 
 const getScript = async (
