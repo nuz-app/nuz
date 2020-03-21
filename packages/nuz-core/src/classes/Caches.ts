@@ -16,6 +16,10 @@ class Caches<K = string, V = unknown> {
   get(key: K) {
     return this._data.get(key)
   }
+
+  values(): V[] {
+    return Array.from(this._data.values())
+  }
 }
 
 export default Caches

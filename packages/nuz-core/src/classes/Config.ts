@@ -34,7 +34,7 @@ const setDefaultIfUnset = <T extends BaseItemConfig>(
 
 export type ConfigInitial = Pick<
   BootstrapConfig,
-  'shared' | 'preload' | 'dev' | 'vendors' | 'modules' | 'linked'
+  'ssr' | 'shared' | 'preload' | 'dev' | 'vendors' | 'modules' | 'linked'
 >
 
 class Config {
@@ -45,9 +45,11 @@ class Config {
   private _preload: BootstrapConfig['preload']
   private _locked: boolean
   private _dev: boolean
+  private _ssr: boolean
 
   constructor({
     dev,
+    ssr,
     preload,
     vendors,
     modules,
@@ -60,6 +62,7 @@ class Config {
     this._modules = {}
     this._shared = {}
     this._linked = linked
+    this._ssr = typeof ssr === 'boolean' ? ssr : false
     this._preload = preload || []
     this._locked = false
 
@@ -78,6 +81,10 @@ class Config {
 
   isDev() {
     return this._dev
+  }
+
+  isSSR() {
+    return this._ssr
   }
 
   getLinked() {

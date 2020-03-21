@@ -70,9 +70,13 @@ const pickIfSet = (upstream: any, config: RequiredBaseItem) => {
   }
 }
 
+const PRECONNECT_LIMIT_DOMAIN = 3
+
+type TagElement = DOMHelpers.DefinedElement
+
 export interface LoadResults<M = unknown> {
   module: M
-  styles: Element[]
+  styles: TagElement[]
 }
 
 class Modules {
@@ -81,11 +85,12 @@ class Modules {
   private readonly _platform: RuntimePlatforms
   private readonly _globals: Globals
   private readonly _dev: boolean
+  private readonly _ssr: boolean
   private readonly _resolvedModules: Caches<string, LoadResults<any>>
   private readonly _resolvedDependencies: Caches<string, any>
   private readonly _pingResources: Caches<
     string,
-    { script: Element; styles: Element[] }
+    { script: TagElement; styles: TagElement[] }
   >
 
   // @ts-ignore
@@ -104,12 +109,21 @@ class Modules {
     this._dev = this._config.isDev()
 
     // Init maps for resolved modules, shared and ping resources
-    this._resolvedModules = new Caches()
     this._resolvedDependencies = new Caches()
+    this._resolvedModules = new Caches()
     this._pingResources = new Caches()
 
-    // Something great
+    // Create defered promise to checking ready
     this._readyPromise = deferedPromise<boolean>()
+
+    // Check SSR mode is valid
+    const isNode = this._platform === RuntimePlatforms.node
+    const isUseSSR = this._config.isSSR()
+    this._ssr = isUseSSR && isNode
+
+    if (!isUseSSR && isNode) {
+      throw new Error(`Can't run in Node environment if not enable SSR mode!`)
+    }
   }
 
   private async linkModules() {
@@ -168,11 +182,6 @@ class Modules {
   }
 
   private async ping(item: RequiredBaseItem) {
-    const isNode = this._platform === RuntimePlatforms.node
-    if (isNode) {
-      return false
-    }
-
     const canUseLocal = this._dev && (await this.canUseLocal(item))
     if (canUseLocal) {
       return false
@@ -245,7 +254,6 @@ class Modules {
     alias,
     exportsOnly,
   }: BaseItemConfig & { format: ModuleFormats; code: string }) {
-    const isNode = this._platform === RuntimePlatforms.node
     const context = this.createContext()
 
     try {
@@ -253,7 +261,7 @@ class Modules {
         format,
       })
 
-      if (isNode) {
+      if (this._ssr) {
         await script.runInContext(context)
       } else {
         await script.runInScript(context)
@@ -290,8 +298,6 @@ class Modules {
     item: RequiredBaseItem,
     options?: InstallConfig,
   ) {
-    const isNode = this._platform === RuntimePlatforms.node
-
     const { name, upstream } = item
     const { library, format, alias, exportsOnly } = pickIfSet(upstream, item)
     const { timeout, retries } = ensureInstallConfig(options)
@@ -316,11 +322,9 @@ class Modules {
       exportsOnly,
     })
 
-    const moduleStyles = isNode
-      ? []
-      : (styles || []).map(style =>
-          DOMHelpers.loadStyle(style.url, { integrity: style.integrity }),
-        )
+    const moduleStyles = (styles || []).map(style =>
+      DOMHelpers.loadStyle(style.url, { integrity: style.integrity }),
+    )
 
     return {
       module: exportsModule,
@@ -342,8 +346,10 @@ class Modules {
       linked: true,
     })
 
-    //  Watch and reload if module was changed
-    this._linked.watch([item.name])
+    //  Watch and reload if module was changed, only client-side
+    if (!this._ssr) {
+      this._linked.watch([item.name])
+    }
 
     return resolved
   }
@@ -438,9 +444,9 @@ class Modules {
     const resolvedCache = this._resolvedModules
 
     const key = this.getKey(item)
-    if (resolvedCache.has(key)) {
-      return resolvedCache.get(key) as any
-    }
+    // if (resolvedCache.has(key)) {
+    //   return resolvedCache.get(key) as any
+    // }
 
     const resolvedModule = await this.resolve(item, options)
     resolvedCache.set(key, resolvedModule)
@@ -448,11 +454,11 @@ class Modules {
     return resolvedModule
   }
 
-  private optimizeConnection() {
-    const isNode = this._platform === RuntimePlatforms.node
-    if (isNode) {
-      return false
-    }
+  // Note: fn only call once times in prepare
+  private async optimizeConnection() {
+    // if (this._ssr) {
+    //   return false
+    // }
 
     const modules = this.getAllModules()
     const modulesKeys = Object.keys(modules)
@@ -472,7 +478,10 @@ class Modules {
     }, [] as string[])
 
     const deduplicated = Array.from(new Set(urls))
-    const dnsPrefetchs = deduplicated.map(item => DOMHelpers.dnsPrefetch(item))
+    const isPreconnect = deduplicated.length <= PRECONNECT_LIMIT_DOMAIN
+    const dnsPrefetchs = deduplicated.map(item =>
+      DOMHelpers.dnsPrefetch(item, isPreconnect),
+    )
     return dnsPrefetchs
   }
 
@@ -481,6 +490,7 @@ class Modules {
 
     if (this._dev) {
       // Call to check and use linked modules if availability
+      // Note: this feature take time for wait to ready
       await this.linkModules()
     }
 
@@ -490,6 +500,7 @@ class Modules {
     // Preload resources
     await this.preload()
 
+    // Fired event to inform for other know modules is ready
     this._readyPromise.resolve(true)
   }
 
@@ -498,11 +509,6 @@ class Modules {
   }
 
   async preload() {
-    const isNode = this._platform === RuntimePlatforms.node
-    if (isNode) {
-      return false
-    }
-
     const modules = this.getAllModules()
     const preload = this._config.getPreload()
 
@@ -534,6 +540,24 @@ class Modules {
 
     const resolved = await this.load<M>(item)
     return resolved
+  }
+
+  getTagsInHead(): TagElement[] {
+    // await this.ready()
+
+    const resources = this._pingResources.values()
+    const modules = this._resolvedModules.values()
+
+    const tags = [...resources].reduce(
+      (acc, item) => acc.concat(item.script, ...item.styles),
+      [] as TagElement[],
+    )
+
+    modules.forEach(item => {
+      tags.concat(item.styles)
+    })
+
+    return tags
   }
 }
 

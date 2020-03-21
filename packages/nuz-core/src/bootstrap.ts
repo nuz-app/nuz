@@ -59,6 +59,7 @@ const bootstrap = async (
 
   const {
     dev,
+    ssr,
     preload,
     shared,
     linked: definedLinked,
@@ -69,6 +70,7 @@ const bootstrap = async (
   // Set vendors and modules to config, using in modules manager
   const _config = initConfig({
     dev,
+    ssr,
     preload,
     shared,
     linked: definedLinked,
@@ -87,7 +89,8 @@ const bootstrap = async (
   const modules = getModules()
   await modules.prepare()
 
-  // Lock config
+  // Lock config, not allow changing any config
+  // Note: change config after initialized is dangerous!
   _config.lock()
 
   // Emit a ready event

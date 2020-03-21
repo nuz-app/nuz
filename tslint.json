@@ -22,7 +22,7 @@
         "printWidth": 80
       }
     ],
-    "quotemark": [true, "single"],
+    "quotemark": [true, "single", "jsx-double"],
     "trailing-comma": [true],
     "semicolon": [true, "never"],
     "ordered-imports": [true],

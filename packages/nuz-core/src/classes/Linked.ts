@@ -89,8 +89,6 @@ class Linked {
 
     this.bindEvents(dfPromise)
 
-    console.log('done!!')
-
     return await Promise.all([dfPromise, connectPromise])
   }
 

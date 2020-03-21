@@ -1,46 +1,58 @@
-interface PreloadConfig {
+export interface PreloadConfig {
   [attr: string]: any
   integrity: string | undefined
 }
 
-const linkFactory = (url: string, { integrity, ...rest }: PreloadConfig) => {
-  const link = document.createElement('link')
+export interface DefinedElement {
+  type: string
+  attributes: { [attribute: string]: any }
+}
 
-  Object.assign(link, rest, { integrity })
-  link.rel = 'preload'
-  link.crossOrigin = 'anonymous'
-  // @ts-ignore
-  link.importance = 'auto'
-  link.href = url
+const defaultConfigForPreload = {
+  rel: 'preload',
+  crossOrigin: 'anonymous',
+  importance: 'auto',
+}
 
+export const createElement = (
+  type: string,
+  attributes: { [key: string]: any },
+): DefinedElement => ({
+  type,
+  attributes,
+})
+
+export const appendToHead = (element: Element) =>
+  document.head.appendChild(element)
+
+export const preloadStyle = (href: string, config: PreloadConfig) => {
+  const link = createElement(
+    'link',
+    Object.assign({ href, as: 'style' }, defaultConfigForPreload, config),
+  )
+
+  // appendToHead(link)
   return link
 }
 
-const appendToHead = (element: Element) => document.head.appendChild(element)
+export const preloadScript = (href: string, config: PreloadConfig) => {
+  const link = createElement(
+    'link',
+    Object.assign({ href, as: 'fetch' }, defaultConfigForPreload, config),
+  )
 
-export const preloadStyle = (url: string, config: PreloadConfig) => {
-  const link = linkFactory(url, config)
-  link.as = 'style'
-
-  appendToHead(link)
+  // appendToHead(link)
   return link
 }
 
-export const preloadScript = (url: string, config: PreloadConfig) => {
-  const link = linkFactory(url, config)
-  link.as = 'fetch'
+export const dnsPrefetch = (href: string, isPreconnect: boolean = false) => {
+  const link = createElement('link', {
+    href,
+    as: 'fetch',
+    ref: isPreconnect ? 'preconnect' : 'dns-prefetch',
+  })
 
-  appendToHead(link)
-  return link
-}
-
-export const dnsPrefetch = (url: string) => {
-  const link = document.createElement('link')
-
-  link.rel = 'dns-prefetch'
-  link.href = url
-
-  appendToHead(link)
+  // appendToHead(link)
   return link
 }
 
@@ -49,14 +61,19 @@ interface StyleConfig {
   [attr: string]: any
 }
 
-export const loadStyle = (url: string, config?: StyleConfig) => {
-  const link = document.createElement('link')
+export const loadStyle = (href: string, config?: StyleConfig) => {
+  const link = createElement(
+    'link',
+    Object.assign(
+      {
+        href,
+        type: 'text/css',
+        rel: 'stylesheet',
+      },
+      config,
+    ),
+  )
 
-  Object.assign(link, config)
-  link.rel = 'stylesheet'
-  link.type = 'text/css'
-  link.href = url
-
-  appendToHead(link)
+  // appendToHead(link)
   return link
 }

@@ -60,7 +60,7 @@ const execute = async ({
   logs.notifyOnStart()
 
   // Create build directory for worksapce
-  const publicPath = `${linkedUrl.href}/`
+  const publicPath = `${linkedUrl.href}`
 
   const buildDir = paths.nuz(moduleDir, 'modules')
   fs.ensureDir(buildDir)

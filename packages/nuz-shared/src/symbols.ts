@@ -20,5 +20,9 @@ export const INIT_KEY = !symbolSupported
   ? '@nuz/module.initialized'
   : Symbol.for('@nuz/module.initialized')
 
+export const REACT_DOM_INJECTED = !symbolSupported
+  ? '@nuz/react.injected'
+  : Symbol.for('@nuz/react.injected')
+
 // Must be a string
 export const DEPENDENCIES_KEY = '@nuz/core.dependencies'

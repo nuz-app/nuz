@@ -30,6 +30,10 @@ export interface BootstrapConfig {
    */
   dev?: boolean
   /**
+   * Allow server-side-rendering
+   */
+  ssr?: boolean
+  /**
    * Config registry to resolve
    */
   registry?: string | RegistryConfig
