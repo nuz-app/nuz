@@ -11,7 +11,14 @@ export { default as bootstrap } from './bootstrap'
 export { default as getTagsInHead } from './getTagsInHead'
 export { default as checkIsReady } from './checkIsReady'
 
-export { default as reactHelpersFactory } from './reactHelpersFactory'
-export { default as nextHelpersFactory } from './nextHelpersFactory'
+export {
+  default as reactHelpersFactory,
+  ReactHelpersFactoryOptions,
+  ReactHelpersConfig,
+} from './reactHelpersFactory'
+export {
+  default as nextHelpersFactory,
+  NextHelpersConfig,
+} from './nextHelpersFactory'
 
 export { default as events } from './events'
