@@ -3,10 +3,40 @@ import { REACT_DOM_INJECTED } from '@nuz/shared'
 import checkIsReady from './checkIsReady'
 import getTagsInHead from './getTagsInHead'
 
-function reactHelpersFactory(React: any, ReactDOM: any) {
+export interface ReactHelpersConfig {
+  React: any
+  ReactDOM: any
+}
+
+export interface ReactHelpersFactoryOptions {
+  autoInject?: boolean
+}
+
+const defaultOptions = {
+  autoInject: true,
+}
+
+function reactHelpersFactory(
+  { React, ReactDOM }: ReactHelpersConfig,
+  options?: ReactHelpersFactoryOptions,
+) {
+  const { autoInject } = Object.assign({}, defaultOptions, options)
+
+  if (!React) {
+    throw new Error(
+      'React fields in config is required to use "reactHelpersFactory" helper!',
+    )
+  }
+
+  if (!ReactDOM) {
+    throw new Error(
+      'ReactDOM fields in config is required to use "reactHelpersFactory" helper!',
+    )
+  }
+
   const { useMemo } = React
 
-  const Bootstrap = ({
+  const App = ({
     component: Component = 'main' as any,
     injectHead: InjectHead,
     children,
@@ -56,7 +86,11 @@ function reactHelpersFactory(React: any, ReactDOM: any) {
     return true
   }
 
-  return { Bootstrap, injectReact }
+  if (autoInject) {
+    injectReact()
+  }
+
+  return { App, injectReact }
 }
 
 export default reactHelpersFactory
