@@ -1,3 +1,5 @@
+import { loadCertificateDefault } from '@nuz/utils'
+
 import bodyParser from 'body-parser'
 import compression from 'compression'
 import express from 'express'
@@ -10,8 +12,6 @@ import ModelDB from './classes/ModelDB'
 import MongoDB from './classes/MongoDB'
 
 import serverless from './serverless'
-
-import loadCertificateDefault from './utils/loadCertificateDefault'
 
 const dbMaps = {
   [DBTypes.mongodb]: MongoDB,
