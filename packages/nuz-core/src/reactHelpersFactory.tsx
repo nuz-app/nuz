@@ -3,6 +3,8 @@ import { REACT_DOM_INJECTED } from '@nuz/shared'
 import checkIsReady from './checkIsReady'
 import getTagsInHead from './getTagsInHead'
 
+import * as DOMHelpers from './utils/DOMHelpers'
+
 export interface ReactHelpersConfig {
   React: any
   ReactDOM: any
@@ -10,6 +12,11 @@ export interface ReactHelpersConfig {
 
 export interface ReactHelpersFactoryOptions {
   autoInject?: boolean
+}
+
+export interface AppProps {
+  component?: React.ElementType
+  injectHead?: React.ElementType
 }
 
 const defaultOptions = {
@@ -36,28 +43,54 @@ function reactHelpersFactory(
 
   const { useMemo } = React
 
-  const App = ({
-    component: Component = 'main' as any,
+  const App: React.FunctionComponent<AppProps> = ({
+    component: Component = 'main',
     injectHead: InjectHead,
     children,
     ...rest
   }) => {
     const definedTags = getTagsInHead()
-    const headTags = useMemo(
-      () =>
-        definedTags.map(item => {
-          const { type: TagComponent, attributes } = item
+    const head = useMemo(() => {
+      const injectHeadIsNotFound = !InjectHead
+      const headTags = injectHeadIsNotFound
+        ? definedTags
+        : definedTags.map(item => {
+            const { type: TagComponent, attributes } = item
 
-          const key = `${attributes.rel}-${attributes.href}`
-          const props = Object.assign({ key }, item.attributes)
-          return <TagComponent {...props} />
-        }),
-      [],
-    )
+            const key = `${attributes.rel}-${attributes.href}`
+            const props = Object.assign({ key }, item.attributes)
+            return <TagComponent {...props} />
+          })
+
+      if (injectHeadIsNotFound) {
+        console.warn(
+          'Please provide injectHead component to render links tag in head!',
+        )
+        console.warn(
+          'Suggestion: use `next/head` for next.js or `helmet` for creact-react-app',
+        )
+
+        if (!DOMHelpers.domIsExsted) {
+          return null
+        }
+
+        // tslint:disable-next-line: semicolon
+        ;(headTags as DOMHelpers.DefinedElement[]).forEach(item => {
+          const tagElement = DOMHelpers.createElement(item)
+          DOMHelpers.appendToHead(tagElement)
+        })
+        console.log({ headTags })
+
+        return null
+      }
+
+      // @ts-ignore
+      return <InjectHead>{headTags}</InjectHead>
+    }, [])
 
     return (
       <Component {...rest} id="main">
-        <InjectHead>{headTags}</InjectHead>
+        {head}
         {children}
       </Component>
     )

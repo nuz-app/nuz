@@ -14,7 +14,7 @@ const defaultConfigForPreload = {
   importance: 'auto',
 }
 
-export const createElement = (
+export const defineElement = (
   type: string,
   attributes: { [key: string]: any },
 ): DefinedElement => ({
@@ -22,37 +22,49 @@ export const createElement = (
   attributes,
 })
 
+export const domIsExsted = () => typeof document !== 'undefined'
+
 export const appendToHead = (element: Element) =>
   document.head.appendChild(element)
 
+export const createElement = (defined: DefinedElement) => {
+  const { type, attributes } = defined
+
+  const element = document.createElement(type)
+
+  const keysOf = Object.keys(attributes)
+  keysOf.forEach(key => {
+    element[key] = attributes[key]
+  })
+
+  return element
+}
+
 export const preloadStyle = (href: string, config: PreloadConfig) => {
-  const link = createElement(
+  const link = defineElement(
     'link',
     Object.assign({ href, as: 'style' }, defaultConfigForPreload, config),
   )
 
-  // appendToHead(link)
   return link
 }
 
 export const preloadScript = (href: string, config: PreloadConfig) => {
-  const link = createElement(
+  const link = defineElement(
     'link',
     Object.assign({ href, as: 'fetch' }, defaultConfigForPreload, config),
   )
 
-  // appendToHead(link)
   return link
 }
 
 export const dnsPrefetch = (href: string, isPreconnect: boolean = false) => {
-  const link = createElement('link', {
+  const link = defineElement('link', {
     href,
     as: 'fetch',
     ref: isPreconnect ? 'preconnect' : 'dns-prefetch',
   })
 
-  // appendToHead(link)
   return link
 }
 
@@ -62,7 +74,7 @@ interface StyleConfig {
 }
 
 export const loadStyle = (href: string, config?: StyleConfig) => {
-  const link = createElement(
+  const link = defineElement(
     'link',
     Object.assign(
       {
@@ -74,6 +86,5 @@ export const loadStyle = (href: string, config?: StyleConfig) => {
     ),
   )
 
-  // appendToHead(link)
   return link
 }
