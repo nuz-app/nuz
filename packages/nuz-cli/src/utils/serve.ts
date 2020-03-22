@@ -11,12 +11,14 @@ import checkIsProductionMode from './checkIsProductionMode'
 export interface ServeConfig {
   port: number
   dir: string
+  hidePoweredBy?: boolean
   https?: boolean | any
   compression?: boolean | any
   cors?: boolean | any
 }
 
 const defaultConfig = {
+  hidePoweredBy: true,
   cors: checkIsProductionMode() ? false : true,
   compression: checkIsProductionMode() ? false : true,
 }
@@ -26,6 +28,7 @@ const serve = (config: ServeConfig) => {
     port,
     dir,
     https,
+    hidePoweredBy,
     compression: compress,
     cors: corsc,
   } = Object.assign({}, defaultConfig, config)
@@ -33,6 +36,10 @@ const serve = (config: ServeConfig) => {
   let server
 
   const app = express()
+
+  if (hidePoweredBy) {
+    app.disable('x-powered-by')
+  }
 
   if (compress) {
     app.use(compression(compress === true ? {} : compress))
