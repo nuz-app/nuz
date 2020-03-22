@@ -131,8 +131,8 @@ function createLoadableComponent(loadFn, options) {
           }
 
           if (!timeoutToReload) {
-            // If production, reload after 1m
-            const timeout = process.env.NODE_ENV !== 'production' ? 250 : (60 * 1000)
+            // If production, reload after 10s
+            const timeout = process.env.NODE_ENV !== 'production' ? 250 : 10000
             timeoutToReload = setTimeout(() => {
               subscription.retry()
               timeoutToReload = 0
