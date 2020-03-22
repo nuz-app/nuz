@@ -194,7 +194,8 @@ function createLoadableComponent(loadFn, options) {
     }
   };
   LoadableComponent.preload = () => init();
-  LoadableComponent.displayName = 'LoadableComponent';
+  // Updated by @nuz/core
+  LoadableComponent.displayName = 'withNuz(LoadableComponent)';
   return react_1.default.forwardRef(LoadableComponent);
 }
 class LoadableSubscription {
