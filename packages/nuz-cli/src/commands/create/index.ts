@@ -8,6 +8,7 @@ import checkIsYarnInstalled from '../../utils/checkIsYarnInstalled'
 import clearConsole from '../../utils/clearConsole'
 import downloadAndExtractTemplate from '../../utils/downloadAndExtractTemplate'
 import * as fs from '../../utils/fs'
+import * as gitHelpers from '../../utils/gitHelpers'
 import installPackages from '../../utils/installPackages'
 import * as localTemplates from '../../utils/localTemplates'
 import * as paths from '../../utils/paths'
@@ -97,6 +98,8 @@ const execute = async ({
     error(`An error occurred, details:`, installed.stdout)
     return exit(1)
   }
+
+  gitHelpers.initGitInDir(moduleDir)
 
   logs.packagesInstalled()
   logs.guide(name, useYarn)

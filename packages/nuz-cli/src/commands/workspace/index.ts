@@ -7,7 +7,6 @@ import * as webpack from 'webpack'
 import * as yargs from 'yargs'
 
 import {
-  Command,
   CommandConfig,
   CommandTypes,
   ModuleConfig,
