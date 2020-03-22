@@ -32,7 +32,7 @@ const execute = async ({ port: _port }: yargs.Argv<DevCommand>) => {
   }
 
   exitIfModuleInsufficient(moduleConfig)
-  const { name } = moduleConfig
+  const { name, serve: serveConfig } = moduleConfig
 
   const featureConfig = getFeatureConfig(moduleDir, moduleConfig)
 
@@ -55,10 +55,12 @@ const execute = async ({ port: _port }: yargs.Argv<DevCommand>) => {
     buildConfig as webpackCompiler.AllowWebpackConfig,
   )
   const port = _port || 4000
-  const server = serve({
-    port,
-    dir: buildConfig.output.path as string,
-  })
+  const server = serve(
+    Object.assign({}, serveConfig, {
+      port,
+      dir: buildConfig.output.path as string,
+    }),
+  )
 
   const upstreamUrl = `http://localhost:${port}/${buildConfig.output.filename}`
   logs.guide({

@@ -6,7 +6,13 @@ import io from 'socket.io'
 import * as webpack from 'webpack'
 import * as yargs from 'yargs'
 
-import { CommandConfig, CommandTypes, WorkspaceCommand } from '../../types'
+import {
+  Command,
+  CommandConfig,
+  CommandTypes,
+  ModuleConfig,
+  WorkspaceCommand,
+} from '../../types'
 
 import clearConsole from '../../utils/clearConsole'
 import * as compilerName from '../../utils/compilerName'
@@ -37,9 +43,8 @@ const execute = async ({
     return exit(1)
   }
 
-  const moduleConfig = _workspace
-    ? ({} as any)
-    : configHelpers.extract(moduleDir, false)
+  const moduleConfig =
+    configHelpers.extract(moduleDir, false) || ({} as ModuleConfig)
   if (!moduleConfig) {
     logs.configIsInvalid()
     return exit(1)
@@ -51,6 +56,8 @@ const execute = async ({
     logs.workspaceIsNotFound()
     return exit(1)
   }
+
+  const { serve: serveConfig } = moduleConfig || {}
 
   const port = _port || 4000
   const linkedUrl = linkedUrls.modules(port)
@@ -147,10 +154,12 @@ const execute = async ({
   )
 
   // Create server to serve file serving and directory listing in workspace
-  const server = serve({
-    port,
-    dir: buildDir,
-  })
+  const server = serve(
+    Object.assign({}, serveConfig, {
+      port,
+      dir: buildDir,
+    }),
+  )
 
   const watchUrl = linkedUrls.watch(port)
   const store = { linkedModules: null as any }

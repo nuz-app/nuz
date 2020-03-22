@@ -1,3 +1,5 @@
+import compression = require('compression')
+import cors = require('cors')
 import webpack = require('webpack')
 import * as yargs from 'yargs'
 
@@ -56,6 +58,18 @@ export interface WorkspaceCommand {
 export interface AnalyzerConfig {
   open: boolean
   statsOptions?: { [key: string]: any }
+}
+
+export interface ServeHttpsConfig {
+  key: Buffer | string
+  cert: Buffer | string
+}
+
+export interface ServeConfig {
+  hidePoweredBy?: boolean
+  https?: boolean | ServeHttpsConfig
+  compression?: boolean | compression.CompressionOptions
+  cors?: boolean | cors.CorsOptions | cors.CorsOptionsDelegate
 }
 
 export interface ModuleConfig {
@@ -122,6 +136,11 @@ export interface ModuleConfig {
    * Shared dependencies module used
    */
   shared?: string[]
+  /**
+   * Serve config
+   * Config using for dev, serve and workspace mode
+   */
+  serve?: ServeConfig
 }
 
 export interface FeatureConfig {

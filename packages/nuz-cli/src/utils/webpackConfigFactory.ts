@@ -106,7 +106,7 @@ const webpackConfigFactory = (
 
   const cacheConfig = cache && {
     type: 'filesystem',
-    cacheDirectory: (paths as any).cache('webpack'),
+    cacheDirectory: (paths as any).cache('bundles'),
     hashAlgorithm: 'md4',
   }
 

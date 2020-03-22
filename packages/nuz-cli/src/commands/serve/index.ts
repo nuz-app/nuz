@@ -27,17 +27,19 @@ const execute = async ({ port: _port }: yargs.Argv<ServeCommand>) => {
     return exit(1)
   }
 
-  const { name, output } = moduleConfig
+  const { name, output, serve: serveConfig } = moduleConfig
 
   clearConsole()
   logs.notifyOnStart(name)
 
   const outputPath = path.dirname(output)
   const port = _port || 4000
-  const server = serve({
-    port,
-    dir: outputPath,
-  })
+  const server = serve(
+    Object.assign({}, serveConfig, {
+      port,
+      dir: outputPath,
+    }),
+  )
 
   logs.guide({
     port,

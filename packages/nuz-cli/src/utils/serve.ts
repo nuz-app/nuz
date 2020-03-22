@@ -6,24 +6,22 @@ import http from 'http'
 import handler from 'serve-handler'
 import spdy from 'spdy'
 
+import { ServeConfig } from '../types'
+
 import checkIsProductionMode from './checkIsProductionMode'
 
-export interface ServeConfig {
+export type ServeFullConfig = ServeConfig & {
   port: number
   dir: string
-  hidePoweredBy?: boolean
-  https?: boolean | any
-  compression?: boolean | any
-  cors?: boolean | any
 }
 
-const defaultConfig = {
+const defaultConfig: ServeConfig = {
   hidePoweredBy: true,
   cors: checkIsProductionMode() ? false : true,
   compression: checkIsProductionMode() ? false : true,
 }
 
-const serve = (config: ServeConfig) => {
+const serve = (config: ServeFullConfig) => {
   const {
     port,
     dir,
