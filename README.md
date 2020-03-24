@@ -81,6 +81,10 @@ And other packages just create to using in the main packages.
 
 Read more at [here](#) 🙈
 
+### Quickstart
+
+[Get started in 5 minutes](#)
+
 ### Examples
 
 * [nuz + create-next-app](#) - using **nuz** with a typescript template created by create-next-app, both *server and client* side render.
@@ -95,3 +99,7 @@ Update soon! ✍️
 ## Contributing
 
 Please see our CONTRIBUTING.md 📝
+
+## Author
+
+Hieu Lam ([@lamhieu-vk](https://github.com/lamhieu-vk)).

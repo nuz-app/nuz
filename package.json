@@ -1,7 +1,7 @@
 {
   "name": "nuz",
   "private": true,
-  "description": "Ecosystems includes cli, tool, registry and more to supports implements micro-frontends with high scalability",
+  "description": "Nuz is a fancy library to implements Micro Frontends compatible with ReactJS and may support more in the future",
   "author": {
     "email": "lamhieu.vk@gmail.com",
     "name": "Hieu Lam",
