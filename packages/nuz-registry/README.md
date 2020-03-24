@@ -1,1 +1,1 @@
-# nuz-cli
+# @nuz/registry
