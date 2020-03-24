@@ -1,8 +1,8 @@
-## Nuz
-
-***
+# Nuz
 
 **Nuz** is a fancy library to implements Micro Frontends compatible with [ReactJS](#) and may support more in the future. 🏃
+
+***
 
 ## What is Micro Frontends?
 
