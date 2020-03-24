@@ -1,6 +1,6 @@
 {
   "name": "@nuz/registry",
-  "description": "Registry server support manage modules and related things",
+  "description": "Provides functions to create a stable, secure and scalable registry server",
   "version": "0.0.1",
   "repository": {
     "type": "git",

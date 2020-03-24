@@ -1,6 +1,6 @@
 {
   "name": "@nuz/core",
-  "description": "Core to define and resolve externals modules, implement as a worker for micro-frontends",
+  "description": "The core is define, resolve and manage  modules from the network in the application",
   "version": "0.0.1",
   "repository": {
     "type": "git",

@@ -1,49 +1,102 @@
 ## Nuz
+
 ***
 
-#### Should use it when?
+**Nuz** is a fancy library to implements Micro Frontends compatible with [ReactJS](#) and may support more in the future. 🏃
 
-**nuz** is created to resolve problems while implementing the micro-frontends project, the solution to build a large website such as e-commerce, social network, and more.
-Techniques, strategies and recipes for building a **modern web app** with **multiple teams** that can **ship features independently**.
+### What is Micro Frontends?
 
-* **Independent** - creating independence for multiple teams to build and release features.
-* **Management** - easy to manage the features, pages or widgets in the application by tags to off, release, rollback or a/b tests.
-* **Scalability** - don't care about project size because it just a module and can be add a lot of modules.
-* **Safely** - the risk of failure and isolating the fault area becomes easier and safer.
+> The idea behind Micro Frontends is to think about a website or web app as **a composition of features** which are owned by **independent teams**. Each team has a **distinct area of business** or **mission** it cares about and specialises in. A team is **cross functional** and develops its features **end-to-end**, from database to user interface.
 
-**tl;dr**: you can use **nuz** to *building modern web* app with *multiple teams*, such as: *e-commerce*, *social network*, and more.
+from [micro-frontends.org](https://micro-frontends.org)
 
-#### How it works?
+> Micro-frontends is a microservice-like architecture that applies the concept of microservices to the browser side. Transforming to a mono-like applications from a single, single application to an application that combines multiple small front-end applications. Each frontend application can also be **standalone run**, **independent development**, **standalone deployment**.
 
-Read more at [here](https://github.com/lamhieu-vk/nuz/blob/master/docs/WORKFLOW.md)
+from [a post in dev.to](https://dev.to/phodal/micro-frontend-architecture-in-action-4n60)
 
-#### Usage
+But you can think easier like... You can use Micro Frontends to building modern web apps with multiple teams, such as e-commerce, social network...
 
-To implement micro-frontends you need a **master app** and one or more **modules**. See **master app** as root application includes config and common dependencies such as `react` `react-dom` `redux`. See each **module** as a feature of a team, it's can build and release independent and using like a normal module in Javascript by `require` but using another way (function).
+#### How to implement Micro Frontends?
 
-* **Master app** allow created by [create-react-app](#) or [create-next-app](#).
-* **Module** allow created by [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-cli) or self-create by using [Rollup](https://github.com/rollup/rollup) or [Webpack](https://github.com/webpack/webpack). Otherway, you can pull templates example for **module** as [here](https://github.com/lamhieu-vk/nuz/tree/master/templates).
+I found some articles about it
 
-You can see examples for micro-frontends projects at [here](https://github.com/lamhieu-vk/nuz/tree/master/examples).
+- [Micro-frontend Architecture in Action with six ways](https://dev.to/phodal/micro-frontend-architecture-in-action-4n60)
 
-### Ecosystems
+- [The Strengths and Benefits of Micro Frontends](https://www.toptal.com/front-end/micro-frontends-strengths-benefits)
 
-* [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-core) - core to define and resolve externals modules, implement as a worker for micro-frontends
-* [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-cli) - cli to supports create, dev, build, serve and publish a module in nuz ecosystems
-* [@nuz/registry](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-registry) - registry server support manage modules and related things
-* [@nuz/utils](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-utils) - includes utils using in nuz packages
-* [@nuz/shared](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-shared) - includes shared symbols and constants using in nuz packages
+- [Implementing a Frontend with Micro-Components](https://itnext.io/micro-frontend-941a5f1a3e72)
 
-### Concepts
+- [Understanding Micro Frontends](https://hackernoon.com/understanding-micro-frontends-b1c11585a297)
 
-* **Master app / Master-module** - a root module, it is incluing modules define and install common dependencies. Inside [master app](#) of [master app](#) may contain one or more module.
+Ah... sound like really hard to implement, right? 🤯 
 
-* **Module / Inside-module** - a module using inside master module, it is not include modules define and using common dependencies from [master app](#). Inside [module](#) allow contain another [module](#) but prevent recursive calling.
+> Yep, it really hard but... I created **Nuz** to help you! 😉
 
-* **Configuration / Config file** - a config file as name `nuz.config.js` in root folder of [module](#). Read more at [here](https://github.com/lamhieu-vk/nuz/blob/master/docs/CONFIGURATION.md).
+#### But I already have a React app, do I have to rewrite it?
 
-* **Registry** - a registry same `npm` or `yarn` registry to *fetch*, *manage* and *publish* the modules in nuz ecosystem if you want to self-hosted. It's *not required* but I recommend for business.
+Nooo, you can use **Nuz** with your React application, **Nuz** is compatible with the projects created by [create-next-app](https://github.com/zeit/next.js) and [create-react-app](https://github.com/facebook/create-react-app).
 
-### Author
+### What Nuz can do?
 
-Hieu Lam  ([@lamhieu-vk](https://github.com/lamhieu-vk)).
+**Nuz** just is something great to resolve the problems while implements Micro Frontends application such as:
+
+- [x] 🛥 **Require modules from the network**
+  - Compatible with Node require, just replace `require` by `resolve`.
+  - Download resource from network, execute in safe context.
+  - Support **timeout**, **retry** and **fallback** for modules while running.
+  - Support **preload** and **preconnect** to reduce download time.
+  - Secure with integrity hash downloaded content from CDN.
+- [x] ⚡️ **Easy to create, develop, serve, build and deploy modules**
+  - Create a module quickly, just by a command.
+  - Support development mode for **standalone** and **workspace** projects.
+  - Build with **auto-optimize code** and **minify size**.
+  - Easy to publish with integrity hash check.
+  - Support file serving and directory listing in module, allow secure methods.
+- [x] 📦 **Easy management the modules**
+  - High performance to fetch config for many clients.
+  - Permission scope-based using by token.
+  - Support full APIs to management the permission and modules.
+  - Allow **lock** module to prevent publish at dangerous time.
+  - Allow **rollback** module by version.
+  - Allow **auto create fallback** using previous for new publish.
+  - Supports secure methods with **https**, **http2**.
+  - Allow extends application by `express`.
+- [x] 🖼 **Server-side rendering? Sure!**
+  - Easy to enable **SSR** mode.
+  - Compatible with [Next.JS](https://github.com/zeit/next.js), don't need modify on code.
+- [x] 🧩 **Code-Splitting? Okkkk**
+  - Defalt is auto code-splitting in build mode.
+  - Support dynamic imports.
+  - Splitting chunks with `webpack` config.
+
+
+### About
+
+#### Packages
+
+- **[@nuz/core](#)** - the core is define, resolve and manage  modules from the network in the application.
+
+- **[@nuz/cli](#)** - Cli provides functions to create, dev, serve and deploy the modules with the best way.
+
+- **[@nuz/registry](#)** - Provides functions to create a stable, secure and scalable registry server.
+
+And other packages just create to using in the main packages.
+
+#### How it work?
+
+Read more at [here](#) 🙈
+
+#### Examples
+
+* [nuz + create-next-app](#) - using **nuz** with a typescript template created by create-next-app, both *server and client* side render.
+* [nuz + create-react-app](#) - using **nuz** with a template created by create-react-app, *client-side* render only.
+
+If you using **nuz** for your project, PR is welcome! 🎉
+
+### Documentation
+
+Update soon! ✍️
+
+### Contributing
+
+Please see our CONTRIBUTING.md 📝
