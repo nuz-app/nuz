@@ -41,7 +41,7 @@ module.exports = ({
   publicPath: 'https://another-cdn.com/',
 
   // If you using @nuz/registry, you need config it
-  publishConfig?: {
+  registry?: {
     // Permission token to publish a module
     token: 'abcxyz',
     // Endpoint of registry server

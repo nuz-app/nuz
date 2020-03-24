@@ -4,19 +4,19 @@
 
 **Nuz** is a fancy library to implements Micro Frontends compatible with [ReactJS](#) and may support more in the future. 🏃
 
-### What is Micro Frontends?
+## What is Micro Frontends?
 
 > The idea behind Micro Frontends is to think about a website or web app as **a composition of features** which are owned by **independent teams**. Each team has a **distinct area of business** or **mission** it cares about and specialises in. A team is **cross functional** and develops its features **end-to-end**, from database to user interface.
 
-from [micro-frontends.org](https://micro-frontends.org)
+*from [micro-frontends.org](https://micro-frontends.org)*
 
 > Micro-frontends is a microservice-like architecture that applies the concept of microservices to the browser side. Transforming to a mono-like applications from a single, single application to an application that combines multiple small front-end applications. Each frontend application can also be **standalone run**, **independent development**, **standalone deployment**.
 
-from [a post in dev.to](https://dev.to/phodal/micro-frontend-architecture-in-action-4n60)
+*from [a post in dev.to](https://dev.to/phodal/micro-frontend-architecture-in-action-4n60)*
 
 But you can think easier like... You can use Micro Frontends to building modern web apps with multiple teams, such as e-commerce, social network...
 
-#### How to implement Micro Frontends?
+### How to implement Micro Frontends?
 
 I found some articles about it
 
@@ -25,15 +25,15 @@ I found some articles about it
 - [Implementing a Frontend with Micro-Components](https://itnext.io/micro-frontend-941a5f1a3e72)
 - [Understanding Micro Frontends](https://hackernoon.com/understanding-micro-frontends-b1c11585a297)
 
-Ah... sound like really hard to implement, right? 🤯 
+### Ah... sound like really hard to implement, right? 🤯 
 
 > Yep, it really hard but... I created **Nuz** to help you! 😉
 
-#### But I already have a React app, do I have to rewrite it?
+### But I already have a React app, do I have to rewrite it?
 
 Nooo, you can use **Nuz** with your React application, **Nuz** is compatible with the projects created by [create-next-app](https://github.com/zeit/next.js) and [create-react-app](https://github.com/facebook/create-react-app).
 
-### What Nuz can do?
+## What Nuz can do?
 
 **Nuz** just is something great to resolve the problems while implements Micro Frontends application such as:
 
@@ -67,9 +67,9 @@ Nooo, you can use **Nuz** with your React application, **Nuz** is compatible wit
   - Splitting chunks with `webpack` config.
 
 
-### About
+## About
 
-#### Packages
+### Packages
 
 - **[@nuz/core](#)** - the core is define, resolve and manage  modules from the network in the application.
 - **[@nuz/cli](#)** - Cli provides functions to create, dev, serve and deploy the modules with the best way.
@@ -77,21 +77,21 @@ Nooo, you can use **Nuz** with your React application, **Nuz** is compatible wit
 
 And other packages just create to using in the main packages.
 
-#### How it work?
+### How it work?
 
 Read more at [here](#) 🙈
 
-#### Examples
+### Examples
 
 * [nuz + create-next-app](#) - using **nuz** with a typescript template created by create-next-app, both *server and client* side render.
 * [nuz + create-react-app](#) - using **nuz** with a template created by create-react-app, *client-side* render only.
 
 If you using **nuz** for your project, PR is welcome! 🎉
 
-### Documentation
+## Documentation
 
 Update soon! ✍️
 
-### Contributing
+## Contributing
 
 Please see our CONTRIBUTING.md 📝

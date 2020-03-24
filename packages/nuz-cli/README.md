@@ -83,7 +83,7 @@ module.exports = ({
   publicPath: 'https://another-cdn.com/',
 
   // If you using @nuz/registry, you need config it
-  publishConfig?: {
+  registry?: {
     // Permission token to publish a module
     token: 'abcxyz',
     // Endpoint of registry server
@@ -135,7 +135,7 @@ $ nuz dev
 Run development mode
 
 Options:
-  --port, -p  Port to bind on                                           [number]
+  --port, -p  Set port listen for server                                           [number]
 ```
 
 **dev** command to start development mode for module. It only work for nuz module was genarated by nuz create command.
@@ -161,7 +161,7 @@ $ nuz serve
 File serving and directory listing in module
 
 Options:
-  --port, -p  Port to bind on                                           [number]
+  --port, -p  Set port listen for server                                           [number]
 ```
 
 **serve** command will serve resource in `output` dir of module.
@@ -177,4 +177,4 @@ Options:
   --fallback, -f  Set fallback for new version        [required] [default: true]
 ```
 
-**publish** command will read `stats.json` file in `output`, combines `publicPath` with `filename` of assets and sent to registry server. The command will only works if `publishConfig` is defined.
+**publish** command will read `stats.json` file in `output`, combines `publicPath` with `filename` of assets and sent to registry server. The command will only works if `registry` is defined.
