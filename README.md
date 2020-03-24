@@ -21,11 +21,8 @@ But you can think easier like... You can use Micro Frontends to building modern 
 I found some articles about it
 
 - [Micro-frontend Architecture in Action with six ways](https://dev.to/phodal/micro-frontend-architecture-in-action-4n60)
-
 - [The Strengths and Benefits of Micro Frontends](https://www.toptal.com/front-end/micro-frontends-strengths-benefits)
-
 - [Implementing a Frontend with Micro-Components](https://itnext.io/micro-frontend-941a5f1a3e72)
-
 - [Understanding Micro Frontends](https://hackernoon.com/understanding-micro-frontends-b1c11585a297)
 
 Ah... sound like really hard to implement, right? 🤯 
@@ -75,9 +72,7 @@ Nooo, you can use **Nuz** with your React application, **Nuz** is compatible wit
 #### Packages
 
 - **[@nuz/core](#)** - the core is define, resolve and manage  modules from the network in the application.
-
 - **[@nuz/cli](#)** - Cli provides functions to create, dev, serve and deploy the modules with the best way.
-
 - **[@nuz/registry](#)** - Provides functions to create a stable, secure and scalable registry server.
 
 And other packages just create to using in the main packages.
