@@ -1,8 +1,8 @@
-## Nuz + Netx.js (with-typescript)
+# Nuz + Netx.js (with-typescript)
 
 The template is [with-typescript](https://github.com/zeit/next.js/tree/canary/examples/with-typescript) created by [creact-next-app](https://github.com/zeit/next.js).
 
-### What is different?
+## What is different?
 
 - Installed @nuz/core as `dependencies` and @nuz/cli as `devDependencies`.
 - Add script `dev-workspace` in package.json.
@@ -11,11 +11,11 @@ The template is [with-typescript](https://github.com/zeit/next.js/tree/canary/ex
 - Updated `next.config.js` file to use helper of CORE for [Next.js](https://github.com/zeit/next.js), support **server-side-rendering**.
 - Updated `pages/index.tsx` file to use [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-core).
 
-### How to start!?
+## How to start!?
 
 You just run 2 scripts below:
 
-#### Start dev mode of `next.js`:
+### Start dev mode of `next.js`:
 ```sh
 # with npm
 $ npm run dev
@@ -24,7 +24,7 @@ $ npm run dev
 $ yarn dev
 ```
 
-#### Start workspace mode of `@nuz/core`:
+### Start workspace mode of `@nuz/core`:
 ```sh
 # with npm
 $ npm run dev-workspace
@@ -33,4 +33,5 @@ $ npm run dev-workspace
 $ yarn dev-workspace
 ```
 
-### Good luck! 👍
+## Good luck! 👍
+
