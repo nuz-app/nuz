@@ -4,7 +4,9 @@
 
 ***
 
-## What is Micro Frontends?
+## About Micro Frontends
+
+### What is Micro Frontends?
 
 > The idea behind Micro Frontends is to think about a website or web app as **a composition of features** which are owned by **independent teams**. Each team has a **distinct area of business** or **mission** it cares about and specialises in. A team is **cross functional** and develops its features **end-to-end**, from database to user interface.
 
@@ -50,20 +52,21 @@ Nooo, you can use **Nuz** with your React application, **Nuz** is compatible wit
   - Easy to publish with integrity hash check.
   - Support file serving and directory listing in module, allow secure methods.
 - [x] 📦 **Easy management the modules**
-  - High performance to fetch config for many clients.
-  - Permission scope-based using by token.
+  - **High performance** to fetch config for many clients.
+  - Permission **scope-based** using by token.
   - Support full APIs to management the permission and modules.
   - Allow **lock** module to prevent publish at dangerous time.
   - Allow **rollback** module by version.
   - Allow **auto create fallback** using previous for new publish.
-  - Supports secure methods with **https**, **http2**.
+  - Support secure methods with **https**, **http2**.
+  - Support release by **schedule**.
   - Allow extends application by `express`.
 - [x] 🖼 **Server-side rendering? Sure!**
   - Easy to enable **SSR** mode.
   - Compatible with [Next.JS](https://github.com/zeit/next.js), don't need modify on code.
 - [x] 🧩 **Code-Splitting? Okkkk**
   - Defalt is auto code-splitting in build mode.
-  - Support dynamic imports.
+  - Support **dynamic imports**.
   - Splitting chunks with `webpack` config.
 
 
@@ -79,18 +82,18 @@ And other packages just create to using in the main packages.
 
 ### How it work?
 
-Read more at [here](#) 🙈
+[View the workflow here](https://github.com/lamhieu-vk/nuz/blob/master/docs/WORKFLOW.md) 🙈
 
 ### Quickstart
 
-[Get started in 5 minutes](#)
+[Get started in 5 minutes](https://github.com/lamhieu-vk/nuz/blob/master/docs/GET_STARTED.md) ⏱
 
 ### Examples
 
-* [nuz + create-next-app](#) - using **nuz** with a typescript template created by create-next-app, both *server and client* side render.
-* [nuz + create-react-app](#) - using **nuz** with a template created by create-react-app, *client-side* render only.
+* [nuz + create-next-app](https://github.com/lamhieu-vk/nuz/blob/master/examples/with-create-next-app) - using **nuz** with a typescript template created by create-next-app, both *server and client* side render.
+* [nuz + create-react-app](https://github.com/lamhieu-vk/nuz/blob/master/examples/with-create-react-app) - using **nuz** with a template created by create-react-app, *client-side* render only.
 
-If you using **nuz** for your project, PR is welcome! 🎉
+If you using **nuz** for your project, PRs are welcome! 🎉
 
 ## Documentation
 
@@ -98,7 +101,7 @@ Update soon! ✍️
 
 ## Contributing
 
-Please see our CONTRIBUTING.md 📝
+Please see our [CONTRIBUTING.md](https://github.com/lamhieu-vk/nuz/blob/master/docs/CONTRIBUTING.md) 📝
 
 ## Author
 
