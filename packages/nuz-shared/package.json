@@ -6,6 +6,7 @@
     "type": "git",
     "url": "https://github.com/lamhieu-vk/nuz.git"
   },
+  "files": ["dist"],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

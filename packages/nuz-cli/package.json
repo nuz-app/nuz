@@ -9,6 +9,7 @@
   "bin": {
     "nuz": "dist/cli.js"
   },
+  "files": ["dist"],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
