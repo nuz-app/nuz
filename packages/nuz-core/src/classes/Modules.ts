@@ -244,7 +244,7 @@ class Modules {
   }
 
   private async loadDependencies(shared: string[]) {
-    return shared.map(item => this.loadDependency(item))
+    return shared.map((item) => this.loadDependency(item))
   }
 
   private async runScript({
@@ -322,7 +322,7 @@ class Modules {
       exportsOnly,
     })
 
-    const moduleStyles = (styles || []).map(style =>
+    const moduleStyles = (styles || []).map((style) =>
       DOMHelpers.loadStyle(style.url, { integrity: style.integrity }),
     )
 
@@ -479,7 +479,7 @@ class Modules {
 
     const deduplicated = Array.from(new Set(urls))
     const isPreconnect = deduplicated.length <= PRECONNECT_LIMIT_DOMAIN
-    const dnsPrefetchs = deduplicated.map(item =>
+    const dnsPrefetchs = deduplicated.map((item) =>
       DOMHelpers.dnsPrefetch(item, isPreconnect),
     )
     return dnsPrefetchs
@@ -553,7 +553,7 @@ class Modules {
       [] as TagElement[],
     )
 
-    modules.forEach(item => {
+    modules.forEach((item) => {
       tags.concat(item.styles)
     })
 

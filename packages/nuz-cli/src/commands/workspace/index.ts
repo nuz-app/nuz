@@ -76,7 +76,7 @@ const execute = async ({
     (acc, item) => acc.concat(glob.sync(item)),
     [],
   )
-  const validPaths = workspacePaths.filter(p => p && configHelpers.exists(p))
+  const validPaths = workspacePaths.filter((p) => p && configHelpers.exists(p))
   const modulesConfig = validPaths.reduce((acc, modulePath: string) => {
     // If path is empty or not found config, skip it!
     const moduleIsValid = modulePath && configHelpers.exists(modulePath)
@@ -174,7 +174,7 @@ const execute = async ({
   const emitOnChange = (modules: string[]) =>
     socket.emit(LINKED_CHANGE_EVENT, { modules })
 
-  socket.on('connection', client => {
+  socket.on('connection', (client) => {
     const isReady = !!store.linkedModules
     client.emit(LINKED_DEFINE_EVENT, {
       ready: isReady,
@@ -200,7 +200,7 @@ const execute = async ({
         const moduleAssets = pickAssetsFromStats(item)
         const moduleResolve = {
           main: moduleAssets.main.url,
-          styles: moduleAssets.styles.map(style => style.url),
+          styles: moduleAssets.styles.map((style) => style.url),
         }
 
         return Object.assign(acc, {
@@ -217,7 +217,7 @@ const execute = async ({
       }, {})
       store.linkedModules = linkedModules
 
-      const changedModulesName = children.map(child =>
+      const changedModulesName = children.map((child) =>
         compilerName.extract((child as any).name),
       )
       emitOnChange(changedModulesName)
@@ -234,7 +234,7 @@ const execute = async ({
 const config: CommandConfig<{}> = {
   type: CommandTypes.workspace,
   description: 'Start development mode in workspace',
-  transform: yarg =>
+  transform: (yarg) =>
     yarg
       .option('workspace', {
         alias: 'w',

@@ -104,6 +104,7 @@ class Linked {
     this._watching.push(...modules)
   }
 
+  // tslint:disable-next-line: no-empty
   unwatch(modules: string[]) {}
 }
 

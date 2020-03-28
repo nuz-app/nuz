@@ -79,6 +79,7 @@ class MongoDB implements ModelDB {
     throw new Error('Token is invalid or Module not in scope allowed!')
   }
 
+  // tslint:disable-next-line: no-empty
   async prepage() {}
 
   async createToken(secretKey: string | undefined, scope: string[]) {
@@ -291,7 +292,9 @@ class MongoDB implements ModelDB {
       updated,
     }
   }
+  // tslint:disable-next-line: no-empty
   async lockModule(token: string, name: string) {}
+  // tslint:disable-next-line: no-empty
   async unlockModule(token: string, name: string) {}
 
   async getConfig() {

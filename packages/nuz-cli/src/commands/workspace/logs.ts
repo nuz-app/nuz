@@ -18,7 +18,13 @@ export const moduleConfigIsInvalid = (dir: string) => {
   info(`Found invalid config, check at ${print.link(dir)}`)
 }
 
-export const moduleConfigIsFactoring = ({ config, dir }: { config: any, dir: string }) => {
+export const moduleConfigIsFactoring = ({
+  config,
+  dir,
+}: {
+  config: any
+  dir: string
+}) => {
   info(
     `Found module ${print.name(config.name)}, library ${print.name(
       config.library,
@@ -36,7 +42,7 @@ export const workspaceIsBuilding = (keys: string[]) => {
     info(
       `Workspace is having ${print.bold(length)} modules, all are building...`,
     )
-    info(`Building modules ${keys.map(k => print.name(k)).join(', ')}.`)
+    info(`Building modules ${keys.map((k) => print.name(k)).join(', ')}.`)
   }
   log()
 }

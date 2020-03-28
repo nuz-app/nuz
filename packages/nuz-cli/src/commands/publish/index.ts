@@ -84,7 +84,7 @@ const execute = async ({ fallback }: yargs.Argv<PublishCommand>) => {
 const config: CommandConfig<{}> = {
   type: CommandTypes.publish,
   description: 'Publish version for module',
-  transform: yarg =>
+  transform: (yarg) =>
     yarg.option('fallback', {
       alias: 'f',
       describe: 'Set fallback for new version',

@@ -80,7 +80,7 @@ const execute = async ({ port: _port }: yargs.Argv<DevCommand>) => {
 const config: CommandConfig = {
   type: CommandTypes.dev,
   description: 'Run development mode',
-  transform: yarg =>
+  transform: (yarg) =>
     yarg.option('port', {
       alias: 'p',
       describe: 'Set port listen for server',

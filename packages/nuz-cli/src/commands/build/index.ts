@@ -83,7 +83,7 @@ const execute = async ({ clean }: yargs.Argv<BuildCommand>) => {
 const config: CommandConfig<{ clean: true }> = {
   type: CommandTypes.build,
   description: 'Run build production mode',
-  transform: yarg =>
+  transform: (yarg) =>
     yarg.option('clean', {
       alias: 'c',
       describe: 'Clean dist folder before run build',

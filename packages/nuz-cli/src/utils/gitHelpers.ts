@@ -34,7 +34,9 @@ export const initGitInDir = (dir: string) => {
     if (didInit) {
       try {
         rimraf.sync(path.join(dir, '.git'))
-      } catch {}
+      } catch {
+        //
+      }
     }
     return false
   }

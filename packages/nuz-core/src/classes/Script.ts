@@ -28,9 +28,7 @@ class Script {
   }
 
   private generateId() {
-    const id = Math.random()
-      .toString(36)
-      .substring(7)
+    const id = Math.random().toString(36).substring(7)
     const now = Date.now()
     const name = ['fn', now, id].join('_')
     return name

@@ -13,10 +13,7 @@ export const file = (path: string, algorithm: string = DEFAULT_ALGORITHM) => {
 }
 
 export const data = (content: any, algorithm: string = DEFAULT_ALGORITHM) => {
-  const digest = crypto
-    .createHash(algorithm)
-    .update(content)
-    .digest('base64')
+  const digest = crypto.createHash(algorithm).update(content).digest('base64')
 
   return `${algorithm}-${digest}`
 }

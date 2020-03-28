@@ -38,7 +38,7 @@ export const extract = (
       config,
     )
 
-    const isInvalid = !REQUIRED_FIELDS.every(field => !!full[field])
+    const isInvalid = !REQUIRED_FIELDS.every((field) => !!full[field])
     if (required && isInvalid) {
       return null
     }

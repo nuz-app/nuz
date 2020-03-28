@@ -67,7 +67,7 @@ const resolveByDomain = (
     if (styles) {
       resolveUrls.styles = styles
         .filter(Boolean)
-        .map(style => ensureResolve(domain, style))
+        .map((style) => ensureResolve(domain, style))
     }
   }
 

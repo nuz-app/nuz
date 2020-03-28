@@ -39,6 +39,7 @@ export interface Resource {
   integrity: string
 }
 
+// tslint:disable-next-line: no-empty-interface
 export interface Schedule {}
 
 export type VersionInfo = Omit<PublishInfo, 'name' | 'version' | 'resolve'> & {

@@ -32,7 +32,7 @@ const nextHelpersFactory = ({ require }: NextHelpersConfig) => {
             updatedConfig.node = {}
           }
           const useNodeBuiltins = ['child_process', 'fs', 'net']
-          useNodeBuiltins.forEach(builtins => {
+          useNodeBuiltins.forEach((builtins) => {
             updatedConfig.node[builtins] = !updatedConfig.node[builtins]
               ? 'empty'
               : updatedConfig.node[builtins]

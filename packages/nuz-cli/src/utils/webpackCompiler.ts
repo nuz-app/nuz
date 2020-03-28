@@ -20,7 +20,7 @@ export const watch = (
   config: AllowWebpackConfig,
   callback: webpack.ICompiler.Handler,
 ): Promise<webpack.Compiler.Watching> =>
-  new Promise(resolve => {
+  new Promise((resolve) => {
     const compiler = get(config)
     const watcher = compiler.watch(
       {

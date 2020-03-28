@@ -54,7 +54,7 @@ function reactHelpersFactory(
       const injectHeadIsNotFound = !InjectHead
       const headTags = injectHeadIsNotFound
         ? definedTags
-        : definedTags.map(item => {
+        : definedTags.map((item) => {
             const { type: TagComponent, attributes } = item
 
             const key = `${attributes.rel}-${attributes.href}`
@@ -75,7 +75,7 @@ function reactHelpersFactory(
         }
 
         // tslint:disable-next-line: semicolon
-        ;(headTags as DOMHelpers.DefinedElement[]).forEach(item => {
+        ;(headTags as DOMHelpers.DefinedElement[]).forEach((item) => {
           const tagElement = DOMHelpers.createElement(item)
           DOMHelpers.appendToHead(tagElement)
         })

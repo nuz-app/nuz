@@ -120,7 +120,7 @@ const generateTemplate = async (
 
     // Rename extension files
     const matches = glob.sync(dir + '/src/**/*.tsx')
-    const promise = matches.map(match =>
+    const promise = matches.map((match) =>
       fs.move(match, match.replace('.tsx', `.${scriptExtension}`)),
     )
     await Promise.all(promise)

@@ -33,7 +33,7 @@ export const createElement = (defined: DefinedElement) => {
   const element = document.createElement(type)
 
   const keysOf = Object.keys(attributes)
-  keysOf.forEach(key => {
+  keysOf.forEach((key) => {
     element[key] = attributes[key]
   })
 

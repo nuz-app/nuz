@@ -35,12 +35,12 @@ export const showErrorsAndWarnings = ({
 }) => {
   if (errors.length > 0) {
     error('Have some errors from stats of bundle')
-    errors.forEach(item => log(item))
+    errors.forEach((item) => log(item))
   }
 
   if (warnings.length > 0) {
     warn('Have some warnings from stats of bundle')
-    warnings.forEach(item => log(item))
+    warnings.forEach((item) => log(item))
   }
 }
 
