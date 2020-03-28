@@ -18,6 +18,13 @@ install:
 jobs:
   include:
     - stage: test
-      script: yarn test
+      before_script:
+        - jest --version
+        - tsc --version
+      script:
+        - yarn test
     - stage: lint
-      script: yarn lint
+      before_script:
+        - tslint --version
+      script:
+        - yarn lint
