@@ -3,5 +3,6 @@ module.exports = {
   testEnvironment: "node",
   preset: "ts-jest",
   testPathIgnorePatterns: ["/node_modules/", "/dist/"],
-  testMatch: ["**/?(*.)+(spec|test).[jt]sx?$"],
+  testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 };
