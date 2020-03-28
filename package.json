@@ -1,14 +1,10 @@
 {
   "name": "nuz",
   "description": "Nuz is a fancy library to implements Micro Frontends compatible with ReactJS and may support more in the future",
-  "author": {
-    "email": "lamhieu.vk@gmail.com",
-    "name": "Hieu Lam",
-    "url": "https://lamhieu.info"
-  },
+  "author": "Hieu Lam <lamhieu.vk@gmail.com> (https://lamhieu.info)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lamhieu-vk/nuz.git"
+    "url": "git+https://github.com/lamhieu-vk/nuz.git"
   },
   "scripts": {
     "postinstall": "lerna bootstrap",
@@ -36,5 +32,16 @@
     "tslint-plugin-prettier": "^2.1.0",
     "typescript": "^3.8.3"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "bugs": {
+    "url": "https://github.com/lamhieu-vk/nuz/issues"
+  },
+  "homepage": "https://github.com/lamhieu-vk/nuz#readme",
+  "version": "0.0.1",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
+  },
+  "license": "ISC"
 }
