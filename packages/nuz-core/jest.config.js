@@ -1,6 +1,7 @@
 module.exports = {
+  rootDir: process.cwd(),
   testEnvironment: "node",
   preset: "ts-jest",
-  testPathIgnorePatterns: ["/node_modules/", "/build/"],
-  testRegex: "/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$",
+  testPathIgnorePatterns: ["/node_modules/", "/dist/"],
+  testMatch: ["**/?(*.)+(spec|test).[jt]sx?$"],
 };
