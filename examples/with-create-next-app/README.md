@@ -11,11 +11,24 @@ The template is [with-typescript](https://github.com/zeit/next.js/tree/canary/ex
 - Updated `next.config.js` file to use helper of CORE for [Next.js](https://github.com/zeit/next.js), support **server-side-rendering**.
 - Updated `pages/index.tsx` file to use [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-core).
 
-## How to start!?
+## Getting started
+
+### Installation
+
+Run install in `root` dir and `workspace/hello-world` dir same below command:
+```sh
+# with npm
+$ npm install
+
+# or yarn
+$ yarn install
+```
+
+### Start development mode
 
 You just run 2 scripts below:
 
-### Start dev mode of `next.js`:
+##### Start dev mode of `next.js`:
 ```sh
 # with npm
 $ npm run dev
@@ -24,7 +37,7 @@ $ npm run dev
 $ yarn dev
 ```
 
-### Start workspace mode of `@nuz/core`:
+##### Start workspace mode of `@nuz/core`:
 ```sh
 # with npm
 $ npm run dev-workspace
