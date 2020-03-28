@@ -43,5 +43,5 @@
     "doc": "docs",
     "example": "examples"
   },
-  "license": "ISC"
+  "license": "MIT"
 }
