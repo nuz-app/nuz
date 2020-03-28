@@ -6,6 +6,9 @@
     "type": "git",
     "url": "https://github.com/lamhieu-vk/nuz.git"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "bin": {
     "nuz": "dist/cli.js"
   },
