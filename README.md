@@ -74,9 +74,9 @@ Nooo, you can use **Nuz** with your React application, **Nuz** is compatible wit
 
 ### Packages
 
-- **[@nuz/core](#)** - the core is define, resolve and manage  modules from the network in the application.
-- **[@nuz/cli](#)** - Cli provides functions to create, dev, serve and deploy the modules with the best way.
-- **[@nuz/registry](#)** - Provides functions to create a stable, secure and scalable registry server.
+- **[@nuz/core](https://github.com/lamhieu-vk/nuz/blob/master/packages/nuz-core)** - the core is define, resolve and manage  modules from the network in the application.
+- **[@nuz/cli](https://github.com/lamhieu-vk/nuz/blob/master/packages/nuz-cli)** - Cli provides functions to create, dev, serve and deploy the modules with the best way.
+- **[@nuz/registry](https://github.com/lamhieu-vk/nuz/blob/master/packages/nuz-registry)** - Provides functions to create a stable, secure and scalable registry server.
 
 And other packages just create to using in the main packages.
 
