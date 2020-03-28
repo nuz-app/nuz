@@ -1,17 +1,30 @@
 {
   "name": "nuz",
+  "version": "0.0.1",
   "description": "Nuz is a fancy library to implements Micro Frontends compatible with ReactJS and may support more in the future",
   "author": "Hieu Lam <lamhieu.vk@gmail.com> (https://lamhieu.info)",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lamhieu-vk/nuz.git"
   },
+  "bugs": {
+    "url": "https://github.com/lamhieu-vk/nuz/issues"
+  },
+  "homepage": "https://github.com/lamhieu-vk/nuz#readme",
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
+  },
+  "license": "MIT",
   "scripts": {
     "postinstall": "lerna bootstrap",
     "reinstall": "find . -name \"node_modules\" -type d -prune -exec rm -rf '{}' + && yarn",
     "clean": "lerna run clean",
+    "prebuild": "lerna run build",
     "build": "lerna run build",
-    "test": "lerna run test",
+    "test:types": "tsc --build tsconfig.test.json",
+    "test:unit": "lerna run test",
+    "test": "yarn test:types && yarn test:unit",
     "lint": "lerna run lint",
     "lint:fix": "lerna run lint:fix",
     "dev": "tsc --build --watch tsconfig.dev.json"
@@ -32,16 +45,5 @@
     "tslint-plugin-prettier": "^2.3.0",
     "typescript": "^3.8.3"
   },
-  "dependencies": {},
-  "bugs": {
-    "url": "https://github.com/lamhieu-vk/nuz/issues"
-  },
-  "homepage": "https://github.com/lamhieu-vk/nuz#readme",
-  "version": "0.0.1",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs",
-    "example": "examples"
-  },
-  "license": "MIT"
+  "dependencies": {}
 }
