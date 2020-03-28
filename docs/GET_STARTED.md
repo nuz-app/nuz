@@ -37,304 +37,157 @@ Run below command to check version of [@nuz/cli](#):
 $ nuz --version
 ```
 
-### Bootstrap in-app
+### Bootstrap
 
-For [@nuz/core](#) work in your app, you must be run `bootstrap` in app.
+For [@nuz/core](#) work in your app, you must be run `bootstrap`, inject to renderers of `react-dom` in app.
+
 Should be run `bootstrap` in the top of app flow, by below code:
 ```ts
 import React from 'react';
 import ReactDOM from 'react-react';
-import { bootstrap } from '@nuz/core';
 
-bootstrap({
-  // BootstrapConfig
-})
-```
+import { 
+  bootstrap,
+  reactHelpersFactory,
+} from '@nuz/core';
 
-Example:
-```ts
-import React from 'react';
-import ReactDOM from 'react-react';
-
-bootstrap({
-  // Uncomment if using `workspace` mode of `@nuz/cli`
-  // linked: {
-  //   port: 4000,
-  // },
-  vendors: {
-    react: React,
-    'react-dom': ReactDOM,
-  },
-})
-```
-*Note: `port` in above example is port expose of `workspace` mode of [@nuz/cli](#).*
-
-If you using fully Nuz in your project, you just create an above config that is done! 🥳
-
-In the below is the advanced config, you can read to reference.
-
-#### Bootstrap config
-
-```ts
-export interface BootstrapConfig {
-  /**
-   * Set development mode
-   */
-  dev?: boolean
-  /**
-   * Allow server-side-rendering
-   */
-  ssr?: boolean
-  /**
-   * Defined vendors dependencies
-   */
-  vendors?: VendorsConfig
-  /**
-   * Defined shared dependencies
-   */
-  shared?: SharedConfig
-  /**
-   * Preload modules
-   */
-  preload?: string[]
-  /**
-   * Config registry to resolve
-   */
-  registry?: string | RegistryConfig
-  /**
-   * Linked info, use for workspace
-   */
-  linked?: LinkedConfig
-  /**
-   * Defined modules to resolve in runtime
-   */
-  modules?: ModulesConfig
-}
-```
-
-##### `dev?: boolean`
-Default is: `process.env.NODE_ENV !== 'production'`
-
-Use this value to identify `development` and `production` mode. 
-
-##### `ssr?: boolean`
-Default is `false`
-
-Allow [@nuz/core](#) resolve modules in Node environment. Set `true` if using [create-next-app](#) or using server-side-rendering. 
-
-##### `vendors?: VendorsConfig`
-Default is `{}`.
-
-Vendors dependencies should be included in common library using in all the modules and master app such as `react`, `react-dom`, `redux` and more.`react` and `react-dom` is **required**.
-
-Example:
-```ts
-import React from 'react';
-import ReactDOM from 'react-dom';
-
-{
-  ...
-  vendors: {
-    react: React,
-    'react-dom': ReactDOM,
-    ...
-  },
-}
-```
-*Note: the modules using [@nuz/cli](#), install vendors dependencies as `peerDependencies` of module. `react` `react-dom` `@nuz/core` is required in modules*
-
-##### `shared?: SharedConfig`
-Default is `{}`
-
-Shared dependencies are the same vendors dependencies but it requires is a *dynamic import function*. Shared dependencies only call to load *while modules using it resolving*.
-
-Example:
-```ts
-{
-  ...
-  shared: {
-    lodash: () => import('lodash'),
-    'memoize-one': () => import('memoize-one'),
-  },
-}
-```
-*Note: the modules using [@nuz/cli](#) must be add shared dependencies to `shared` field in [config file](#) and like normal dependencies.*
-
-##### `preload?: string[]`
-Default is `[]`
-
-Set preload modules, it will be downloaded and processed first. Should be set first load modules in app.
-
-Example:
-```ts
-{
-  ...
-  preload: ['navigation', 'left-menu'],
-}
-```
-
-##### `registry?: string | RegistryConfig`
-Default is `undefined`
-
-It provides [registry server](#) url, [@nuz/core](#) will call fetch to this url get config from upstream. It should be a `string` url.
-
-Example:
-```ts
-// REGISTRY_URL=https://example-registry-server.com
-
-{
-  ...
-  registry: process.env.REGISTRY_URL,
-}
-```
-
-##### `linked?: LinkedConfig`
-Default is `undefined`
-
-It only work when set `dev: true`, it provides info of local linked modules such as `port` of socket. `port` is same port in [command run workspace](#).
-
-Example:
-```sh
-$ nuz workspace --port 4000
-```
-
-```ts
-// LINKED_PORT=4000
-
-{
-  ...
-  linked: {
-    port: process.env.LINKED_PORT,
-  },
-}
-```
-
-##### `modules?: ModulesConfig`
-
-The values of `modules` can merge with modules config in upstream response from the [registry server](#). If you using [@nuz/registry](#) and [@nuz/cli](#), you don't need to define it.
-
-Example:
-```ts
-{
-  ...
-  modules: {
-    'module-name': BaseItemConfig,
-  },
-}
-
-type BaseItemConfig = {
-  /**
-   * Upstream is resolve info of module
-   */
-  upstream?: UpstreamConfigAllowed
-  /**
-   * Fallback resolve for module, define like `upstream`
-   */
-  fallback?: UpstreamConfigAllowed
-  /**
-   * Override local modules
-   */
-  local?: LoadedModule<any>
-  /**
-   * Library name, bundle with `umd` format
-   */
-  library?: string
-  /**
-   * Format of library. Currently, default is `umd` format
-   */
-  format?: ModuleFormats
-  /**
-   * Alias name for fields in module
-   */
-  alias?: { [field: string]: any }
-  /**
-   * Export only, not use will exports fields
-   */
-  exportsOnly?: string[]
-  /**
-   * Install options
-   */
-  options?: InstallConfig
-  /**
-   * Shared dependencies module used
-   */
-  shared?: string[]
-}
-```
-
-### Factory helpers for React
-
-To make sure React only render after modules is prepared you must be use `reactHelpersFactory` to do it. Should be add `reactHelpersFactory` to above of `bootstrap`, by below code:
-
-```ts
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { reactHelpersFactory } from '@nuz/core';
-
-// Using App component to wrap root component in-app.
+// inject to renderers of `react-dom`
 const { App } = reactHelpersFactory({
   React,
   ReactDOM,
 })
 
-// Just a example to using App
+// run bootstrap
+bootstrap(
+  // BootstrapConfig
+)
+```
+
+If you master app was created by [create-react-app](#) or [create-next-app](#) you can see example for bootstrap below!
+
+#### Integrate for `create-react-app`
+
+Change `src/index.js` file from:
+```js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import * as serviceWorker from './serviceWorker';
+
+ReactDOM.render(<App />, document.getElementById('root'));
+
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://bit.ly/CRA-PWA
+serviceWorker.unregister();
+
+```
+
+To:
+```js
+import { bootstrap, reactHelpersFactory } from '@nuz/core';
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import * as serviceWorker from './serviceWorker';
+
+const { App: AppProvider } = reactHelpersFactory({
+  React,
+  ReactDOM,
+})
+
+bootstrap({
+  // ... BootstrapConfig
+  linked: {
+    port: 4000,
+  },
+  vendors: {
+    react: React,
+    'react-dom': ReactDOM,
+  },
+});
+
 ReactDOM.render((
-  <App>
-    <YourAppComponent />
-  </App>
+  <AppProvider>
+    <App />
+  </AppProvider>
 ), document.getElementById('root'))
+
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://bit.ly/CRA-PWA
+serviceWorker.unregister();
 ```
 
-### Usage
+It was done! Currently, you can use **Nuz** in your project. Start with [create new module](#) below!
 
-[@nuz/core](#) is compatible with es dynamic import, you can see example:
-
-Current way to use dynamic import by:
-```ts
-const something = import('path-to-resolve');
-```
-
-Using [@nuz/core](#) to resolve from network:
-```ts
-import { resolve } from '@nuz/core';
-
-const something = resolve('module-name');
-```
-
-#### Use `React.lazy`
-
-Currently, lazy load a component:
-```ts
+Try to create new module and usage like example:
+```js
 import React from 'react';
 
-const AnyComponent = lazy(() => import('path-to-resolve'));
+const ModuleComponent = lazy(() => import('module-name'));
 ```
 
-And with [@nuz/core](#):
-```ts
-import React from 'react';
+#### Integrate for `create-next-app`
+
+Create `next.config.js` file with content:
+```js
+const nuz = require('@nuz/core')
+
+const { withNuz } = nuz.nextHelpersFactory({
+  require,
+})
+
+module.exports = withNuz();
+```
+
+Create `pages/_app.jsx` file with content:
+```js
+import React from 'react'
+import ReactDOM from 'react-dom'
+import Head from 'next/head'
+
+import { bootstrap, reactHelpersFactory } from '@nuz/core'
+
+const { App } = reactHelpersFactory({
+  React, 
+  ReactDOM,
+})
+
+bootstrap({
+  ssr: true,
+  linked: {
+    port: 4000,
+  },
+  vendors: {
+    'react': React,
+    'react-dom': ReactDOM,
+  },
+})
+
+function MyApp({ Component, pageProps }: any) {
+  return (
+    <App injectHead={Head}>
+      <Component {...pageProps} />
+    </App>
+  )
+}
+
+export default MyApp
+```
+
+It was done! Currently, you can use **Nuz** in your project. Start with [create new module](#) below!
+
+Try to create new module and usage like example:
+```js
+import dynamic from 'next/dynamic';
 import { resolve } from '@nuz/core';
 
-const AnyComponent = lazy(() => resolve('module-name'));
+const ModuleComponent = dynamic(() => resolve('module-name'), { nuz: true });
 ```
-
-#### Use `next/dynamic`
-
-With [Next.js](#), to lazy load component you can use:
-```ts
-import dynamic from 'next/dynamic';
-
-const AnyComponent = dynamic(() => import('path-to-resolve'));
-```
-
-And with [@nuz/core](#):
-```ts
-import dynamic from 'next/dynamic';
-import { resolve } from '@nuz/core';
-
-const AnyComponent = dynamic(() => resolve('module-name'), { nuz: true });
-```
-*Note: to using [@nuz/core](#) with [next.js](#), you must config something in `next.config.js`, read more at [here](#).*
 
 ## 🎲 Usage modules
 
@@ -367,9 +220,6 @@ About parameter in script:
 ##### `workspace: string[]`
 Workspace value is array paths of modules want to links
 
-##### `port: number` 
-Port value is expose port of links socket, using as `linked` field in bootstrap config.
-
-### Good luck! 👍
+## Good luck! 👍
 
 If you think you can update the document to make it clearer, PRs are welcome!
