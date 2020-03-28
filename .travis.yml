@@ -22,7 +22,8 @@ jobs:
         - jest --version
         - tsc --version
       script:
-        - yarn test
+        - yarn test:types
+        - yarn test:unit -- --ci
     - stage: lint
       before_script:
         - tslint --version
