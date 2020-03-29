@@ -4,6 +4,8 @@
   "packages": [
     "packages/*"
   ],
-  "sort": ["@nuz/shared", "@nuz/utils"],
-  "lerna": "3.20.2"
+  "sort": [
+    "@nuz/shared",
+    "@nuz/utils"
+  ]
 }

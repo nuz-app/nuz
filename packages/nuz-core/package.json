@@ -10,7 +10,10 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": ["dist", "bundled"],
+  "files": [
+    "dist",
+    "bundled"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -39,5 +42,8 @@
     "@types/react": "^16.9.25",
     "@types/react-dom": "^16.9.5",
     "@types/socket.io-client": "^1.4.32"
+  },
+  "peerDependencies": {
+    "tslib": "^1.11.1"
   }
 }

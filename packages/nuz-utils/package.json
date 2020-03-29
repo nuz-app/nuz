@@ -10,7 +10,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -25,5 +27,8 @@
   "dependencies": {
     "axios": "^0.19.2",
     "selfsigned": "^1.10.7"
+  },
+  "peerDependencies": {
+    "tslib": "^1.11.1"
   }
 }

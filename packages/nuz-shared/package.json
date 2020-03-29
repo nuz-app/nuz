@@ -24,6 +24,7 @@
     "dev": "tsc -p tsconfig.json -w",
     "build": "tsc -p tsconfig.json"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "peerDependencies": {
+    "tslib": "^1.11.1"
+  }
 }
