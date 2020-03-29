@@ -20,7 +20,6 @@
     "postinstall": "lerna bootstrap",
     "reinstall": "find . -name \"node_modules\" -type d -prune -exec rm -rf '{}' + && yarn",
     "clean": "lerna run clean",
-    "prebuild": "lerna run build",
     "build": "lerna run build",
     "test:types": "tsc --build tsconfig.test.json",
     "test:unit": "lerna run test",
@@ -45,5 +44,7 @@
     "tslint-plugin-prettier": "^2.3.0",
     "typescript": "^3.8.3"
   },
-  "dependencies": {}
+  "dependencies": {
+    "tslib": "^1.11.1"
+  }
 }
