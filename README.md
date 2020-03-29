@@ -1,4 +1,4 @@
-# Nuz &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/lamhieu-vk/nuz/blob/master/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/lamhieu-vk/nuz/blob/master/CONTRIBUTING.md) [![Travis Status](https://travis-ci.com/lamhieu-vk/nuz.svg?branch=master)](https://travis-ci.com/lamhieu-vk/nuz)
+# Nuz &middot; [![Travis Status](https://travis-ci.com/lamhieu-vk/nuz.svg?branch=master)](https://travis-ci.com/lamhieu-vk/nuz) ![GitHub last commit](https://img.shields.io/github/last-commit/lamhieu-vk/nuz) ![GitHub issues](https://img.shields.io/github/issues/lamhieu-vk/nuz) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/lamhieu-vk/nuz/blob/master/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/lamhieu-vk/nuz/blob/master/CONTRIBUTING.md)
 
 **Nuz** is a fancy library to implements Micro Frontends compatible with [ReactJS](#) and may support more in the future. 🏃
 
