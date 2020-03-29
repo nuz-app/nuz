@@ -23,8 +23,8 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@nuz/shared": "^0.0.1",
-    "@nuz/utils": "^0.0.1",
+    "@nuz/shared": "latest",
+    "@nuz/utils": "latest",
     "abort-controller": "^3.0.0",
     "cross-fetch": "^3.0.4",
     "object-hash": "^2.0.3",
