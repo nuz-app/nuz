@@ -9,7 +9,7 @@
     "build": "mode=production webpack"
   },
   "peerDependencies": {
-    "@nuz/core": "^0.0.1",
+    "@nuz/core": "latest",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },

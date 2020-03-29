@@ -8,7 +8,7 @@
     "start": "NODE_ENV=production node -r dotenv/config server.js"
   },
   "dependencies": {
-    "@nuz/registry": "^0.0.1",
+    "@nuz/registry": "latest",
     "cors": "^2.8.5",
     "morgan": "^1.9.1"
   },
