@@ -35,6 +35,6 @@
     ]
   },
   "devDependencies": {
-    "@nuz/cli": "^0.0.5"
+    "@nuz/cli": "latest"
   }
 }
