@@ -1,7 +1,7 @@
 {
   "name": "@nuz/cli",
   "description": "Cli provides functions to create, dev, serve and deploy the modules with the best way",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "repository": {
     "type": "git",
     "url": "https://github.com/lamhieu-vk/nuz.git"
