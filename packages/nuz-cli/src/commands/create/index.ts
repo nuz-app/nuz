@@ -115,11 +115,13 @@ const config: CommandConfig = {
       .option('name', {
         alias: 'n',
         describe: 'Module name',
+        type: 'string',
         required: false,
       })
       .option('template', {
         alias: 't',
         describe: 'Module template',
+        type: 'string',
         required: false,
       }),
   execute,
