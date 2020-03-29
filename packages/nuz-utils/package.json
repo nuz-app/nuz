@@ -26,9 +26,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "selfsigned": "^1.10.7"
-  },
-  "peerDependencies": {
+    "selfsigned": "^1.10.7",
     "tslib": "^1.11.1"
   }
 }
