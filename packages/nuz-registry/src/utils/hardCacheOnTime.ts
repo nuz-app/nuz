@@ -22,7 +22,6 @@ const hardCacheOnTime = async <T = unknown>(
         throw new Error('Cache time not allow to smaller prepare time!')
       }
 
-      console.log(timeout - prepare, 'timeout - prepare')
       setTimeout(async () => cache.set(key, await fn()), timeout - prepare)
     }
   }

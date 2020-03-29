@@ -25,7 +25,7 @@ class Server {
   private readonly serverless: ServerlessOptions
 
   constructor(options: ServerOptions) {
-    const { https, key, db, compression: compress } = options
+    const { https, key, db, compression: compress = true } = options
 
     // Init db to manage config
     const Database = dbMaps[db.type]
