@@ -1,6 +1,6 @@
 {
   "name": "nuz",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Nuz is a fancy library to implements Micro Frontends compatible with ReactJS and may support more in the future",
   "author": "Hieu Lam <lamhieu.vk@gmail.com> (https://lamhieu.info)",
   "repository": {
