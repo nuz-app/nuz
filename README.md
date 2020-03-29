@@ -1,4 +1,4 @@
-# Nuz &middot; [![Travis Status](https://travis-ci.com/lamhieu-vk/nuz.svg?branch=master)](https://travis-ci.com/lamhieu-vk/nuz) ![GitHub last commit](https://img.shields.io/github/last-commit/lamhieu-vk/nuz) ![GitHub issues](https://img.shields.io/github/issues/lamhieu-vk/nuz) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/lamhieu-vk/nuz/blob/master/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/lamhieu-vk/nuz/blob/master/CONTRIBUTING.md)
+# Nuz &middot; [![Travis Status](https://travis-ci.com/lamhieu-vk/nuz.svg?branch=master)](https://travis-ci.com/lamhieu-vk/nuz) ![GitHub last commit](https://img.shields.io/github/last-commit/lamhieu-vk/nuz) ![GitHub issues](https://img.shields.io/github/issues/lamhieu-vk/nuz) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/lamhieu-vk/nuz/blob/develop/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/lamhieu-vk/nuz/blob/develop/CONTRIBUTING.md)
 
 **Nuz** is a fancy library to implements Micro Frontends compatible with [ReactJS](#) and may support more in the future. 🏃
 
@@ -74,24 +74,24 @@ Nooo, you can use **Nuz** with your React application, **Nuz** is compatible wit
 
 ### Packages
 
-- **[@nuz/core](https://github.com/lamhieu-vk/nuz/blob/master/packages/nuz-core)** - the core is define, resolve and manage  modules from the network in the application.
-- **[@nuz/cli](https://github.com/lamhieu-vk/nuz/blob/master/packages/nuz-cli)** - Cli provides functions to create, dev, serve and deploy the modules with the best way.
-- **[@nuz/registry](https://github.com/lamhieu-vk/nuz/blob/master/packages/nuz-registry)** - Provides functions to create a stable, secure and scalable registry server.
+- **[@nuz/core](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-core)** - the core is define, resolve and manage  modules from the network in the application.
+- **[@nuz/cli](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-cli)** - Cli provides functions to create, dev, serve and deploy the modules with the best way.
+- **[@nuz/registry](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-registry)** - Provides functions to create a stable, secure and scalable registry server.
 
 And other packages just create to using in the main packages.
 
 ### How it work?
 
-[View the workflow here](https://github.com/lamhieu-vk/nuz/blob/master/docs/WORKFLOW.md) 🙈
+[View the workflow here](https://github.com/lamhieu-vk/nuz/blob/develop/docs/WORKFLOW.md) 🙈
 
 ### Quickstart
 
-[Get started in 5 minutes](https://github.com/lamhieu-vk/nuz/blob/master/docs/GET_STARTED.md) ⏱
+[Get started in 5 minutes](https://github.com/lamhieu-vk/nuz/blob/develop/docs/GET_STARTED.md) ⏱
 
 ### Examples
 
-* [nuz + create-next-app](https://github.com/lamhieu-vk/nuz/blob/master/examples/with-create-next-app) - using **nuz** with a typescript template created by create-next-app, both *server and client* side render.
-* [nuz + create-react-app](https://github.com/lamhieu-vk/nuz/blob/master/examples/with-create-react-app) - using **nuz** with a template created by create-react-app, *client-side* render only.
+* [nuz + create-next-app](https://github.com/lamhieu-vk/nuz/blob/develop/examples/with-create-next-app) - using **nuz** with a typescript template created by create-next-app, both *server and client* side render.
+* [nuz + create-react-app](https://github.com/lamhieu-vk/nuz/blob/develop/examples/with-create-react-app) - using **nuz** with a template created by create-react-app, *client-side* render only.
 
 If you using **nuz** for your project, PRs are welcome! 🎉
 
@@ -101,7 +101,7 @@ Update soon! ✍️
 
 ## Contributing
 
-Please see our [CONTRIBUTING.md](https://github.com/lamhieu-vk/nuz/blob/master/docs/CONTRIBUTING.md) 📝
+Please see our [CONTRIBUTING.md](https://github.com/lamhieu-vk/nuz/blob/develop/CONTRIBUTING.md) 📝
 
 ## Author
 

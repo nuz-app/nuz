@@ -6,9 +6,9 @@ The template created by [create-react-app](https://www.npmjs.com/package/create-
 
 - Installed `@nuz/core` `react-helmet` as `dependencies` and `@nuz/cli` as `devDependencies`.
 - Add script `dev-workspace` in package.json.
-- A new folder named `workspace` includes `modules` created by [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-cli).
+- A new folder named `workspace` includes `modules` created by [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli).
 - Updated `src/client.js` file to bootstrap in-app.
-- Updated `src/App.js` file to use [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-core).
+- Updated `src/App.js` file to use [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core).
 
 ## Getting started
 

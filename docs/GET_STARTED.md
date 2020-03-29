@@ -5,7 +5,7 @@ If you want to start a new project, you can use [creact-react-app](#) or [creact
 
 ## 🎮 Config in-app
 
-For the first time using Nuz, you must configure Nuz in the master app. It is easy to game, you can follow a step-by-step below. And if your master app created by [create-react-app](#) reference [here]((https://github.com/lamhieu-vk/nuz/tree/master/examples/with-creact-react-app)), [create-next-app](#) is [here](https://github.com/lamhieu-vk/nuz/tree/master/examples/with-create-next-app).
+For the first time using Nuz, you must configure Nuz in the master app. It is easy to game, you can follow a step-by-step below. And if your master app created by [create-react-app](#) reference [here]((https://github.com/lamhieu-vk/nuz/tree/develop/examples/with-creact-react-app)), [create-next-app](#) is [here](https://github.com/lamhieu-vk/nuz/tree/develop/examples/with-create-next-app).
 
 
 ### Installation 

@@ -48,7 +48,7 @@ Example using `express` middlewares:
 
 ### Recommendation
 
-See [example](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-registry/examples/registry-server).
+See [example](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-registry/examples/registry-server).
 
 ## Documentation
 
