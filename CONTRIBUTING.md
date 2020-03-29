@@ -2,25 +2,25 @@
 
 We are happy with your help in making the Nuz project better. Please read the project overview and guidelines for contributing bug reports and new code, or it might be hard for the community to help you with your issue or pull request.
 
-## Overview
+## 📃 Overview
 
 Before we jump into detailed guidelines for opening and triaging issues and submitting pull requests, here is some information about how our project is structured and resources you should refer to as you start contributing.
 
-### Project roles
+## 📎 Project roles
 
-#### Reviewer
+### Reviewer
 
 If you having submit a pull request, you can assign a reviewer is any members below to review and merge your pull request.
 
 * [@lamhieu-vk](https://github.com/lamhieu-vk)
 
-#### Core Committer
+### Core Committer
 
 The contributors with commit access and release to Nuz project. If you want to become a core committer please start writing PRs.
 
 * [@lamhieu-vk](https://github.com/lamhieu-vk)
 
-### Submitting pull requests
+## 🔽 Submitting pull requests
 
 Once you've come up with a good design, go ahead and submit a pull request (PR). When submitting a PR, please follow these guidelines:
 * Base all your work off of the `develop` branch. The `develop` branch is where active development happens. 
@@ -32,7 +32,7 @@ Once you've come up with a good design, go ahead and submit a pull request (PR).
 
 If your pull request is working in process or not ready to merge, please add `WIP:` prefix in pull request name.
 
-### Commit conventions
+## 📝 Commit conventions
 
 Nuz is using [conventional commits](https://www.conventionalcommits.org), you can enter commit with the message:
 ```sh
