@@ -131,6 +131,12 @@ class Modules {
     const config = this._config.getLinked()
     this._linked = new Linked(config)
 
+    if (config.port) {
+      console.warn(
+        `Please make sure the workspace server was started! \n Start workspace by command: \n > nuz workspace --port ${config.port}`,
+      )
+    }
+
     // Prepare: wait socket ready, binding events,...
     await this._linked.prepare()
 
