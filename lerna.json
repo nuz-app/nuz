@@ -1,11 +1,18 @@
 {
-  "version": "0.0.5",
+  "version": "0.0.6",
   "npmClient": "yarn",
-  "packages": ["packages/*"],
-  "sort": ["@nuz/shared", "@nuz/utils"],
+  "packages": [
+    "packages/*"
+  ],
+  "sort": [
+    "@nuz/shared",
+    "@nuz/utils"
+  ],
   "command": {
     "version": {
-      "allowBranch": ["master"],
+      "allowBranch": [
+        "master"
+      ],
       "message": "chore(release): %s"
     }
   }
