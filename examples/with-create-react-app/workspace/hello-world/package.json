@@ -1,0 +1,20 @@
+{
+  "name": "hello-world",
+  "library": "HelloWorld",
+  "version": "0.1.0",
+  "source": "src/index.jsx",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "nuz dev --port 4001",
+    "build": "nuz build",
+    "serve": "nuz serve --port 4001"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "peerDependencies": {
+    "@nuz/core": "latest"
+  }
+}
