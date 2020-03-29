@@ -1,4 +1,4 @@
-# @nuz/registry
+# @nuz/registry &middot; [![npm version](https://img.shields.io/npm/v/@nuz/registry.svg?style=flat)](https://www.npmjs.com/package/@nuz/registry)
 
 ## Installation
 
