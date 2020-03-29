@@ -4,11 +4,11 @@ The template is [with-typescript](https://github.com/zeit/next.js/tree/canary/ex
 
 ## What is different?
 
-- Installed @nuz/core as `dependencies` and @nuz/cli as `devDependencies`.
+- Installed `@nuz/core` as `dependencies` and `@nuz/cli` as `devDependencies`.
 - Add script `dev-workspace` in package.json.
 - A new folder named `workspace` includes `modules` created by [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-cli).
 - File `pages/_app.tsx` default of next with some config for [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-core).
-- Updated `next.config.js` file to use helper of CORE for [Next.js](https://github.com/zeit/next.js), support **server-side-rendering**.
+- Updated `next.config.js` file to use helper of [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-core) for [Next.js](https://github.com/zeit/next.js), support **server-side-rendering**.
 - Updated `pages/index.tsx` file to use [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/master/packages/nuz-core).
 
 ## Getting started
