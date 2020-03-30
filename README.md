@@ -97,7 +97,7 @@ If you using **nuz** for your project, PRs are welcome! 🎉
 
 ## Documentation
 
-Update soon! ✍️
+Read at [here](https://github.com/lamhieu-vk/nuz/blob/develop/docs/README.md) 📚
 
 ## Contributing
 
