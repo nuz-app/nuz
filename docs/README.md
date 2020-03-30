@@ -88,7 +88,7 @@ See the map below
 
 ![image](https://user-images.githubusercontent.com/9839768/77934078-c7932380-72d9-11ea-8b92-6b191801d1af.png)
 
-*Note: Nuz is [@nuz/core](#).*
+*Note: Nuz is [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core).*
 
 #### Concepts
 
@@ -100,7 +100,7 @@ This is the main application, it is the place to store dependencies, shared libr
 ##### Modules
 It is a component, or more than that. Define it as an NPM module installed into the project. It exports an element to render on the application, or may contain additional things like tools or more, up to you.
 
-*Note: use [@nuz/cli](#) to create new modules.*
+*Note: use [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli) to create new modules.*
 
 ##### Shared libraries
 Libraries are shared among modules, it will be lazy loaded when one of the used modules is initialized!
@@ -109,18 +109,18 @@ Libraries are shared among modules, it will be lazy loaded when one of the used 
 Is the general store of the whole project, can be `redux` store or any. It should only be stored collectively if a value is used more often, limiting data sharing (because we expect each to be independent, including the api from the backend).
 
 ##### Registry server
-Registry server is a place to store information about modules (resources, integrity hash, shared, ...), [@nuz/core](#) will call this server to get information and resolve modules. Use [@nuz/registry](#) to create it!
+Registry server is a place to store information about modules (resources, integrity hash, shared, ...), [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core) will call this server to get information and resolve modules. Use [@nuz/registry](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-registry) to create it!
 
 ##### CDN Resources
-The content distribution network contains the resources of the modules, which are built by [@nuz/cli](#) and synchronized.
+The content distribution network contains the resources of the modules, which are built by [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli) and synchronized.
 
 
 ### Workflow
 
-* When the user enters your application, [@nuz/core](#) will call up the registry server to get information about the configuration of the modules used in the application.
+* When the user enters your application, [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core) will call up the registry server to get information about the configuration of the modules used in the application.
 * Once the modules have been configured, it will automatically create preload or preconnect to the origin used in the received configuration.
-* And at the same time React will render your application, if any, it renders to any of the modules identified. Determined to resolve by [@nuz/core](#), [@nuz/core](#) will download resources and create a secure execution environment, after execution will return the module like a normal module!
-* In case the module is called using a shared library, if the library is already in, it will be used, if not already downloaded it will be downloaded before the module's resources are downloaded and executed, you do not need to Having to care about syncing it, [@nuz/core](#) has done it for you!
+* And at the same time React will render your application, if any, it renders to any of the modules identified. Determined to resolve by [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core), [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core) will download resources and create a secure execution environment, after execution will return the module like a normal module!
+* In case the module is called using a shared library, if the library is already in, it will be used, if not already downloaded it will be downloaded before the module's resources are downloaded and executed, you do not need to Having to care about syncing it, [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core) has done it for you!
 
 **Some notes to know:**
 * During the configuration process from the registry server, React render will be blocked until it receives configuration. To solve this problem, Nuz supports several cache mechanisms to minimize waiting time.
@@ -136,7 +136,7 @@ The content distribution network contains the resources of the modules, which ar
 ### Reslved
 
 #### Modules management
-We have created [@nuz/registry](#) to create a registry server for you to manage modules, publish, rollback, support token authorization. [@nuz/core](#) will call the registry server to determine which modules version is being used!
+We have created [@nuz/registry](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-registry) to create a registry server for you to manage modules, publish, rollback, support token authorization. [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core) will call the registry server to determine which modules version is being used!
 
 #### Routing
 The master app will be the routing container. If you create a master using [create-next-app](https://github.com/zeit/next.js), routing is followed the instructions of [next.js](https://nextjs.org). If you create the master app with [create-react-app](https://create-react-app.dev/), you can refer to using [react-router](https://create-react-app.dev/docs/adding-a-router) for this job.
@@ -145,10 +145,10 @@ The master app will be the routing container. If you create a master using [crea
 You can easily use [redux](https://redux.js.org) in a project.
 
 #### Shared component libraries
-[@nuz/core](#) has already handled this, and you will only lazy load the library used by the module when the module is initialized!
+[@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core) has already handled this, and you will only lazy load the library used by the module when the module is initialized!
 
 #### Styles collision
-[@nuz/cli](#) takes care of this for you, you just need to select the library you want to use when creating the module using [@nuz/cli](#), everything else is solved!
+[@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli) takes care of this for you, you just need to select the library you want to use when creating the module using [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli), everything else is solved!
 
 #### SEO and UX
 If you are interested in SEO and Server-side-rendering, you can use [Next.js](https://nextjs.org) for the master app, Nuz is compatible with [Next.js](https://nextjs.org).
