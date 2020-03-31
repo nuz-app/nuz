@@ -13,6 +13,13 @@ $ npm install
 $ yarn install
 ```
 
+### Environment
+
+You can clone example environment by comamnd:
+```sh
+$ cp .env.example .env
+```
+
 ### Scripts
 
 You can get started quickly with the following script.
