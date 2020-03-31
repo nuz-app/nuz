@@ -82,7 +82,7 @@ And other packages just create to using in the main packages.
 
 ### How it work?
 
-[View the workflow here](https://github.com/lamhieu-vk/nuz/blob/develop/docs/WORKFLOW.md) 🙈
+[View the workflow here](https://github.com/lamhieu-vk/nuz/tree/develop/docs#architectures-1) 🙈
 
 ### Quickstart
 
@@ -104,7 +104,7 @@ If you use Nuz for your project, PRs are welcome! 🎉
 
 ## Documentation
 
-Read at [here](https://github.com/lamhieu-vk/nuz/blob/develop/docs/README.md) 📚
+See more information about [documents here](https://github.com/lamhieu-vk/nuz/blob/develop/docs/README.md) 📚
 
 ## Contributing
 

@@ -4,7 +4,7 @@ We are happy with your help in making the Nuz project better. Please read the pr
 
 ## 📃 Overview
 
-Before we jump into detailed guidelines for opening and triaging issues and submitting pull requests, here is some information about how our project is structured and resources you should refer to as you start contributing.
+Before we jump into detailed guidelines for opening and triaging issues and submitting pull requests, here is some information about how our project is [structured and resources](https://github.com/lamhieu-vk/nuz/tree/develop/docs) you should refer to as you start contributing.
 
 ## 📎 Project roles
 
