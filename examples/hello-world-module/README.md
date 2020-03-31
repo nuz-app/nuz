@@ -8,7 +8,7 @@ Deploy the example using [ZEIT Now](https://zeit.co/now):
 
 [![Deploy with ZEIT Now](https://zeit.co/button)](https://zeit.co/import/project?template=https://github.com/lamhieu-vk/nuz/tree/develop/examples/hello-world-module)
 
-_Live Example: https://hello-world-module-lamhieu.nuz.now.sh_
+_Live Example: https://hello-world-module.nuz.now.sh_
 
 Note: you need to go into **Build & Development Settings** to update the **Output Directory** field as shown:
 
