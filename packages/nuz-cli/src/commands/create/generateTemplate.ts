@@ -88,6 +88,7 @@ const generateTemplate = async (
             '@types/node': 'latest',
             '@types/react': 'latest',
             '@types/react-dom': 'latest',
+            typescript: '^3.8.3',
           }
         : {},
       {
