@@ -1,0 +1,25 @@
+{
+  "name": "hello-world-module",
+  "library": "HelloWorldModule",
+  "version": "0.1.0",
+  "source": "src/index.tsx",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "nuz dev --port 4001",
+    "build": "nuz build",
+    "serve": "nuz serve --port 4001"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "typescript": "^3.8.3",
+    "@nuz/cli": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "peerDependencies": {
+    "@nuz/core": "latest"
+  }
+}
