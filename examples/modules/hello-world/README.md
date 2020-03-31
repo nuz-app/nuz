@@ -1,19 +1,5 @@
 # hello-world-module
 
-## Deploy your own
-
-### Now
-
-Deploy the example using [ZEIT Now](https://zeit.co/now):
-
-[![Deploy with ZEIT Now](https://zeit.co/button)](https://zeit.co/import/project?template=https://github.com/lamhieu-vk/nuz/tree/develop/examples/modules/hello-world)
-
-_Live Example: https://hello-world-module.nuz.now.sh_
-
-Note: you need to go into **Build & Development Settings** to update the **Output Directory** field as shown:
-
-![image](https://user-images.githubusercontent.com/9839768/77988495-b5030380-7346-11ea-91b5-e5498e7ff2ac.png)
-
 ## Getting started
 
 ### Installation
@@ -77,3 +63,17 @@ $ npm run serve
 # or yarn
 $ yarn serve
 ```
+
+#### Deploy your own
+
+##### Now
+
+Deploy the example using [ZEIT Now](https://zeit.co/now):
+
+[![Deploy with ZEIT Now](https://zeit.co/button)](https://zeit.co/import/project?template=https://github.com/lamhieu-vk/nuz/tree/develop/examples/modules/hello-world)
+
+_Live Example: https://hello-world-module.nuz.now.sh_
+
+Note: you need to go into **Build & Development Settings** to update the **Output Directory** field as shown:
+
+![image](https://user-images.githubusercontent.com/9839768/77988495-b5030380-7346-11ea-91b5-e5498e7ff2ac.png)

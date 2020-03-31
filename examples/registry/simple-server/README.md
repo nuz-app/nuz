@@ -1,9 +1,10 @@
-# registry-server
+# simple-server
 
 ## Getting started
 
 ### Installation
 
+Install dependencies for the module before use:
 ```sh
 # with npm
 $ npm install
@@ -12,8 +13,11 @@ $ npm install
 $ yarn install
 ```
 
-### Start development mode
+### Scripts
 
+You can get started quickly with the following script.
+
+#### Start development mode
 ```sh
 # with npm
 $ npm run dev
@@ -22,8 +26,7 @@ $ npm run dev
 $ yarn dev
 ```
 
-### Start production mode
-
+#### Start production mode
 ```sh
 # with npm
 $ npm run start
@@ -41,6 +44,5 @@ Edit **Authorization**, set value is `key` field in `ServerOptions`:
 
 Edit **Variables**, set `BASE_URL` is you registry url:
 ![image](https://user-images.githubusercontent.com/9839768/77844561-e3ab9d80-71d1-11ea-9337-9270fd57a4c3.png)
-
 
 ## Good luck! 👍

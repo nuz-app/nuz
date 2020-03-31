@@ -95,8 +95,10 @@ And other packages just create to using in the main packages.
 * [create-react-app](https://github.com/lamhieu-vk/nuz/blob/develop/examples/apps/create-react-app) - use Nuz with a template created by create-react-app, *client-side* render only.
 
 #### Modules
+* [hello-world-module](https://github.com/lamhieu-vk/nuz/blob/develop/examples/modules/hello-world-module) - a module was created by [@nuz/cli](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-cli), have [online examples](https://hello-world-module.now.sh) and deploy button.
 
-* [hello-world-module](hello-world-module) - a module was created by [@nuz/cli](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-cli), have [online examples](https://hello-world-module.now.sh) and deploy button.
+#### Regitry Server
+* [simple-server](https://github.com/lamhieu-vk/nuz/blob/develop/examples/registry/simple-server) - a registry server using [@nuz/registry](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-registry).
 
 If you use Nuz for your project, PRs are welcome! 🎉
 
