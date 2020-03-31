@@ -91,6 +91,7 @@ const generateTemplate = async (
           }
         : {},
       {
+        '@nuz/cli': 'latest',
         react: 'latest',
         'react-dom': 'latest',
       },
