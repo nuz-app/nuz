@@ -17,7 +17,7 @@ If you are starting to learn about Micro Frontends, you should read it to know w
 
 *Note: when starting here, I will understand by default that you should consult and have some basic knowledge about Micro Frontends.*
 
-The Micro Frontends architecture was inspired by MS and was born to replace the monolithic architecture that has been around for a long time. With Micro Frontends, each feature component on the interface as a service in MS, you can split it or keep it at a level such as: by component, by feature, by feature group, by page,... But the best way, keep it at the component level and a group can manage multiple components, to know why you please follow along.
+The Micro Frontends architecture was inspired by Micro Services and was born to replace the monolithic architecture that has been around for a long time. With Micro Frontends, each feature component on the interface as a service in Micro Services, you can split it or keep it at a level such as: by component, by feature, by feature group, by page,... But the best way, keep it at the component level and a group can manage multiple components, to know why you please follow along.
 
 #### Architectures
 
