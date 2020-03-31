@@ -115,6 +115,13 @@ const generateTemplate = async (
   const configPath = path.join(dir, 'nuz.config.js')
   fs.writeSync(configPath, dataConfig)
 
+  // Update `README.md` file
+  const readmePath = path.join(dir, 'README.md')
+  fs.writeSync(
+    readmePath,
+    fs.read(readmePath).toString('utf8').replace('{module-name}', name),
+  )
+
   if (!useTypescript) {
     // Remove `tsconfig.json` file if not using Typescript
     const tsconfigPath = path.join(dir, 'tsconfig.json')
