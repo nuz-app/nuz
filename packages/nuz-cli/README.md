@@ -2,7 +2,7 @@
 
 ## Installation
 
-Easy to install [@nuz/cli](#) with command:
+Easy to install [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli) with command:
 ```sh
 # with npm
 $ npm install @nuz/cli --save-dev
@@ -11,7 +11,7 @@ $ npm install @nuz/cli --save-dev
 $ yarn add @nuz/cli -D
 ```
 
-After install, run command to check version of [@nuz/cli](#):
+After install, run command to check version of [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli):
 ```sh
 $ nuz --version
 ```
@@ -36,8 +36,8 @@ Options:
 
 ## Usage
 
-The [@nuz/cli](#) commands below will only works while calling in root directory of the module.
-When [@nuz/cli](#) called, it will find `nuz.config.js` file to read config, read more [here](https://github.com/lamhieu-vk/nuz/tree/develop/docs#configuration).
+The [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli) commands below will only works while calling in root directory of the module.
+When [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli) called, it will find `nuz.config.js` file to read config, read more [here](https://github.com/lamhieu-vk/nuz/tree/develop/docs#configuration).
 
 ### Commands
 

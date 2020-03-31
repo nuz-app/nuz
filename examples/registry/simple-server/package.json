@@ -1,11 +1,11 @@
 {
-  "name": "registry-server",
+  "name": "simple-server",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/server.js",
   "license": "MIT",
   "scripts": {
-    "dev": "node -r dotenv/config server.js",
-    "start": "NODE_ENV=production node -r dotenv/config server.js"
+    "dev": "node -r dotenv/config src/server.js",
+    "start": "NODE_ENV=production node -r dotenv/config src/server.js"
   },
   "dependencies": {
     "@nuz/registry": "latest",

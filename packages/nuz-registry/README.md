@@ -48,7 +48,7 @@ Example using `express` middlewares:
 
 ### Recommendation
 
-See [example](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-registry/examples/registry-server).
+See [simple registry server](https://github.com/lamhieu-vk/nuz/blob/develop/examples/registry/simple-server) example.
 
 ## Documentation
 
@@ -89,7 +89,7 @@ If type is `mongodb` please add `url` as MongoDB url.
 ##### `https: boolean | HttpsConfig`
 Default is `false`.
 
-Provide https config for your registry server. If set is `true`, [@nuz/registry](#) will auto generate self certificate to use https connect method.
+Provide https config for your registry server. If set is `true`, [@nuz/registry](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-registry) will auto generate self certificate to use https connect method.
 ```ts
 export interface HttpsConfig {
   key: Buffer | string
@@ -97,14 +97,14 @@ export interface HttpsConfig {
 }
 ```
 
-[@nuz/registry](#) use [spdy](https://www.npmjs.com/package/spdy) to handle on *https* and *http2*.
+[@nuz/registry](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-registry) use [spdy](https://www.npmjs.com/package/spdy) to handle on *https* and *http2*.
 
 *Note: Please only use `true` for `localhost`, in development mode. In proudction, please provide your certificate!*
 
 ##### `compression?: boolean | compression.CompressionOptions`
 Default is `true`.
 
-[@nuz/registry](#) use [compression](https://www.npmjs.com/package/compression) to compress. Set is `true` will use default with default config, you can also pass `compression.CompressionOptions`!
+[@nuz/registry](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-registry) use [compression](https://www.npmjs.com/package/compression) to compress. Set is `true` will use default with default config, you can also pass `compression.CompressionOptions`!
 
 ##### `serverless?: ServerlessOptions`
 

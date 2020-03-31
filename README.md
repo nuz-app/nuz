@@ -1,6 +1,6 @@
 # Nuz &middot; [![Travis Status](https://travis-ci.com/lamhieu-vk/nuz.svg?branch=master)](https://travis-ci.com/lamhieu-vk/nuz) ![GitHub last commit](https://img.shields.io/github/last-commit/lamhieu-vk/nuz) ![GitHub issues](https://img.shields.io/github/issues/lamhieu-vk/nuz) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/lamhieu-vk/nuz/blob/develop/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/lamhieu-vk/nuz/blob/develop/CONTRIBUTING.md)
 
-**Nuz** is a fancy library to implements Micro Frontends compatible with [ReactJS](#) and may support more in the future. 🏃
+**Nuz** is a fancy library to implements Micro Frontends compatible with [ReactJS](https://reactjs.org) and may support more in the future. 🏃
 
 ***
 
@@ -90,9 +90,13 @@ And other packages just create to using in the main packages.
 
 ### Examples
 
+#### Master Apps
+* [create-next-app](https://github.com/lamhieu-vk/nuz/blob/develop/examples/apps/create-next-app) - use Nuz with a typescript template created by create-next-app, both *server and client* side render.
+* [create-react-app](https://github.com/lamhieu-vk/nuz/blob/develop/examples/apps/create-react-app) - use Nuz with a template created by create-react-app, *client-side* render only.
+
+#### Modules
+
 * [hello-world-module](hello-world-module) - a module was created by [@nuz/cli](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-cli), have [online examples](https://hello-world-module.now.sh) and deploy button.
-* [nuz + create-next-app](https://github.com/lamhieu-vk/nuz/blob/develop/examples/with-create-next-app) - use Nuz with a typescript template created by create-next-app, both *server and client* side render.
-* [nuz + create-react-app](https://github.com/lamhieu-vk/nuz/blob/develop/examples/with-create-react-app) - use Nuz with a template created by create-react-app, *client-side* render only.
 
 If you use Nuz for your project, PRs are welcome! 🎉
 

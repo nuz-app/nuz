@@ -1,18 +1,18 @@
 # Getting started
 
 For using Nuz to implements Micro Frontends for your project, you must have an application using React, of course.
-If you want to start a new project, you can use [creact-react-app](#) or [creact-next-app](#) to create the master app.
+If you want to start a new project, you can use [create-react-app](https://create-react-app.dev) or [create-next-app](https://github.com/zeit/next.js) to create the master app.
 
 ## 🎮 Config in-app
 
-For the first time using Nuz, you must configure Nuz in the master app. It is easy to game, you can follow a step-by-step below. And if your master app created by [create-react-app](#) reference [here]((https://github.com/lamhieu-vk/nuz/tree/develop/examples/with-creact-react-app)), [create-next-app](#) is [here](https://github.com/lamhieu-vk/nuz/tree/develop/examples/with-create-next-app).
+For the first time using Nuz, you must configure Nuz in the master app. It is easy to game, you can follow a step-by-step below. And if your master app created by [create-react-app](https://create-react-app.dev) reference [here]((https://github.com/lamhieu-vk/nuz/tree/develop/examples/apps/creact-react-app)), [create-next-app](https://github.com/zeit/next.js) is [here](https://github.com/lamhieu-vk/nuz/tree/develop/examples/apps/create-next-app).
 
 
 ### Installation 
 
-You much install [@nuz/core](#) to handles the main workflow and [@nuz/cli](#) to working with modules and start development mode in the workspace for the master app.
+You much install [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core) to handles the main workflow and [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli) to working with modules and start development mode in the workspace for the master app.
 
-To install [@nuz/core](#) package, you just run below command:
+To install [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core) package, you just run below command:
 ```sh
 # with npm
 $ npm install @nuz/core
@@ -20,9 +20,9 @@ $ npm install @nuz/core
 # or yarn
 $ yarn add @nuz/core
 ```
-*Note: [@nuz/core](#) must be installed as `dependencies`.*
+*Note: [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core) must be installed as `dependencies`.*
 
-And install [@nuz/cli](#) package with:
+And install [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli) package with:
 ```sh
 # with npm
 $ npm install --dev @nuz/cli
@@ -30,16 +30,16 @@ $ npm install --dev @nuz/cli
 # or yarn
 $ yarn add -D @nuz/cli
 ```
-*Note: [@nuz/cli](#) is allow installed as `devDependencies`.*
+*Note: [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli) is allow installed as `devDependencies`.*
 
-Run below command to check version of [@nuz/cli](#):
+Run below command to check version of [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli):
 ```sh
 $ nuz --version
 ```
 
 ### Bootstrap
 
-For [@nuz/core](#) work in your app, you must be run `bootstrap`, inject to renderers of `react-dom` in app.
+For [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core) work in your app, you must be run `bootstrap`, inject to renderers of `react-dom` in app.
 
 Should be run `bootstrap` in the top of app flow, by below code:
 ```ts
@@ -63,7 +63,7 @@ bootstrap(
 )
 ```
 
-If you master app was created by [create-react-app](#) or [create-next-app](#) you can see example for bootstrap below!
+If you master app was created by [create-react-app](https://create-react-app.dev) or [create-next-app](https://github.com/zeit/next.js) you can see example for bootstrap below!
 
 #### Integrate for `create-react-app`
 
@@ -122,7 +122,7 @@ ReactDOM.render((
 serviceWorker.unregister();
 ```
 
-It was done! Currently, you can use **Nuz** in your project. Start with [create new module](#) below!
+It was done! Currently, you can use **Nuz** in your project. Start with [create new module](https://github.com/lamhieu-vk/nuz/blob/develop/docs/GET_STARTED.md#create-a-new) below!
 
 Try to create new module and usage like example:
 ```js
@@ -179,7 +179,7 @@ function MyApp({ Component, pageProps }: any) {
 export default MyApp
 ```
 
-It was done! Currently, you can use **Nuz** in your project. Start with [create new module](#) below!
+It was done! Currently, you can use **Nuz** in your project. Start with [create new module](https://github.com/lamhieu-vk/nuz/blob/develop/docs/GET_STARTED.md#create-a-new) below!
 
 Try to create new module and usage like example:
 ```js
@@ -193,16 +193,16 @@ const ModuleComponent = dynamic(() => resolve('module-name'), { nuz: true });
 
 ### Create a new
 
-Go to the folder you want to create module inside, use [@nuz/cli](#) to create new module by command:
+Go to the folder you want to create module inside, use [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli) to create new module by command:
 ```sh
 $ nuz create
 ```
 After answer the questions, your new module will auto-generated.
-More information about scripts inside new module will display in your terminal window. You can read more at [here](#).
+More information about scripts inside new module will display in your terminal window. You can read more at [here](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli#commands).
 
 #### Link modules
 
-You can use [workspace command](#) to links modules in development mode.
+You can use [workspace command](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli#nuz-workspace) to links modules in development mode.
 
 To quick use, in the root of the master app, add the script to package.json:
 ```ts
