@@ -15,5 +15,8 @@
     "composite": true,
     "noEmitOnError": true
   },
+  "exclude": [
+    "**/examples/**"
+  ],
   "references": []
 }
