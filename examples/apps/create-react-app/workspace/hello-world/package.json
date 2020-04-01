@@ -1,8 +1,8 @@
 {
-  "name": "hello-world",
+  "name": "hello-world-module",
   "library": "HelloWorld",
   "version": "0.1.0",
-  "source": "src/index.jsx",
+  "source": "src/index.tsx",
   "main": "dist/index.js",
   "scripts": {
     "dev": "nuz dev --port 4001",
@@ -11,6 +11,11 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "typescript": "^3.8.3",
+    "@nuz/cli": "latest",
     "react": "latest",
     "react-dom": "latest"
   },

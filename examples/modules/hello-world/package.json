@@ -1,6 +1,6 @@
 {
   "name": "hello-world-module",
-  "library": "HelloWorldModule",
+  "library": "HelloWorld",
   "version": "0.1.0",
   "source": "src/index.tsx",
   "main": "dist/index.js",
