@@ -2,7 +2,17 @@
 
 ## Installation
 
-Easy to install [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli) with command:
+Install [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli) as **global**:
+```sh
+# with npm
+$ npm install @nuz/cli --g
+
+# or yarn
+$ yarn global add @nuz/cli
+```
+*Note: should install as global, please note that it is updated regularly.*
+
+Install [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli) in **the project**:
 ```sh
 # with npm
 $ npm install @nuz/cli --save-dev
