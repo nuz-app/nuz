@@ -4,7 +4,7 @@ import Hello from './components/Hello';
 
 const Module = () => (
   <div>
-    <p>Thanks for using nuz! :)</p>
+    <p>Thanks for using nuz!</p>
     <Hello />
   </div>
 );

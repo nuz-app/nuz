@@ -10,6 +10,7 @@ const { App } = reactHelpersFactory({
 
 bootstrap({
   ssr: true,
+  // Link only run on development mode
   linked: {
     port: 4000,
   },
@@ -17,11 +18,12 @@ bootstrap({
     'react': React,
     'react-dom': ReactDOM,
   },
+  // Declared modules in production
   modules: {
     'hello-world': {
       library: 'HelloWorld',
       format: 'umd' as ModuleFormats,
-      upstream: 'http://localhost:4000/hello-world/index.js',
+      upstream: 'https://hello-world.nuz.now.sh',
     },
   },
   preload: ['hello-world'],

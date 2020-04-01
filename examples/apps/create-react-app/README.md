@@ -70,7 +70,7 @@ $ npm run build
 $ yarn build
 ```
 
-Builds the app for production:
+Start the app for production:
 ```sh
 # with npm
 $ npm run start
@@ -87,7 +87,7 @@ Deploy the example using [ZEIT Now](https://zeit.co/now):
 
 [![Deploy with ZEIT Now](https://zeit.co/button)](https://zeit.co/import/project?template=https://github.com/lamhieu-vk/nuz/tree/develop/examples/apps/create-react-app)
 
-_Live Example: https://create-react-ap.nuz.now.sh_
+_Live Example: https://create-react-app.nuz.now.sh_
 
 ## Good luck! 👍
 
