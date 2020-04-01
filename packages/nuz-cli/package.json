@@ -14,7 +14,8 @@
     "nuz": "dist/cli.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "templates"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
