@@ -92,10 +92,10 @@ And other packages just create to using in the main packages.
 
 #### Master Apps
 * [create-next-app](https://github.com/lamhieu-vk/nuz/blob/develop/examples/apps/create-next-app) - use Nuz with a typescript template created by create-next-app, both *server and client* side render.
-* [create-react-app](https://github.com/lamhieu-vk/nuz/blob/develop/examples/apps/create-react-app) - use Nuz with a template created by create-react-app, *client-side* render only.
+* [create-react-app](https://github.com/lamhieu-vk/nuz/blob/develop/examples/apps/create-react-app) - use Nuz with a template created by create-react-app, *client-side* render only, have [online examples](https://create-react-app.nuz.now.sh) and deploy button..
 
 #### Modules
-* [hello-world](https://github.com/lamhieu-vk/nuz/blob/develop/examples/modules/hello-world) - a module was created by [@nuz/cli](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-cli), have [online examples](https://hello-world-module.now.sh) and deploy button.
+* [hello-world](https://github.com/lamhieu-vk/nuz/blob/develop/examples/modules/hello-world) - a module was created by [@nuz/cli](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-cli), have [online examples](https://hello-world.nuz.now.sh) and deploy button.
 
 #### Regitry Server
 * [simple-server](https://github.com/lamhieu-vk/nuz/blob/develop/examples/registry/simple-server) - a registry server using [@nuz/registry](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-registry).
