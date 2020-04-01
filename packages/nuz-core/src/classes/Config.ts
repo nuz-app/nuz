@@ -1,3 +1,5 @@
+import { checkIsObject } from '@nuz/utils'
+
 import {
   BaseItemConfig,
   BootstrapConfig,
@@ -13,6 +15,12 @@ const setDefaultIfUnset = <T extends BaseItemConfig>(
   name: string,
   item: T,
 ): T => {
+  const isObject = checkIsObject(item)
+  const isInvalid = !(isObject && item.library)
+  if (isInvalid) {
+    throw new Error(`Module ${name} is invalid config`)
+  }
+
   const cloned = { ...item, name }
 
   if (!cloned.alias) {
