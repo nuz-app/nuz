@@ -83,16 +83,16 @@ const generateTemplate = async (
     },
     dependencies: {},
     devDependencies: Object.assign(
-      useTypescript
-        ? {
-            '@types/node': 'latest',
-            '@types/react': 'latest',
-            '@types/react-dom': 'latest',
-            typescript: '^3.8.3',
-          }
-        : {},
       {
         '@nuz/cli': 'latest',
+      },
+      useTypescript && {
+        '@types/node': 'latest',
+        '@types/react': 'latest',
+        '@types/react-dom': 'latest',
+        typescript: '^3.8.3',
+      },
+      {
         react: 'latest',
         'react-dom': 'latest',
       },
