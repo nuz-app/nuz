@@ -9,6 +9,7 @@ import * as serviceWorker from './serviceWorker';
 const nuz = reactHelpersFactory({ React, ReactDOM })
 
 bootstrap({
+  // Link only run on development mode
   linked: {
     port: 4000,
   },
@@ -16,6 +17,13 @@ bootstrap({
     'react': React,
     'react-dom': ReactDOM,
   },
+  // Declared modules in production
+  modules: {
+    'hello-world': {
+      library: 'HelloWorld',
+      upstream: 'https://hello-world.nuz.now.sh',
+    },
+  }
 });
 
 ReactDOM.render(
