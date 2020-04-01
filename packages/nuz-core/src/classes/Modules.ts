@@ -507,6 +507,7 @@ class Modules {
     await this.preload()
 
     // Fired event to inform for other know modules is ready
+    await this._readyPromise.ready
     this._readyPromise.resolve(true)
   }
 
