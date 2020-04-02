@@ -1,5 +1,5 @@
-import _camelCase from 'lodash/camelCase'
-import _upperFirst from 'lodash/upperFirst'
+import _camelCase from 'lodash.camelcase'
+import _upperFirst from 'lodash.upperfirst'
 
 import createQuestions from '../../utils/createQuestions'
 

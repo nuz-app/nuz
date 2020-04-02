@@ -1,6 +1,6 @@
 import { got } from '@nuz/utils'
 
-import _get from 'lodash/get'
+import _get from 'lodash.get'
 
 import { RegistryConfig } from '../../types'
 import * as apiUrls from '../../utils/apiUrls'
