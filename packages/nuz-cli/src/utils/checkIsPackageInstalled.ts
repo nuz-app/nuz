@@ -1,8 +1,9 @@
+import * as paths from './paths'
+
 const checkIsPackageInstalled = (name: string) => {
   try {
-    require(name)
-    return true
-  } catch {
+    return paths.resolveInApp(name)
+  } catch (errror) {
     return false
   }
 }

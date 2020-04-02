@@ -135,6 +135,7 @@ const webpackConfigFactory = (
       extensions,
       mainFields,
       modules: resolveModules,
+      alias: {},
     },
     externals: [externals],
     module: {
@@ -179,11 +180,11 @@ const webpackConfigFactory = (
   )
 
   // Set cache loader to improve build time
-  ruleOfScripts.use.push({ loader: require.resolve('cache-loader') })
+  ruleOfScripts.use.push({ loader: paths.resolveInApp('cache-loader') })
 
   // Set thread loader to use child process
   ruleOfScripts.use.push({
-    loader: require.resolve('thread-loader'),
+    loader: paths.resolveInApp('thread-loader'),
     options: {
       workers: Math.max(1, os.cpus().length - 1),
       poolTimeout: !dev ? 500 : Infinity,
@@ -192,26 +193,26 @@ const webpackConfigFactory = (
 
   // Set babel loader to transplie es
   ruleOfScripts.use.push({
-    loader: require.resolve('babel-loader'),
+    loader: paths.resolveInApp('babel-loader'),
     options: {
       cacheDirectory: cache,
       presets: [
-        require.resolve('@babel/preset-env'),
-        feature.react && require.resolve('@babel/preset-react'),
+        paths.resolveInApp('@babel/preset-env'),
+        feature.react && paths.resolveInApp('@babel/preset-react'),
       ].filter(Boolean),
-      plugins: [require.resolve('@babel/plugin-transform-runtime')],
+      plugins: [paths.resolveInApp('@babel/plugin-transform-runtime')],
     },
   })
 
   // Set typescript loader to transplie ts
   if (feature.typescript) {
-    const tsIsInstalled = checkIsPackageInstalled('typescript')
-    if (!tsIsInstalled) {
+    const typescriptIsInstalled = checkIsPackageInstalled('typescript')
+    if (!typescriptIsInstalled) {
       throw new Error('Install `typescript` to use Typescript!')
     }
 
     ruleOfScripts.use.push({
-      loader: require.resolve('ts-loader'),
+      loader: paths.resolveInApp('ts-loader'),
       options: {
         context: dir,
         happyPackMode: true,
@@ -249,51 +250,43 @@ const webpackConfigFactory = (
     if (feature.css) {
       // Set styles loader for preprocessor
       ruleOfStyles.use.push({
-        loader: require.resolve('style-loader'),
+        loader: paths.resolveInApp('style-loader'),
       })
 
       // Set css loader
       ruleOfStyles.use.push({
-        loader: require.resolve('css-loader'),
+        loader: paths.resolveInApp('css-loader'),
         options: Object.assign(
           {
             modules: true,
+            importLoaders: 1,
           },
           feature.css,
-          { importLoaders: 1 },
         ),
       })
     }
 
     if (feature.postcss) {
       // Set postcss loader
-      ruleOfStyles.use.push(
-        Object.assign(
-          {
-            loader: require.resolve('postcss-loader'),
-          },
-          feature.postcss !== true && { options: feature.postcss },
-        ),
-      )
+      ruleOfStyles.use.push({
+        loader: paths.resolveInApp('postcss-loader'),
+        options: feature.postcss === true ? {} : feature.postcss,
+      })
     }
 
     if (feature.sass) {
-      const sassIsInstalled =
-        checkIsPackageInstalled('node-sass') ||
-        checkIsPackageInstalled('dart-sass')
+      const nodeSassIsInstalled = checkIsPackageInstalled('node-sass')
+      const dartSassIsInstalled = checkIsPackageInstalled('dart-sass')
+      const sassIsInstalled = nodeSassIsInstalled || dartSassIsInstalled
       if (!sassIsInstalled) {
         throw new Error('Install `node-sass` or `dart-sass` to use Sass!')
       }
 
       // Set sass loader
-      ruleOfStyles.use.push(
-        Object.assign(
-          {
-            loader: require.resolve('sass-loader'),
-          },
-          feature.sass !== true && { options: feature.sass },
-        ),
-      )
+      ruleOfStyles.use.push({
+        loader: paths.resolveInApp('sass-loader'),
+        options: feature.sass === true ? {} : feature.sass,
+      })
     }
 
     if (feature.less) {
@@ -303,14 +296,10 @@ const webpackConfigFactory = (
       }
 
       // Set less loader
-      ruleOfStyles.use.push(
-        Object.assign(
-          {
-            loader: require.resolve('less-loader'),
-          },
-          feature.less !== true && { options: feature.less },
-        ),
-      )
+      ruleOfStyles.use.push({
+        loader: paths.resolveInApp('less-loader'),
+        options: feature.less === true ? {} : feature.less,
+      })
     }
 
     // Push styles rule to config
