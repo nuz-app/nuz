@@ -34,7 +34,7 @@
     }
   },
   "engines": {
-    "node": ">= 8.3"
+    "node": ">= 10.13.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
