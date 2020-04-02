@@ -3,6 +3,7 @@ import os from 'os'
 import path from 'path'
 import webpack from 'webpack'
 
+import ExtractCssChunks from 'extract-css-chunks-webpack-plugin'
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
@@ -248,10 +249,25 @@ const webpackConfigFactory = (
     const ruleOfStyles = ruleFactory(testOfStyles)
 
     if (feature.css) {
-      // Set styles loader for preprocessor
+      // Set ExtractCssChunks loader for preprocessor
       ruleOfStyles.use.push({
-        loader: paths.resolveInApp('style-loader'),
+        loader: ExtractCssChunks.loader,
+        options: {
+          hmr: dev,
+        },
       })
+
+      config.plugins.push(
+        new ExtractCssChunks({
+          filename: dev
+            ? 'styles/[name].css'
+            : 'styles/[name].[contenthash:8].css',
+          chunkFilename: dev
+            ? 'styles/[name].chunk.css'
+            : 'styles/[name].[contenthash:8].chunk.css',
+          dev,
+        }),
+      )
 
       // Set css loader
       ruleOfStyles.use.push({
