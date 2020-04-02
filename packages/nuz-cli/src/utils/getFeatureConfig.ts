@@ -21,6 +21,8 @@ const useIfOk = <T>(value: T, checker: () => T): T => {
 
   return checker()
 }
+const globSyncInDir = (pattern: string, dir: string) =>
+  glob.sync(pattern, { cwd: dir })
 
 const getFeatureConfig = (dir: string, config: ModuleConfig): FeatureConfig => {
   if (config.feature === false) {
@@ -42,36 +44,31 @@ const getFeatureConfig = (dir: string, config: ModuleConfig): FeatureConfig => {
 
   const useReact = useIfOk(
     options.react,
-    (): boolean =>
-      (glob.sync(path.join(dir, 'src/**/*{.tsx,.jsx}')) || []).length > 0,
+    (): boolean => (globSyncInDir('src/**/*{.tsx,.jsx}', dir) || []).length > 0,
   )
 
   const useCss = useIfOk(
     options.css,
     () =>
-      (
-        glob.sync(path.join(dir, `src/**/*{${stylesExtensions.join(',')}}`)) ||
-        []
-      ).length > 0,
+      (globSyncInDir(`src/**/*{${stylesExtensions.join(',')}}`, dir) || [])
+        .length > 0,
   )
 
   const useLess = useIfOk(
     options.less,
-    () => (glob.sync(path.join(dir, 'src/**/*.less')) || []).length > 0,
+    () => (globSyncInDir('src/**/*.less', dir) || []).length > 0,
   )
 
   const useSass = useIfOk(
     options.sass,
     () =>
-      (
-        glob.sync(path.join(dir, `src/**/*{${SASS_EXTENSIONS.join(',')}}`)) ||
-        []
-      ).length > 0,
+      (globSyncInDir(`src/**/*{${SASS_EXTENSIONS.join(',')}}`, dir) || [])
+        .length > 0,
   )
 
   const usePostCss = useIfOk(
     options.postcss,
-    () => (glob.sync(path.join(dir, 'postcss.config.js')) || []).length > 0,
+    () => (globSyncInDir('postcss.config.js', dir) || []).length > 0,
   )
 
   return {

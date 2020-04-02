@@ -20,6 +20,7 @@ import {
   TS_EXTENSIONS,
 } from '../lib/const'
 
+import checkIsPackageInstalled from './checkIsPackageInstalled'
 import * as compilerName from './compilerName'
 import * as paths from './paths'
 
@@ -204,6 +205,11 @@ const webpackConfigFactory = (
 
   // Set typescript loader to transplie ts
   if (feature.typescript) {
+    const tsIsInstalled = checkIsPackageInstalled('typescript')
+    if (!tsIsInstalled) {
+      throw new Error('Install `typescript` to use Typescript!')
+    }
+
     ruleOfScripts.use.push({
       loader: require.resolve('ts-loader'),
       options: {
@@ -217,6 +223,7 @@ const webpackConfigFactory = (
     config.plugins.push(
       new ForkTsCheckerWebpackPlugin({ silent: false, async: false }),
     )
+    config.plugins.push(new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]))
   }
 
   // Push scripts rule to config
@@ -271,6 +278,13 @@ const webpackConfigFactory = (
     }
 
     if (feature.sass) {
+      const sassIsInstalled =
+        checkIsPackageInstalled('node-sass') ||
+        checkIsPackageInstalled('dart-sass')
+      if (!sassIsInstalled) {
+        throw new Error('Install `node-sass` or `dart-sass` to use Sass!')
+      }
+
       // Set sass loader
       ruleOfStyles.use.push(
         Object.assign(
@@ -283,6 +297,11 @@ const webpackConfigFactory = (
     }
 
     if (feature.less) {
+      const lessIsInstalled = checkIsPackageInstalled('less')
+      if (!lessIsInstalled) {
+        throw new Error('Install `less` to use Less!')
+      }
+
       // Set less loader
       ruleOfStyles.use.push(
         Object.assign(
