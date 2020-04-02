@@ -480,7 +480,6 @@ class Modules {
       )
     }, [] as string[])
 
-
     const deduplicated = Array.from(new Set(urls))
     const isPreconnect = deduplicated.length <= PRECONNECT_LIMIT_DOMAIN
     const dnsPrefetchs = deduplicated.map((item) =>
