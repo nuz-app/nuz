@@ -34,6 +34,10 @@ export const createElement = (defined: DefinedElement) => {
 
   const keysOf = Object.keys(attributes)
   keysOf.forEach((key) => {
+    if (attributes[key] === undefined) {
+      return
+    }
+
     element[key] = attributes[key]
   })
 
@@ -41,31 +45,30 @@ export const createElement = (defined: DefinedElement) => {
 }
 
 export const preloadStyle = (href: string, config: PreloadConfig) => {
-  const link = defineElement(
+  const defined = defineElement(
     'link',
     Object.assign({ href, as: 'style' }, defaultConfigForPreload, config),
   )
 
-  return link
+  return defined
 }
 
 export const preloadScript = (href: string, config: PreloadConfig) => {
-  const link = defineElement(
+  const defined = defineElement(
     'link',
     Object.assign({ href, as: 'fetch' }, defaultConfigForPreload, config),
   )
 
-  return link
+  return defined
 }
 
 export const dnsPrefetch = (href: string, isPreconnect: boolean = false) => {
-  const link = defineElement('link', {
+  const defined = defineElement('link', {
+    rel: isPreconnect ? 'preconnect' : 'dns-prefetch',
     href,
-    as: 'fetch',
-    ref: isPreconnect ? 'preconnect' : 'dns-prefetch',
   })
 
-  return link
+  return defined
 }
 
 interface StyleConfig {
@@ -74,7 +77,7 @@ interface StyleConfig {
 }
 
 export const loadStyle = (href: string, config?: StyleConfig) => {
-  const link = defineElement(
+  const defined = defineElement(
     'link',
     Object.assign(
       {
@@ -86,5 +89,9 @@ export const loadStyle = (href: string, config?: StyleConfig) => {
     ),
   )
 
-  return link
+  if (domIsExsted()) {
+    appendToHead(createElement(defined))
+  }
+
+  return defined
 }

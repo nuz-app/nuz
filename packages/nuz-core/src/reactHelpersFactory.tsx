@@ -67,7 +67,7 @@ function reactHelpersFactory(
           'Please provide injectHead component to render links tag in head!',
         )
         console.warn(
-          'Suggestion: use `next/head` for next.js or `react-helmet` for creact-react-app',
+          'Suggestion: use `next/head` for Next.js or `react-helmet` for creact-react-app',
         )
 
         if (!DOMHelpers.domIsExsted) {
@@ -79,7 +79,6 @@ function reactHelpersFactory(
           const tagElement = DOMHelpers.createElement(item)
           DOMHelpers.appendToHead(tagElement)
         })
-        console.log({ headTags })
 
         return null
       }

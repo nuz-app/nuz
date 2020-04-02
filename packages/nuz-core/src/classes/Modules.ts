@@ -92,7 +92,7 @@ class Modules {
     string,
     { script: TagElement; styles: TagElement[] }
   >
-
+  private readonly _dnsPrefetchs: Set<TagElement>
   // @ts-ignore
   private _linked: Linked
 
@@ -112,6 +112,7 @@ class Modules {
     this._resolvedDependencies = new Caches()
     this._resolvedModules = new Caches()
     this._pingResources = new Caches()
+    this._dnsPrefetchs = new Set()
 
     // Create defered promise to checking ready
     this._readyPromise = deferedPromise<boolean>()
@@ -462,10 +463,6 @@ class Modules {
 
   // Note: fn only call once times in prepare
   private async optimizeConnection() {
-    // if (this._ssr) {
-    //   return false
-    // }
-
     const modules = this.getAllModules()
     const modulesKeys = Object.keys(modules)
 
@@ -483,11 +480,14 @@ class Modules {
       )
     }, [] as string[])
 
+
     const deduplicated = Array.from(new Set(urls))
     const isPreconnect = deduplicated.length <= PRECONNECT_LIMIT_DOMAIN
     const dnsPrefetchs = deduplicated.map((item) =>
       DOMHelpers.dnsPrefetch(item, isPreconnect),
     )
+    dnsPrefetchs.forEach((item) => this._dnsPrefetchs.add(item))
+
     return dnsPrefetchs
   }
 
@@ -549,20 +549,22 @@ class Modules {
     return resolved
   }
 
+  // Ensure modules is ready before use!
   getTagsInHead(): TagElement[] {
-    // await this.ready()
-
+    const preconnects = Array.from(this._dnsPrefetchs.values())
     const resources = this._pingResources.values()
-    const modules = this._resolvedModules.values()
+    // const modules = this._resolvedModules.values()
 
     const tags = [...resources].reduce(
       (acc, item) => acc.concat(item.script, ...item.styles),
       [] as TagElement[],
     )
 
-    modules.forEach((item) => {
-      tags.concat(item.styles)
-    })
+    tags.push(...preconnects)
+
+    // modules.forEach((item) => {
+    //   tags.push(...(item.styles || []))
+    // })
 
     return tags
   }

@@ -60,8 +60,7 @@ class Linked {
     this._socket.on(
       LINKED_DEFINE_EVENT,
       ({ ready, modules: linkedModules }: any) => {
-        console.log({ ready, linkedModules })
-        this._modules = linkedModules
+        this._modules = linkedModules || {}
 
         // Waiting until bundles is ready
         if (ready) {
