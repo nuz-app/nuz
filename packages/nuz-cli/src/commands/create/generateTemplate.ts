@@ -13,6 +13,13 @@ const CONFIG_FILE = `
 module.exports = ({content})
 `
 
+const mapStyleToDependencies = {
+  none: {},
+  css: {},
+  sass: { 'node-sass': '^4.13.0' },
+  less: { less: '^3.11.0' },
+}
+
 const getQuestions = (name: string) => [
   {
     type: 'list',
@@ -26,7 +33,7 @@ const getQuestions = (name: string) => [
   {
     type: 'list',
     name: 'style',
-    default: 'Css',
+    default: 'css',
     message: `Which ${print.bold('stylesheet language')} using for ${print.name(
       name,
     )} module?`,
@@ -96,6 +103,7 @@ const generateTemplate = async (
         react: 'latest',
         'react-dom': 'latest',
       },
+      mapStyleToDependencies[results.style] || {},
     ),
     peerDependencies: {
       '@nuz/core': 'latest',

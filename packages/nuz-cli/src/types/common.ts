@@ -72,6 +72,10 @@ export interface ServeConfig {
   cors?: boolean | cors.CorsOptions | cors.CorsOptionsDelegate
 }
 
+export interface ExperimentalConfig {
+  multiThread?: boolean
+}
+
 export interface ModuleConfig {
   /**
    * Name of module
@@ -141,6 +145,10 @@ export interface ModuleConfig {
    * Config using for dev, serve and workspace mode
    */
   serve?: ServeConfig
+  /**
+   * Experimental
+   */
+  experimental?: ExperimentalConfig
 }
 
 export interface FeatureConfig {

@@ -51,6 +51,7 @@ const setExternals = (name: string) => ({
 const defaultConfig = {
   publicPath: '/',
   format: 'umd' as webpack.LibraryTarget,
+  experimental: {},
   externals: {},
   // ref: https://github.com/webpack/webpack/issues/2145#issuecomment-294361203
   // suggested: `eval-source-map` (dev), `hidden-source-map` (pro)
@@ -79,6 +80,7 @@ const webpackConfigFactory = (
     shared,
     webpack: webpackCustomer,
     devtool: devtoolCustomer,
+    experimental,
   } = Object.assign({}, defaultConfig, moduleConfig)
 
   const target = 'web'
@@ -183,14 +185,16 @@ const webpackConfigFactory = (
   // Set cache loader to improve build time
   ruleOfScripts.use.push({ loader: paths.resolveInApp('cache-loader') })
 
-  // Set thread loader to use child process
-  ruleOfScripts.use.push({
-    loader: paths.resolveInApp('thread-loader'),
-    options: {
-      workers: Math.max(1, os.cpus().length - 1),
-      poolTimeout: !dev ? 500 : Infinity,
-    },
-  })
+  if (experimental.multiThread) {
+    // Set thread loader to use child process
+    ruleOfScripts.use.push({
+      loader: paths.resolveInApp('thread-loader'),
+      options: {
+        workers: Math.max(1, os.cpus().length - 1),
+        poolTimeout: !dev ? 2000 : Infinity,
+      },
+    })
+  }
 
   // Set babel loader to transplie es
   ruleOfScripts.use.push({
