@@ -11,15 +11,15 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@nuz/cli": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "typescript": "^3.8.3",
-    "@nuz/cli": "latest",
-    "react": "latest",
-    "react-dom": "latest"
+    "typescript": "^3.8.3"
   },
   "peerDependencies": {
-    "@nuz/core": "latest"
+    "@nuz/core": "latest",
+    "react": "latest",
+    "react-dom": "latest"
   }
 }
