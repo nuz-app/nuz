@@ -46,11 +46,12 @@ Nooo, you can use **Nuz** with your React application, **Nuz** is compatible wit
   - Support **preload** and **preconnect** to reduce download time.
   - Secure with integrity hash downloaded content from CDN.
 - [x] ⚡️ **Easy to create, develop, serve, build and deploy modules**
-  - Create a module quickly, just by a command.
+  - Create a module **quickly**, just by a command.
   - Support development mode for **standalone** and **workspace** projects.
   - Build with **auto-optimize code** and **minify size**.
-  - Easy to publish with integrity hash check.
+  - Easy to publish with **integrity hash check**.
   - Support file serving and directory listing in module, allow secure methods.
+  - Support styling with **CSS modules**, **Less** and **Sass**, don't need config.
 - [x] 📦 **Easy management the modules**
   - **High performance** to fetch config for many clients.
   - Permission **scope-based** using by token.
