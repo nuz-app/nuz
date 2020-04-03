@@ -45,7 +45,7 @@ Nooo, you can use **Nuz** with your React application, **Nuz** is compatible wit
   - Support **timeout**, **retry** and **fallback** for modules while running.
   - Support **preload** and **preconnect** to reduce download time.
   - Secure with integrity hash downloaded content from CDN.
-- [x] ⚡️ **Easy to create, develop, serve, build and deploy modules**
+- [x] ⚡️ **Easy to create, dev, serve, build and publish modules**
   - Create a module **quickly**, just by a command.
   - Support development mode for **standalone** and **workspace** projects.
   - Build with **auto-optimize code** and **minify size**.
