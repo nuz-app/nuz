@@ -10,13 +10,6 @@
     "serve": "nuz serve"
   },
   "dependencies": {},
-  "devDependencies": {
-    "@types/react": "^16.9.23",
-    "@types/react-dom": "^16.9.5",
-    "react": "latest",
-    "react-dom": "latest"
-  },
-  "peerDependencies": {
-    "@nuz/core": "latest"
-  }
+  "devDependencies": {},
+  "peerDependencies": {}
 }
