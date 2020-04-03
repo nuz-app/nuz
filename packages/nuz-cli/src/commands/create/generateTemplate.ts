@@ -99,14 +99,12 @@ const generateTemplate = async (
         '@types/react-dom': 'latest',
         typescript: '^3.8.3',
       },
-      {
-        react: 'latest',
-        'react-dom': 'latest',
-      },
       mapStyleToDependencies[results.style] || {},
     ),
     peerDependencies: {
       '@nuz/core': 'latest',
+      react: 'latest',
+      'react-dom': 'latest',
     },
   }
   fs.writeJson(packageJsonPath, packageJson)
