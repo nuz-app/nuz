@@ -91,7 +91,5 @@
     "@types/webpack-bundle-analyzer": "^2.13.3",
     "@types/webpackbar": "^2.6.0"
   },
-  "peerDependencies": {
-    "typescript": "^3.8.3"
-  }
+  "peerDependencies": {}
 }
