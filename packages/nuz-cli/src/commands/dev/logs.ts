@@ -26,6 +26,10 @@ export const guide = ({
   log()
 }
 
+export const cleanFolder = (path: string) => {
+  info(`Clean up dist folder before run build at ${print.link(path)}.`)
+}
+
 export const configIsNotFound = common.configIsNotFound
 export const configIsInvalid = common.configIsInvalid
 export const enableFeatures = common.enableFeatures

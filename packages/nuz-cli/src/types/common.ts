@@ -45,6 +45,7 @@ export interface BuildCommand {
 
 export interface DevCommand {
   port?: number
+  clean?: boolean
 }
 
 export interface ServeCommand {

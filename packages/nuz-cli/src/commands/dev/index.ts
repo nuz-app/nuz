@@ -1,3 +1,4 @@
+import path from 'path'
 import * as yargs from 'yargs'
 
 import { CommandConfig, CommandTypes, DevCommand } from '../../types'
@@ -5,6 +6,7 @@ import { CommandConfig, CommandTypes, DevCommand } from '../../types'
 import clearConsole from '../../utils/clearConsole'
 import * as configHelpers from '../../utils/configHelpers'
 import exitIfModuleInsufficient from '../../utils/exitIfModuleInsufficient'
+import * as fs from '../../utils/fs'
 import getFeatureConfig from '../../utils/getFeatureConfig'
 import * as paths from '../../utils/paths'
 import { exit, onExit } from '../../utils/process'
@@ -16,7 +18,7 @@ import webpackConfigFactory from '../../utils/webpackConfigFactory'
 import * as logs from './logs'
 
 // @ts-ignore
-const execute = async ({ port: _port }: yargs.Argv<DevCommand>) => {
+const execute = async ({ port: _port, clean }: yargs.Argv<DevCommand>) => {
   const moduleDir = paths.cwd
 
   const configIsExisted = configHelpers.exists(moduleDir)
@@ -32,7 +34,7 @@ const execute = async ({ port: _port }: yargs.Argv<DevCommand>) => {
   }
 
   exitIfModuleInsufficient(moduleConfig)
-  const { name, serve: serveConfig } = moduleConfig
+  const { name, output, serve: serveConfig } = moduleConfig
 
   const featureConfig = getFeatureConfig(moduleDir, moduleConfig)
 
@@ -40,6 +42,12 @@ const execute = async ({ port: _port }: yargs.Argv<DevCommand>) => {
   logs.notifyOnStart(name)
 
   logs.enableFeatures(featureConfig)
+  if (clean) {
+    const distPath = path.join(moduleDir, path.dirname(output))
+    logs.cleanFolder(distPath)
+
+    await fs.emptyDir(distPath)
+  }
 
   const buildConfig = webpackConfigFactory(
     {
@@ -81,12 +89,20 @@ const config: CommandConfig = {
   type: CommandTypes.dev,
   description: 'Run development mode',
   transform: (yarg) =>
-    yarg.option('port', {
-      alias: 'p',
-      describe: 'Set port listen for server',
-      type: 'number',
-      required: false,
-    }),
+    yarg
+      .option('port', {
+        alias: 'p',
+        describe: 'Set port listen for server',
+        type: 'number',
+        required: false,
+      })
+      .option('clean', {
+        alias: 'c',
+        describe: 'Clean dist folder before run build',
+        type: 'number',
+        default: true,
+        required: false,
+      }),
   execute,
 }
 
