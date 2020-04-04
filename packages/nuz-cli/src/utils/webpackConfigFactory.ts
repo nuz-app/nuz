@@ -194,14 +194,14 @@ const webpackConfigFactory = (
   }
 
   // Config babel and typescript to transplie scripts
-  const ruleOfScripts = ruleFactory(
+  const scriptRule = ruleFactory(
     feature.typescript ? /.tsx?/ : /.jsx?/,
     /(node_modules|bower_components)/,
   )
 
   // Set cache loader to improve build time
   if (cache) {
-    ruleOfScripts.use.push({
+    scriptRule.use.push({
       loader: paths.resolveInApp('cache-loader'),
       options: {
         cacheContext: dir,
@@ -213,7 +213,7 @@ const webpackConfigFactory = (
 
   if (experimental.multiThread) {
     // Set thread loader to use child process
-    ruleOfScripts.use.push({
+    scriptRule.use.push({
       loader: paths.resolveInApp('thread-loader'),
       options: {
         workers: Math.max(1, os.cpus().length - 1),
@@ -223,7 +223,7 @@ const webpackConfigFactory = (
   }
 
   // Set babel loader to transplie es
-  ruleOfScripts.use.push({
+  scriptRule.use.push({
     loader: paths.resolveInApp('babel-loader'),
     options: {
       cacheDirectory: cache ? (paths as any).cache('babel-loader') : false,
@@ -242,7 +242,7 @@ const webpackConfigFactory = (
       throw new Error('Install `typescript` to use Typescript!')
     }
 
-    ruleOfScripts.use.push({
+    scriptRule.use.push({
       loader: paths.resolveInApp('ts-loader'),
       options: {
         context: dir,
@@ -259,7 +259,7 @@ const webpackConfigFactory = (
   }
 
   // Push scripts rule to config
-  config.module.rules.push(ruleOfScripts)
+  config.module.rules.push(scriptRule)
 
   const shouldUseIncludeStyles = [
     feature.css,
@@ -327,6 +327,18 @@ const webpackConfigFactory = (
       }),
     )
   }
+
+  const filesRule = ruleFactory(/\.(png|jpe?g|gif)$/i)
+  filesRule.use.push({
+    loader: paths.resolveInApp('file-loader'),
+    options: {
+      context: dir,
+      outputPath: 'images',
+      name: '[name].[contenthash:8].[ext]',
+      emitFile: true,
+    },
+  })
+  config.module.rules.push(filesRule)
 
   // Set peers deps as externals
   config.plugins.push(new PeerDepsExternalsPlugin(dir))

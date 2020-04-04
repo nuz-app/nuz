@@ -47,6 +47,7 @@
     "execa": "^4.0.0",
     "express": "^4.17.1",
     "extract-css-chunks-webpack-plugin": "^4.7.4",
+    "file-loader": "^6.0.0",
     "find-cache-dir": "^3.3.0",
     "fork-ts-checker-webpack-plugin": "^4.0.5",
     "fs-extra": "^8.1.0",
