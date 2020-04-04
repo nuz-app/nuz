@@ -334,7 +334,7 @@ const webpackConfigFactory = (
     options: {
       context: dir,
       outputPath: 'images',
-      name: '[name].[contenthash:8].[ext]',
+      name: dev ? '[name].[contenthash:8].[ext]' : '[contenthash].[ext]',
       emitFile: true,
     },
   })
