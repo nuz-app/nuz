@@ -103,7 +103,7 @@ const webpackConfigFactory = (
   const target = 'web'
   const mode = dev ? 'development' : 'production'
   const devtool = !devtoolCustomer
-    ? mode
+    ? dev
       ? 'eval-source-map'
       : 'hidden-source-map'
     : devtoolCustomer
@@ -321,13 +321,13 @@ const webpackConfigFactory = (
     // Push ExtractCssChunks plugin for regular and modules styles
     config.plugins.push(
       new ExtractCssChunks({
+        dev,
         filename: dev
           ? 'styles/[name].css'
           : 'styles/[name].[contenthash:8].css',
         chunkFilename: dev
           ? 'styles/[name].chunk.css'
           : 'styles/[name].[contenthash:8].chunk.css',
-        dev,
       }),
     )
   }
@@ -391,7 +391,7 @@ const webpackConfigFactory = (
       output: {
         ecma: 5 as any,
         safari10: true,
-        comments: true,
+        comments: false,
         ascii_only: true,
       },
     }
