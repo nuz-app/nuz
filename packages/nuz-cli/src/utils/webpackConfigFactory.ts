@@ -9,7 +9,12 @@ import TerserPlugin from 'terser-webpack-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import WebpackProcessBar from 'webpackbar'
 
-import { AnalyzerConfig, FeatureConfig, ModuleConfig } from '../types'
+import {
+  AnalyzerConfig,
+  ExperimentalConfig,
+  FeatureConfig,
+  ModuleConfig,
+} from '../types'
 
 import {
   CSS_EXTENSIONS,
@@ -25,6 +30,7 @@ import checkIsPackageInstalled from './checkIsPackageInstalled'
 import * as compilerName from './compilerName'
 import * as paths from './paths'
 
+import styleLoadersFactory from './webpack/factories/styleLoaders'
 import PeerDepsExternalsPlugin from './webpack/PeerDepsExternalsPlugin'
 
 export interface FactoryConfig {
@@ -36,10 +42,10 @@ export interface FactoryConfig {
   config: ModuleConfig
 }
 
-const ruleFactory = (test: RegExp, exclude?: RegExp) => ({
+const ruleFactory = (test: RegExp, exclude?: RegExp, use?: any[]) => ({
   test,
   exclude,
-  use: [] as any[],
+  use: use || [],
 })
 
 const setExternals = (name: string) => ({
@@ -58,11 +64,15 @@ const defaultConfig = {
   // devtool: 'eval-source-map' as webpack.Options.Devtool,
 }
 
+const defaultExperimental: ExperimentalConfig = {
+  multiThread: false,
+}
+
 const webpackConfigFactory = (
   {
     dev,
     dir,
-    cache,
+    cache = true,
     ci = false,
     module = '~',
     config: moduleConfig,
@@ -80,8 +90,14 @@ const webpackConfigFactory = (
     shared,
     webpack: webpackCustomer,
     devtool: devtoolCustomer,
-    experimental,
+    experimental: experimentalCustomer,
   } = Object.assign({}, defaultConfig, moduleConfig)
+
+  const experimental = Object.assign(
+    {},
+    defaultExperimental,
+    experimentalCustomer,
+  )
 
   const target = 'web'
   const mode = dev ? 'development' : 'production'
@@ -103,6 +119,7 @@ const webpackConfigFactory = (
   const resolveModules = ['node_modules']
   const statsFilename = STATS_FILENAME
   const name = compilerName.get(module)
+  const now = Date.now()
 
   const extensions = feature.typescript
     ? [...TS_EXTENSIONS, ...JS_EXTENSIONS, ...JSON_EXTENSIONS]
@@ -183,7 +200,16 @@ const webpackConfigFactory = (
   )
 
   // Set cache loader to improve build time
-  ruleOfScripts.use.push({ loader: paths.resolveInApp('cache-loader') })
+  if (cache) {
+    ruleOfScripts.use.push({
+      loader: paths.resolveInApp('cache-loader'),
+      options: {
+        cacheContext: dir,
+        cacheIdentifier: `${name}:${mode}`,
+        cacheDirectory: (paths as any).cache('cache-loader'),
+      },
+    })
+  }
 
   if (experimental.multiThread) {
     // Set thread loader to use child process
@@ -200,7 +226,7 @@ const webpackConfigFactory = (
   ruleOfScripts.use.push({
     loader: paths.resolveInApp('babel-loader'),
     options: {
-      cacheDirectory: cache,
+      cacheDirectory: cache ? (paths as any).cache('babel-loader') : false,
       presets: [
         paths.resolveInApp('@babel/preset-env'),
         feature.react && paths.resolveInApp('@babel/preset-react'),
@@ -237,93 +263,67 @@ const webpackConfigFactory = (
 
   const shouldUseIncludeStyles = [
     feature.css,
+    feature.postcss,
     feature.less,
     feature.sass,
-    feature.postcss,
   ].some(Boolean)
   if (shouldUseIncludeStyles) {
-    const stylesExt = ([] as any[])
+    const supportedStyleExtensions = ([] as any[])
       .concat(
-        feature.css && CSS_EXTENSIONS, // always true
+        feature.css && CSS_EXTENSIONS,
         feature.sass && SASS_EXTENSIONS,
         feature.less && LESS_EXTENSIONS,
       )
       .filter(Boolean)
-    const testOfStyles = new RegExp(`(${stylesExt.join('|')})$`)
-    const ruleOfStyles = ruleFactory(testOfStyles)
+    // Create style loaders for modules styles if enabled
+    const modulesStyleExtensions = supportedStyleExtensions.map(
+      (ext) => `(.m(odules?)?${ext})`,
+    )
+    const modulesStyleRegexp = new RegExp(
+      `(${modulesStyleExtensions.join('|')})$`,
+    )
+    const modulesStyleLoaders = styleLoadersFactory({
+      dev,
+      feature,
+      modules: true,
+    })
+    const modulesStyleRule = ruleFactory(
+      modulesStyleRegexp,
+      undefined,
+      modulesStyleLoaders,
+    )
+    config.module.rules.push(modulesStyleRule)
 
-    if (feature.css) {
-      // Set ExtractCssChunks loader for preprocessor
-      ruleOfStyles.use.push({
-        loader: ExtractCssChunks.loader,
-        options: {
-          hmr: dev,
-        },
-      })
+    // Create style loaders for regular styles
+    const regularStyleExtensions = supportedStyleExtensions
+    const regularStyleRegexp = new RegExp(
+      `(${regularStyleExtensions.join('|')})$`,
+    )
+    const regularStyleLoaders = styleLoadersFactory({
+      dev,
+      feature,
+      modules: false,
+    })
+    const regularStyleRule = ruleFactory(
+      regularStyleRegexp,
+      modulesStyleRegexp,
+      regularStyleLoaders,
+    )
 
-      config.plugins.push(
-        new ExtractCssChunks({
-          filename: dev
-            ? 'styles/[name].css'
-            : 'styles/[name].[contenthash:8].css',
-          chunkFilename: dev
-            ? 'styles/[name].chunk.css'
-            : 'styles/[name].[contenthash:8].chunk.css',
-          dev,
-        }),
-      )
+    config.module.rules.push(regularStyleRule)
 
-      // Set css loader
-      ruleOfStyles.use.push({
-        loader: paths.resolveInApp('css-loader'),
-        options: Object.assign(
-          {
-            modules: true,
-            importLoaders: 1,
-          },
-          feature.css,
-        ),
-      })
-    }
-
-    if (feature.postcss) {
-      // Set postcss loader
-      ruleOfStyles.use.push({
-        loader: paths.resolveInApp('postcss-loader'),
-        options: feature.postcss === true ? {} : feature.postcss,
-      })
-    }
-
-    if (feature.sass) {
-      const nodeSassIsInstalled = checkIsPackageInstalled('node-sass')
-      const dartSassIsInstalled = checkIsPackageInstalled('dart-sass')
-      const sassIsInstalled = nodeSassIsInstalled || dartSassIsInstalled
-      if (!sassIsInstalled) {
-        throw new Error('Install `node-sass` or `dart-sass` to use Sass!')
-      }
-
-      // Set sass loader
-      ruleOfStyles.use.push({
-        loader: paths.resolveInApp('sass-loader'),
-        options: feature.sass === true ? {} : feature.sass,
-      })
-    }
-
-    if (feature.less) {
-      const lessIsInstalled = checkIsPackageInstalled('less')
-      if (!lessIsInstalled) {
-        throw new Error('Install `less` to use Less!')
-      }
-
-      // Set less loader
-      ruleOfStyles.use.push({
-        loader: paths.resolveInApp('less-loader'),
-        options: feature.less === true ? {} : feature.less,
-      })
-    }
-
-    // Push styles rule to config
-    config.module.rules.push(ruleOfStyles)
+    // Push ExtractCssChunks plugin for regular and modules styles
+    config.plugins.push(
+      new ExtractCssChunks({
+        filename: dev
+          ? 'styles/[name].css'
+          : 'styles/[name].[contenthash:8].css',
+        chunkFilename: dev
+          ? 'styles/[name].chunk.css'
+          : 'styles/[name].[contenthash:8].chunk.css',
+        dev,
+      }),
+    )
   }
 
   // Set peers deps as externals
