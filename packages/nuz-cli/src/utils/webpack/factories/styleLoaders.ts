@@ -67,6 +67,9 @@ const styleLoadersFactory = ({
         },
       }),
       require('postcss-flexbugs-fixes')(),
+      require('cssnano')({
+        preset: 'default',
+      }),
       ...(plugins || []),
     ]
   }
