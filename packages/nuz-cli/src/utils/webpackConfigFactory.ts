@@ -28,6 +28,7 @@ import {
 
 import checkIsPackageInstalled from './checkIsPackageInstalled'
 import * as compilerName from './compilerName'
+import * as fs from './fs'
 import * as paths from './paths'
 
 import styleLoadersFactory from './webpack/factories/styleLoaders'
@@ -200,13 +201,16 @@ const webpackConfigFactory = (
   )
 
   // Set cache loader to improve build time
-  if (cache) {
+  if (cache && dev) {
+    const cacheDirectory = (paths as any).cache('cache-loader')
+    fs.emptyDir(cacheDirectory)
+
     scriptRule.use.push({
       loader: paths.resolveInApp('cache-loader'),
       options: {
+        cacheDirectory,
         cacheContext: dir,
-        cacheIdentifier: `${name}:${mode}`,
-        cacheDirectory: (paths as any).cache('cache-loader'),
+        cacheIdentifier: `${name}:${mode}:${now}`,
       },
     })
   }
@@ -328,10 +332,13 @@ const webpackConfigFactory = (
     )
   }
 
+  // Config `url-loader` and `file-loader` to use images files
   const filesRule = ruleFactory(/\.(png|jpe?g|gif)$/i)
   filesRule.use.push({
-    loader: paths.resolveInApp('file-loader'),
+    loader: paths.resolveInApp('url-loader'),
     options: {
+      limit: 8 * 2014,
+      fallback: paths.resolveInApp('file-loader'),
       context: dir,
       outputPath: 'images',
       name: dev ? '[name].[contenthash:8].[ext]' : '[contenthash].[ext]',
@@ -339,6 +346,12 @@ const webpackConfigFactory = (
     },
   })
   config.module.rules.push(filesRule)
+
+  // Config `raw-loader` to use txt files
+  const textRule = ruleFactory(/\.txt$/i)
+  textRule.use.push({
+    loader: paths.resolveInApp('raw-loader'),
+  })
 
   // Set peers deps as externals
   config.plugins.push(new PeerDepsExternalsPlugin(dir))
