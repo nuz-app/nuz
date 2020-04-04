@@ -66,7 +66,7 @@ Nooo, you can use **Nuz** with your React application, **Nuz** is compatible wit
   - Easy to enable **SSR** mode.
   - Compatible with [Next.JS](https://github.com/zeit/next.js), don't need modify on code.
 - [x] 🧩 **Code-Splitting? Okkkk**
-  - Defalt is auto code-splitting in build mode.
+  - Default is **auto code-splitting** in build mode.
   - Support **dynamic imports**.
   - Splitting chunks with `webpack` config.
 
