@@ -334,18 +334,27 @@ const webpackConfigFactory = (
 
   // Config `url-loader` and `file-loader` to use images files
   const filesRule = ruleFactory(/\.(png|jpe?g|gif)$/i)
-  filesRule.use.push({
+  const filesLoader = {
     loader: paths.resolveInApp('url-loader'),
     options: {
-      limit: 8 * 2014,
+      limit: 5 * 1024,
       fallback: paths.resolveInApp('file-loader'),
       context: dir,
       outputPath: 'images',
       name: dev ? '[name].[contenthash:8].[ext]' : '[contenthash].[ext]',
       emitFile: true,
     },
-  })
+  }
+  filesRule.use.push(filesLoader)
   config.module.rules.push(filesRule)
+
+  // Config loaders to use svg files as components and image files
+  const svgRule = ruleFactory(/\.svg$/i)
+  svgRule.use.push({
+    loader: paths.resolveInApp('@svgr/webpack'),
+  })
+  svgRule.use.push(filesLoader)
+  config.module.rules.push(svgRule)
 
   // Config `raw-loader` to use txt files
   const textRule = ruleFactory(/\.txt$/i)

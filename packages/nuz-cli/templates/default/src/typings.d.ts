@@ -33,3 +33,17 @@ declare module "*.gif" {
   const value: string;
   export = value;
 }
+
+declare module "*.txt" {
+  const value: string;
+  export = value;
+}
+
+declare module '*.svg' {
+  interface ISvg {
+    [key: string]: any
+    ReactComponent: any
+  }
+  const svg: ISvg;
+  export = svg;
+}
