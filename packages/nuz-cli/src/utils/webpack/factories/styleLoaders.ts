@@ -7,12 +7,14 @@ import checkIsPackageInstalled from '../../checkIsPackageInstalled'
 import * as paths from '../../paths'
 
 export interface StyleLoadersOptions {
+  dir: string
   dev: boolean
   modules: boolean
   feature: Partial<FeatureConfig>
 }
 
 const styleLoadersFactory = ({
+  dir,
   dev,
   feature,
   modules,
@@ -46,13 +48,27 @@ const styleLoadersFactory = ({
     ),
   })
 
-  if (feature.postcss) {
-    // Set postcss loader
-    loaders.push({
-      loader: paths.resolveInApp('postcss-loader'),
-      options: feature.postcss === true ? {} : feature.postcss,
-    })
-  }
+  // Set postcss loader
+  loaders.push({
+    loader: paths.resolveInApp('postcss-loader'),
+    options: Object.assign(
+      {
+        ident: 'postcss',
+        path: dir,
+      },
+      feature.postcss === true ? {} : feature.postcss,
+      {
+        plugins: () => [
+          require('postcss-preset-env')(),
+          require('autoprefixer')({
+            grid: 'autoplace',
+            flexbox: 'no-2009',
+          }),
+          ...((feature.postcss || {}).plugins || []),
+        ],
+      },
+    ),
+  })
 
   if (feature.sass) {
     const nodeSassIsInstalled = checkIsPackageInstalled('node-sass')

@@ -283,6 +283,7 @@ const webpackConfigFactory = (
       `(${modulesStyleExtensions.join('|')})$`,
     )
     const modulesStyleLoaders = styleLoadersFactory({
+      dir,
       dev,
       feature,
       modules: true,
@@ -300,6 +301,7 @@ const webpackConfigFactory = (
       `(${regularStyleExtensions.join('|')})$`,
     )
     const regularStyleLoaders = styleLoadersFactory({
+      dir,
       dev,
       feature,
       modules: false,
@@ -350,11 +352,23 @@ const webpackConfigFactory = (
       }),
     )
 
+    const terserOptions = {
+      mangle: { safari10: true },
+      output: {
+        ecma: 5 as any,
+        safari10: true,
+        comments: true,
+        ascii_only: true,
+      },
+    }
+
     Object.assign(config.optimization, {
+      minimize: true,
       minimizer: [
         new TerserPlugin({
           sourceMap,
-          cache: true,
+          terserOptions,
+          cache: (paths as any).cache('terser'),
           parallel: true,
         }),
       ],
@@ -364,12 +378,13 @@ const webpackConfigFactory = (
         automaticNameDelimiter: '~',
         maxSize: 1024 * 1024,
         automaticNameMaxLength: 40,
-        maxInitialRequests: 3,
+        maxInitialRequests: 5,
         minChunks: 1,
         cacheGroups: {
           vendors: {
             test: /[\\/]node_modules[\\/]/,
             priority: -10,
+            reuseExistingChunk: true,
           },
           default: {
             minChunks: 2,
@@ -381,6 +396,7 @@ const webpackConfigFactory = (
     })
   } else {
     Object.assign(config.optimization, {
+      minimize: false,
       splitChunks: false,
     })
   }
