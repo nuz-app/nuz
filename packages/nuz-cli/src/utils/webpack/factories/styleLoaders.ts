@@ -4,6 +4,7 @@ import webpack from 'webpack'
 import { FeatureConfig } from '../../../types'
 
 import checkIsPackageInstalled from '../../checkIsPackageInstalled'
+import getBrowserslist from '../../getBrowserslist'
 import * as paths from '../../paths'
 
 export interface StyleLoadersOptions {
@@ -19,6 +20,8 @@ const styleLoadersFactory = ({
   feature,
   modules,
 }: StyleLoadersOptions): webpack.Loader[] => {
+  const browserslist = getBrowserslist({ dir, dev })
+
   const loaders = [] as webpack.Loader[]
 
   // Set ExtractCssChunks loader for preprocessor
@@ -49,23 +52,33 @@ const styleLoadersFactory = ({
   })
 
   // Set postcss loader
+  const combinePostCssPlugins = (...rest) => {
+    const { plugins: pluginsCustom = [] } = feature.postcss || {}
+
+    const pluginsIsFn = typeof pluginsCustom === 'function'
+    const plugins = pluginsIsFn ? pluginsCustom(...rest) : pluginsCustom
+
+    return [
+      require('postcss-preset-env')({
+        browsers: browserslist || ['defaults'],
+        autoprefixer: {
+          grid: 'autoplace',
+          flexbox: 'no-2009',
+        },
+      }),
+      require('postcss-flexbugs-fixes')(),
+      ...(plugins || []),
+    ]
+  }
   loaders.push({
     loader: paths.resolveInApp('postcss-loader'),
     options: Object.assign(
       {
         ident: 'postcss',
-        path: dir,
       },
       feature.postcss === true ? {} : feature.postcss,
       {
-        plugins: () => [
-          require('postcss-preset-env')(),
-          require('autoprefixer')({
-            grid: 'autoplace',
-            flexbox: 'no-2009',
-          }),
-          ...((feature.postcss || {}).plugins || []),
-        ],
+        plugins: combinePostCssPlugins,
       },
     ),
   })
