@@ -1,7 +1,7 @@
 {
   "name": "@nuz/core",
   "description": "The core is define, resolve and manage  modules from the network in the application",
-  "version": "0.0.12",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/lamhieu-vk/nuz.git"
