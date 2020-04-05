@@ -552,18 +552,11 @@ class Modules {
   getTagsInHead(): TagElement[] {
     const preconnects = Array.from(this._dnsPrefetchs.values())
     const resources = this._pingResources.values()
-    // const modules = this._resolvedModules.values()
 
-    const tags = [...resources].reduce(
-      (acc, item) => acc.concat(item.script, ...item.styles),
-      [] as TagElement[],
-    )
-
-    tags.push(...preconnects)
-
-    // modules.forEach((item) => {
-    //   tags.push(...(item.styles || []))
-    // })
+    const tags: TagElement[] = [...preconnects]
+    resources.forEach((item) => {
+      tags.push(item.script, ...(item.styles || []))
+    })
 
     return tags
   }
