@@ -15,29 +15,29 @@ declare module '*.module.less' {
   export default classes
 }
 
-declare module "*.png" {
-  const value: string;
-  export default value;
+declare module '*.png' {
+  const value: string
+  export default value
 }
 
-declare module "*.jpg" {
-  const value: string;
-  export default value;
+declare module '*.jpg' {
+  const value: string
+  export default value
 }
 
-declare module "*.jpeg" {
-  const value: string;
-  export default value;
+declare module '*.jpeg' {
+  const value: string
+  export default value
 }
 
-declare module "*.gif" {
-  const value: string;
-  export default value;
+declare module '*.gif' {
+  const value: string
+  export default value
 }
 
-declare module "*.txt" {
-  const value: string;
-  export default value;
+declare module '*.txt' {
+  const value: string
+  export default value
 }
 
 declare module '*.svg' {
@@ -45,6 +45,6 @@ declare module '*.svg' {
     [key: string]: any
     ReactComponent: any
   }
-  const svg: ISvg;
-  export default svg;
+  const svg: ISvg
+  export default svg
 }
