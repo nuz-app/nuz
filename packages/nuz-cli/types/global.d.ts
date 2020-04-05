@@ -1,52 +1,43 @@
 /// <reference types="node" />
 
 declare module '*.module.css' {
-  interface IClassNames {
-    [className: string]: string
-  }
-  const classNames: IClassNames;
-  export = classNames;
+  const classes: { readonly [key: string]: string }
+  export default classes
 }
 
 declare module '*.module.scss' {
-  interface IClassNames {
-    [className: string]: string
-  }
-  const classNames: IClassNames;
-  export = classNames;
+  const classes: { readonly [key: string]: string }
+  export default classes
 }
 
 declare module '*.module.less' {
-  interface IClassNames {
-    [className: string]: string
-  }
-  const classNames: IClassNames;
-  export = classNames;
+  const classes: { readonly [key: string]: string }
+  export default classes
 }
 
 declare module "*.png" {
   const value: string;
-  export = value;
+  export default value;
 }
 
 declare module "*.jpg" {
   const value: string;
-  export = value;
+  export default value;
 }
 
 declare module "*.jpeg" {
   const value: string;
-  export = value;
+  export default value;
 }
 
 declare module "*.gif" {
   const value: string;
-  export = value;
+  export default value;
 }
 
 declare module "*.txt" {
   const value: string;
-  export = value;
+  export default value;
 }
 
 declare module '*.svg' {
@@ -55,5 +46,5 @@ declare module '*.svg' {
     ReactComponent: any
   }
   const svg: ISvg;
-  export = svg;
+  export default svg;
 }
