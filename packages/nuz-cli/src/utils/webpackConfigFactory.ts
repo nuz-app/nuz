@@ -131,6 +131,7 @@ const webpackConfigFactory = (
     cacheDirectory: (paths as any).cache('bundles'),
     hashAlgorithm: 'md4',
   }
+  const resolveInApp = (moduleId: string) => paths.resolveInApp(moduleId, dir)
 
   const config = {
     name,
@@ -206,7 +207,7 @@ const webpackConfigFactory = (
     fs.emptyDir(cacheDirectory)
 
     scriptRule.use.push({
-      loader: paths.resolveInApp('cache-loader'),
+      loader: resolveInApp('cache-loader'),
       options: {
         cacheDirectory,
         cacheContext: dir,
@@ -218,7 +219,7 @@ const webpackConfigFactory = (
   if (experimental.multiThread) {
     // Set thread loader to use child process
     scriptRule.use.push({
-      loader: paths.resolveInApp('thread-loader'),
+      loader: resolveInApp('thread-loader'),
       options: {
         workers: Math.max(1, os.cpus().length - 1),
         poolTimeout: !dev ? 2000 : Infinity,
@@ -228,26 +229,26 @@ const webpackConfigFactory = (
 
   // Set babel loader to transplie es
   scriptRule.use.push({
-    loader: paths.resolveInApp('babel-loader'),
+    loader: resolveInApp('babel-loader'),
     options: {
       cacheDirectory: cache ? (paths as any).cache('babel-loader') : false,
       presets: [
-        paths.resolveInApp('@babel/preset-env'),
-        feature.react && paths.resolveInApp('@babel/preset-react'),
+        resolveInApp('@babel/preset-env'),
+        feature.react && resolveInApp('@babel/preset-react'),
       ].filter(Boolean),
-      plugins: [paths.resolveInApp('@babel/plugin-transform-runtime')],
+      plugins: [resolveInApp('@babel/plugin-transform-runtime')],
     },
   })
 
   // Set typescript loader to transplie ts
   if (feature.typescript) {
-    const typescriptIsInstalled = checkIsPackageInstalled('typescript')
+    const typescriptIsInstalled = checkIsPackageInstalled('typescript', dir)
     if (!typescriptIsInstalled) {
       throw new Error('Install `typescript` to use Typescript!')
     }
 
     scriptRule.use.push({
-      loader: paths.resolveInApp('ts-loader'),
+      loader: resolveInApp('ts-loader'),
       options: {
         context: dir,
         happyPackMode: true,
@@ -335,10 +336,10 @@ const webpackConfigFactory = (
   // Config `url-loader` and `file-loader` to use images files
   const filesRule = ruleFactory(/\.(png|jpe?g|gif)$/i)
   const filesLoader = {
-    loader: paths.resolveInApp('url-loader'),
+    loader: resolveInApp('url-loader'),
     options: {
       limit: 5 * 1024,
-      fallback: paths.resolveInApp('file-loader'),
+      fallback: resolveInApp('file-loader'),
       context: dir,
       outputPath: 'images',
       name: dev ? '[name].[contenthash:8].[ext]' : '[contenthash].[ext]',
@@ -351,7 +352,7 @@ const webpackConfigFactory = (
   // Config loaders to use svg files as components and image files
   const svgRule = ruleFactory(/\.svg$/i)
   svgRule.use.push({
-    loader: paths.resolveInApp('@svgr/webpack'),
+    loader: resolveInApp('@svgr/webpack'),
   })
   svgRule.use.push(filesLoader)
   config.module.rules.push(svgRule)
@@ -359,7 +360,7 @@ const webpackConfigFactory = (
   // Config `raw-loader` to use txt files
   const textRule = ruleFactory(/\.txt$/i)
   textRule.use.push({
-    loader: paths.resolveInApp('raw-loader'),
+    loader: resolveInApp('raw-loader'),
   })
 
   // Set peers deps as externals

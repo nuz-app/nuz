@@ -20,6 +20,7 @@ const styleLoadersFactory = ({
   feature,
   modules,
 }: StyleLoadersOptions): webpack.Loader[] => {
+  const resolveInApp = (moduleId: string) => paths.resolveInApp(moduleId, dir)
   const browserslist = getBrowserslist({ dir, dev })
 
   const loaders = [] as webpack.Loader[]
@@ -34,7 +35,7 @@ const styleLoadersFactory = ({
 
   // Set css loader
   loaders.push({
-    loader: paths.resolveInApp('css-loader'),
+    loader: resolveInApp('css-loader'),
     options: Object.assign(
       {
         modules: modules
@@ -74,7 +75,7 @@ const styleLoadersFactory = ({
     ]
   }
   loaders.push({
-    loader: paths.resolveInApp('postcss-loader'),
+    loader: resolveInApp('postcss-loader'),
     options: Object.assign(
       {
         ident: 'postcss',
@@ -87,8 +88,8 @@ const styleLoadersFactory = ({
   })
 
   if (feature.sass) {
-    const nodeSassIsInstalled = checkIsPackageInstalled('node-sass')
-    const dartSassIsInstalled = checkIsPackageInstalled('dart-sass')
+    const nodeSassIsInstalled = checkIsPackageInstalled('node-sass', dir)
+    const dartSassIsInstalled = checkIsPackageInstalled('dart-sass', dir)
     const sassIsInstalled = nodeSassIsInstalled || dartSassIsInstalled
     if (!sassIsInstalled) {
       throw new Error('Install `node-sass` or `dart-sass` to use Sass!')
@@ -96,20 +97,27 @@ const styleLoadersFactory = ({
 
     // Set sass loader
     loaders.push({
-      loader: paths.resolveInApp('sass-loader'),
-      options: feature.sass === true ? {} : feature.sass,
+      loader: resolveInApp('sass-loader'),
+      options: Object.assign(
+        {
+          implementation: dartSassIsInstalled
+            ? require(dartSassIsInstalled)
+            : require(nodeSassIsInstalled as string),
+        },
+        feature.sass === true ? {} : feature.sass,
+      ),
     })
   }
 
   if (feature.less) {
-    const lessIsInstalled = checkIsPackageInstalled('less')
+    const lessIsInstalled = checkIsPackageInstalled('less', dir)
     if (!lessIsInstalled) {
       throw new Error('Install `less` to use Less!')
     }
 
     // Set less loader
     loaders.push({
-      loader: paths.resolveInApp('less-loader'),
+      loader: resolveInApp('less-loader'),
       options: feature.less === true ? {} : feature.less,
     })
   }

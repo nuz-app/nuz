@@ -24,7 +24,11 @@ export const cache = findCacheDir({
   thunk: true,
 })
 
-export const resolveInApp = (name: string) =>
+export const resolveInApp = (name: string, dir?: string) =>
   require.resolve(name, {
-    paths: [path.join(app, 'node_modules'), path.join(tool, 'node_modules')],
+    paths: [
+      dir && dir !== app && path.join(dir, 'node_modules'),
+      path.join(app, 'node_modules'),
+      path.join(tool, 'node_modules'),
+    ].filter(Boolean) as string[],
   })
