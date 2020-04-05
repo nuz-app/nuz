@@ -142,17 +142,9 @@ const generateTemplate = async (
   }
 
   // Remove styles types if not used
-  const typePath = path.join(dir, 'src/typings.d.ts')
+  const typePath = path.join(dir, 'nuz-env.d.ts')
   if (!useTypescript || results.style === 'none') {
     await fs.remove(typePath)
-  } else if (useTypescript && results.style !== 'none') {
-    fs.writeSync(
-      typePath,
-      fs
-        .read(typePath)
-        .toString('utf8')
-        .replace('{ext}', results.style === 'sass' ? 'scss' : results.style),
-    )
   }
 
   return true

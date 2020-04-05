@@ -15,7 +15,8 @@
   },
   "files": [
     "dist",
-    "templates"
+    "templates",
+    "types"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

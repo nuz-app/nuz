@@ -1,4 +1,6 @@
-declare module '*.css' {
+/// <reference types="node" />
+
+declare module '*.module.css' {
   interface IClassNames {
     [className: string]: string
   }
@@ -6,7 +8,15 @@ declare module '*.css' {
   export = classNames;
 }
 
-declare module '*.{ext}' {
+declare module '*.module.scss' {
+  interface IClassNames {
+    [className: string]: string
+  }
+  const classNames: IClassNames;
+  export = classNames;
+}
+
+declare module '*.module.less' {
   interface IClassNames {
     [className: string]: string
   }
