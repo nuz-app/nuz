@@ -109,7 +109,7 @@ const execute = async ({
 
 const config: CommandConfig = {
   type: CommandTypes.create,
-  description: 'Create a module for micro frontends project',
+  description: 'Create a module in the Micro Frontends project',
   transform: (yarg) =>
     yarg
       .option('name', {

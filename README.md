@@ -50,7 +50,7 @@ Nooo, you can use **Nuz** with your React application, **Nuz** is compatible wit
   - Support development mode for **standalone** and **workspace** projects.
   - Build with **auto-optimize code** and **minify size**.
   - Easy to publish with **integrity hash check**.
-  - File serving and directory listing in module, allow secure methods.
+  - File serving and directory listing in the module, allow secure methods.
   - Styling are supports **CSS modules**, **Less** and **Sass**, don't need config.
   - Using `svg` files as **React component** or static files.
   - Allow import **image files** and convert to `base64` or static files.
@@ -80,7 +80,7 @@ Nooo, you can use **Nuz** with your React application, **Nuz** is compatible wit
 | Name     | Description | Other |
 |---------------|-----|-----|
 | **[@nuz/core](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-core)**     | The core is define, resolve and manage  modules from the network in the application. | [![npm version](https://img.shields.io/npm/v/@nuz/core.svg?style=flat)](https://www.npmjs.com/package/@nuz/core) ![npm downloads](https://img.shields.io/npm/dw/@nuz/core) |
-| **[@nuz/cli](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-cli)** | Cli provides functions to create, dev, serve and deploy the modules with the best way. | [![npm version](https://img.shields.io/npm/v/@nuz/cli.svg?style=flat)](https://www.npmjs.com/package/@nuz/cli) ![npm downloads](https://img.shields.io/npm/dw/@nuz/cli) |
+| **[@nuz/cli](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-cli)** | Cli is a tool to help create, develop, build, serve and publish a module in the simplest way. | [![npm version](https://img.shields.io/npm/v/@nuz/cli.svg?style=flat)](https://www.npmjs.com/package/@nuz/cli) ![npm downloads](https://img.shields.io/npm/dw/@nuz/cli) |
 | **[@nuz/registry](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-registry)** | Provides functions to create a stable, secure and scalable registry server. | [![npm version](https://img.shields.io/npm/v/@nuz/registry.svg?style=flat)](https://www.npmjs.com/package/@nuz/registry) ![npm downloads](https://img.shields.io/npm/dw/@nuz/registry) |
 
 And other packages just create to using in the main packages.

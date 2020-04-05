@@ -83,7 +83,7 @@ const execute = async ({ fallback }: yargs.Argv<PublishCommand>) => {
 
 const config: CommandConfig<{}> = {
   type: CommandTypes.publish,
-  description: 'Publish version for module',
+  description: 'Publish module to the registry server',
   transform: (yarg) =>
     yarg.option('fallback', {
       alias: 'f',

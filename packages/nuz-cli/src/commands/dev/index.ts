@@ -87,7 +87,7 @@ const execute = async ({ port: _port, clean }: yargs.Argv<DevCommand>) => {
 
 const config: CommandConfig = {
   type: CommandTypes.dev,
-  description: 'Run development mode',
+  description: 'Run standalone development mode',
   transform: (yarg) =>
     yarg
       .option('port', {

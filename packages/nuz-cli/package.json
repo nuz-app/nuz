@@ -1,6 +1,6 @@
 {
   "name": "@nuz/cli",
-  "description": "Cli provides functions to create, dev, serve and deploy the modules with the best way",
+  "description": "Cli is a tool to help create, develop, build, serve and publish a module in the simplest way",
   "version": "0.1.4",
   "repository": {
     "type": "git",

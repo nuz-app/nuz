@@ -233,7 +233,7 @@ const execute = async ({
 
 const config: CommandConfig<{}> = {
   type: CommandTypes.workspace,
-  description: 'Start development mode in workspace',
+  description: 'Run workspace development mode',
   transform: (yarg) =>
     yarg
       .option('workspace', {
