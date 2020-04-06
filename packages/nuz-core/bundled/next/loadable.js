@@ -25,6 +25,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
   return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+
+// If production, reload after 10s & 250ms if dev mode
+const isProduction = process.env.NODE_ENV === 'production';
+const defaultTimeout = (isProduction ? 10000 : 250);
+const reloadTimeout = process.env.MODULE_RELOAD_TIMEOUT;
+const moduleReloadTimeout = (reloadTimeout && parseInt(reloadTimeout, 10)) || defaultTimeout;
+
 const react_1 = __importDefault(require("react"));
 const use_subscription_1 = require("use-subscription");
 const loadable_context_1 = require("./loadable-context");
@@ -125,18 +132,16 @@ function createLoadableComponent(loadFn, options) {
       // Added by @nuz/core
       if (typeof window === 'undefined') {
         subscription.promise().then((loadedModule) => {
-          const isUpstream = loadedModule && loadedModule.__isUpstream
+          const isUpstream = loadedModule && loadedModule.__isUpstream;
           if (!isUpstream) {
             return;
           }
 
           if (!timeoutToReload) {
-            // If production, reload after 10s
-            const timeout = process.env.NODE_ENV !== 'production' ? 250 : 10000
             timeoutToReload = setTimeout(() => {
-              subscription.retry()
-              timeoutToReload = 0
-            }, timeout) // Detay time to reload
+              subscription.retry();
+              timeoutToReload = 0;
+            }, moduleReloadTimeout); // Detay time to reload
           }
         })
       }
