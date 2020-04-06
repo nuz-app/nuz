@@ -13,8 +13,6 @@ export const execute = (app: Express, db: ModelDB) => {
       const { authorization } = request.headers
       const { token } = request.body
 
-      console.log({ authorization, token })
-
       const item = await db.deleteToken(authorization, token)
 
       response.json(item)

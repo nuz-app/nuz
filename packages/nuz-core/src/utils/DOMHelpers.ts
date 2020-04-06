@@ -1,3 +1,7 @@
+import { jsonHelpers } from '@nuz/utils'
+
+import { SHARED_CONFIG_KEY } from '../lib/const'
+
 export interface PreloadConfig {
   [attr: string]: any
   integrity: string | undefined
@@ -35,6 +39,11 @@ export const createElement = (defined: DefinedElement) => {
   const keysOf = Object.keys(attributes)
   keysOf.forEach((key) => {
     if (attributes[key] === undefined) {
+      return
+    }
+
+    if (key === 'dangerouslySetInnerHTML') {
+      element.innerHTML = attributes.dangerouslySetInnerHTML.__html
       return
     }
 
@@ -92,6 +101,19 @@ export const loadStyle = (href: string, config?: StyleConfig) => {
   if (domIsExsted()) {
     appendToHead(createElement(defined))
   }
+
+  return defined
+}
+
+export const sharedConfig = (config: any) => {
+  const defined = defineElement('script', {
+    type: 'text/javascript',
+    dangerouslySetInnerHTML: {
+      __html: `window['${SHARED_CONFIG_KEY}'] = ${jsonHelpers.stringify(
+        config,
+      )};`,
+    },
+  })
 
   return defined
 }

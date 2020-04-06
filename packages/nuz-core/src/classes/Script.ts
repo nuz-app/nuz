@@ -73,32 +73,6 @@ class Script {
     runScriptInContext(code, context)
     return context
   }
-
-  // async runInScript(context) {
-  //   const name = this.generateId()
-  //   const code = this.getScriptTemplate({
-  //     name,
-  //     code: this.code,
-  //     context: CONTEXT_KET,
-  //   })
-
-  //   const script = document.createElement('script')
-  //   script.type = 'text/javascript'
-  //   script.text = code
-  //   script.id = name + '_id'
-
-  //   document.head.appendChild(script)
-
-  //   // if (!checkIsFunction(window[name])) {
-  //   //   throw new Error(`Missing ${name} in Window or it is not a function`)
-  //   // }
-
-  //   console.log({ xxx: window[name], context })
-  //   window[name].call(window, context)
-  //   // window[name] = undefined
-
-  //   return context
-  // }
 }
 
 export default Script

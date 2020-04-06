@@ -309,7 +309,7 @@ class Modules {
     item: RequiredBaseItem,
     options?: InstallConfig,
   ) {
-    const { name, upstream } = item
+    const { upstream } = item
     const { library, format, alias, exportsOnly } = pickIfSet(upstream, item)
     const { timeout, retries } = ensureInstallConfig(options)
 
@@ -558,7 +558,12 @@ class Modules {
     const preconnects = Array.from(this._dnsPrefetchs.values())
     const resources = this._pingResources.values()
 
-    const tags: TagElement[] = [...preconnects]
+    const tags =
+      [
+        this._ssr && DOMHelpers.sharedConfig(this._config.raw()),
+        ...preconnects,
+      ].filter(Boolean) as TagElement[]
+
     resources.forEach((item) => {
       tags.push(item.script, ...(item.styles || []))
     })

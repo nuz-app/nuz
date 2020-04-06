@@ -79,6 +79,13 @@ class Config {
     this.setShared(shared || {})
   }
 
+  raw(): ConfigInitial {
+    return {
+      preload: this._preload,
+      modules: this._modules,
+    }
+  }
+
   update({
     preload,
     vendors,
