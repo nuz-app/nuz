@@ -2,8 +2,6 @@ import { jsonHelpers } from '@nuz/utils'
 
 import { BootstrapConfig, EventTypes, RegistryConfig } from './types'
 
-import { emitter } from './events'
-
 import { mark as markIsInitialized } from './utils/checkIsInitialized'
 import { initConfig } from './utils/effects/getConfig'
 import getModules, { initModules } from './utils/effects/getModules'
@@ -21,6 +19,7 @@ const mergeConfig = (
   })
 
 const bootstrap = async (config: BootstrapConfig) => {
+  console.log('call bootstrap')
   const configIsInvalid = !validator.bootstrapConfig(config)
   if (configIsInvalid) {
     throw new Error(
@@ -70,9 +69,6 @@ const bootstrap = async (config: BootstrapConfig) => {
   })
   markIsInitialized()
 
-  // Emit an initial event
-  emitter.emit(EventTypes.initial)
-
   // Init modules manager to using for resolve and more
   initModules()
 
@@ -83,9 +79,6 @@ const bootstrap = async (config: BootstrapConfig) => {
   // Lock config, not allow changing any config
   // Note: change config after initialized is dangerous!
   _config.lock()
-
-  // Emit a ready event
-  emitter.emit(EventTypes.ready)
 
   return true
 }

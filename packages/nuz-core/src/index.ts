@@ -20,5 +20,3 @@ export {
   default as nextHelpersFactory,
   NextHelpersConfig,
 } from './nextHelpersFactory'
-
-export { default as events } from './events'
