@@ -4,7 +4,6 @@ import { BootstrapConfig, EventTypes, RegistryConfig } from './types'
 
 import { emitter } from './events'
 
-import checkIsFunction from './utils/checkIsFunction'
 import { mark as markIsInitialized } from './utils/checkIsInitialized'
 import { initConfig } from './utils/effects/getConfig'
 import getModules, { initModules } from './utils/effects/getModules'
@@ -21,16 +20,7 @@ const mergeConfig = (
     modules: Object.assign({}, modules, localConfig.modules),
   })
 
-export interface BootstrapCallbacks {
-  render: () => Promise<void>
-}
-
-const defaultCallbacks = {} as BootstrapCallbacks
-
-const bootstrap = async (
-  config: BootstrapConfig,
-  callbacks: BootstrapCallbacks = defaultCallbacks,
-) => {
+const bootstrap = async (config: BootstrapConfig) => {
   const configIsInvalid = !validator.bootstrapConfig(config)
   if (configIsInvalid) {
     throw new Error(
@@ -96,10 +86,6 @@ const bootstrap = async (
 
   // Emit a ready event
   emitter.emit(EventTypes.ready)
-
-  if (checkIsFunction(callbacks.render)) {
-    await callbacks.render()
-  }
 
   return true
 }
