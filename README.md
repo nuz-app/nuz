@@ -99,7 +99,7 @@ And other packages just create to using in the main packages.
 
 #### Master Apps
 * **[create-next-app](https://github.com/lamhieu-vk/nuz/blob/develop/examples/apps/create-next-app)** - use Nuz with a typescript template created by create-next-app, both *server and client* side render, have [online example](https://create-next-app.nuz.now.sh) and deploy button.
-* **[create-react-app](https://github.com/lamhieu-vk/nuz/blob/develop/examples/apps/create-react-app)** - use Nuz with a template created by create-react-app, *client-side* render only, have [online example](https://create-react-app.nuz.now.sh) and deploy button..
+* **[create-react-app](https://github.com/lamhieu-vk/nuz/blob/develop/examples/apps/create-react-app)** - use Nuz with a template created by create-react-app, *client-side* render only, have [online example](https://create-react-app.nuz.now.sh) and deploy button.
 
 #### Modules
 * **[hello-world](https://github.com/lamhieu-vk/nuz/blob/develop/examples/modules/hello-world)** - a module was created by [@nuz/cli](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-cli), have [online example](https://hello-world.nuz.now.sh) and deploy button.
