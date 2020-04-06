@@ -3,10 +3,11 @@ import path from 'path'
 import * as fs from '../../utils/fs'
 import getPathInTemplate from '../../utils/getPathInTemplate'
 
-const filesMap = {
-  '.gitignore': 'gitignore',
-  'package.json': 'package.json',
-} as { [file: string]: string }
+const filesMap =
+  {
+    '.gitignore': 'gitignore',
+    'package.json': 'package.json',
+  } as { [file: string]: string }
 
 const cloneFilesIfNotFound = (dir: string, files: string[]) =>
   Promise.all<any>(

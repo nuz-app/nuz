@@ -19,7 +19,9 @@
         "singleQuote": true,
         "semi": false,
         "tabWidth": 2,
-        "printWidth": 80
+        "printWidth": 80,
+        "bracketSpacing": true,
+        "jsxBracketSameLine": false
       }
     ],
     "quotemark": [true, "single", "jsx-double"],
@@ -28,7 +30,9 @@
     "ordered-imports": [true],
     "max-line-length": [true, { "code": 80, "comments": 100, "tabWidth": 2, "ignoreUrls": true }],
     "no-console": false,
-    "object-literal-sort-keys": false
+    "object-literal-sort-keys": false,
+    "eofline": true,
+    "one-line": [true, "check-catch", "check-finally", "check-open-brace", "check-else"]
   },
   "rulesDirectory": []
 }

@@ -10,15 +10,16 @@ export interface ExportedConfig {
   shared?: boolean
 }
 
-const definedKeys = {
-  module: '__esModule',
-  linked: '__isLinked',
-  local: '__isLocal',
-  vendor: '__isVendor',
-  upstream: '__isUpstream',
-  fallback: '__isFallback',
-  shared: '__isShared',
-} as { [name: string]: any }
+const definedKeys =
+  {
+    module: '__esModule',
+    linked: '__isLinked',
+    local: '__isLocal',
+    vendor: '__isVendor',
+    upstream: '__isUpstream',
+    fallback: '__isFallback',
+    shared: '__isShared',
+  } as { [name: string]: any }
 
 export const define = (module: any, config: ExportedConfig) => {
   // tslint:disable-next-line: forin

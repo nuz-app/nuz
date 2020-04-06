@@ -422,11 +422,12 @@ class Modules {
         throw error
       }
 
-      const cloned = {
-        ...item,
-        upstream: item.fallback,
-        fallback: undefined,
-      } as RequiredBaseItem
+      const cloned =
+        {
+          ...item,
+          upstream: item.fallback,
+          fallback: undefined,
+        } as RequiredBaseItem
       console.warn(
         `Try to use fallback as backup module: ${jsonHelpers.stringify(
           cloned,
