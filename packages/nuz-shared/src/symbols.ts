@@ -26,3 +26,5 @@ export const REACT_DOM_INJECTED = !symbolSupported
 
 // Must be a string
 export const DEPENDENCIES_KEY = '@nuz/core.dependencies'
+
+export const SHARED_CONFIG_KEY = '@nuz/core.sharedConfig'

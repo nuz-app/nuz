@@ -104,8 +104,3 @@ export type BaseItemConfig = {
    */
   shared?: string[]
 }
-
-export enum EventTypes {
-  initial = 'initial',
-  ready = 'ready',
-}

@@ -72,6 +72,8 @@ const pickIfSet = (upstream: any, config: RequiredBaseItem) => {
 
 const PRECONNECT_LIMIT_DOMAIN = 3
 
+let wsWarningIsShowed = false
+
 type TagElement = DOMHelpers.DefinedElement
 
 export interface LoadResults<M = unknown> {
@@ -132,7 +134,9 @@ class Modules {
     const config = this._config.getLinked()
     this._linked = new Linked(config)
 
-    if (config.port) {
+    if (!wsWarningIsShowed && config.port) {
+      wsWarningIsShowed = true
+
       console.warn(
         `Please make sure the workspace server was started! \n Start workspace by command: \n > nuz workspace --port ${config.port}`,
       )

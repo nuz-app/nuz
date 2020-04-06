@@ -95,26 +95,28 @@ function reactHelpersFactory(
     )
   }
 
-  const originalRender = ReactDOM.render
-  const originalHydrate = ReactDOM.hydrate
+  const originalRender = ReactDOM.render.bind(ReactDOM)
+  const originalHydrate = ReactDOM.hydrate.bind(ReactDOM)
 
   const injectReact = () => {
     if (ReactDOM[REACT_DOM_INJECTED]) {
       return false
     }
 
+    const renderFactory = (fn: any) =>
+      async function renderInjected(element, container, callback?) {
+        await checkIsReady()
+
+        return fn(element, container, callback)
+      }
+
     Object.assign(ReactDOM, {
-      render: async (...rest) => {
-        await checkIsReady()
-        return originalRender.apply(ReactDOM, rest as any)
-      },
-      hydrate: async (...rest) => {
-        await checkIsReady()
-        return originalHydrate.apply(ReactDOM, rest as any)
-      },
+      render: renderFactory(originalRender),
+      hydrate: renderFactory(originalHydrate),
     })
 
     Object.defineProperty(ReactDOM, REACT_DOM_INJECTED, { value: true })
+
     return true
   }
 

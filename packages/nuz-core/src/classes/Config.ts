@@ -79,6 +79,26 @@ class Config {
     this.setShared(shared || {})
   }
 
+  update({
+    preload,
+    vendors,
+    modules,
+    shared,
+  }: Pick<ConfigInitial, 'preload' | 'vendors' | 'modules' | 'shared'>) {
+    if (this._locked) {
+      throw new Error('Can not set shared because config was locked!')
+    }
+
+    this._vendors = {}
+    this._modules = {}
+    this._shared = {}
+    this._preload = preload || []
+
+    this.setVendors(vendors || {})
+    this.setModules(modules || {})
+    this.setShared(shared || {})
+  }
+
   lock() {
     return (this._locked = true)
   }

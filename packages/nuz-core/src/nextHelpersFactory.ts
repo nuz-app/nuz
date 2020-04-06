@@ -2,8 +2,11 @@ import { compareFilesByHash } from '@nuz/utils'
 import fs from 'fs'
 import path from 'path'
 
+import { worker } from './bootstrap'
+
 export interface NextHelpersConfig {
   require: NodeRequire
+  autoInject?: boolean
 }
 
 const LOADABLE_UPDATED_PATH = path.join(
@@ -11,9 +14,13 @@ const LOADABLE_UPDATED_PATH = path.join(
   '../bundled/next/loadable.js',
 )
 
-const nextHelpersFactory = ({ require }: NextHelpersConfig) => {
+const nextHelpersFactory = ({
+  require,
+  autoInject = true,
+}: NextHelpersConfig) => {
   const loadableInApp = require.resolve('next/dist/next-server/lib/loadable')
 
+  // Replace loadable file of Next.js
   const fileIsDiff = !compareFilesByHash(LOADABLE_UPDATED_PATH, loadableInApp)
   if (fileIsDiff) {
     fs.copyFileSync(LOADABLE_UPDATED_PATH, loadableInApp)
@@ -42,6 +49,27 @@ const nextHelpersFactory = ({ require }: NextHelpersConfig) => {
         return updatedConfig
       },
     })
+
+  const injectNext = () => {
+    const nextServerRender = require('next/dist/next-server/server/render')
+    const renderToHTML = nextServerRender.renderToHTML
+
+    Object.assign(nextServerRender, {
+      renderToHTML: async function renderInjected() {
+        await worker.ready()
+        await worker.refresh()
+
+        const html = await renderToHTML.apply(nextServerRender, arguments)
+        await worker.teardown()
+
+        return html
+      },
+    })
+  }
+
+  if (autoInject) {
+    injectNext()
+  }
 
   return { withNuz }
 }
