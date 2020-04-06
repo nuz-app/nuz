@@ -8,7 +8,7 @@ import checkIsFunction from './utils/checkIsFunction'
 import { mark as markIsInitialized } from './utils/checkIsInitialized'
 import { initConfig } from './utils/effects/getConfig'
 import getModules, { initModules } from './utils/effects/getModules'
-import getConfig from './utils/getConfig'
+import fetchConfig from './utils/fetchConfig'
 import uniq from './utils/uniq'
 import * as validator from './utils/validator'
 
@@ -39,15 +39,16 @@ const bootstrap = async (
   }
 
   let configOnRegistry
+
   const registryIsDefined = !!config.registry
-  if (registryIsDefined) {
+  if (registryIsDefined && !configOnRegistry) {
     const registryConfig = (config.registry || {}) as RegistryConfig
     const registryUrl =
       typeof config.registry === 'string'
         ? config.registry
         : (config.registry as any).url
 
-    configOnRegistry = await getConfig<BootstrapConfig>(
+    configOnRegistry = await fetchConfig<BootstrapConfig>(
       registryUrl,
       {
         timeout: registryConfig.timeout || -1,

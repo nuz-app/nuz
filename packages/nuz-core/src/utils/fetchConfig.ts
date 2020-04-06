@@ -5,7 +5,7 @@ const defaultConfig = {
   headers: { 'content-type': 'application/json' },
 }
 
-const getConfig = async <T = unknown>(
+const fetchConfig = async <T = unknown>(
   url: string,
   config: FetchOptions = {},
   retries: number = 0,
@@ -22,7 +22,7 @@ const getConfig = async <T = unknown>(
     content = await response.json()
   } catch (error) {
     if (retries > 0) {
-      content = await getConfig(url, config, retries - 1)
+      content = await fetchConfig(url, config, retries - 1)
     } else {
       throw new Error(
         `Cannot get config from ${url}, details: ${error.message || error}`,
@@ -33,4 +33,4 @@ const getConfig = async <T = unknown>(
   return content
 }
 
-export default getConfig
+export default fetchConfig
