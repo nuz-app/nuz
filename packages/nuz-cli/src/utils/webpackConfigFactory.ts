@@ -1,4 +1,3 @@
-import { DEPENDENCIES_KEY } from '@nuz/shared'
 import os from 'os'
 import path from 'path'
 import webpack from 'webpack'
@@ -32,11 +31,13 @@ import * as fs from './fs'
 import * as paths from './paths'
 
 import styleLoadersFactory from './webpack/factories/styleLoaders'
+import setExternals from './webpack/helpers/setExternals'
 import PeerDepsExternalsPlugin from './webpack/PeerDepsExternalsPlugin'
 
 export interface FactoryConfig {
   ci?: boolean
   module?: string
+  nextjs?: boolean
   dir: string
   dev: boolean
   cache: boolean
@@ -47,12 +48,6 @@ const ruleFactory = (test: RegExp, exclude?: RegExp, use?: any[]) => ({
   test,
   exclude,
   use: use || [],
-})
-
-const setExternals = (name: string) => ({
-  commonjs: [DEPENDENCIES_KEY, name],
-  commonjs2: [DEPENDENCIES_KEY, name],
-  root: [DEPENDENCIES_KEY, name],
 })
 
 const defaultConfig = {
@@ -75,6 +70,7 @@ const webpackConfigFactory = (
     dir,
     cache = true,
     ci = false,
+    nextjs = true,
     module = '~',
     config: moduleConfig,
   }: FactoryConfig,
@@ -191,8 +187,25 @@ const webpackConfigFactory = (
       {},
     )
 
-    // @ts-ignore
     config.externals.push(sharedExternals)
+  }
+
+  if (nextjs) {
+    const sharedNextModules = [
+      'next',
+      'next/dynamic',
+      'next/router',
+      'next/link',
+      'next/head',
+      'next/amp',
+    ]
+
+    const nextExternals = sharedNextModules.reduce(
+      (acc, item) => Object.assign(acc, { [item]: setExternals(item) }),
+      {},
+    )
+
+    config.externals.push(nextExternals)
   }
 
   // Config babel and typescript to transplie scripts

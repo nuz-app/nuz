@@ -52,14 +52,14 @@ const nextHelpersFactory = ({
 
   const injectNext = () => {
     const nextServerRender = require('next/dist/next-server/server/render')
-    const renderToHTML = nextServerRender.renderToHTML
+    const renderToHTML = nextServerRender.renderToHTML.bind(nextServerRender)
 
     Object.assign(nextServerRender, {
-      renderToHTML: async function renderInjected() {
+      renderToHTML: async function renderInjected(...rest: any[]) {
         await worker.ready()
         await worker.refresh()
 
-        const html = await renderToHTML.apply(nextServerRender, arguments)
+        const html = await renderToHTML(...rest)
         await worker.teardown()
 
         return html

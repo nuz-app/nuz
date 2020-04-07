@@ -1,4 +1,4 @@
-import webpack from 'webpack'
+import setExternals from './helpers/setExternals'
 
 // tslint:disable-next-line: no-var-requires
 const ExternalModuleFactoryPlugin = require('webpack/lib/ExternalModuleFactoryPlugin')
@@ -7,7 +7,10 @@ function getPeerDependencies(dir: string | undefined) {
   try {
     const { resolve } = require('path')
     const pkg = require(resolve(dir || process.cwd(), 'package.json'))
-    return Object.keys(pkg.peerDependencies)
+    return Object.keys(pkg.peerDependencies).reduce(
+      (acc, key) => Object.assign(acc, { [key]: setExternals(key) }),
+      {},
+    )
   } catch (err) {
     return []
   }
