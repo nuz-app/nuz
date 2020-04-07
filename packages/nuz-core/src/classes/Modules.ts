@@ -426,12 +426,11 @@ class Modules {
         throw error
       }
 
-      const cloned =
-        {
-          ...item,
-          upstream: item.fallback,
-          fallback: undefined,
-        } as RequiredBaseItem
+      const cloned = {
+        ...item,
+        upstream: item.fallback,
+        fallback: undefined,
+      } as RequiredBaseItem
       console.warn(
         `Try to use fallback as backup module: ${jsonHelpers.stringify(
           cloned,
@@ -558,11 +557,10 @@ class Modules {
     const preconnects = Array.from(this._dnsPrefetchs.values())
     const resources = this._pingResources.values()
 
-    const tags =
-      [
-        this._ssr && DOMHelpers.sharedConfig(this._config.raw()),
-        ...preconnects,
-      ].filter(Boolean) as TagElement[]
+    const tags = [
+      this._ssr && DOMHelpers.sharedConfig(this._config.raw()),
+      ...preconnects,
+    ].filter(Boolean) as TagElement[]
 
     resources.forEach((item) => {
       tags.push(item.script, ...(item.styles || []))

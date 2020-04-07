@@ -7,13 +7,12 @@ export interface DeferedPromise<T> extends Promise<T> {
 const tick = () => new Promise((resolve) => setTimeout(resolve, 1))
 
 const deferedPromise = <T = unknown>() => {
-  const promise =
-    new Promise<T>((resolve, reject) => {
-      setTimeout(() => {
-        promise.resolve = resolve
-        promise.reject = reject
-      }, 0)
-    }) as DeferedPromise<T>
+  const promise = new Promise<T>((resolve, reject) => {
+    setTimeout(() => {
+      promise.resolve = resolve
+      promise.reject = reject
+    }, 0)
+  }) as DeferedPromise<T>
 
   promise.ready = tick()
 
