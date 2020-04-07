@@ -1,6 +1,5 @@
+import { SHARED_CONFIG_KEY } from '@nuz/shared'
 import { jsonHelpers } from '@nuz/utils'
-
-import { SHARED_CONFIG_KEY } from '../lib/const'
 
 export interface PreloadConfig {
   [attr: string]: any

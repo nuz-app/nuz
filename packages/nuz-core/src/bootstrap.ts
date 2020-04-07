@@ -1,9 +1,7 @@
-// import { SHARED_CONFIG_KEY } from '@nuz/shared'
+import { SHARED_CONFIG_KEY } from '@nuz/shared'
 import { checkIsObject, jsonHelpers } from '@nuz/utils'
 
 import { BootstrapConfig, RegistryConfig, RuntimePlatforms } from './types'
-
-import { SHARED_CONFIG_KEY } from './lib/const'
 
 import Worker from './classes/Worker'
 
@@ -33,13 +31,14 @@ const configFactory = async (config: BootstrapConfig) => {
   }
 
   const isNode = getRuntimePlatform() === RuntimePlatforms.node
-  const sharedIsValid = !isNode && checkIsObject(window[SHARED_CONFIG_KEY])
+  const registryIsDefined = !!config.registry
+  const sharedIsValid =
+    !isNode && registryIsDefined && checkIsObject(window[SHARED_CONFIG_KEY])
 
   let configOnRegistry = !sharedIsValid
     ? undefined
     : (window[SHARED_CONFIG_KEY] as BootstrapConfig)
 
-  const registryIsDefined = !!config.registry
   if (registryIsDefined && !configOnRegistry) {
     const registryConfig = (config.registry || {}) as RegistryConfig
     const registryUrl =
