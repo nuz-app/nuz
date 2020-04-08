@@ -37,7 +37,6 @@ import PeerDepsExternalsPlugin from './webpack/PeerDepsExternalsPlugin'
 export interface FactoryConfig {
   ci?: boolean
   module?: string
-  nextjs?: boolean
   dir: string
   dev: boolean
   cache: boolean
@@ -70,7 +69,6 @@ const webpackConfigFactory = (
     dir,
     cache = true,
     ci = false,
-    nextjs = true,
     module = '~',
     config: moduleConfig,
   }: FactoryConfig,
@@ -190,9 +188,9 @@ const webpackConfigFactory = (
     config.externals.push(sharedExternals)
   }
 
-  if (nextjs) {
+  const nextIsInstalled = checkIsPackageInstalled('next', dir)
+  if (nextIsInstalled) {
     const sharedNextModules = [
-      'next',
       'next/dynamic',
       'next/router',
       'next/link',

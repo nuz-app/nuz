@@ -101,8 +101,8 @@ const styleLoadersFactory = ({
       options: Object.assign(
         {
           implementation: dartSassIsInstalled
-            ? require(dartSassIsInstalled)
-            : require(nodeSassIsInstalled as string),
+            ? require(paths.resolveInApp('dart-sass', dir))
+            : require(paths.resolveInApp('node-sass', dir)),
         },
         feature.sass === true ? {} : feature.sass,
       ),

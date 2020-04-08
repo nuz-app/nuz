@@ -109,7 +109,7 @@ export interface ModuleConfig {
   /**
    * Extends externals module
    */
-  externals?: { [moduleName: string]: string }
+  externals?: webpack.ExternalsElement | webpack.ExternalsElement[]
   /**
    * Enable feature by loader and plugins
    */
