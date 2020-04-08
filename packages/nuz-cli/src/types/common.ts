@@ -150,6 +150,10 @@ export interface ModuleConfig {
    * Experimental
    */
   experimental?: ExperimentalConfig
+  /**
+   * Build isolated module
+   */
+  isolated?: boolean
 }
 
 export interface FeatureConfig {

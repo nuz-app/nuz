@@ -1,14 +1,17 @@
+import { getPackageJsonInDir } from '@nuz/utils'
+
 import setExternals from './helpers/setExternals'
 
 // tslint:disable-next-line: no-var-requires
 const ExternalModuleFactoryPlugin = require('webpack/lib/ExternalModuleFactoryPlugin')
 
-function getPeerDependencies(dir: string | undefined) {
+function getPeerDependencies(dir: string | undefined, isolated: boolean) {
   try {
-    const { resolve } = require('path')
-    const pkg = require(resolve(dir || process.cwd(), 'package.json'))
-    return Object.keys(pkg.peerDependencies).reduce(
-      (acc, key) => Object.assign(acc, { [key]: setExternals(key) }),
+    const moduleDir = dir || process.cwd()
+    const pkgJson = getPackageJsonInDir(moduleDir)
+
+    return Object.keys(pkgJson.peerDependencies).reduce(
+      (acc, key) => Object.assign(acc, { [key]: setExternals(key, isolated) }),
       {},
     )
   } catch (err) {
@@ -17,10 +20,13 @@ function getPeerDependencies(dir: string | undefined) {
 }
 
 class PeerDepsExternalsPlugin {
-  constructor(private readonly dir?: string) {}
+  constructor(
+    private readonly dir: string | undefined,
+    private readonly isolated: boolean,
+  ) {}
 
   apply(compiler: any) {
-    const peerDependencies = getPeerDependencies(this.dir)
+    const peerDependencies = getPeerDependencies(this.dir, this.isolated)
 
     // webpack 4+
     if (compiler.hooks) {

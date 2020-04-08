@@ -50,6 +50,7 @@ const ruleFactory = (test: RegExp, exclude?: RegExp, use?: any[]) => ({
 })
 
 const defaultConfig = {
+  isolated: false,
   publicPath: '/',
   format: 'umd' as webpack.LibraryTarget,
   experimental: {},
@@ -75,6 +76,7 @@ const webpackConfigFactory = (
   feature: Partial<FeatureConfig> = {},
 ) => {
   const {
+    isolated,
     library,
     format,
     input,
@@ -174,14 +176,15 @@ const webpackConfigFactory = (
   if (feature.react) {
     // tslint:disable-next-line: prettier
     (config.externals as webpack.ExternalsElement[]).push({
-      react: setExternals('react'),
-      'react-dom': setExternals('react-dom'),
+      react: setExternals('react', isolated),
+      'react-dom': setExternals('react-dom', isolated),
     })
   }
 
   if (Array.isArray(shared) && shared.length > 0) {
     const sharedExternals = shared.reduce(
-      (acc, item) => Object.assign(acc, { [item]: setExternals(item) }),
+      (acc, item) =>
+        Object.assign(acc, { [item]: setExternals(item, isolated) }),
       {},
     )
 
@@ -199,7 +202,8 @@ const webpackConfigFactory = (
     ]
 
     const nextExternals = sharedNextModules.reduce(
-      (acc, item) => Object.assign(acc, { [item]: setExternals(item) }),
+      (acc, item) =>
+        Object.assign(acc, { [item]: setExternals(item, isolated) }),
       {},
     )
 
@@ -375,7 +379,7 @@ const webpackConfigFactory = (
   })
 
   // Set peers deps as externals
-  config.plugins.push(new PeerDepsExternalsPlugin(dir))
+  config.plugins.push(new PeerDepsExternalsPlugin(dir, isolated))
 
   // Config optimization for production mode
   if (!dev) {
