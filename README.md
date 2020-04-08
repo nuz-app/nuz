@@ -81,9 +81,9 @@ Nooo, you can use **Nuz** with your React application, **Nuz** is compatible wit
 
 | Name     | Description | Other |
 |---------------|-----|-----|
-| **[@nuz/core](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-core)**     | The core is define, resolve and manage  modules from the network in the application. | [![npm version](https://img.shields.io/npm/v/@nuz/core.svg?style=flat)](https://www.npmjs.com/package/@nuz/core) ![npm downloads](https://img.shields.io/npm/dw/@nuz/core) |
-| **[@nuz/cli](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-cli)** | Cli is a tool to help create, develop, build, serve and publish a module in the simplest way. | [![npm version](https://img.shields.io/npm/v/@nuz/cli.svg?style=flat)](https://www.npmjs.com/package/@nuz/cli) ![npm downloads](https://img.shields.io/npm/dw/@nuz/cli) |
-| **[@nuz/registry](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-registry)** | Provides functions to create a stable, secure and scalable registry server. | [![npm version](https://img.shields.io/npm/v/@nuz/registry.svg?style=flat)](https://www.npmjs.com/package/@nuz/registry) ![npm downloads](https://img.shields.io/npm/dw/@nuz/registry) |
+| **[@nuz/core](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-core)**     | The core is define, resolve and manage  modules from the network in the application. | [![npm version](https://img.shields.io/npm/v/@nuz/core.svg?style=flat)](https://www.npmjs.com/package/@nuz/core) ![npm downloads](https://img.shields.io/npm/dm/@nuz/core) |
+| **[@nuz/cli](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-cli)** | Cli is a tool to help create, develop, build, serve and publish a module in the simplest way. | [![npm version](https://img.shields.io/npm/v/@nuz/cli.svg?style=flat)](https://www.npmjs.com/package/@nuz/cli) ![npm downloads](https://img.shields.io/npm/dm/@nuz/cli) |
+| **[@nuz/registry](https://github.com/lamhieu-vk/nuz/blob/develop/packages/nuz-registry)** | Provides functions to create a stable, secure and scalable registry server. | [![npm version](https://img.shields.io/npm/v/@nuz/registry.svg?style=flat)](https://www.npmjs.com/package/@nuz/registry) ![npm downloads](https://img.shields.io/npm/dm/@nuz/registry) |
 
 And other packages just create to using in the main packages.
 
