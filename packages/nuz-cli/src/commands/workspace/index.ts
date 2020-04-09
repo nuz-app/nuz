@@ -33,6 +33,8 @@ const execute = async ({
   workspace: _workspace,
   // @ts-ignore
   port: _port,
+  // @ts-ignore
+  clean,
 }: yargs.Argv<WorkspaceCommand>) => {
   const moduleDir = paths.cwd
 
@@ -70,6 +72,11 @@ const execute = async ({
 
   const buildDir = paths.nuz(moduleDir, 'modules')
   fs.ensureDir(buildDir)
+  if (clean) {
+    logs.cleanFolder(buildDir)
+
+    await fs.emptyDir(buildDir)
+  }
 
   // Check and get modules paths in workspace
   const workspacePaths = workspace.reduce<string[]>(
@@ -247,6 +254,13 @@ const config: CommandConfig<{}> = {
         alias: 'p',
         describe: 'Set port listen for server',
         type: 'number',
+        required: false,
+      })
+      .option('clean', {
+        alias: 'c',
+        describe: 'Clean dist folder before run build',
+        type: 'number',
+        default: true,
         required: false,
       }),
   execute,

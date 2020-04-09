@@ -43,7 +43,17 @@ export interface FactoryConfig {
   config: ModuleConfig
 }
 
-const ruleFactory = (test: RegExp, exclude?: RegExp, use?: any[]) => ({
+const TYPESCRIPT_REGEXP = /.tsx?/
+const JAVASCRIPT_REGEXP = /.jsx?/
+const IMAGE_REPGEXP = /\.(png|jpe?g|gif)$/i
+const SVG_REPGEXP = /\.svg$/i
+const IMAGE_MINIFY_REGEXP = /(\.min\.(png|jpe?g|gif|svg))$/i
+
+const ruleFactory = (
+  test: RegExp,
+  exclude?: RegExp,
+  use?: any[],
+): webpack.RuleSetRule & { use: webpack.RuleSetUseItem[] } => ({
   test,
   exclude,
   use: use || [],
@@ -122,11 +132,20 @@ const webpackConfigFactory = (
     ? [...TS_EXTENSIONS, ...JS_EXTENSIONS, ...JSON_EXTENSIONS]
     : [...JS_EXTENSIONS, ...JSON_EXTENSIONS]
 
-  const cacheConfig = cache && {
-    type: 'filesystem',
-    cacheDirectory: (paths as any).cache('bundles'),
-    hashAlgorithm: 'md4',
+  const cacheDirectories = {
+    bundles: (paths as any).cache('bundles'),
+    babel: (paths as any).cache('babel'),
+    terser: (paths as any).cache('terser'),
+    images: (paths as any).cache('images'),
   }
+  const cacheConfig = cache
+    ? {
+        type: 'filesystem',
+        cacheDirectory: cacheDirectories.bundles,
+        hashAlgorithm: 'md4',
+      }
+    : false
+
   const resolveInApp = (moduleId: string) => paths.resolveInApp(moduleId, dir)
 
   const config = {
@@ -212,24 +231,9 @@ const webpackConfigFactory = (
 
   // Config babel and typescript to transplie scripts
   const scriptRule = ruleFactory(
-    feature.typescript ? /.tsx?/ : /.jsx?/,
+    feature.typescript ? TYPESCRIPT_REGEXP : JAVASCRIPT_REGEXP,
     /(node_modules|bower_components)/,
   )
-
-  // Set cache loader to improve build time
-  if (cache && dev) {
-    const cacheDirectory = (paths as any).cache('cache-loader')
-    fs.emptyDir(cacheDirectory)
-
-    scriptRule.use.push({
-      loader: resolveInApp('cache-loader'),
-      options: {
-        cacheDirectory,
-        cacheContext: dir,
-        cacheIdentifier: `${name}:${mode}:${now}`,
-      },
-    })
-  }
 
   if (experimental.multiThread) {
     // Set thread loader to use child process
@@ -246,7 +250,7 @@ const webpackConfigFactory = (
   scriptRule.use.push({
     loader: resolveInApp('babel-loader'),
     options: {
-      cacheDirectory: cache ? (paths as any).cache('babel-loader') : false,
+      cacheDirectory: cache ? cacheDirectories.babel : false,
       presets: [
         resolveInApp('@babel/preset-env'),
         feature.react && resolveInApp('@babel/preset-react'),
@@ -348,28 +352,82 @@ const webpackConfigFactory = (
     )
   }
 
+  // Optimized images in production mode
+  const optimizedImagesRule = ruleFactory(IMAGE_MINIFY_REGEXP)
+  optimizedImagesRule.enforce = 'pre'
+  if (cache) {
+    optimizedImagesRule.use.push({
+      loader: resolveInApp('cache-loader'),
+      options: {
+        cacheDirectory: cacheDirectories.images,
+        cacheContext: dir,
+      },
+    })
+  }
+  optimizedImagesRule.use.push({
+    loader: resolveInApp('image-webpack-loader'),
+    options: {
+      mozjpeg: {
+        progressive: true,
+        quality: 80,
+      },
+      optipng: {
+        optimizationLevel: 3,
+      },
+      pngquant: {
+        quality: [0.75, 0.9],
+        speed: 4,
+      },
+      gifsicle: {
+        interlaced: false,
+      },
+      webp: {
+        quality: 80,
+      },
+    },
+  })
+  config.module.rules.push(optimizedImagesRule)
+
   // Config `url-loader` and `file-loader` to use images files
-  const filesRule = ruleFactory(/\.(png|jpe?g|gif)$/i)
-  const filesLoader = {
+  const imagesRule = ruleFactory(IMAGE_REPGEXP)
+  config.module.rules.push(imagesRule)
+
+  const imagesLoader = {
     loader: resolveInApp('url-loader'),
     options: {
       limit: 5 * 1024,
       fallback: resolveInApp('file-loader'),
       context: dir,
       outputPath: 'images',
-      name: dev ? '[name].[contenthash:8].[ext]' : '[contenthash].[ext]',
+      name: (resourcePath: string) => {
+        const imageAllowMinify = IMAGE_MINIFY_REGEXP.test(resourcePath)
+        if (imageAllowMinify) {
+          const filename = path
+            .basename(resourcePath)
+            .replace(IMAGE_MINIFY_REGEXP, '')
+
+          return dev
+            ? `${filename}.[contenthash:8].min.[ext]`
+            : `${filename}.[contenthash].min.[ext]`
+        }
+
+        return dev
+          ? `[name].[contenthash:8].[ext]`
+          : `[name].[contenthash].[ext]`
+      },
       emitFile: true,
     },
   }
-  filesRule.use.push(filesLoader)
-  config.module.rules.push(filesRule)
+  imagesRule.use.push(imagesLoader)
 
   // Config loaders to use svg files as components and image files
-  const svgRule = ruleFactory(/\.svg$/i)
-  svgRule.use.push({
-    loader: resolveInApp('@svgr/webpack'),
-  })
-  svgRule.use.push(filesLoader)
+  const svgRule = ruleFactory(SVG_REPGEXP)
+  svgRule.use.push(
+    {
+      loader: resolveInApp('@svgr/webpack'),
+    },
+    imagesLoader,
+  )
   config.module.rules.push(svgRule)
 
   // Config `raw-loader` to use txt files
@@ -418,7 +476,7 @@ const webpackConfigFactory = (
         new TerserPlugin({
           sourceMap,
           terserOptions,
-          cache: (paths as any).cache('terser'),
+          cache: cache ? cacheDirectories.terser : false,
           parallel: true,
         }),
       ],

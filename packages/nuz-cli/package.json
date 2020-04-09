@@ -55,6 +55,7 @@
     "fork-ts-checker-webpack-plugin": "^4.0.5",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.6",
+    "image-webpack-loader": "^6.0.0",
     "inquirer": "^7.0.5",
     "less-loader": "^5.0.0",
     "lodash.camelcase": "^4.3.0",

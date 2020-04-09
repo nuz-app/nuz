@@ -54,6 +54,8 @@ export interface ServeCommand {
 
 export interface WorkspaceCommand {
   workspace?: string[]
+  port?: number
+  clean?: boolean
 }
 
 export interface AnalyzerConfig {
