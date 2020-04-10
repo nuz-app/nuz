@@ -27,7 +27,6 @@ import {
 
 import checkIsPackageInstalled from './checkIsPackageInstalled'
 import * as compilerName from './compilerName'
-import * as fs from './fs'
 import * as paths from './paths'
 
 import styleLoadersFactory from './webpack/factories/styleLoaders'
@@ -45,9 +44,10 @@ export interface FactoryConfig {
 
 const TYPESCRIPT_REGEXP = /.tsx?/
 const JAVASCRIPT_REGEXP = /.jsx?/
-const IMAGE_REPGEXP = /\.(png|jpe?g|gif)$/i
-const SVG_REPGEXP = /\.svg$/i
+const IMAGE_REGEXP = /\.(png|jpe?g|gif)$/i
+const SVG_REGEXP = /\.svg$/i
 const IMAGE_MINIFY_REGEXP = /(\.min\.(png|jpe?g|gif|svg))$/i
+const TEXT_REGEXP = /\.txt$/i
 
 const ruleFactory = (
   test: RegExp,
@@ -254,7 +254,7 @@ const webpackConfigFactory = (
       presets: [
         resolveInApp('@babel/preset-env'),
         feature.react && resolveInApp('@babel/preset-react'),
-      ].filter(Boolean),
+      ].filter(Boolean) as string[],
       plugins: [resolveInApp('@babel/plugin-transform-runtime')],
     },
   })
@@ -355,41 +355,43 @@ const webpackConfigFactory = (
   // Optimized images in production mode
   const optimizedImagesRule = ruleFactory(IMAGE_MINIFY_REGEXP)
   optimizedImagesRule.enforce = 'pre'
-  if (cache) {
-    optimizedImagesRule.use.push({
-      loader: resolveInApp('cache-loader'),
-      options: {
-        cacheDirectory: cacheDirectories.images,
-        cacheContext: dir,
+  optimizedImagesRule.use.push(
+    ...([
+      cache && {
+        loader: resolveInApp('cache-loader'),
+        options: {
+          cacheDirectory: cacheDirectories.images,
+          cacheContext: dir,
+        },
       },
-    })
-  }
-  optimizedImagesRule.use.push({
-    loader: resolveInApp('image-webpack-loader'),
-    options: {
-      mozjpeg: {
-        progressive: true,
-        quality: 80,
+      {
+        loader: resolveInApp('image-webpack-loader'),
+        options: {
+          mozjpeg: {
+            progressive: true,
+            quality: 80,
+          },
+          optipng: {
+            optimizationLevel: 3,
+          },
+          pngquant: {
+            quality: [0.75, 0.9],
+            speed: 4,
+          },
+          gifsicle: {
+            interlaced: false,
+          },
+          webp: {
+            quality: 80,
+          },
+        },
       },
-      optipng: {
-        optimizationLevel: 3,
-      },
-      pngquant: {
-        quality: [0.75, 0.9],
-        speed: 4,
-      },
-      gifsicle: {
-        interlaced: false,
-      },
-      webp: {
-        quality: 80,
-      },
-    },
-  })
+    ].filter(Boolean) as any[]),
+  )
   config.module.rules.push(optimizedImagesRule)
 
   // Config `url-loader` and `file-loader` to use images files
-  const imagesRule = ruleFactory(IMAGE_REPGEXP)
+  const imagesRule = ruleFactory(IMAGE_REGEXP)
   config.module.rules.push(imagesRule)
 
   const imagesLoader = {
@@ -398,6 +400,7 @@ const webpackConfigFactory = (
       limit: 5 * 1024,
       fallback: resolveInApp('file-loader'),
       context: dir,
+      emitFile: true,
       outputPath: 'images',
       name: (resourcePath: string) => {
         const imageAllowMinify = IMAGE_MINIFY_REGEXP.test(resourcePath)
@@ -415,13 +418,12 @@ const webpackConfigFactory = (
           ? `[name].[contenthash:8].[ext]`
           : `[name].[contenthash].[ext]`
       },
-      emitFile: true,
     },
   }
   imagesRule.use.push(imagesLoader)
 
   // Config loaders to use svg files as components and image files
-  const svgRule = ruleFactory(SVG_REPGEXP)
+  const svgRule = ruleFactory(SVG_REGEXP)
   svgRule.use.push(
     {
       loader: resolveInApp('@svgr/webpack'),
@@ -431,7 +433,7 @@ const webpackConfigFactory = (
   config.module.rules.push(svgRule)
 
   // Config `raw-loader` to use txt files
-  const textRule = ruleFactory(/\.txt$/i)
+  const textRule = ruleFactory(TEXT_REGEXP)
   textRule.use.push({
     loader: resolveInApp('raw-loader'),
   })
