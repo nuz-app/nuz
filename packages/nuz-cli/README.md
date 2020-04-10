@@ -13,7 +13,7 @@ The [@nuz/cli](#) is recommended for the Nuz ecosystem, but if you want to use i
 - 🗂 File serving and directory listing in the module.
 - 💅 Styling is supporting CSS, Less, and Sass. Auto css modules by name.
 - 🔷 SVG is supporting as React Component or static file.
-- 🏞 Image imports are supported. Auto convert base64 or static files.
+- 🏞 Image imports are supported. Auto optimize and convert base64 or static files by size.
 - 🏷 Easy publish to a module to the registry server using [@nuz/registry](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-registry).
 - 🚨Rollback quickly when encountering problems.
 
