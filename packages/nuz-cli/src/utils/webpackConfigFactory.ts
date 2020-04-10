@@ -299,25 +299,6 @@ const webpackConfigFactory = (
         feature.less && LESS_EXTENSIONS,
       )
       .filter(Boolean)
-    // Create style loaders for modules styles if enabled
-    const modulesStyleExtensions = supportedStyleExtensions.map(
-      (ext) => `(.m(odules?)?${ext})`,
-    )
-    const modulesStyleRegexp = new RegExp(
-      `(${modulesStyleExtensions.join('|')})$`,
-    )
-    const modulesStyleLoaders = styleLoadersFactory({
-      dir,
-      dev,
-      feature,
-      modules: true,
-    })
-    const modulesStyleRule = ruleFactory(
-      modulesStyleRegexp,
-      undefined,
-      modulesStyleLoaders,
-    )
-    config.module.rules.push(modulesStyleRule)
 
     // Create style loaders for regular styles
     const regularStyleExtensions = supportedStyleExtensions
@@ -328,11 +309,10 @@ const webpackConfigFactory = (
       dir,
       dev,
       feature,
-      modules: false,
     })
     const regularStyleRule = ruleFactory(
       regularStyleRegexp,
-      modulesStyleRegexp,
+      undefined,
       regularStyleLoaders,
     )
 

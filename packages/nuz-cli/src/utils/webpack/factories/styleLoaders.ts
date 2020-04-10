@@ -10,7 +10,6 @@ import * as paths from '../../paths'
 export interface StyleLoadersOptions {
   dir: string
   dev: boolean
-  modules: boolean
   feature: Partial<FeatureConfig>
 }
 
@@ -18,7 +17,6 @@ const styleLoadersFactory = ({
   dir,
   dev,
   feature,
-  modules,
 }: StyleLoadersOptions): webpack.Loader[] => {
   const resolveInApp = (moduleId: string) => paths.resolveInApp(moduleId, dir)
   const browserslist = getBrowserslist({ dir, dev })
@@ -38,15 +36,13 @@ const styleLoadersFactory = ({
     loader: resolveInApp('css-loader'),
     options: Object.assign(
       {
-        modules: modules
-          ? {
-              mode: 'local',
-              localIdentName: dev
-                ? '[name]_[local]-[contenthash:4]'
-                : '[contenthash:8]',
-            }
-          : false,
         importLoaders: 1,
+        modules: {
+          auto: /(\.m(odule)?\.\w+)$/i,
+          localIdentName: dev
+            ? '[name]_[local]-[contenthash:4]'
+            : '[contenthash:8]',
+        },
       },
       feature.css,
     ),
