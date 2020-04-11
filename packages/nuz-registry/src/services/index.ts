@@ -11,7 +11,7 @@ export type Services = {
 }
 
 export const createServices = (db: Models): Services => ({
-  User: User.createService(db),
-  Module: Module.createService(db),
-  Composition: Composition.createService(db),
+  User: User.createService(db.User),
+  Module: Module.createService(db.Module),
+  Composition: Composition.createService(db.Composition),
 })

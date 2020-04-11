@@ -1,6 +1,6 @@
 import { Document, Model } from 'mongoose'
 
-import { Collaborator, ModuleFormats, Resource } from './common'
+import { Collaborator, ModuleFormats, Resource, TObjectId } from './common'
 
 // tslint:disable-next-line: no-empty-interface
 export interface Schedule {}
@@ -36,7 +36,7 @@ export interface ModuleModel {
 }
 
 export interface ModuleDocument extends Document, ModuleModel {
-  _id: string
+  _id: TObjectId
   createdAt: Date
   updatedAt: Date
 }
@@ -45,7 +45,11 @@ export interface ModuleDocument extends Document, ModuleModel {
  * User
  */
 
-export enum UserAccessTokenTypes {}
+export enum UserAccessTokenTypes {
+  readOnly = 1,
+  publish = 5,
+  fullAccess = 10,
+}
 
 export interface UserAccessToken {
   value: string
@@ -62,9 +66,10 @@ export interface UserModel {
 }
 
 export interface UserDocument extends Document, UserModel {
-  _id: string
+  _id: TObjectId
   createdAt: Date
   updatedAt: Date
+  comparePassword: (password: string) => boolean
 }
 
 /**
@@ -77,7 +82,7 @@ export interface CompositionModel {
 }
 
 export interface CompositionDocument extends Document, CompositionModel {
-  _id: string
+  _id: TObjectId
   createdAt: Date
   updatedAt: Date
 }
