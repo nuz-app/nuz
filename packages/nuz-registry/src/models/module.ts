@@ -31,6 +31,7 @@ const schema: Schema = new Schema(
           required: true,
           enum: Object.values(ModuleFormats),
         },
+        publisher: { type: Schema.Types.ObjectId, required: true },
         createdAt: { type: Date, required: true },
         resolve: {
           main: {
@@ -46,6 +47,7 @@ const schema: Schema = new Schema(
         },
         alias: { type: Schema.Types.Mixed, required: false },
         exportsOnly: [{ type: String, required: false }],
+        deprecated: { type: String, required: false, default: null },
       },
       required: true,
     },

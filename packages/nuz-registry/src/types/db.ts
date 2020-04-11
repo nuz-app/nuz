@@ -11,11 +11,13 @@ export type VersionInfo = {
   alias?: { [key: string]: string }
   exportsOnly?: string[]
   format?: ModuleFormats
+  publisher: string
   createdAt: Date
   resolve: {
     main: Resource
     styles: Resource[]
   }
+  deprecated?: string
 }
 
 /**
@@ -53,6 +55,7 @@ export interface UserAccessToken {
 
 export interface UserModel {
   name: string
+  email: string
   username: string
   password: string
   accessTokens: UserAccessToken[]

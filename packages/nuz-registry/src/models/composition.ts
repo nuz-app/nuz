@@ -17,7 +17,7 @@ const schema: Schema = new Schema(
         },
       },
     ],
-    modules: [{ type: String }],
+    modules: [String],
   },
   {
     collection,
