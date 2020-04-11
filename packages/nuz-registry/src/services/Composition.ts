@@ -1,11 +1,10 @@
 import { Models } from '../types'
 
-type CompositionDB = Pick<Models, 'Composition'>
-
 class Composition {
-  constructor(private readonly db: CompositionDB) {}
+  constructor(private readonly Collection: Models['Composition']) {}
 }
 
-export const createService = (db: CompositionDB) => new Composition(db)
+export const createService = (collection: Models['Composition']) =>
+  new Composition(collection)
 
 export default Composition

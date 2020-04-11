@@ -14,7 +14,7 @@ const schema: Schema = new Schema(
     password: { type: String, required: true },
     accessTokens: [
       {
-        value: { type: String, required: true },
+        value: { type: String, required: true, index: true },
         type: {
           type: String,
           required: true,

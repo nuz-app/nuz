@@ -1,6 +1,13 @@
 import { Connection } from 'mongoose'
 
-import { Models, MongoOptions } from '../types'
+import {
+  CreateUserData,
+  Models,
+  MongoOptions,
+  TObjectId,
+  UpdateUserData,
+  UserAccessTokenTypes,
+} from '../types'
 
 import { createModels } from '../models'
 import { createServices, Services } from '../services'
@@ -39,10 +46,38 @@ class Worker {
   /**
    * Operations management User
    */
-  async createUser() {}
-  async updateUser() {}
-  async authUser() {}
-  async verifyUser() {}
+  async createUser(data: CreateUserData) {
+    const result = await this.services.User.create(data)
+
+    return { _id: result._id }
+  }
+  async updateUser(token: string, data: UpdateUserData) {
+    const user = await this.services.User.verifyToken(
+      token,
+      UserAccessTokenTypes.fullAccess,
+    )
+
+    const result = await this.services.User.update(user._id, data)
+    return result
+  }
+  async createTokenForUser(
+    username: string,
+    password: string,
+    requiredType: UserAccessTokenTypes,
+  ) {
+    const user = await this.services.User.login(username, password)
+
+    const result = await this.services.User.createToken(user._id, requiredType)
+    return result
+  }
+  async verifyTokenForUser(token: string, requiredType: UserAccessTokenTypes) {
+    const result = await this.services.User.verifyToken(token, requiredType)
+    return result
+  }
+  async deleteTokenForUser(id: TObjectId, token: string) {
+    const result = await this.services.User.deleteToken(id, token)
+    return result
+  }
 
   /**
    * Operations management Composition
