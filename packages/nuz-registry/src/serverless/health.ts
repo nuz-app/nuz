@@ -1,12 +1,12 @@
 import { Express } from 'express'
 
-import ModelDB from '../classes/ModelDB'
+import Worker from '../classes/Worker'
 
 import onRoute from '../utils/onRoute'
 
 export const name = 'health'
 
-export const execute = (app: Express, db: ModelDB) => {
+export const execute = (app: Express, worker: Worker) => {
   app.get(
     '/health',
     onRoute(async (request, response) => {

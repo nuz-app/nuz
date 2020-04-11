@@ -1,9 +1,11 @@
 import { Connection } from 'mongoose'
 
+import * as Composition from './composition'
 import * as Module from './module'
-import * as Permission from './permission'
+import * as User from './user'
 
 export const createModels = (connection: Connection) => ({
+  User: User.createModel(connection),
   Module: Module.createModel(connection),
-  Permission: Permission.createModel(connection),
+  Composition: Composition.createModel(connection),
 })

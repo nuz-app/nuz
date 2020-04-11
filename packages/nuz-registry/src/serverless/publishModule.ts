@@ -1,17 +1,17 @@
 import { Express } from 'express'
 
-import ModelDB from '../classes/ModelDB'
+import Worker from '../classes/Worker'
 
 import onRoute from '../utils/onRoute'
 
 export const name = 'publishModule'
 
-export const execute = (app: Express, db: ModelDB) => {
+export const execute = (app: Express, worker: Worker) => {
   app.post(
     '/module',
     onRoute(async (request, response) => {
       const { token, info, options: publishOptions } = request.body
-      const item = await db.publishModule(token, info, publishOptions)
+      const item = await worker.publishModule(token, info, publishOptions)
 
       response.json(item)
       return true

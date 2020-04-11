@@ -1,19 +1,19 @@
 import { Express } from 'express'
 
-import ModelDB from '../classes/ModelDB'
+import Worker from '../classes/Worker'
 
 import onRoute from '../utils/onRoute'
 
 export const name = 'deleteToken'
 
-export const execute = (app: Express, db: ModelDB) => {
+export const execute = (app: Express, worker: Worker) => {
   app.delete(
     '/token',
     onRoute(async (request, response) => {
       const { authorization } = request.headers
       const { token } = request.body
 
-      const item = await db.deleteToken(authorization, token)
+      const item = await worker.deleteToken(authorization, token)
 
       response.json(item)
       return true

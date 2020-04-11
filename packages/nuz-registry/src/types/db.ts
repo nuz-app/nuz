@@ -1,53 +1,26 @@
 import { Document, Model } from 'mongoose'
 
-export interface PublishInfo {
-  name: string
-  version: string
-  library: string
-  resolve: {
-    main: string
-    styles: string[]
-  }
-  alias?: { [key: string]: string }
-  exportsOnly?: string[]
-  format?: string
-}
-
-export interface PublishOptions {
-  fallback?: boolean
-  schedule?: any
-}
-
-export interface RollbackInfo {
-  name: string
-  upstream: string
-  fallback?: string
-}
-
-export interface PermissionModel {
-  scope: string[]
-}
-
-export interface PermissionDocument extends Document, PermissionModel {
-  _id: string
-  createdAt: Date
-  updatedAt: Date
-}
-
-export interface Resource {
-  url: string
-  integrity: string
-}
+import { Collaborator, ModuleFormats, Resource } from './common'
 
 // tslint:disable-next-line: no-empty-interface
 export interface Schedule {}
 
-export type VersionInfo = Omit<PublishInfo, 'name' | 'version' | 'resolve'> & {
+export type VersionInfo = {
+  version: string
+  library: string
+  alias?: { [key: string]: string }
+  exportsOnly?: string[]
+  format?: ModuleFormats
+  createdAt: Date
   resolve: {
     main: Resource
     styles: Resource[]
   }
 }
+
+/**
+ * Module
+ */
 
 export interface ModuleModel {
   name: string
@@ -55,8 +28,9 @@ export interface ModuleModel {
     upstream: string
     fallback: string
   }
+  collaborators: Collaborator[]
+  versions: Map<string, VersionInfo>
   schedule?: Schedule
-  versions: { [version: string]: VersionInfo }
 }
 
 export interface ModuleDocument extends Document, ModuleModel {
@@ -65,7 +39,48 @@ export interface ModuleDocument extends Document, ModuleModel {
   updatedAt: Date
 }
 
+/**
+ * User
+ */
+
+export enum UserAccessTokenTypes {}
+
+export interface UserAccessToken {
+  value: string
+  type: UserAccessTokenTypes
+  createdAt: Date
+}
+
+export interface UserModel {
+  name: string
+  username: string
+  password: string
+  accessTokens: UserAccessToken[]
+}
+
+export interface UserDocument extends Document, UserModel {
+  _id: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+/**
+ * Group
+ */
+export interface CompositionModel {
+  name: string
+  collaborators: Collaborator[]
+  modules: string[]
+}
+
+export interface CompositionDocument extends Document, CompositionModel {
+  _id: string
+  createdAt: Date
+  updatedAt: Date
+}
+
 export interface Models {
+  User: Model<UserDocument>
   Module: Model<ModuleDocument>
-  Permission: Model<PermissionDocument>
+  Composition: Model<CompositionDocument>
 }
