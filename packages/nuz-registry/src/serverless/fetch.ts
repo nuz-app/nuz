@@ -2,7 +2,7 @@ import { Express } from 'express'
 
 import { FetchRouteOptions } from '../types'
 
-import ModelDB from '../classes/ModelDB'
+import Worker from '../classes/Worker'
 
 import hardCacheOnTime from '../utils/hardCacheOnTime'
 import onRoute from '../utils/onRoute'
@@ -13,7 +13,7 @@ export const name = 'fetch'
 
 export const execute = (
   app: Express,
-  db: ModelDB,
+  worker: Worker,
   options: FetchRouteOptions,
 ) => {
   app.get(
@@ -22,7 +22,7 @@ export const execute = (
       const { cacheTime, prepareTime } = options
 
       const config = await hardCacheOnTime(
-        () => db.getConfig(),
+        () => worker.getConfig(),
         CACHE_KEY,
         cacheTime,
         prepareTime,

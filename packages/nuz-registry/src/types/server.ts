@@ -1,11 +1,13 @@
 import compression from 'compression'
 
+import { ModuleFormats } from './common'
+
 export enum DBTypes {
   mongodb = 'mongodb',
 }
 
-export type DBOptions = LocalDBOptions & {
-  type: DBTypes
+export interface MongoOptions {
+  url: string
 }
 
 export interface FetchRouteOptions {
@@ -24,7 +26,7 @@ export interface HttpsConfig {
 
 export interface ServerOptions {
   key: string
-  db: DBOptions
+  db: MongoOptions
   https?: boolean | HttpsConfig
   compression?: boolean | compression.CompressionOptions
   serverless?: ServerlessOptions
@@ -32,4 +34,28 @@ export interface ServerOptions {
 
 export interface LocalDBOptions {
   path?: string
+}
+
+export interface PublishInfo {
+  name: string
+  version: string
+  library: string
+  resolve: {
+    main: string
+    styles: string[]
+  }
+  alias?: { [key: string]: string }
+  exportsOnly?: string[]
+  format?: ModuleFormats
+}
+
+export interface PublishOptions {
+  fallback?: boolean
+  schedule?: any
+}
+
+export interface RollbackInfo {
+  name: string
+  upstream: string
+  fallback?: string
 }

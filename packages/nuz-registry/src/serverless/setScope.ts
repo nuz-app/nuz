@@ -1,12 +1,12 @@
 import express from 'express'
 
-import ModelDB from '../classes/ModelDB'
+import Worker from '../classes/Worker'
 
 import onRoute from '../utils/onRoute'
 
 export const name = 'setScope'
 
-export const execute = (app: express.Express, db: ModelDB) => {
+export const execute = (app: express.Express, worker: Worker) => {
   app.post(
     '/permission/scope',
     onRoute(
@@ -17,7 +17,7 @@ export const execute = (app: express.Express, db: ModelDB) => {
         const { authorization } = request.headers
         const { token, scope } = request.body
 
-        const item = await db.setScope(authorization, token, scope)
+        const item = await worker.setScope(authorization, token, scope)
 
         response.json(item)
         return true

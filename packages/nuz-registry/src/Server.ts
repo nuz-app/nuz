@@ -8,33 +8,20 @@ import spdy from 'spdy'
 
 import { DBTypes, ServerlessOptions, ServerOptions } from './types'
 
-import ModelDB from './classes/ModelDB'
-import MongoDB from './classes/MongoDB'
+import Worker from './classes/Worker'
 
 import serverless from './serverless'
 
-const dbMaps = {
-  [DBTypes.mongodb]: MongoDB,
-}
-
 class Server {
-  private readonly key: string
-  private readonly db: ModelDB
+  private readonly worker: Worker
   private readonly app: express.Express
   private readonly server: http.Server
   private readonly serverless: ServerlessOptions
 
   constructor(options: ServerOptions) {
-    const { https, key, db, compression: compress = true } = options
+    const { https, db, compression: compress = true } = options
 
-    // Init db to manage config
-    const Database = dbMaps[db.type]
-    if (!Database) {
-      throw new Error('Received type of db field is invalid!')
-    }
-
-    this.key = key
-    this.db = new Database(this.key, db as any)
+    this.worker = new Worker(db)
 
     // Init app to listen requests
     this.app = express()
@@ -62,7 +49,7 @@ class Server {
   }
 
   async prepare() {
-    await this.db.prepage()
+    await this.worker.prepare()
 
     this.app.use(bodyParser.urlencoded({ extended: false }))
     this.app.use(bodyParser.json())
@@ -70,7 +57,7 @@ class Server {
     for (const route of serverless) {
       route.execute(
         this.app,
-        this.db,
+        this.worker,
         (this.serverless as any)[route.name] || {},
       )
     }
