@@ -25,6 +25,34 @@ class Worker {
   }
 
   async prepare() {}
+
+  /**
+   * Operations management Module
+   */
+  async publishModule() {}
+  async unpublishModule() {}
+  async deprecateModule() {}
+  async setTagForModule() {}
+  async addCollaboratorToModule() {}
+  async removeCollaboratorToModule() {}
+
+  /**
+   * Operations management User
+   */
+  async createUser() {}
+  async updateUser() {}
+  async authUser() {}
+  async verifyUser() {}
+
+  /**
+   * Operations management Composition
+   */
+  async createComposition() {}
+  async deleteComposition() {}
+  async addCollaboratorToComposition() {}
+  async removeCollaboratorToComposition() {}
+  async addModulesToComposition() {}
+  async removeModulesToComposition() {}
 }
 
 export default Worker
