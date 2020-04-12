@@ -1,21 +1,6 @@
-import * as createToken from './createToken'
-import * as deleteToken from './deleteToken'
-import * as extendScope from './extendScope'
-import * as fetch from './fetch'
-import * as health from './health'
-import * as publishModule from './publishModule'
-import * as removeScope from './removeScope'
-import * as rollbackModule from './rollbackModule'
-import * as setScope from './setScope'
+export * from './types'
 
-export default [
-  health,
-  fetch,
-  createToken,
-  deleteToken,
-  extendScope,
-  removeScope,
-  setScope,
-  publishModule,
-  rollbackModule,
-]
+import * as createUser from './createUser'
+import * as health from './health'
+
+export default [health, createUser]

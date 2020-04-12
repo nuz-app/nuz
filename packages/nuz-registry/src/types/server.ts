@@ -1,4 +1,5 @@
 import compression from 'compression'
+import { Express } from 'express'
 
 import { ModuleFormats } from './common'
 
