@@ -5,13 +5,17 @@ import onRoute from '../utils/onRoute'
 
 import { ServerlessRoute } from './types'
 
-export const name = 'health'
+export const name = 'createUser'
 
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
-  app.get(
-    '/health',
+  app.post(
+    '/user',
     onRoute(async (request, response) => {
-      response.status(200).json({ isOk: true })
+      const { data } = request.body
+
+      const item = await worker.createUser(data)
+
+      response.json(item)
       return true
     }),
   )
