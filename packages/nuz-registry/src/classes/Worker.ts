@@ -52,7 +52,7 @@ class Worker {
     return { _id: result._id }
   }
   async updateUser(token: string, data: UpdateUserData) {
-    const user = await this.services.User.verifyToken(
+    const user = await this.verifyTokenForUser(
       token,
       UserAccessTokenTypes.fullAccess,
     )
@@ -70,7 +70,10 @@ class Worker {
     const result = await this.services.User.createToken(user._id, requiredType)
     return result
   }
-  async verifyTokenForUser(token: string, requiredType: UserAccessTokenTypes) {
+  private async verifyTokenForUser(
+    token: string,
+    requiredType: UserAccessTokenTypes,
+  ) {
     const result = await this.services.User.verifyToken(token, requiredType)
     return result
   }

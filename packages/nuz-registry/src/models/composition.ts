@@ -8,14 +8,17 @@ const schema: Schema = new Schema(
   {
     name: { type: String, required: true, unique: true, index: true },
     collaborators: [
-      {
-        id: { type: Schema.Types.ObjectId, required: true },
-        type: {
-          type: String,
-          required: true,
-          enum: Object.values(CollaboratorTypes),
+      new Schema(
+        {
+          id: { type: Schema.Types.ObjectId, required: true },
+          type: {
+            type: String,
+            required: true,
+            enum: Object.values(CollaboratorTypes),
+          },
         },
-      },
+        { _id: false },
+      ),
     ],
     modules: [String],
   },

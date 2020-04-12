@@ -17,28 +17,53 @@ class User {
     const { email, name, username, password } = data
 
     const user = new this.Collection({ email, name, username, password })
-    user.save()
+    try {
+      await user.save()
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new Error('Username is existed')
+      }
+
+      throw error
+    }
 
     console.log({ user })
     return user
   }
 
+  async findById(id: TObjectId, fields?: any) {
+    return this.Collection.findOne({ _id: id }, fields || { _id: 1 })
+  }
+
+  async findByUsername(username: string, fields?: any) {
+    return this.Collection.findOne({ username }, fields || { _id: 1 })
+  }
+
   async update(id: TObjectId, data: UpdateUserData) {
+    const user = await this.findById(id)
+    if (!user) {
+      throw new Error('User is not found')
+    }
+
     const keysOf = Object.keys(data)
-    const info = keysOf
-      .filter((key) => UPDATE_FIELDS_ALLOWED.includes(key))
-      .reduce((acc, key) => Object.assign(acc, { [key]: data[key] }), {})
+    keysOf.forEach((key) => {
+      const shouldBeUpdate = !!data[key] && UPDATE_FIELDS_ALLOWED.includes(key)
+      if (shouldBeUpdate) {
+        user[key] = data[key]
+      }
+    })
 
-    const updated = await this.Collection.update({ _id: id }, { $set: info })
+    const reuslt = await user.save()
 
-    return {}
+    return { _id: user._id }
   }
 
   async login(username: string, password: string) {
-    const user = await this.Collection.findOne(
-      { username },
-      { _id: 1, username: 1, password: 1 },
-    )
+    const user = await this.findByUsername(username, {
+      _id: 1,
+      username: 1,
+      password: 1,
+    })
     if (!user) {
       throw new Error('Username is not existed')
     }
@@ -73,24 +98,32 @@ class User {
   }
 
   async createToken(id: TObjectId, requiredType: UserAccessTokenTypes) {
-    const value = genarateTokenId()
+    const value = genarateTokenId(id)
     const createdAt = new Date()
     const accessToken = { value, createdAt, type: requiredType }
-    const result = await this.Collection.updateOne(
+    const { ok, nModified: mofitied } = await this.Collection.updateOne(
       { _id: id },
       { $push: { accessTokens: accessToken } },
     )
 
-    return { _id: id, accessToken }
+    if (mofitied === 0) {
+      throw new Error('User is not found')
+    }
+
+    return { _id: id, mofitied, ok, accessToken }
   }
 
   async deleteToken(id: TObjectId, token: string) {
-    const result = await this.Collection.updateOne(
+    const { ok, nModified: mofitied } = await this.Collection.updateOne(
       { _id: id },
       { $pull: { accessTokens: { value: token } } },
     )
 
-    return { _id: id }
+    if (mofitied === 0) {
+      throw new Error('User is not found')
+    }
+
+    return { _id: id, mofitied, ok }
   }
 }
 
