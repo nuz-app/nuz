@@ -13,15 +13,18 @@ const schema: Schema = new Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     accessTokens: [
-      {
-        value: { type: String, required: true, index: true },
-        type: {
-          type: String,
-          required: true,
-          enum: Object.values(UserAccessTokenTypes),
+      new Schema(
+        {
+          value: { type: String, required: true, index: true },
+          type: {
+            type: String,
+            required: true,
+            enum: Object.values(UserAccessTokenTypes),
+          },
+          createdAt: { type: Date, required: true },
         },
-        createdAt: { type: Date, required: true },
-      },
+        { _id: false },
+      ),
     ],
   },
   {
@@ -46,8 +49,8 @@ schema.index(
 schema.pre('save', function save(next) {
   const user = this as UserDocument
 
-  const shouldHashPassword = user.isModified('password')
-  if (shouldHashPassword) {
+  const passwordIsModified = user.isModified('password')
+  if (passwordIsModified) {
     user.password = passwordHelpers.genarate(user.password)
   }
 
