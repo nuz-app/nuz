@@ -1,8 +1,8 @@
 import { Models } from '../types'
 
-import * as Composition from './composition'
-import * as Module from './module'
-import * as User from './user'
+import * as Composition from './Composition'
+import * as Module from './Module'
+import * as User from './User'
 
 export type Services = {
   User: User.default

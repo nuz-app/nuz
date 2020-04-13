@@ -48,7 +48,6 @@ class Worker {
    */
   async createUser(data: CreateUserData) {
     const result = await this.services.User.create(data)
-
     return { _id: result._id }
   }
   async updateUser(token: string, data: UpdateUserData) {
