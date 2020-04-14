@@ -1,18 +1,18 @@
 {
   "version": "0.2.4",
   "npmClient": "yarn",
-  "packages": [
-    "packages/*"
-  ],
+  "useWorkspaces": true,
+  "packages": ["packages/*"],
   "sort": [
     "@nuz/shared",
-    "@nuz/utils"
+    "@nuz/utils",
+    "@nuz/core",
+    "@nuz/cli",
+    "@nuz/registry"
   ],
   "command": {
     "version": {
-      "allowBranch": [
-        "master"
-      ],
+      "allowBranch": ["master"],
       "message": "chore(release): %s"
     }
   }
