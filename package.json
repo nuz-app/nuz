@@ -16,16 +16,20 @@
     "example": "examples"
   },
   "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/**"
+  ],
   "scripts": {
     "postinstall": "lerna bootstrap",
-    "reinstall": "find . -name \"node_modules\" -type d -prune -exec rm -rf '{}' + && yarn",
-    "clean": "lerna run clean",
+    "reinstall": "rimraf **/node_modules **/yarn.lock && yarn",
+    "clean": "lerna run clean --parallel",
     "build": "lerna run build",
     "test:types": "tsc --build tsconfig.test.json",
-    "test:unit": "lerna run test",
+    "test:unit": "lerna run test --stream",
     "test": "yarn test:types && yarn test:unit",
-    "lint": "lerna run lint",
-    "lint:fix": "lerna run lint:fix",
+    "lint": "lerna run lint --parallel",
+    "lint:fix": "lerna run lint:fix --parallel",
     "dev": "tsc --build --watch tsconfig.dev.json"
   },
   "husky": {
