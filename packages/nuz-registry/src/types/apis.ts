@@ -1,4 +1,4 @@
-import { TObjectId } from './common'
+import { CollaboratorTypes, TObjectId } from './common'
 
 export interface CreateUserData {
   name: string
@@ -17,4 +17,9 @@ export interface CreateCompositionData {
   userId: TObjectId
   name: string
   modules: string[]
+}
+
+export interface AddCollaboratorData {
+  id: TObjectId
+  type: CollaboratorTypes
 }

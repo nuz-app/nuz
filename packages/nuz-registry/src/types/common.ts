@@ -12,6 +12,7 @@ export interface Resource {
 export enum CollaboratorTypes {
   creator = 'creator',
   maintainer = 'maintainer',
+  contributor = 'contributor',
 }
 
 export interface Collaborator {

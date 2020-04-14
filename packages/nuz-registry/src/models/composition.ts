@@ -16,6 +16,7 @@ const schema: Schema = new Schema(
             required: true,
             enum: Object.values(CollaboratorTypes),
           },
+          createdAt: { type: Date, required: true, default: Date.now },
         },
         { _id: false },
       ),

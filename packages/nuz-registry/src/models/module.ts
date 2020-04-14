@@ -20,6 +20,7 @@ const schema: Schema = new Schema(
             required: true,
             enum: Object.values(CollaboratorTypes),
           },
+          createdAt: { type: Date, required: true, default: Date.now },
         },
         { _id: false },
       ),
@@ -36,7 +37,7 @@ const schema: Schema = new Schema(
             enum: Object.values(ModuleFormats),
           },
           publisher: { type: Schema.Types.ObjectId, required: true },
-          createdAt: { type: Date, required: true },
+          createdAt: { type: Date, required: true, default: Date.now },
           resolve: {
             main: {
               url: { type: String, required: true },

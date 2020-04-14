@@ -14,6 +14,11 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
     onRoute(async (request, response) => {
       const { id, token } = request.body
 
+      const formIsMissing = !id || !token
+      if (formIsMissing) {
+        throw new Error('Form is missing fields')
+      }
+
       const item = await worker.deleteTokenForUser(ensureObjectId(id), token)
 
       response.json(item)

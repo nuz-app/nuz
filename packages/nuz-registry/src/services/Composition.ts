@@ -1,21 +1,17 @@
 import { MONGOOSE_ERROR_CODES } from '../lib/const'
 import {
+  AddCollaboratorData,
   CollaboratorTypes,
   CreateCompositionData,
   Models,
   TObjectId,
 } from '../types'
 
+import * as collaboratorTypesHelpers from '../utils/collaboratorTypesHelpers'
 import compareObjectId from '../utils/compareObjectId'
-
-const DELETE_TIMEOUT = 24 * 60 * 60 * 1000
 
 class Composition {
   constructor(private readonly Collection: Models['Composition']) {}
-
-  private async findByName(name: string, fields?) {
-    return this.Collection.findOne({ name }, fields || { _id: 1 })
-  }
 
   async create(data: CreateCompositionData) {
     const { userId, name, modules } = data
@@ -38,11 +34,23 @@ class Composition {
     return composition
   }
 
-  async delete(userId: TObjectId, name: string) {
-    const composition = await this.findByName(name, {
-      collaborators: 1,
-      createdAt: 1,
-    })
+  async delete(id: TObjectId) {
+    const { ok, deletedCount } = await this.Collection.deleteOne({ _id: id })
+    return { ok, deleted: deletedCount }
+  }
+
+  async verifyCollaborator(
+    idOrName: TObjectId | string,
+    userId: TObjectId,
+    requiredType: CollaboratorTypes,
+  ) {
+    const queryField = typeof idOrName === 'string' ? 'name' : '_id'
+    const composition = await this.Collection.findOne(
+      {
+        [queryField]: idOrName,
+      },
+      { collaborators: 1, createdAt: 1 },
+    )
     if (!composition) {
       throw new Error('Composition is not found')
     }
@@ -50,21 +58,44 @@ class Composition {
     const collaborator = composition.collaborators.find((item) =>
       compareObjectId(item.id, userId),
     )
-
-    const now = new Date().getTime()
-    const isLimitByTimeout =
-      now - composition.createdAt.getTime() >= DELETE_TIMEOUT
-    const isAvailableDelete = !isLimitByTimeout
-    if (!isAvailableDelete) {
-      throw new Error(`Composition can't be deleted by policy`)
-    }
-
     if (!collaborator) {
       throw new Error('User does not include collaborators of composition')
     }
 
-    const { ok, deletedCount } = await this.Collection.deleteOne({ name })
-    return { ok, deleted: deletedCount }
+    const permissionIsDenied = !collaboratorTypesHelpers.verify(
+      collaborator.type,
+      requiredType,
+    )
+    if (permissionIsDenied) {
+      throw new Error('Permission denied')
+    }
+
+    return composition
+  }
+
+  async addCollaborator(id: TObjectId, collaborator: AddCollaboratorData) {
+    const { ok, nModified: mofitied } = await this.Collection.updateOne(
+      { _id: id },
+      { $addToSet: { collaborators: collaborator } },
+    )
+
+    if (mofitied === 0) {
+      throw new Error('Composition is not found')
+    }
+
+    return { _id: id, mofitied, ok, collaborator }
+  }
+  async removeCollaborator(id: TObjectId, collaboratorId: TObjectId) {
+    const { ok, nModified: mofitied } = await this.Collection.updateOne(
+      { _id: id },
+      { $pull: { collaborators: { id: collaboratorId } } },
+    )
+
+    if (mofitied === 0) {
+      throw new Error('Composition is not found')
+    }
+
+    return { _id: id, mofitied, ok }
   }
 }
 
