@@ -1,4 +1,4 @@
-import { Schema, Types } from 'mongoose'
+import { Types } from 'mongoose'
 
 export enum ModuleFormats {
   umd = 'umd',
@@ -15,7 +15,7 @@ export enum CollaboratorTypes {
 }
 
 export interface Collaborator {
-  id: Schema.Types.ObjectId
+  id: Types.ObjectId
   type: CollaboratorTypes
 }
 

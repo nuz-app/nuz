@@ -1,6 +1,8 @@
+import { pick } from '@nuz/utils'
 import { Connection } from 'mongoose'
 
 import {
+  CreateCompositionData,
   CreateUserData,
   Models,
   MongoOptions,
@@ -48,17 +50,18 @@ class Worker {
    */
   async createUser(data: CreateUserData) {
     const result = await this.services.User.create(data)
-    return { _id: result._id }
+    return pick(result, ['_id', 'name', 'email', 'username', 'createdAt'])
   }
-  async updateUser(token: string, data: UpdateUserData) {
+  async updateUser(tokenId: string, data: UpdateUserData) {
     const user = await this.verifyTokenForUser(
-      token,
+      tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
     const result = await this.services.User.update(user._id, data)
     return result
   }
+  async deleteUser() {}
   async createTokenForUser(
     username: string,
     password: string,
@@ -70,22 +73,47 @@ class Worker {
     return result
   }
   private async verifyTokenForUser(
-    token: string,
+    tokenId: string,
     requiredType: UserAccessTokenTypes,
   ) {
-    const result = await this.services.User.verifyToken(token, requiredType)
+    const result = await this.services.User.verifyToken(tokenId, requiredType)
     return result
   }
-  async deleteTokenForUser(id: TObjectId, token: string) {
-    const result = await this.services.User.deleteToken(id, token)
+  async deleteTokenForUser(userId: TObjectId, tokenId: string) {
+    const result = await this.services.User.deleteToken(userId, tokenId)
     return result
   }
 
   /**
    * Operations management Composition
    */
-  async createComposition() {}
-  async deleteComposition() {}
+  async createComposition(
+    tokenId: string,
+    data: Omit<CreateCompositionData, 'userId'>,
+  ) {
+    const { name, modules } = data
+
+    const user = await this.verifyTokenForUser(
+      tokenId,
+      UserAccessTokenTypes.fullAccess,
+    )
+
+    const result = await this.services.Composition.create({
+      userId: user._id,
+      name,
+      modules,
+    })
+    return pick(result, ['_id', 'name', 'modules'])
+  }
+  async deleteComposition(tokenId: string, name: string) {
+    const user = await this.verifyTokenForUser(
+      tokenId,
+      UserAccessTokenTypes.fullAccess,
+    )
+
+    const result = await this.services.Composition.delete(user._id, name)
+    return result
+  }
   async addCollaboratorToComposition() {}
   async removeCollaboratorToComposition() {}
   async addModulesToComposition() {}
