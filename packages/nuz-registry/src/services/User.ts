@@ -1,3 +1,4 @@
+import { MONGOOSE_ERROR_CODES } from '../lib/const'
 import {
   CreateUserData,
   Models,
@@ -20,8 +21,8 @@ class User {
     try {
       await user.save()
     } catch (error) {
-      if (error.code === 11000) {
-        throw new Error('Username is existed')
+      if (error.code === MONGOOSE_ERROR_CODES.UNIQUE_KEY_EXISTED) {
+        throw new Error('Username is already existed')
       }
 
       throw error
