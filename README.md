@@ -1,10 +1,8 @@
-# Nuz &middot; [![Travis Status](https://travis-ci.com/lamhieu-vk/nuz.svg?branch=develop)](https://travis-ci.com/lamhieu-vk/nuz) ![GitHub last commit](https://img.shields.io/github/last-commit/lamhieu-vk/nuz) ![GitHub issues](https://img.shields.io/github/issues/lamhieu-vk/nuz) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/lamhieu-vk/nuz/blob/develop/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/lamhieu-vk/nuz/blob/develop/CONTRIBUTING.md)
+# 🔮 Nuz &middot; [![Travis Status](https://travis-ci.com/lamhieu-vk/nuz.svg?branch=develop)](https://travis-ci.com/lamhieu-vk/nuz) ![GitHub last commit](https://img.shields.io/github/last-commit/lamhieu-vk/nuz) ![GitHub issues](https://img.shields.io/github/issues/lamhieu-vk/nuz) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/lamhieu-vk/nuz/blob/develop/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/lamhieu-vk/nuz/blob/develop/CONTRIBUTING.md)
 
 [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/nuz)
 
-> 📌 This is still an in-development project, and suggestions and bug reports are welcome.
-
-**Nuz** is a fancy library to implements Micro Frontends compatible with [ReactJS](https://reactjs.org) and may support more in the future. 🏃
+🔮 **Nuz** is a fancy library to implements Micro Frontends compatible with [ReactJS](https://reactjs.org) and may support more in the future 🏃.
 
 ***
 
