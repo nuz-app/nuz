@@ -2,6 +2,8 @@ import { pick } from '@nuz/utils'
 import { Connection } from 'mongoose'
 
 import {
+  AddCollaboratorData,
+  CollaboratorTypes,
   CreateCompositionData,
   CreateUserData,
   Models,
@@ -14,6 +16,7 @@ import {
 import { createModels } from '../models'
 import { createServices, Services } from '../services'
 
+import checkIsNewComposition from '../utils/checkIsNewComposition'
 import createMongoConnection from '../utils/createMongoConnection'
 
 class Worker {
@@ -105,19 +108,84 @@ class Worker {
     })
     return pick(result, ['_id', 'name', 'modules'])
   }
-  async deleteComposition(tokenId: string, name: string) {
+  async deleteComposition(tokenId: string, idOrName: TObjectId | string) {
     const user = await this.verifyTokenForUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const result = await this.services.Composition.delete(user._id, name)
+    const composition = await this.verifyCollaboratorOfComposition(
+      idOrName,
+      user._id,
+      CollaboratorTypes.maintainer,
+    )
+
+    const isNewComposition = checkIsNewComposition(composition.createdAt)
+    if (!isNewComposition) {
+      throw new Error(`Composition can't be deleted by policy`)
+    }
+
+    const result = await this.services.Composition.delete(composition._id)
     return result
   }
-  async addCollaboratorToComposition() {}
-  async removeCollaboratorToComposition() {}
+  async verifyCollaboratorOfComposition(
+    idOrName: TObjectId | string,
+    userId: TObjectId,
+    requiredType: CollaboratorTypes,
+  ) {
+    const result = await this.services.Composition.verifyCollaborator(
+      idOrName,
+      userId,
+      requiredType,
+    )
+    return result
+  }
+  async addCollaboratorToComposition(
+    tokenId: string,
+    idOrName: TObjectId | string,
+    collaborator: AddCollaboratorData,
+  ) {
+    const user = await this.verifyTokenForUser(
+      tokenId,
+      UserAccessTokenTypes.fullAccess,
+    )
+
+    const composition = await this.verifyCollaboratorOfComposition(
+      idOrName,
+      user._id,
+      CollaboratorTypes.maintainer,
+    )
+
+    const reuslt = await this.services.Composition.addCollaborator(
+      composition._id,
+      collaborator,
+    )
+    return reuslt
+  }
+  async removeCollaboratorFromComposition(
+    tokenId: string,
+    idOrName: TObjectId | string,
+    collaboratorId: TObjectId,
+  ) {
+    const user = await this.verifyTokenForUser(
+      tokenId,
+      UserAccessTokenTypes.fullAccess,
+    )
+
+    const composition = await this.verifyCollaboratorOfComposition(
+      idOrName,
+      user._id,
+      CollaboratorTypes.maintainer,
+    )
+
+    const reuslt = this.services.Composition.removeCollaborator(
+      composition._id,
+      collaboratorId,
+    )
+    return reuslt
+  }
   async addModulesToComposition() {}
-  async removeModulesToComposition() {}
+  async removeModulesFromComposition() {}
 }
 
 export default Worker

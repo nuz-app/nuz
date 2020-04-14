@@ -21,7 +21,7 @@ const schema: Schema = new Schema(
             required: true,
             enum: Object.values(UserAccessTokenTypes),
           },
-          createdAt: { type: Date, required: true },
+          createdAt: { type: Date, required: true, default: Date.now },
         },
         { _id: false },
       ),

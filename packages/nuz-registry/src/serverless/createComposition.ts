@@ -13,6 +13,11 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
     onRoute(async (request, response) => {
       const { token, data } = request.body
 
+      const formIsMissing = !token || !data
+      if (formIsMissing) {
+        throw new Error('Form is missing fields')
+      }
+
       const item = await worker.createComposition(token, data)
 
       response.json(item)

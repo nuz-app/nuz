@@ -46,9 +46,9 @@ export interface ModuleDocument extends Document, ModuleModel {
  */
 
 export enum UserAccessTokenTypes {
-  readOnly = 1,
-  publish = 5,
-  fullAccess = 10,
+  readOnly = 'readOnly',
+  publish = 'publish',
+  fullAccess = 'fullAccess',
 }
 
 export interface UserAccessToken {

@@ -1,24 +1,29 @@
 import { Express } from 'express'
 
 import Worker from '../classes/Worker'
+import ensureObjectId from '../utils/ensureObjectId'
 import onRoute from '../utils/onRoute'
 
 import { ServerlessRoute } from './types'
 
-export const name = 'deleteComposition'
+export const name = 'removeCollaboratorFromComposition'
 
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.delete(
-    '/composition',
+    '/composition/collaborator',
     onRoute(async (request, response) => {
-      const { token, composition } = request.body
+      const { token, composition, collaboratorId } = request.body
 
-      const formIsMissing = !token || !composition
+      const formIsMissing = !token || !composition || !collaboratorId
       if (formIsMissing) {
         throw new Error('Form is missing fields')
       }
 
-      const item = await worker.deleteComposition(token, composition)
+      const item = await worker.removeCollaboratorFromComposition(
+        token,
+        composition,
+        ensureObjectId(collaboratorId),
+      )
 
       response.json(item)
       return true

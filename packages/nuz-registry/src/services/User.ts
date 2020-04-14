@@ -8,6 +8,7 @@ import {
 } from '../types'
 
 import genarateTokenId from '../utils/genarateTokenId'
+import * as tokenTypesHelpers from '../utils/tokenTypesHelpers'
 
 const UPDATE_FIELDS_ALLOWED = ['email', 'name', 'password']
 
@@ -32,16 +33,8 @@ class User {
     return user
   }
 
-  async findById(id: TObjectId, fields?: any) {
-    return this.Collection.findOne({ _id: id }, fields || { _id: 1 })
-  }
-
-  async findByUsername(username: string, fields?: any) {
-    return this.Collection.findOne({ username }, fields || { _id: 1 })
-  }
-
   async update(id: TObjectId, data: UpdateUserData) {
-    const user = await this.findById(id)
+    const user = await this.Collection.findOne({ _id: id }, { _id: 1 })
     if (!user) {
       throw new Error('User is not found')
     }
@@ -60,11 +53,14 @@ class User {
   }
 
   async login(username: string, password: string) {
-    const user = await this.findByUsername(username, {
-      _id: 1,
-      username: 1,
-      password: 1,
-    })
+    const user = await this.Collection.findOne(
+      { username },
+      {
+        _id: 1,
+        username: 1,
+        password: 1,
+      },
+    )
     if (!user) {
       throw new Error('Username is not existed')
     }
@@ -91,8 +87,12 @@ class User {
       throw new Error(`Not found token by value ${token}`)
     }
 
-    if (accessToken.type < requiredType) {
-      throw new Error('Permission defined')
+    const permissionIsDenied = !tokenTypesHelpers.verify(
+      accessToken.type,
+      requiredType,
+    )
+    if (permissionIsDenied) {
+      throw new Error('Permission denied')
     }
 
     return { _id: user._id }
@@ -100,11 +100,10 @@ class User {
 
   async createToken(id: TObjectId, requiredType: UserAccessTokenTypes) {
     const value = genarateTokenId(id)
-    const createdAt = new Date()
-    const accessToken = { value, createdAt, type: requiredType }
+    const accessToken = { value, type: requiredType }
     const { ok, nModified: mofitied } = await this.Collection.updateOne(
       { _id: id },
-      { $push: { accessTokens: accessToken } },
+      { $addToSet: { accessTokens: accessToken } },
     )
 
     if (mofitied === 0) {

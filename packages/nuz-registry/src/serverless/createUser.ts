@@ -13,6 +13,11 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
     onRoute(async (request, response) => {
       const { data } = request.body
 
+      const formIsMissing = !data
+      if (formIsMissing) {
+        throw new Error('Form is missing fields')
+      }
+
       const item = await worker.createUser(data)
 
       response.json(item)
