@@ -13,7 +13,8 @@
   "command": {
     "version": {
       "allowBranch": ["master"],
-      "message": "chore(release): %s"
+      "message": "chore(release): %s",
+      "ignoreChanges": ["**/__fixtures__/**", "**/__tests__/**", "**/*.md"]
     }
   }
 }
