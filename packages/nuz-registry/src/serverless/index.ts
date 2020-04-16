@@ -4,7 +4,7 @@ import * as health from './health'
 
 import * as createTokenForUser from './createTokenForUser'
 import * as createUser from './createUser'
-import * as deleteTokenForUser from './deleteTokenForUser'
+import * as deleteTokenFromUser from './deleteTokenFromUser'
 import * as updateUser from './updateUser'
 
 import * as addCollaboratorToComposition from './addCollaboratorToComposition'
@@ -18,7 +18,7 @@ export default [
   createUser,
   updateUser,
   createTokenForUser,
-  deleteTokenForUser,
+  deleteTokenFromUser,
 
   createComposition,
   deleteComposition,
