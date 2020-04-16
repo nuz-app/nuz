@@ -1,11 +1,14 @@
 language: node_js
+sudo: false
+
 node_js:
   - lts/*
-sudo: false
+
 cache:
   yarn: true
   directories:
     - 'node_modules'
+
 env:
   CI=true
 
@@ -14,6 +17,10 @@ before_install:
   - export PATH="$HOME/.yarn/bin:$PATH"
 install:
   - yarn install
+
+before_script:
+  - node --version
+  - yarn --version
 
 jobs:
   include:
