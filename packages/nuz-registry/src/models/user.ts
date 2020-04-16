@@ -1,8 +1,9 @@
 import { Connection, Model, Schema } from 'mongoose'
 
 import { UserAccessTokenTypes, UserDocument } from '../types'
-
 import * as passwordHelpers from '../utils/passwordHelpers'
+
+import { createdAt as createdAtSchema } from './schemas'
 
 export const collection = 'User'
 
@@ -21,7 +22,7 @@ const schema: Schema = new Schema(
             required: true,
             enum: Object.values(UserAccessTokenTypes),
           },
-          createdAt: { type: Date, required: true, default: Date.now },
+          createdAt: createdAtSchema,
         },
         { _id: false },
       ),

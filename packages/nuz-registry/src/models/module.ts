@@ -1,6 +1,13 @@
 import { Connection, Model, Schema } from 'mongoose'
 
-import { CollaboratorTypes, ModuleDocument, ModuleFormats } from '../types'
+import { ModuleDocument, ModuleFormats } from '../types'
+
+import {
+  collaborator as collaboratorSchema,
+  createdAt as createdAtSchema,
+  resource as resourceSchema,
+  userId as userIdSchema,
+} from './schemas'
 
 export const collection = 'Module'
 
@@ -8,9 +15,6 @@ const schema: Schema = new Schema(
   {
     _id: {
       type: String,
-      required: true,
-      unique: true,
-      index: true,
       default() {
         // @ts-ignore
         return this.name
@@ -18,23 +22,10 @@ const schema: Schema = new Schema(
     },
     name: { type: String, required: true },
     tags: {
-      upstream: { type: String, required: true },
-      fallback: { type: String, required: false, default: null },
+      type: Map,
+      of: String,
     },
-    collaborators: [
-      new Schema(
-        {
-          id: { type: Schema.Types.ObjectId, required: true },
-          type: {
-            type: String,
-            required: true,
-            enum: Object.values(CollaboratorTypes),
-          },
-          createdAt: { type: Date, required: true, default: Date.now },
-        },
-        { _id: false },
-      ),
-    ],
+    collaborators: [collaboratorSchema],
     versions: {
       type: Map,
       of: new Schema(
@@ -46,23 +37,16 @@ const schema: Schema = new Schema(
             required: true,
             enum: Object.values(ModuleFormats),
           },
-          publisher: { type: Schema.Types.ObjectId, required: true },
-          createdAt: { type: Date, required: true, default: Date.now },
+          publisher: userIdSchema,
+          createdAt: createdAtSchema,
           resolve: {
-            main: {
-              url: { type: String, required: true },
-              integrity: { type: String, required: true },
-            },
-            styles: [
-              {
-                url: { type: String, required: true },
-                integrity: { type: String, required: true },
-              },
-            ],
+            main: resourceSchema,
+            styles: [resourceSchema],
           },
           alias: { type: Schema.Types.Mixed, required: false },
-          exportsOnly: [{ type: String, required: false }],
-          deprecated: { type: String, required: false, default: null },
+          exportsOnly: [String],
+          fallback: { type: String, required: false },
+          deprecated: { type: String, required: false },
         },
         { _id: false },
       ),

@@ -4,13 +4,17 @@ import { Connection } from 'mongoose'
 import {
   AddCollaboratorData,
   CollaboratorTypes,
+  CompositionId,
   CreateCompositionData,
   CreateUserData,
   Models,
+  ModuleId,
   MongoOptions,
-  TObjectId,
+  RequiredModule,
+  TokenId,
   UpdateUserData,
   UserAccessTokenTypes,
+  UserId,
 } from '../types'
 
 import { createModels } from '../models'
@@ -57,7 +61,7 @@ class Worker {
   /**
    * Update information of the user
    */
-  async updateUser(tokenId: string, data: UpdateUserData) {
+  async updateUser(tokenId: TokenId, data: UpdateUserData) {
     const user = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
@@ -90,7 +94,7 @@ class Worker {
    * Verify token of the user
    */
   private async verifyTokenOfUser(
-    tokenId: string,
+    tokenId: TokenId,
     requiredType: UserAccessTokenTypes,
   ) {
     const result = await this.services.User.verifyToken(tokenId, requiredType)
@@ -100,7 +104,7 @@ class Worker {
   /**
    * Delete a token from the user
    */
-  async deleteTokenFromUser(userId: TObjectId, tokenId: string) {
+  async deleteTokenFromUser(userId: UserId, tokenId: TokenId) {
     const result = await this.services.User.deleteToken(userId, tokenId)
     return result
   }
@@ -109,7 +113,7 @@ class Worker {
    * Create a composition
    */
   async createComposition(
-    tokenId: string,
+    tokenId: TokenId,
     data: Omit<CreateCompositionData, 'userId'>,
   ) {
     const { name, modules } = data
@@ -130,7 +134,7 @@ class Worker {
   /**
    * Delete a composition
    */
-  async deleteComposition(tokenId: string, compositionId: string) {
+  async deleteComposition(tokenId: TokenId, compositionId: CompositionId) {
     const user = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
@@ -155,8 +159,8 @@ class Worker {
    * Verify collaborator of the composition
    */
   async verifyCollaboratorOfComposition(
-    compositionId: string,
-    userId: TObjectId,
+    compositionId: CompositionId,
+    userId: UserId,
     requiredType: CollaboratorTypes,
   ) {
     const result = await this.services.Composition.verifyCollaborator(
@@ -171,8 +175,8 @@ class Worker {
    * Add collaborator to the composition
    */
   async addCollaboratorToComposition(
-    tokenId: string,
-    compositionId: string,
+    tokenId: TokenId,
+    compositionId: CompositionId,
     collaborator: AddCollaboratorData,
   ) {
     const user = await this.verifyTokenOfUser(
@@ -197,9 +201,9 @@ class Worker {
    * Remove collaborator from the composition
    */
   async removeCollaboratorFromComposition(
-    tokenId: string,
-    compositionId: string,
-    collaboratorId: TObjectId,
+    tokenId: TokenId,
+    compositionId: CompositionId,
+    collaboratorId: UserId,
   ) {
     const user = await this.verifyTokenOfUser(
       tokenId,
@@ -223,9 +227,9 @@ class Worker {
    * Add the modules to the composition
    */
   async addModulesToComposition(
-    tokenId: string,
-    compositionId: string,
-    modules: string[],
+    tokenId: TokenId,
+    compositionId: CompositionId,
+    modules: RequiredModule[],
   ) {
     const user = await this.verifyTokenOfUser(
       tokenId,
@@ -249,9 +253,9 @@ class Worker {
    * Remove the modules from composition
    */
   async removeModulesFromComposition(
-    tokenId: string,
-    compositionId: string,
-    modules: string[],
+    tokenId: TokenId,
+    compositionId: CompositionId,
+    moduleIds: ModuleId[],
   ) {
     const user = await this.verifyTokenOfUser(
       tokenId,
@@ -266,7 +270,7 @@ class Worker {
 
     const result = await this.services.Composition.removeModules(
       composition._id,
-      modules,
+      moduleIds,
     )
     return result
   }

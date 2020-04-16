@@ -2,8 +2,11 @@ import { MONGOOSE_ERROR_CODES } from '../lib/const'
 import {
   AddCollaboratorData,
   CollaboratorTypes,
+  CompositionId,
   CreateCompositionData,
   Models,
+  ModuleId,
+  RequiredModule,
   TObjectId,
 } from '../types'
 
@@ -11,7 +14,7 @@ import * as collaboratorTypesHelpers from '../utils/collaboratorTypesHelpers'
 import compareObjectId from '../utils/compareObjectId'
 
 class Composition {
-  constructor(private readonly Collection: Models['Composition']) {}
+  constructor(private readonly Collection: Models['Composition']) { }
 
   async create(data: CreateCompositionData) {
     const { userId, name, modules } = data
@@ -34,13 +37,13 @@ class Composition {
     return composition
   }
 
-  async delete(id: TObjectId) {
+  async delete(id: CompositionId) {
     const { ok, deletedCount } = await this.Collection.deleteOne({ _id: id })
     return { ok, deleted: deletedCount }
   }
 
   async verifyCollaborator(
-    id: string,
+    id: CompositionId,
     userId: TObjectId,
     requiredType: CollaboratorTypes,
   ) {
@@ -72,7 +75,7 @@ class Composition {
     return composition
   }
 
-  async addCollaborator(id: TObjectId, collaborator: AddCollaboratorData) {
+  async addCollaborator(id: CompositionId, collaborator: AddCollaboratorData) {
     const { ok, nModified: mofitied } = await this.Collection.updateOne(
       { _id: id },
       { $addToSet: { collaborators: collaborator } },
@@ -85,7 +88,7 @@ class Composition {
     return { _id: id, mofitied, ok, collaborator }
   }
 
-  async removeCollaborator(id: TObjectId, collaboratorId: TObjectId) {
+  async removeCollaborator(id: CompositionId, collaboratorId: TObjectId) {
     const { ok, nModified: mofitied } = await this.Collection.updateOne(
       { _id: id },
       { $pull: { collaborators: { id: collaboratorId } } },
@@ -98,30 +101,54 @@ class Composition {
     return { _id: id, mofitied, ok }
   }
 
-  async addModules(id: TObjectId, modules: string[]) {
-    const { ok, nModified: mofitied } = await this.Collection.updateOne(
+  async addModules(id: CompositionId, modules: RequiredModule[]) {
+    const composition = await this.Collection.findOne(
       { _id: id },
-      { $addToSet: { modules: { $each: modules } } },
+      { modules: 1 },
     )
-
-    if (mofitied === 0) {
+    if (!composition) {
       throw new Error('Composition is not found')
     }
 
-    return { _id: id, mofitied, ok, modules }
+    const newModuleIds = modules.map((item) => item.id)
+    const mergedModules = composition.modules.filter(
+      (item) => !newModuleIds.includes(item.id),
+    )
+    mergedModules.push(...modules)
+
+    const { ok, nModified: mofitied } = await this.Collection.updateOne(
+      { _id: id },
+      { $set: { modules: mergedModules } },
+    )
+    if (mofitied === 0) {
+      throw new Error('An error occurred while updating')
+    }
+
+    return { _id: id, mofitied, ok, modules: mergedModules }
   }
 
-  async removeModules(id: TObjectId, modules: string[]) {
-    const { ok, nModified: mofitied } = await this.Collection.updateOne(
+  async removeModules(id: CompositionId, moduleIds: ModuleId[]) {
+    const composition = await this.Collection.findOne(
       { _id: id },
-      { $pull: { modules: { $in: modules } } },
+      { modules: 1 },
     )
-
-    if (mofitied === 0) {
+    if (!composition) {
       throw new Error('Composition is not found')
     }
 
-    return { _id: id, mofitied, ok }
+    const mergedModules = composition.modules.filter(
+      (item) => !moduleIds.includes(item.id),
+    )
+
+    const { ok, nModified: mofitied } = await this.Collection.updateOne(
+      { _id: id },
+      { $set: { modules: mergedModules } },
+    )
+    if (mofitied === 0) {
+      throw new Error('An error occurred while updating')
+    }
+
+    return { _id: id, mofitied, ok, modules: mergedModules }
   }
 }
 

@@ -2,22 +2,33 @@ import { Document, Model } from 'mongoose'
 
 import { Collaborator, ModuleFormats, Resource, TObjectId } from './common'
 
+export type CompositionId = string
+export type ModuleId = string
+export type UserId = TObjectId
+export type TokenId = string
+
 // tslint:disable-next-line: no-empty-interface
 export interface Schedule {}
 
 export type VersionInfo = {
   version: string
   library: string
-  alias?: { [key: string]: string }
-  exportsOnly?: string[]
-  format?: ModuleFormats
   publisher: string
   createdAt: Date
+  format: ModuleFormats
   resolve: {
     main: Resource
     styles: Resource[]
   }
+  exportsOnly?: string[]
+  alias?: { [key: string]: string }
+  fallback?: string
   deprecated?: string
+}
+
+export type RequiredModule = {
+  id: ModuleId
+  version: string
 }
 
 /**
@@ -26,17 +37,14 @@ export type VersionInfo = {
 
 export interface ModuleModel {
   name: string
-  tags: {
-    upstream: string
-    fallback: string
-  }
   collaborators: Collaborator[]
+  tags: Map<string, string>
   versions: Map<string, VersionInfo>
   schedule?: Schedule
 }
 
 export interface ModuleDocument extends Document, ModuleModel {
-  _id: TObjectId
+  _id: string
   createdAt: Date
   updatedAt: Date
 }
@@ -52,7 +60,7 @@ export enum UserAccessTokenTypes {
 }
 
 export interface UserAccessToken {
-  value: string
+  value: TokenId
   type: UserAccessTokenTypes
   createdAt: Date
 }
@@ -73,16 +81,16 @@ export interface UserDocument extends Document, UserModel {
 }
 
 /**
- * Group
+ * Composition
  */
 export interface CompositionModel {
   name: string
   collaborators: Collaborator[]
-  modules: string[]
+  modules: RequiredModule[]
 }
 
 export interface CompositionDocument extends Document, CompositionModel {
-  _id: TObjectId
+  _id: string
   createdAt: Date
   updatedAt: Date
 }
