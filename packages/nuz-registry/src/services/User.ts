@@ -2,9 +2,9 @@ import { MONGOOSE_ERROR_CODES } from '../lib/const'
 import {
   CreateUserData,
   Models,
-  TObjectId,
   UpdateUserData,
   UserAccessTokenTypes,
+  UserId,
 } from '../types'
 
 import genarateTokenId from '../utils/genarateTokenId'
@@ -33,7 +33,7 @@ class User {
     return user
   }
 
-  async update(id: TObjectId, data: UpdateUserData) {
+  async update(id: UserId, data: UpdateUserData) {
     const user = await this.Collection.findOne({ _id: id }, { _id: 1 })
     if (!user) {
       throw new Error('User is not found')
@@ -98,7 +98,7 @@ class User {
     return { _id: user._id }
   }
 
-  async createToken(id: TObjectId, requiredType: UserAccessTokenTypes) {
+  async createToken(id: UserId, requiredType: UserAccessTokenTypes) {
     const value = genarateTokenId(id)
     const accessToken = { value, type: requiredType }
     const { ok, nModified: mofitied } = await this.Collection.updateOne(
@@ -113,7 +113,7 @@ class User {
     return { _id: id, mofitied, ok, accessToken }
   }
 
-  async deleteToken(id: TObjectId, token: string) {
+  async deleteToken(id: UserId, token: string) {
     const { ok, nModified: mofitied } = await this.Collection.updateOne(
       { _id: id },
       { $pull: { accessTokens: { value: token } } },

@@ -1,6 +1,8 @@
 import { Connection, Model, Schema } from 'mongoose'
 
-import { CollaboratorTypes, CompositionDocument } from '../types'
+import { CompositionDocument } from '../types'
+
+import { collaborator as collaboratorSchema } from './schemas'
 
 export const collection = 'Composition'
 
@@ -8,30 +10,22 @@ const schema: Schema = new Schema(
   {
     _id: {
       type: String,
-      required: true,
-      unique: true,
-      index: true,
       default() {
         // @ts-ignore
         return this.name
       },
     },
     name: { type: String, required: true },
-    collaborators: [
+    collaborators: [collaboratorSchema],
+    modules: [
       new Schema(
         {
-          id: { type: Schema.Types.ObjectId, required: true },
-          type: {
-            type: String,
-            required: true,
-            enum: Object.values(CollaboratorTypes),
-          },
-          createdAt: { type: Date, required: true, default: Date.now },
+          id: { type: String, required: true },
+          version: { type: String, required: true },
         },
         { _id: false },
       ),
     ],
-    modules: [String],
   },
   {
     collection,
