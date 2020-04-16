@@ -212,14 +212,64 @@ class Worker {
       CollaboratorTypes.maintainer,
     )
 
-    const reuslt = this.services.Composition.removeCollaborator(
+    const reuslt = await this.services.Composition.removeCollaborator(
       composition._id,
       collaboratorId,
     )
     return reuslt
   }
-  async addModulesToComposition() {}
-  async removeModulesFromComposition() {}
+
+  /**
+   * Add the modules to the composition
+   */
+  async addModulesToComposition(
+    tokenId: string,
+    idOrName: TObjectId | string,
+    modules: string[],
+  ) {
+    const user = await this.verifyTokenOfUser(
+      tokenId,
+      UserAccessTokenTypes.fullAccess,
+    )
+
+    const composition = await this.verifyCollaboratorOfComposition(
+      idOrName,
+      user._id,
+      CollaboratorTypes.maintainer,
+    )
+
+    const result = await this.services.Composition.addModules(
+      composition._id,
+      modules,
+    )
+    return result
+  }
+
+  /**
+   * Remove the modules from composition
+   */
+  async removeModulesFromComposition(
+    tokenId: string,
+    idOrName: TObjectId | string,
+    modules: string[],
+  ) {
+    const user = await this.verifyTokenOfUser(
+      tokenId,
+      UserAccessTokenTypes.fullAccess,
+    )
+
+    const composition = await this.verifyCollaboratorOfComposition(
+      idOrName,
+      user._id,
+      CollaboratorTypes.maintainer,
+    )
+
+    const result = await this.services.Composition.removeModules(
+      composition._id,
+      modules,
+    )
+    return result
+  }
 }
 
 export default Worker
