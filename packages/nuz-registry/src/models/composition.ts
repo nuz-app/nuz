@@ -6,7 +6,17 @@ export const collection = 'Composition'
 
 const schema: Schema = new Schema(
   {
-    name: { type: String, required: true, unique: true, index: true },
+    _id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+      default() {
+        // @ts-ignore
+        return this.name
+      },
+    },
+    name: { type: String, required: true },
     collaborators: [
       new Schema(
         {
@@ -31,7 +41,6 @@ const schema: Schema = new Schema(
       createdAt: true,
       updatedAt: true,
     },
-    _id: true,
   },
 )
 

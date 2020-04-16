@@ -130,14 +130,14 @@ class Worker {
   /**
    * Delete a composition
    */
-  async deleteComposition(tokenId: string, idOrName: TObjectId | string) {
+  async deleteComposition(tokenId: string, compositionId: string) {
     const user = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
     const composition = await this.verifyCollaboratorOfComposition(
-      idOrName,
+      compositionId,
       user._id,
       CollaboratorTypes.maintainer,
     )
@@ -155,12 +155,12 @@ class Worker {
    * Verify collaborator of the composition
    */
   async verifyCollaboratorOfComposition(
-    idOrName: TObjectId | string,
+    compositionId: string,
     userId: TObjectId,
     requiredType: CollaboratorTypes,
   ) {
     const result = await this.services.Composition.verifyCollaborator(
-      idOrName,
+      compositionId,
       userId,
       requiredType,
     )
@@ -172,7 +172,7 @@ class Worker {
    */
   async addCollaboratorToComposition(
     tokenId: string,
-    idOrName: TObjectId | string,
+    compositionId: string,
     collaborator: AddCollaboratorData,
   ) {
     const user = await this.verifyTokenOfUser(
@@ -181,7 +181,7 @@ class Worker {
     )
 
     const composition = await this.verifyCollaboratorOfComposition(
-      idOrName,
+      compositionId,
       user._id,
       CollaboratorTypes.maintainer,
     )
@@ -198,7 +198,7 @@ class Worker {
    */
   async removeCollaboratorFromComposition(
     tokenId: string,
-    idOrName: TObjectId | string,
+    compositionId: string,
     collaboratorId: TObjectId,
   ) {
     const user = await this.verifyTokenOfUser(
@@ -207,7 +207,7 @@ class Worker {
     )
 
     const composition = await this.verifyCollaboratorOfComposition(
-      idOrName,
+      compositionId,
       user._id,
       CollaboratorTypes.maintainer,
     )
@@ -224,7 +224,7 @@ class Worker {
    */
   async addModulesToComposition(
     tokenId: string,
-    idOrName: TObjectId | string,
+    compositionId: string,
     modules: string[],
   ) {
     const user = await this.verifyTokenOfUser(
@@ -233,7 +233,7 @@ class Worker {
     )
 
     const composition = await this.verifyCollaboratorOfComposition(
-      idOrName,
+      compositionId,
       user._id,
       CollaboratorTypes.maintainer,
     )
@@ -250,7 +250,7 @@ class Worker {
    */
   async removeModulesFromComposition(
     tokenId: string,
-    idOrName: TObjectId | string,
+    compositionId: string,
     modules: string[],
   ) {
     const user = await this.verifyTokenOfUser(
@@ -259,7 +259,7 @@ class Worker {
     )
 
     const composition = await this.verifyCollaboratorOfComposition(
-      idOrName,
+      compositionId,
       user._id,
       CollaboratorTypes.maintainer,
     )
