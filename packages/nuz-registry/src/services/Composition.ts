@@ -85,10 +85,37 @@ class Composition {
 
     return { _id: id, mofitied, ok, collaborator }
   }
+
   async removeCollaborator(id: TObjectId, collaboratorId: TObjectId) {
     const { ok, nModified: mofitied } = await this.Collection.updateOne(
       { _id: id },
       { $pull: { collaborators: { id: collaboratorId } } },
+    )
+
+    if (mofitied === 0) {
+      throw new Error('Composition is not found')
+    }
+
+    return { _id: id, mofitied, ok }
+  }
+
+  async addModules(id: TObjectId, modules: string[]) {
+    const { ok, nModified: mofitied } = await this.Collection.updateOne(
+      { _id: id },
+      { $addToSet: { modules: { $each: modules } } },
+    )
+
+    if (mofitied === 0) {
+      throw new Error('Composition is not found')
+    }
+
+    return { _id: id, mofitied, ok, modules }
+  }
+
+  async removeModules(id: TObjectId, modules: string[]) {
+    const { ok, nModified: mofitied } = await this.Collection.updateOne(
+      { _id: id },
+      { $pull: { modules: { $each: modules } } },
     )
 
     if (mofitied === 0) {
