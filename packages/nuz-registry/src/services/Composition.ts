@@ -40,16 +40,15 @@ class Composition {
   }
 
   async verifyCollaborator(
-    idOrName: TObjectId | string,
+    id: string,
     userId: TObjectId,
     requiredType: CollaboratorTypes,
   ) {
-    const queryField = typeof idOrName === 'string' ? 'name' : '_id'
     const composition = await this.Collection.findOne(
       {
-        [queryField]: idOrName,
+        _id: id,
       },
-      { collaborators: 1, createdAt: 1 },
+      { name: 1, collaborators: 1, createdAt: 1 },
     )
     if (!composition) {
       throw new Error('Composition is not found')
@@ -115,7 +114,7 @@ class Composition {
   async removeModules(id: TObjectId, modules: string[]) {
     const { ok, nModified: mofitied } = await this.Collection.updateOne(
       { _id: id },
-      { $pull: { modules: { $each: modules } } },
+      { $pull: { modules: { $in: modules } } },
     )
 
     if (mofitied === 0) {

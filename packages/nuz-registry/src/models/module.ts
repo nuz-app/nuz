@@ -6,7 +6,17 @@ export const collection = 'Module'
 
 const schema: Schema = new Schema(
   {
-    name: { type: String, required: true, unique: true, index: true },
+    _id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+      default() {
+        // @ts-ignore
+        return this.name
+      },
+    },
+    name: { type: String, required: true },
     tags: {
       upstream: { type: String, required: true },
       fallback: { type: String, required: false, default: null },
@@ -68,7 +78,6 @@ const schema: Schema = new Schema(
       createdAt: true,
       updatedAt: true,
     },
-    _id: true,
   },
 )
 
