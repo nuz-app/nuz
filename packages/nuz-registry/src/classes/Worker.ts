@@ -38,9 +38,7 @@ class Worker {
 
   async prepare() {}
 
-  /**
-   * Operations management Module
-   */
+  // Operations management Module
   async publishModule() {}
   async unpublishModule() {}
   async deprecateModule() {}
@@ -49,14 +47,18 @@ class Worker {
   async removeCollaboratorToModule() {}
 
   /**
-   * Operations management User
+   * Create a user
    */
   async createUser(data: CreateUserData) {
     const result = await this.services.User.create(data)
     return pick(result, ['_id', 'name', 'email', 'username', 'createdAt'])
   }
+
+  /**
+   * Update information of the user
+   */
   async updateUser(tokenId: string, data: UpdateUserData) {
-    const user = await this.verifyTokenForUser(
+    const user = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
@@ -64,7 +66,15 @@ class Worker {
     const result = await this.services.User.update(user._id, data)
     return result
   }
+
+  /**
+   * Delete a user
+   */
   async deleteUser() {}
+
+  /**
+   * Create a token for the user
+   */
   async createTokenForUser(
     username: string,
     password: string,
@@ -75,20 +85,28 @@ class Worker {
     const result = await this.services.User.createToken(user._id, requiredType)
     return result
   }
-  private async verifyTokenForUser(
+
+  /**
+   * Verify token of the user
+   */
+  private async verifyTokenOfUser(
     tokenId: string,
     requiredType: UserAccessTokenTypes,
   ) {
     const result = await this.services.User.verifyToken(tokenId, requiredType)
     return result
   }
-  async deleteTokenForUser(userId: TObjectId, tokenId: string) {
+
+  /**
+   * Delete a token from the user
+   */
+  async deleteTokenFromUser(userId: TObjectId, tokenId: string) {
     const result = await this.services.User.deleteToken(userId, tokenId)
     return result
   }
 
   /**
-   * Operations management Composition
+   * Create a composition
    */
   async createComposition(
     tokenId: string,
@@ -96,7 +114,7 @@ class Worker {
   ) {
     const { name, modules } = data
 
-    const user = await this.verifyTokenForUser(
+    const user = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
@@ -108,8 +126,12 @@ class Worker {
     })
     return pick(result, ['_id', 'name', 'modules'])
   }
+
+  /**
+   * Delete a composition
+   */
   async deleteComposition(tokenId: string, idOrName: TObjectId | string) {
-    const user = await this.verifyTokenForUser(
+    const user = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
@@ -128,6 +150,10 @@ class Worker {
     const result = await this.services.Composition.delete(composition._id)
     return result
   }
+
+  /**
+   * Verify collaborator of the composition
+   */
   async verifyCollaboratorOfComposition(
     idOrName: TObjectId | string,
     userId: TObjectId,
@@ -140,12 +166,16 @@ class Worker {
     )
     return result
   }
+
+  /**
+   * Add collaborator to the composition
+   */
   async addCollaboratorToComposition(
     tokenId: string,
     idOrName: TObjectId | string,
     collaborator: AddCollaboratorData,
   ) {
-    const user = await this.verifyTokenForUser(
+    const user = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
@@ -162,12 +192,16 @@ class Worker {
     )
     return reuslt
   }
+
+  /**
+   * Remove collaborator from the composition
+   */
   async removeCollaboratorFromComposition(
     tokenId: string,
     idOrName: TObjectId | string,
     collaboratorId: TObjectId,
   ) {
-    const user = await this.verifyTokenForUser(
+    const user = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
