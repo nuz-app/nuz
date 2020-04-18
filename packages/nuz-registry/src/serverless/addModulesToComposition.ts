@@ -1,7 +1,7 @@
+import { checkIsObject } from '@nuz/utils'
 import { Express } from 'express'
 
 import Worker from '../classes/Worker'
-import convertObjectToMap from '../utils/convertObjectToMap'
 import onRoute from '../utils/onRoute'
 
 import { ServerlessRoute } from './types'
@@ -12,15 +12,14 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.post(
     '/composition/modules',
     onRoute(async (request, response) => {
-      const { token, composition, modules: moduleAsObj } = request.body
+      const { token, composition, modules: moduleAsObject } = request.body
 
-      const formIsMissing = !token || !composition || !moduleAsObj
+      const formIsMissing = !token || !composition || !moduleAsObject
       if (formIsMissing) {
         throw new Error('Form is missing fields')
       }
 
-      const modules = convertObjectToMap(moduleAsObj)
-      const modulesIsInvalid = modules.size === 0
+      const modulesIsInvalid = !checkIsObject(moduleAsObject)
       if (modulesIsInvalid) {
         throw new Error('Modules is invalid')
       }
@@ -28,7 +27,7 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
       const item = await worker.addModulesToComposition(
         token,
         composition,
-        modules,
+        moduleAsObject,
       )
 
       response.json(item)

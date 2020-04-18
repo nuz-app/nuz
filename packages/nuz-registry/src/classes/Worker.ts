@@ -8,10 +8,11 @@ import {
   CreateCompositionData,
   CreateUserData,
   Models,
+  ModuleAsObject,
   ModuleId,
   MongoOptions,
   PublishModuleData,
-  RequiredModules,
+  RequiredModule,
   TokenId,
   UpdateUserData,
   UserAccessTokenTypes,
@@ -154,9 +155,11 @@ class Worker {
    * Create a composition
    */
   async createComposition(tokenId: TokenId, data: CreateCompositionData) {
-    const { name, modules } = data
+    const { name, modules: modulesAsObject } = data
 
-    this.services.Composition.validateModules(modules)
+    const modules = this.services.Composition.convertModulesToList(
+      modulesAsObject,
+    )
 
     const user = await this.verifyTokenOfUser(
       tokenId,
@@ -268,9 +271,11 @@ class Worker {
   async addModulesToComposition(
     tokenId: TokenId,
     compositionId: CompositionId,
-    modules: RequiredModules,
+    modulesAsObject: ModuleAsObject,
   ) {
-    this.services.Composition.validateModules(modules)
+    const modules = this.services.Composition.convertModulesToList(
+      modulesAsObject,
+    )
 
     const user = await this.verifyTokenOfUser(
       tokenId,
@@ -298,7 +303,7 @@ class Worker {
     compositionId: CompositionId,
     moduleIds: ModuleId[],
   ) {
-    this.services.Composition.validateModuleIds(moduleIds)
+    // this.services.Composition.validateModuleIds(moduleIds)
 
     const user = await this.verifyTokenOfUser(
       tokenId,
