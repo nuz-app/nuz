@@ -84,11 +84,9 @@ class Linked {
     const connectPromise = this.waitConnect()
 
     const dfPromise = deferedPromise()
-    await dfPromise.ready
-
     this.bindEvents(dfPromise)
 
-    return await Promise.all([dfPromise, connectPromise])
+    return await Promise.all([dfPromise.promise, connectPromise])
   }
 
   getModules(): ModulesConfig {
