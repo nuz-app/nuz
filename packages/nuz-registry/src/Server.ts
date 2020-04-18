@@ -6,7 +6,7 @@ import express from 'express'
 import http from 'http'
 import spdy from 'spdy'
 
-import { DBTypes, ServerlessOptions, ServerOptions } from './types'
+import { ServerlessOptions, ServerOptions } from './types'
 
 import Worker from './classes/Worker'
 

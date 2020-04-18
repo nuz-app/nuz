@@ -17,11 +17,15 @@ const schema: Schema = new Schema(
     },
     name: { type: String, required: true },
     collaborators: [collaboratorSchema],
-    modules: {
-      type: Map,
-      of: String,
-      default: () => new Map(),
-    },
+    modules: [
+      new Schema(
+        {
+          id: { type: String, required: true },
+          version: { type: String, required: true },
+        },
+        { _id: false },
+      ),
+    ],
   },
   {
     collection,

@@ -1,8 +1,8 @@
-import { Document, Model } from 'mongoose'
+import { Document, Model, Types } from 'mongoose'
 
 import {
   Collaborator,
-  RequiredModules,
+  RequiredModule,
   Schedule,
   TObjectId,
   TokenId,
@@ -64,7 +64,7 @@ export interface UserDocument extends Document, UserModel {
 export interface CompositionModel {
   name: string
   collaborators: Collaborator[]
-  modules: RequiredModules
+  modules: Types.Array<RequiredModule>
 }
 
 export interface CompositionDocument extends Document, CompositionModel {

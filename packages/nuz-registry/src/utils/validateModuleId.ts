@@ -1,4 +1,5 @@
 const validateModuleId = (moduleId: string) =>
-  !moduleId || !/\.$|\_/.test(moduleId)
+  !moduleId ||
+  !/([^a-zA-Z0-9\-\.\@\/]+)|(\.|\-|\@\/)$|^(\.|\-|\@\/)/.test(moduleId)
 
 export default validateModuleId

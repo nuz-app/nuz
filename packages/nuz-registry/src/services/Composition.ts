@@ -1,3 +1,5 @@
+import { Types } from 'mongoose'
+
 import { MONGOOSE_ERROR_CODES } from '../lib/const'
 import {
   AddCollaboratorData,
@@ -5,35 +7,45 @@ import {
   CompositionId,
   CreateCompositionData,
   Models,
+  ModuleAsObject,
   ModuleId,
-  RequiredModules,
+  RequiredModule,
   UserId,
 } from '../types'
 
 import * as collaboratorTypesHelpers from '../utils/collaboratorTypesHelpers'
 import compareObjectId from '../utils/compareObjectId'
 import validateModuleId from '../utils/validateModuleId'
+import * as versionHelpers from '../utils/versionHelpers'
 
 class Composition {
   constructor(private readonly Collection: Models['Composition']) {}
 
-  validateModuleIds(moduleIds: string[]) {
-    for (const moduleId of moduleIds) {
-      if (!validateModuleId(moduleId)) {
-        throw new Error(`${moduleId} is invalid module id`)
+  convertModulesToList(modulesAsObject: ModuleAsObject) {
+    const modules = Object.entries(modulesAsObject).map(([id, version]) => ({
+      id,
+      version,
+    }))
+
+    for (const item of modules) {
+      if (!validateModuleId(item.id)) {
+        throw new Error(`${item.id} is invalid module id`)
+      }
+
+      if (!versionHelpers.checkIsValid(item.version)) {
+        throw new Error(`${item.version} is invalid module version`)
       }
     }
 
-    return true
+    return modules
   }
 
-  validateModules(modules: RequiredModules) {
-    const moduleIds = Array.from(modules.keys())
-
-    return this.validateModuleIds(moduleIds)
-  }
-
-  async create(userId: UserId, data: CreateCompositionData) {
+  async create(
+    userId: UserId,
+    data: Omit<CreateCompositionData, 'modules'> & {
+      modules: RequiredModule[]
+    },
+  ) {
     const { name, modules } = data
 
     const creator = { type: CollaboratorTypes.creator, id: userId }
@@ -118,7 +130,7 @@ class Composition {
     return { _id: id, mofitied, ok }
   }
 
-  async addModules(id: CompositionId, modules: RequiredModules) {
+  async addModules(id: CompositionId, modules: RequiredModule[]) {
     const composition = await this.Collection.findOne(
       { _id: id },
       { modules: 1 },
@@ -127,15 +139,12 @@ class Composition {
       throw new Error('Composition is not found')
     }
 
-    const moduleIds = Array.from(modules.keys())
-    for (const moduleId of moduleIds) {
-      const moduleVersion = modules.get(moduleId)
-      if (!moduleVersion) {
-        throw new Error(`Invalid version of module ${module}`)
-      }
-
-      composition.modules.set(moduleId, moduleVersion)
-    }
+    const moduleIds = modules.map((item) => item.id)
+    const updatedModules = composition.modules.filter(
+      (item) => !moduleIds.includes(item.id),
+    )
+    updatedModules.push(...modules)
+    composition.modules = updatedModules as Types.Array<RequiredModule>
 
     const result = await composition.save()
     console.log({ result })
@@ -152,9 +161,10 @@ class Composition {
       throw new Error('Composition is not found')
     }
 
-    for (const moduleId of moduleIds) {
-      composition.modules.delete(moduleId)
-    }
+    const updatedModules = composition.modules.filter(
+      (item) => !moduleIds.includes(item.id),
+    )
+    composition.modules = updatedModules as Types.Array<RequiredModule>
 
     const result = await composition.save()
     console.log({ result })

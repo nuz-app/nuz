@@ -1,9 +1,6 @@
-import {
-  CollaboratorTypes,
-  RequiredModules,
-  TObjectId,
-  VersionInfo,
-} from './common'
+import { CollaboratorTypes, TObjectId, VersionInfo } from './common'
+
+export type ModuleAsObject = { [id: string]: string }
 
 export interface CreateUserData {
   name: string
@@ -20,7 +17,7 @@ export interface UpdateUserData {
 
 export interface CreateCompositionData {
   name: string
-  modules: RequiredModules
+  modules: ModuleAsObject
 }
 
 export interface AddCollaboratorData {

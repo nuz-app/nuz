@@ -46,4 +46,4 @@ export type VersionInfo = {
   deprecated?: string
 }
 
-export type RequiredModules = Map<ModuleId, string>
+export type RequiredModule = { id: string; version: string }
