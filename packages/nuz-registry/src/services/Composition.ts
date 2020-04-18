@@ -6,18 +6,35 @@ import {
   CreateCompositionData,
   Models,
   ModuleId,
-  RequiredModule,
-  TObjectId,
+  RequiredModules,
+  UserId,
 } from '../types'
 
 import * as collaboratorTypesHelpers from '../utils/collaboratorTypesHelpers'
 import compareObjectId from '../utils/compareObjectId'
+import validateModuleId from '../utils/validateModuleId'
 
 class Composition {
-  constructor(private readonly Collection: Models['Composition']) { }
+  constructor(private readonly Collection: Models['Composition']) {}
 
-  async create(data: CreateCompositionData) {
-    const { userId, name, modules } = data
+  validateModuleIds(moduleIds: string[]) {
+    for (const moduleId of moduleIds) {
+      if (!validateModuleId(moduleId)) {
+        throw new Error(`${moduleId} is invalid module id`)
+      }
+    }
+
+    return true
+  }
+
+  validateModules(modules: RequiredModules) {
+    const moduleIds = Array.from(modules.keys())
+
+    return this.validateModuleIds(moduleIds)
+  }
+
+  async create(userId: UserId, data: CreateCompositionData) {
+    const { name, modules } = data
 
     const creator = { type: CollaboratorTypes.creator, id: userId }
     const collaborators = [creator]
@@ -44,7 +61,7 @@ class Composition {
 
   async verifyCollaborator(
     id: CompositionId,
-    userId: TObjectId,
+    userId: UserId,
     requiredType: CollaboratorTypes,
   ) {
     const composition = await this.Collection.findOne(
@@ -88,7 +105,7 @@ class Composition {
     return { _id: id, mofitied, ok, collaborator }
   }
 
-  async removeCollaborator(id: CompositionId, collaboratorId: TObjectId) {
+  async removeCollaborator(id: CompositionId, collaboratorId: UserId) {
     const { ok, nModified: mofitied } = await this.Collection.updateOne(
       { _id: id },
       { $pull: { collaborators: { id: collaboratorId } } },
@@ -101,7 +118,7 @@ class Composition {
     return { _id: id, mofitied, ok }
   }
 
-  async addModules(id: CompositionId, modules: RequiredModule[]) {
+  async addModules(id: CompositionId, modules: RequiredModules) {
     const composition = await this.Collection.findOne(
       { _id: id },
       { modules: 1 },
@@ -110,21 +127,20 @@ class Composition {
       throw new Error('Composition is not found')
     }
 
-    const newModuleIds = modules.map((item) => item.id)
-    const mergedModules = composition.modules.filter(
-      (item) => !newModuleIds.includes(item.id),
-    )
-    mergedModules.push(...modules)
+    const moduleIds = Array.from(modules.keys())
+    for (const moduleId of moduleIds) {
+      const moduleVersion = modules.get(moduleId)
+      if (!moduleVersion) {
+        throw new Error(`Invalid version of module ${module}`)
+      }
 
-    const { ok, nModified: mofitied } = await this.Collection.updateOne(
-      { _id: id },
-      { $set: { modules: mergedModules } },
-    )
-    if (mofitied === 0) {
-      throw new Error('An error occurred while updating')
+      composition.modules.set(moduleId, moduleVersion)
     }
 
-    return { _id: id, mofitied, ok, modules: mergedModules }
+    const result = await composition.save()
+    console.log({ result })
+
+    return { _id: id }
   }
 
   async removeModules(id: CompositionId, moduleIds: ModuleId[]) {
@@ -136,19 +152,14 @@ class Composition {
       throw new Error('Composition is not found')
     }
 
-    const mergedModules = composition.modules.filter(
-      (item) => !moduleIds.includes(item.id),
-    )
-
-    const { ok, nModified: mofitied } = await this.Collection.updateOne(
-      { _id: id },
-      { $set: { modules: mergedModules } },
-    )
-    if (mofitied === 0) {
-      throw new Error('An error occurred while updating')
+    for (const moduleId of moduleIds) {
+      composition.modules.delete(moduleId)
     }
 
-    return { _id: id, mofitied, ok, modules: mergedModules }
+    const result = await composition.save()
+    console.log({ result })
+
+    return { _id: id }
   }
 }
 

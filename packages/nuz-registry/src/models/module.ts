@@ -24,6 +24,8 @@ const schema: Schema = new Schema(
     tags: {
       type: Map,
       of: String,
+      required: true,
+      default: () => new Map(),
     },
     collaborators: [collaboratorSchema],
     versions: {
@@ -51,6 +53,7 @@ const schema: Schema = new Schema(
         { _id: false },
       ),
       required: true,
+      default: () => new Map(),
     },
     // schedule: { type: Schema.Types.Mixed, required: false, default: {} },
   },

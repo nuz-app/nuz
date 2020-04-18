@@ -10,7 +10,8 @@ import {
   Models,
   ModuleId,
   MongoOptions,
-  RequiredModule,
+  PublishModuleData,
+  RequiredModules,
   TokenId,
   UpdateUserData,
   UserAccessTokenTypes,
@@ -42,11 +43,51 @@ class Worker {
 
   async prepare() {}
 
-  // Operations management Module
-  async publishModule() {}
+  /**
+   * Publish a module
+   */
+  async publishModule(tokenId: TokenId, data: PublishModuleData) {
+    const { name } = data
+
+    const user = await this.verifyTokenOfUser(
+      tokenId,
+      UserAccessTokenTypes.publish,
+    )
+
+    const module = await this.verifyCollaboratorOfModule(
+      name,
+      user._id,
+      CollaboratorTypes.contributor,
+      false,
+    )
+    const moduleIsEixsted = !!module
+
+    const result = !moduleIsEixsted
+      ? await this.services.Module.create(user._id, data)
+      : await this.services.Module.publish(user._id, data)
+    return result
+  }
   async unpublishModule() {}
   async deprecateModule() {}
   async setTagForModule() {}
+
+  /**
+   * Verify collaborator of the module
+   */
+  async verifyCollaboratorOfModule(
+    moduleId: ModuleId,
+    userId: UserId,
+    requiredType: CollaboratorTypes,
+    throwIfNotFound: boolean,
+  ) {
+    const result = await this.services.Module.verifyCollaborator(
+      moduleId,
+      userId,
+      requiredType,
+      throwIfNotFound,
+    )
+    return result
+  }
   async addCollaboratorToModule() {}
   async removeCollaboratorToModule() {}
 
@@ -112,19 +153,17 @@ class Worker {
   /**
    * Create a composition
    */
-  async createComposition(
-    tokenId: TokenId,
-    data: Omit<CreateCompositionData, 'userId'>,
-  ) {
+  async createComposition(tokenId: TokenId, data: CreateCompositionData) {
     const { name, modules } = data
+
+    this.services.Composition.validateModules(modules)
 
     const user = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const result = await this.services.Composition.create({
-      userId: user._id,
+    const result = await this.services.Composition.create(user._id, {
       name,
       modules,
     })
@@ -229,8 +268,10 @@ class Worker {
   async addModulesToComposition(
     tokenId: TokenId,
     compositionId: CompositionId,
-    modules: RequiredModule[],
+    modules: RequiredModules,
   ) {
+    this.services.Composition.validateModules(modules)
+
     const user = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
@@ -257,6 +298,8 @@ class Worker {
     compositionId: CompositionId,
     moduleIds: ModuleId[],
   ) {
+    this.services.Composition.validateModuleIds(moduleIds)
+
     const user = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,

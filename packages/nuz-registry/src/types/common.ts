@@ -21,3 +21,29 @@ export interface Collaborator {
 }
 
 export type TObjectId = Types.ObjectId
+
+export type CompositionId = string
+export type ModuleId = string
+export type UserId = TObjectId
+export type TokenId = string
+
+// tslint:disable-next-line: no-empty-interface
+export interface Schedule {}
+
+export type VersionInfo = {
+  version: string
+  library: string
+  publisher: string
+  createdAt: Date
+  format: ModuleFormats
+  resolve: {
+    main: Resource
+    styles: Resource[]
+  }
+  exportsOnly?: string[]
+  alias?: { [key: string]: string }
+  fallback?: string
+  deprecated?: string
+}
+
+export type RequiredModules = Map<ModuleId, string>

@@ -1,5 +1,10 @@
-// Convert `1.23.45-beta.6` -> `1:23:45-beta:6`
-export const encode = (version: string) => (version || '').replace(/\./g, ':')
+import coerce from 'semver/functions/coerce'
+import maxSatisfying from 'semver/ranges/max-satisfying'
+import valid from 'semver/ranges/valid'
 
-// Convert `1:23:45-beta:6` -> `1.23.45-beta.6`
-export const decode = (version: string) => (version || '').replace(/\:/g, '.')
+export const checkIsValid = () => valid(coerce('^1.0.0'))
+
+export const getMaxSatisfying = (
+  versions: string[],
+  range: string,
+): string | null => maxSatisfying(versions, range)
