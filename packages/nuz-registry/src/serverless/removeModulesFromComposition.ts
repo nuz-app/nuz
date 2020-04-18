@@ -11,22 +11,23 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.delete(
     '/composition/modules',
     onRoute(async (request, response) => {
-      const { token, composition, modules } = request.body
+      const { token, composition, moduleIds } = request.body
 
-      const formIsMissing = !token || !composition || !modules
+      const formIsMissing = !token || !composition || !moduleIds
       if (formIsMissing) {
         throw new Error('Form is missing fields')
       }
 
-      const modulesIsInvalid = !Array.isArray(modules) || modules.length === 0
-      if (modulesIsInvalid) {
+      const moduleIdsIsInvalid =
+        !Array.isArray(moduleIds) || moduleIds.length === 0
+      if (moduleIdsIsInvalid) {
         throw new Error('Modules is invalid')
       }
 
       const item = await worker.removeModulesFromComposition(
         token,
         composition,
-        modules,
+        moduleIds,
       )
 
       response.json(item)

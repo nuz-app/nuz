@@ -1,35 +1,13 @@
 import { Document, Model } from 'mongoose'
 
-import { Collaborator, ModuleFormats, Resource, TObjectId } from './common'
-
-export type CompositionId = string
-export type ModuleId = string
-export type UserId = TObjectId
-export type TokenId = string
-
-// tslint:disable-next-line: no-empty-interface
-export interface Schedule {}
-
-export type VersionInfo = {
-  version: string
-  library: string
-  publisher: string
-  createdAt: Date
-  format: ModuleFormats
-  resolve: {
-    main: Resource
-    styles: Resource[]
-  }
-  exportsOnly?: string[]
-  alias?: { [key: string]: string }
-  fallback?: string
-  deprecated?: string
-}
-
-export type RequiredModule = {
-  id: ModuleId
-  version: string
-}
+import {
+  Collaborator,
+  RequiredModules,
+  Schedule,
+  TObjectId,
+  TokenId,
+  VersionInfo,
+} from './common'
 
 /**
  * Module
@@ -86,7 +64,7 @@ export interface UserDocument extends Document, UserModel {
 export interface CompositionModel {
   name: string
   collaborators: Collaborator[]
-  modules: RequiredModule[]
+  modules: RequiredModules
 }
 
 export interface CompositionDocument extends Document, CompositionModel {
