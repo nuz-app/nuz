@@ -306,8 +306,6 @@ class Worker {
     compositionId: CompositionId,
     moduleIds: ModuleId[],
   ) {
-    // this.services.Composition.validateModuleIds(moduleIds)
-
     const user = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
@@ -331,6 +329,8 @@ class Worker {
    */
   async createScope(tokenId: TokenId, data: CreateScopeData) {
     const { name } = data
+
+    this.services.Scope.validateScopeId(name)
 
     const user = await this.verifyTokenOfUser(
       tokenId,
