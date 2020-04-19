@@ -25,6 +25,9 @@ import { createServices, Services } from '../services'
 
 import checkIsNewComposition from '../utils/checkIsNewComposition'
 import createMongoConnection from '../utils/createMongoConnection'
+import ensureVersionResources from '../utils/ensureVersionResources'
+import * as moduleIdHelpers from '../utils/moduleIdHelpers'
+import * as versionHelpers from '../utils/versionHelpers'
 
 class Worker {
   private readonly connection: Connection
@@ -49,7 +52,7 @@ class Worker {
    * Publish a module
    */
   async publishModule(tokenId: TokenId, data: PublishModuleData) {
-    const { name } = data
+    const { name, version, resolve } = data
 
     const user = await this.verifyTokenOfUser(
       tokenId,
@@ -64,11 +67,54 @@ class Worker {
     )
     const moduleIsEixsted = !!module
     if (!moduleIsEixsted) {
-      const createdResult = await this.services.Module.create(user._id, data)
-      return createdResult
+      const parsedId = moduleIdHelpers.parse(name)
+      if (!parsedId) {
+        throw new Error(`${name} is invalid module id`)
+      }
+
+      const shouldVerifyScope = parsedId && parsedId.scope
+      if (shouldVerifyScope) {
+        const scope = await this.services.Scope.verifyCollaborator(
+          parsedId.scope,
+          user._id,
+          CollaboratorTypes.contributor,
+        )
+      }
+    } else {
+      // Check is version published
+      const versionId = versionHelpers.encode(version)
+      const versionIsExisted = module?.versions?.has(versionId)
+      if (versionIsExisted) {
+        throw new Error(
+          `Module ${name} was published version ${version} before!`,
+        )
+      }
+
+      // Ensure fallback for the new version
+      if (!data.fallback) {
+        const list = Array.from(module?.versions?.keys() || []).map((item) =>
+          versionHelpers.decode(item),
+        )
+
+        if (list.length > 0) {
+          list.push(version)
+        }
+
+        const ordered = versionHelpers.order(list, true)
+        const idxOfFallback = ordered.indexOf(version) + 1
+        data.fallback = ordered[idxOfFallback] || undefined
+      }
     }
 
-    const publishedResult = await this.services.Module.publish(user._id, data)
+    const resolved = await ensureVersionResources(resolve)
+    const transformed = {
+      ...data,
+      resolve: resolved as any,
+    }
+
+    const publishedResult = !moduleIsEixsted
+      ? await this.services.Module.create(user._id, transformed)
+      : await this.services.Module.addVersion(user._id, transformed)
     return publishedResult
   }
   async unpublishModule() {}

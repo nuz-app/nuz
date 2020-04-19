@@ -14,8 +14,10 @@ const onRoute = (fn: RouteHandler) => async (
   try {
     return await fn(request, response, next)
   } catch (error) {
+    console.log({ error })
     return response.status(500).json({
       error: {
+        code: error.code,
         message: error.message,
       },
     })

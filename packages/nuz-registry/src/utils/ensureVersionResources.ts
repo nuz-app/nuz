@@ -1,18 +1,19 @@
 import { integrityHelpers } from '@nuz/utils'
 
-import { PublishInfo } from '../types'
+import { VersionInfo } from '../types'
 
 const getOrVerifyIntegrity = async (
-  item: string | { url: string; integrity: string },
+  item: string | { url: string; integrity: string | null },
 ) => {
-  const isVerify = typeof item === 'object'
+  const isObject = typeof item === 'object'
   const itemUrl = (item as any).url
   const itemIntegrity = (item as any).integrity
 
-  const url = isVerify ? itemUrl : item
+  const url = isObject ? itemUrl : item
   const integrity = (await integrityHelpers.url(url)) as string
 
-  const integrityIsNotMatched = isVerify && integrity !== itemIntegrity
+  const integrityIsNotMatched =
+    isObject && itemIntegrity && integrity !== itemIntegrity
   if (integrityIsNotMatched) {
     throw new Error(
       `Integrity of resource is not matched. Expected: "${itemIntegrity}" but received "${integrity}"!`,
@@ -25,16 +26,7 @@ const getOrVerifyIntegrity = async (
   }
 }
 
-const ensureVersion = async ({
-  version,
-  library,
-  alias,
-  exportsOnly,
-  resolve: _resolve,
-}: Pick<
-  PublishInfo,
-  'version' | 'library' | 'alias' | 'exportsOnly' | 'resolve'
->) => {
+const ensureVersionResources = async (_resolve: VersionInfo['resolve']) => {
   const urls = [_resolve.main, ...(_resolve.styles || [])].filter(Boolean)
   const promises = urls.map(getOrVerifyIntegrity)
   const [main, ...styles] = await Promise.all(promises.filter(Boolean))
@@ -43,13 +35,7 @@ const ensureVersion = async ({
     styles: styles.length > 0 ? styles : undefined,
   }
 
-  return {
-    version,
-    library,
-    alias,
-    exportsOnly,
-    resolve,
-  }
+  return resolve
 }
 
-export default ensureVersion
+export default ensureVersionResources
