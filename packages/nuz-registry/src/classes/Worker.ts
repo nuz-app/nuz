@@ -6,13 +6,14 @@ import {
   CollaboratorTypes,
   CompositionId,
   CreateCompositionData,
+  CreateScopeData,
   CreateUserData,
   Models,
   ModuleAsObject,
   ModuleId,
   MongoOptions,
   PublishModuleData,
-  RequiredModule,
+  ScopeId,
   TokenId,
   UpdateUserData,
   UserAccessTokenTypes,
@@ -62,11 +63,13 @@ class Worker {
       false,
     )
     const moduleIsEixsted = !!module
+    if (!moduleIsEixsted) {
+      const createdResult = await this.services.Module.create(user._id, data)
+      return createdResult
+    }
 
-    const result = !moduleIsEixsted
-      ? await this.services.Module.create(user._id, data)
-      : await this.services.Module.publish(user._id, data)
-    return result
+    const publishedResult = await this.services.Module.publish(user._id, data)
+    return publishedResult
   }
   async unpublishModule() {}
   async deprecateModule() {}
@@ -321,6 +324,116 @@ class Worker {
       moduleIds,
     )
     return result
+  }
+
+  /**
+   * Create a scope
+   */
+  async createScope(tokenId: TokenId, data: CreateScopeData) {
+    const { name } = data
+
+    const user = await this.verifyTokenOfUser(
+      tokenId,
+      UserAccessTokenTypes.fullAccess,
+    )
+
+    const result = await this.services.Scope.create(user._id, {
+      name,
+    })
+    return pick(result, ['_id', 'name', 'modules'])
+  }
+
+  /**
+   * Delete a scope
+   */
+  async deleteScope(tokenId: TokenId, scopeId: ScopeId) {
+    throw new Error(`Scope can't be deleted by policy`)
+    // const user = await this.verifyTokenOfUser(
+    //   tokenId,
+    //   UserAccessTokenTypes.fullAccess,
+    // )
+
+    // const scope = await this.verifyCollaboratorOfScope(
+    //   scopeId,
+    //   user._id,
+    //   CollaboratorTypes.maintainer,
+    // )
+
+    // const isNewScope = checkIsNewScope(scope.createdAt)
+    // if (!isNewScope) {
+    //   throw new Error(`Scope can't be deleted by policy`)
+    // }
+
+    // const result = await this.services.Scope.delete(scope._id)
+    // return result
+  }
+
+  /**
+   * Verify collaborator of the scope
+   */
+  async verifyCollaboratorOfScope(
+    scopeId: ScopeId,
+    userId: UserId,
+    requiredType: CollaboratorTypes,
+  ) {
+    const result = await this.services.Scope.verifyCollaborator(
+      scopeId,
+      userId,
+      requiredType,
+    )
+    return result
+  }
+
+  /**
+   * Add collaborator to the scope
+   */
+  async addCollaboratorToScope(
+    tokenId: TokenId,
+    scopeId: ScopeId,
+    collaborator: AddCollaboratorData,
+  ) {
+    const user = await this.verifyTokenOfUser(
+      tokenId,
+      UserAccessTokenTypes.fullAccess,
+    )
+
+    const scope = await this.verifyCollaboratorOfScope(
+      scopeId,
+      user._id,
+      CollaboratorTypes.maintainer,
+    )
+
+    const reuslt = await this.services.Scope.addCollaborator(
+      scope._id,
+      collaborator,
+    )
+    return reuslt
+  }
+
+  /**
+   * Remove collaborator from the scope
+   */
+  async removeCollaboratorFromScope(
+    tokenId: TokenId,
+    scopeId: ScopeId,
+    collaboratorId: UserId,
+  ) {
+    const user = await this.verifyTokenOfUser(
+      tokenId,
+      UserAccessTokenTypes.fullAccess,
+    )
+
+    const scope = await this.verifyCollaboratorOfScope(
+      scopeId,
+      user._id,
+      CollaboratorTypes.maintainer,
+    )
+
+    const reuslt = await this.services.Scope.removeCollaborator(
+      scope._id,
+      collaboratorId,
+    )
+    return reuslt
   }
 }
 

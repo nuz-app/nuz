@@ -28,6 +28,21 @@ export interface ModuleDocument extends Document, ModuleModel {
 }
 
 /**
+ * Scope
+ */
+
+export interface ScopeModel {
+  name: string
+  collaborators: Collaborator[]
+}
+
+export interface ScopeDocument extends Document, ScopeModel {
+  _id: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+/**
  * User
  */
 
@@ -77,4 +92,5 @@ export interface Models {
   User: Model<UserDocument>
   Module: Model<ModuleDocument>
   Composition: Model<CompositionDocument>
+  Scope: Model<ScopeDocument>
 }

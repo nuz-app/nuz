@@ -15,7 +15,7 @@ import {
 
 import * as collaboratorTypesHelpers from '../utils/collaboratorTypesHelpers'
 import compareObjectId from '../utils/compareObjectId'
-import validateModuleId from '../utils/validateModuleId'
+import * as moduleIdHelpers from '../utils/moduleIdHelpers'
 import * as versionHelpers from '../utils/versionHelpers'
 
 class Composition {
@@ -28,7 +28,7 @@ class Composition {
     }))
 
     for (const item of modules) {
-      if (!validateModuleId(item.id)) {
+      if (!moduleIdHelpers.validate(item.id)) {
         throw new Error(`${item.id} is invalid module id`)
       }
 

@@ -14,6 +14,11 @@ import * as deleteComposition from './deleteComposition'
 import * as removeCollaboratorFromComposition from './removeCollaboratorFromComposition'
 import * as removeModulesFromComposition from './removeModulesFromComposition'
 
+import * as addCollaboratorToScope from './addCollaboratorToScope'
+import * as createScope from './createScope'
+import * as deleteScope from './deleteScope'
+import * as removeCollaboratorFromScope from './removeCollaboratorFromScope'
+
 export default [
   health,
 
@@ -28,4 +33,9 @@ export default [
   removeCollaboratorFromComposition,
   addModulesToComposition,
   removeModulesFromComposition,
+
+  createScope,
+  deleteScope,
+  addCollaboratorToScope,
+  removeCollaboratorFromScope,
 ]
