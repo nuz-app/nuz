@@ -75,7 +75,7 @@ class Worker {
 
       const shouldVerifyScope = parsedId && parsedId.scope
       if (shouldVerifyScope) {
-        const scope = await this.services.Scope.verifyCollaborator(
+        const scope = await this.verifyCollaboratorOfScope(
           parsedId.scope,
           user._id,
           CollaboratorTypes.contributor,
@@ -93,9 +93,9 @@ class Worker {
 
       // Ensure fallback for the new version
       if (!data.fallback) {
-        const list = Array.from(module?.versions?.keys() || []).map((item) =>
-          versionHelpers.decode(item),
-        )
+        const list = Array.from<string>(
+          module?.versions?.keys() || [],
+        ).map((item) => versionHelpers.decode(item))
 
         if (list.length > 0) {
           list.push(version)
@@ -131,11 +131,14 @@ class Worker {
     requiredType: CollaboratorTypes,
     throwIfNotFound?: boolean,
   ) {
+    const fields = { _id: 1, name: 1, collaborators: 1, versions: 1 }
     const result = await this.services.Module.verifyCollaborator(
-      moduleId,
-      userId,
-      requiredType,
-      throwIfNotFound,
+      {
+        id: moduleId,
+        userId,
+        requiredType,
+      },
+      { throwIfNotFound, fields },
     )
     return result
   }
@@ -304,11 +307,11 @@ class Worker {
     userId: UserId,
     requiredType: CollaboratorTypes,
   ) {
-    const result = await this.services.Composition.verifyCollaborator(
-      compositionId,
+    const result = await this.services.Composition.verifyCollaborator({
+      id: compositionId,
       userId,
       requiredType,
-    )
+    })
     return result
   }
 
@@ -472,11 +475,11 @@ class Worker {
     userId: UserId,
     requiredType: CollaboratorTypes,
   ) {
-    const result = await this.services.Scope.verifyCollaborator(
-      scopeId,
+    const result = await this.services.Scope.verifyCollaborator({
+      id: scopeId,
       userId,
       requiredType,
-    )
+    })
     return result
   }
 
