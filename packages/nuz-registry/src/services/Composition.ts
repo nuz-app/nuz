@@ -22,7 +22,7 @@ class Composition extends Service<CompositionId> {
     super(Collection)
   }
 
-  convertModulesToList(modulesAsObject: ModuleAsObject) {
+  convertModulesToArray(modulesAsObject: ModuleAsObject) {
     const modules = Object.entries(modulesAsObject).map(([id, version]) => ({
       id,
       version,

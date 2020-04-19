@@ -24,6 +24,7 @@ import {
 import { createModels } from '../models'
 import { createServices, Services } from '../services'
 
+import checkIsCollaboratorIncludes from 'src/utils/checkIsCollaboratorIncludes'
 import checkIsNewComposition from '../utils/checkIsNewComposition'
 import createMongoConnection from '../utils/createMongoConnection'
 import ensureVersionResources from '../utils/ensureVersionResources'
@@ -161,6 +162,14 @@ class Worker {
       CollaboratorTypes.maintainer,
     )) as ModuleDocument
 
+    const found = checkIsCollaboratorIncludes(
+      module.collaborators,
+      collaborator.id,
+    )
+    if (found) {
+      throw new Error('Collaborator is existed in Module')
+    }
+
     const reuslt = await this.services.Module.addCollaborator(
       module._id,
       collaborator,
@@ -259,7 +268,7 @@ class Worker {
   async createComposition(tokenId: TokenId, data: CreateCompositionData) {
     const { name, modules: modulesAsObject } = data
 
-    const modules = this.services.Composition.convertModulesToList(
+    const modules = this.services.Composition.convertModulesToArray(
       modulesAsObject,
     )
 
@@ -334,6 +343,14 @@ class Worker {
       CollaboratorTypes.maintainer,
     )
 
+    const found = checkIsCollaboratorIncludes(
+      composition.collaborators,
+      collaborator.id,
+    )
+    if (found) {
+      throw new Error('Collaborator is existed in Composition')
+    }
+
     const reuslt = await this.services.Composition.addCollaborator(
       composition._id,
       collaborator,
@@ -375,7 +392,7 @@ class Worker {
     compositionId: CompositionId,
     modulesAsObject: ModuleAsObject,
   ) {
-    const modules = this.services.Composition.convertModulesToList(
+    const modules = this.services.Composition.convertModulesToArray(
       modulesAsObject,
     )
 
@@ -501,6 +518,14 @@ class Worker {
       user._id,
       CollaboratorTypes.maintainer,
     )
+
+    const found = checkIsCollaboratorIncludes(
+      scope.collaborators,
+      collaborator.id,
+    )
+    if (found) {
+      throw new Error('Collaborator is existed in Scope')
+    }
 
     const reuslt = await this.services.Scope.addCollaborator(
       scope._id,
