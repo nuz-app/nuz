@@ -23,6 +23,7 @@ export interface Collaborator {
 export type TObjectId = Types.ObjectId
 
 export type CompositionId = string
+export type ScopeId = string
 export type ModuleId = string
 export type UserId = TObjectId
 export type TokenId = string

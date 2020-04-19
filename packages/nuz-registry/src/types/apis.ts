@@ -20,6 +20,10 @@ export interface CreateCompositionData {
   modules: ModuleAsObject
 }
 
+export interface CreateScopeData {
+  name: string
+}
+
 export interface AddCollaboratorData {
   id: TObjectId
   type: CollaboratorTypes
