@@ -9,6 +9,7 @@ import {
 
 import * as collaboratorTypesHelpers from '../utils/collaboratorTypesHelpers'
 import compareObjectId from '../utils/compareObjectId'
+import * as versionHelpers from '../utils/versionHelpers'
 
 class Module {
   constructor(private readonly Collection: Models['Module']) {}
@@ -37,9 +38,11 @@ class Module {
       exportsOnly,
       alias,
       fallback,
+      publisher: userId,
     }
 
-    const versions = new Map([[version, versionInfo]])
+    const versionId = versionHelpers.encode(versionInfo.version)
+    const versions = new Map([[versionId, versionInfo]])
     const tags = new Map([[LASTEST_TAG, version]])
 
     const module = new this.Collection({
@@ -62,7 +65,44 @@ class Module {
     return module
   }
 
-  async publish(userId: UserId, data: PublishModuleData) {}
+  async addVersion(userId: UserId, data: PublishModuleData) {
+    const {
+      name,
+      version,
+      library,
+      format,
+      resolve,
+      exportsOnly,
+      alias,
+      fallback,
+    } = data
+
+    const versionInfo = {
+      name,
+      version,
+      library,
+      format,
+      resolve,
+      exportsOnly,
+      alias,
+      fallback,
+      publisher: userId,
+    }
+
+    const versionId = versionHelpers.encode(versionInfo.version)
+
+    const result = await this.Collection.updateOne(
+      { _id: name },
+      {
+        $set: {
+          [`versions.${versionId}`]: versionInfo,
+          [`tags.${LASTEST_TAG}`]: version,
+        },
+      },
+    )
+    console.log({ result })
+    return { _id: name }
+  }
 
   async verifyCollaborator(
     id: ModuleId,
@@ -74,7 +114,7 @@ class Module {
       {
         _id: id,
       },
-      { name: 1, collaborators: 1, createdAt: 1 },
+      { name: 1, collaborators: 1, createdAt: 1, versions: 1 },
     )
     if (!module) {
       if (throwIfNotFound) {
