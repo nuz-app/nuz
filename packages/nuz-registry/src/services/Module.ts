@@ -1,6 +1,5 @@
 import { LASTEST_TAG, MONGOOSE_ERROR_CODES } from '../lib/const'
 import {
-  AddCollaboratorData,
   CollaboratorTypes,
   Models,
   ModuleId,
@@ -8,12 +7,14 @@ import {
   UserId,
 } from '../types'
 
-import * as collaboratorTypesHelpers from '../utils/collaboratorTypesHelpers'
-import compareObjectId from '../utils/compareObjectId'
 import * as versionHelpers from '../utils/versionHelpers'
 
-class Module {
-  constructor(private readonly Collection: Models['Module']) {}
+import Service from './Service'
+
+class Module extends Service<ModuleId> {
+  constructor(readonly Collection: Models['Module']) {
+    super(Collection)
+  }
 
   async create(userId: UserId, data: PublishModuleData) {
     const {
@@ -103,70 +104,6 @@ class Module {
     )
     console.log({ result })
     return { _id: name }
-  }
-
-  async verifyCollaborator(
-    id: ModuleId,
-    userId: UserId,
-    requiredType: CollaboratorTypes,
-    throwIfNotFound: boolean = true,
-  ) {
-    const module = await this.Collection.findOne(
-      {
-        _id: id,
-      },
-      { name: 1, collaborators: 1, createdAt: 1, versions: 1 },
-    )
-    if (!module) {
-      if (throwIfNotFound) {
-        throw new Error('Module is not found')
-      }
-
-      return null
-    }
-
-    const collaborator = module.collaborators.find((item) =>
-      compareObjectId(item.id, userId),
-    )
-    if (!collaborator) {
-      throw new Error('User does not include collaborators of module')
-    }
-
-    const permissionIsDenied = !collaboratorTypesHelpers.verify(
-      collaborator.type,
-      requiredType,
-    )
-    if (permissionIsDenied) {
-      throw new Error('Permission denied')
-    }
-
-    return module
-  }
-
-  async addCollaborator(id: ModuleId, collaborator: AddCollaboratorData) {
-    const { ok, nModified: mofitied } = await this.Collection.updateOne(
-      { _id: id },
-      { $addToSet: { collaborators: collaborator } },
-    )
-
-    if (mofitied === 0) {
-      throw new Error('Scope is not found')
-    }
-
-    return { _id: id, mofitied, ok, collaborator }
-  }
-
-  async removeCollaborator(id: ModuleId, collaboratorId: UserId) {
-    const { ok, nModified: mofitied } = await this.Collection.updateOne(
-      { _id: id },
-      { $pull: { collaborators: { id: collaboratorId } } },
-    )
-
-    if (mofitied === 0) {
-      throw new Error('Scope is not found')
-    }
-
-    return { _id: id, mofitied, ok }
   }
 }
 
