@@ -10,9 +10,18 @@ import {
 
 import * as collaboratorTypesHelpers from '../utils/collaboratorTypesHelpers'
 import compareObjectId from '../utils/compareObjectId'
+import * as scopeIdHelpers from '../utils/scopeIdHelpers'
 
 class Scope {
   constructor(private readonly Collection: Models['Scope']) {}
+
+  validateScopeId(id: string) {
+    if (!scopeIdHelpers.validate(id)) {
+      throw new Error(`${id} is invalid scope id`)
+    }
+
+    return id
+  }
 
   async create(userId: UserId, data: CreateScopeData) {
     const { name } = data
