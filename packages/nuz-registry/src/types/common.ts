@@ -16,7 +16,7 @@ export enum CollaboratorTypes {
 }
 
 export interface Collaborator {
-  id: Types.ObjectId
+  id: TObjectId
   type: CollaboratorTypes
 }
 
