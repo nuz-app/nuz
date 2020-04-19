@@ -4,7 +4,8 @@
   "version": "0.2.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lamhieu-vk/nuz.git"
+    "url": "https://github.com/lamhieu-vk/nuz.git",
+    "directory": "packages/nuz-utils"
   },
   "license": "MIT",
   "publishConfig": {
