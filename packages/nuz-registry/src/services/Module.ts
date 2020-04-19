@@ -1,5 +1,6 @@
 import { LASTEST_TAG, MONGOOSE_ERROR_CODES } from '../lib/const'
 import {
+  AddCollaboratorData,
   CollaboratorTypes,
   Models,
   ModuleId,
@@ -140,6 +141,32 @@ class Module {
     }
 
     return module
+  }
+
+  async addCollaborator(id: ModuleId, collaborator: AddCollaboratorData) {
+    const { ok, nModified: mofitied } = await this.Collection.updateOne(
+      { _id: id },
+      { $addToSet: { collaborators: collaborator } },
+    )
+
+    if (mofitied === 0) {
+      throw new Error('Scope is not found')
+    }
+
+    return { _id: id, mofitied, ok, collaborator }
+  }
+
+  async removeCollaborator(id: ModuleId, collaboratorId: UserId) {
+    const { ok, nModified: mofitied } = await this.Collection.updateOne(
+      { _id: id },
+      { $pull: { collaborators: { id: collaboratorId } } },
+    )
+
+    if (mofitied === 0) {
+      throw new Error('Scope is not found')
+    }
+
+    return { _id: id, mofitied, ok }
   }
 }
 

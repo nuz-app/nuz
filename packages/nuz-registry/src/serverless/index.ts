@@ -19,7 +19,9 @@ import * as createScope from './createScope'
 import * as deleteScope from './deleteScope'
 import * as removeCollaboratorFromScope from './removeCollaboratorFromScope'
 
+import * as addCollaboratorToModule from './addCollaboratorToModule'
 import * as publishModule from './publishModule'
+import * as removeCollaboratorFromModule from './removeCollaboratorFromModule'
 
 export default [
   health,
@@ -42,4 +44,6 @@ export default [
   removeCollaboratorFromScope,
 
   publishModule,
+  addCollaboratorToModule,
+  removeCollaboratorFromModule,
 ]

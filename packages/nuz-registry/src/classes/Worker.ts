@@ -10,6 +10,7 @@ import {
   CreateUserData,
   Models,
   ModuleAsObject,
+  ModuleDocument,
   ModuleId,
   MongoOptions,
   PublishModuleData,
@@ -128,7 +129,7 @@ class Worker {
     moduleId: ModuleId,
     userId: UserId,
     requiredType: CollaboratorTypes,
-    throwIfNotFound: boolean,
+    throwIfNotFound?: boolean,
   ) {
     const result = await this.services.Module.verifyCollaborator(
       moduleId,
@@ -138,8 +139,57 @@ class Worker {
     )
     return result
   }
-  async addCollaboratorToModule() {}
-  async removeCollaboratorToModule() {}
+  /**
+   * Add collaborator to the module
+   */
+  async addCollaboratorToModule(
+    tokenId: TokenId,
+    moduleId: ModuleId,
+    collaborator: AddCollaboratorData,
+  ) {
+    const user = await this.verifyTokenOfUser(
+      tokenId,
+      UserAccessTokenTypes.fullAccess,
+    )
+
+    const module = (await this.verifyCollaboratorOfModule(
+      moduleId,
+      user._id,
+      CollaboratorTypes.maintainer,
+    )) as ModuleDocument
+
+    const reuslt = await this.services.Module.addCollaborator(
+      module._id,
+      collaborator,
+    )
+    return reuslt
+  }
+
+  /**
+   * Remove collaborator from the module
+   */
+  async removeCollaboratorFromModule(
+    tokenId: TokenId,
+    moduleId: ModuleId,
+    collaboratorId: UserId,
+  ) {
+    const user = await this.verifyTokenOfUser(
+      tokenId,
+      UserAccessTokenTypes.fullAccess,
+    )
+
+    const module = (await this.verifyCollaboratorOfModule(
+      moduleId,
+      user._id,
+      CollaboratorTypes.maintainer,
+    )) as ModuleDocument
+
+    const reuslt = await this.services.Module.removeCollaborator(
+      module._id,
+      collaboratorId,
+    )
+    return reuslt
+  }
 
   /**
    * Create a user
