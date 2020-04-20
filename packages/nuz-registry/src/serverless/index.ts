@@ -22,6 +22,7 @@ import * as removeCollaboratorFromScope from './removeCollaboratorFromScope'
 import * as updateCollaboratorOfScope from './updateCollaboratorOfScope'
 
 import * as addCollaboratorToModule from './addCollaboratorToModule'
+import * as deprecateModule from './deprecateModule'
 import * as publishModule from './publishModule'
 import * as removeCollaboratorFromModule from './removeCollaboratorFromModule'
 import * as updateCollaboratorOfModule from './updateCollaboratorOfModule'
@@ -49,6 +50,7 @@ export default [
   updateCollaboratorOfScope,
 
   publishModule,
+  deprecateModule,
   addCollaboratorToModule,
   removeCollaboratorFromModule,
   updateCollaboratorOfModule,
