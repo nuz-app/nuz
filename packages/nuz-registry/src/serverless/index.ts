@@ -8,11 +8,11 @@ import * as deleteTokenFromUser from './deleteTokenFromUser'
 import * as updateUser from './updateUser'
 
 import * as addCollaboratorToComposition from './addCollaboratorToComposition'
-import * as addModulesToComposition from './addModulesToComposition'
 import * as createComposition from './createComposition'
 import * as deleteComposition from './deleteComposition'
 import * as removeCollaboratorFromComposition from './removeCollaboratorFromComposition'
 import * as removeModulesFromComposition from './removeModulesFromComposition'
+import * as setModulesForComposition from './setModulesForComposition'
 import * as updateCollaboratorOfComposition from './updateCollaboratorOfComposition'
 
 import * as addCollaboratorToScope from './addCollaboratorToScope'
@@ -39,7 +39,7 @@ export default [
   deleteComposition,
   addCollaboratorToComposition,
   removeCollaboratorFromComposition,
-  addModulesToComposition,
+  setModulesForComposition,
   removeModulesFromComposition,
   updateCollaboratorOfComposition,
 

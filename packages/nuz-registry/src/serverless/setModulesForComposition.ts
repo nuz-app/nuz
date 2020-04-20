@@ -6,10 +6,10 @@ import onRoute from '../utils/onRoute'
 
 import { ServerlessRoute } from './types'
 
-export const name = 'addModulesToComposition'
+export const name = 'setModulesForComposition'
 
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
-  app.post(
+  app.put(
     '/composition/modules',
     onRoute(async (request, response) => {
       const { token, composition, modules: moduleAsObject } = request.body
@@ -24,7 +24,7 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
         throw new Error('Modules is invalid')
       }
 
-      const item = await worker.addModulesToComposition(
+      const item = await worker.setModulesForComposition(
         token,
         composition,
         moduleAsObject,
