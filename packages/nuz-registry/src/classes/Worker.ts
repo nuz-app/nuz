@@ -24,6 +24,7 @@ import {
 import { createModels } from '../models'
 import { createServices, Services } from '../services'
 
+import checkIsCollaboratorAllowSet from 'src/utils/checkIsCollaboratorAllowSet'
 import checkIsCollaboratorIncludes from 'src/utils/checkIsCollaboratorIncludes'
 import checkIsNewComposition from '../utils/checkIsNewComposition'
 import createMongoConnection from '../utils/createMongoConnection'
@@ -143,6 +144,7 @@ class Worker {
     )
     return result
   }
+
   /**
    * Add collaborator to the module
    */
@@ -167,12 +169,56 @@ class Worker {
       collaborator.id,
     )
     if (found) {
-      throw new Error('Collaborator is existed in Module')
+      throw new Error('Collaborator already exists in the Module')
     }
 
     const reuslt = await this.services.Module.addCollaborator(
       module._id,
       collaborator,
+    )
+    return reuslt
+  }
+
+  /**
+   * Update collaborator of the module
+   */
+  async updateCollaboratorOfModule(
+    tokenId: TokenId,
+    moduleId: ModuleId,
+    collaborator: AddCollaboratorData,
+  ) {
+    const user = await this.verifyTokenOfUser(
+      tokenId,
+      UserAccessTokenTypes.fullAccess,
+    )
+
+    const module = (await this.verifyCollaboratorOfModule(
+      moduleId,
+      user._id,
+      CollaboratorTypes.maintainer,
+    )) as ModuleDocument
+
+    const isAllowToSet = checkIsCollaboratorAllowSet(
+      module.collaborators,
+      user._id,
+      collaborator.type,
+    )
+    if (!isAllowToSet) {
+      throw new Error('Permission denied')
+    }
+
+    const found = checkIsCollaboratorIncludes(
+      module.collaborators,
+      collaborator.id,
+    )
+    if (!found) {
+      throw new Error('Collaborator not exists in the Module')
+    }
+
+    const reuslt = await this.services.Module.updateCollaborator(
+      module._id,
+      collaborator.id,
+      collaborator.type,
     )
     return reuslt
   }
@@ -348,12 +394,56 @@ class Worker {
       collaborator.id,
     )
     if (found) {
-      throw new Error('Collaborator is existed in Composition')
+      throw new Error('Collaborator already exists in the Composition')
     }
 
     const reuslt = await this.services.Composition.addCollaborator(
       composition._id,
       collaborator,
+    )
+    return reuslt
+  }
+
+  /**
+   * Update collaborator of the composition
+   */
+  async updateCollaboratorOfComposition(
+    tokenId: TokenId,
+    compositionId: CompositionId,
+    collaborator: AddCollaboratorData,
+  ) {
+    const user = await this.verifyTokenOfUser(
+      tokenId,
+      UserAccessTokenTypes.fullAccess,
+    )
+
+    const composition = await this.verifyCollaboratorOfComposition(
+      compositionId,
+      user._id,
+      CollaboratorTypes.maintainer,
+    )
+
+    const isAllowToSet = checkIsCollaboratorAllowSet(
+      composition.collaborators,
+      user._id,
+      collaborator.type,
+    )
+    if (!isAllowToSet) {
+      throw new Error('Permission denied')
+    }
+
+    const found = checkIsCollaboratorIncludes(
+      composition.collaborators,
+      collaborator.id,
+    )
+    if (!found) {
+      throw new Error('Collaborator not exists in the Composition')
+    }
+
+    const reuslt = await this.services.Composition.updateCollaborator(
+      composition._id,
+      collaborator.id,
+      collaborator.type,
     )
     return reuslt
   }
@@ -464,24 +554,6 @@ class Worker {
    */
   async deleteScope(tokenId: TokenId, scopeId: ScopeId) {
     throw new Error(`Scope can't be deleted by policy`)
-    // const user = await this.verifyTokenOfUser(
-    //   tokenId,
-    //   UserAccessTokenTypes.fullAccess,
-    // )
-
-    // const scope = await this.verifyCollaboratorOfScope(
-    //   scopeId,
-    //   user._id,
-    //   CollaboratorTypes.maintainer,
-    // )
-
-    // const isNewScope = checkIsNewScope(scope.createdAt)
-    // if (!isNewScope) {
-    //   throw new Error(`Scope can't be deleted by policy`)
-    // }
-
-    // const result = await this.services.Scope.delete(scope._id)
-    // return result
   }
 
   /**
@@ -524,12 +596,56 @@ class Worker {
       collaborator.id,
     )
     if (found) {
-      throw new Error('Collaborator is existed in Scope')
+      throw new Error('Collaborator already exists in the Scope')
     }
 
     const reuslt = await this.services.Scope.addCollaborator(
       scope._id,
       collaborator,
+    )
+    return reuslt
+  }
+
+  /**
+   * Update collaborator of the scope
+   */
+  async updateCollaboratorOfScope(
+    tokenId: TokenId,
+    scopeId: ScopeId,
+    collaborator: AddCollaboratorData,
+  ) {
+    const user = await this.verifyTokenOfUser(
+      tokenId,
+      UserAccessTokenTypes.fullAccess,
+    )
+
+    const scope = await this.verifyCollaboratorOfScope(
+      scopeId,
+      user._id,
+      CollaboratorTypes.maintainer,
+    )
+
+    const isAllowToSet = checkIsCollaboratorAllowSet(
+      scope.collaborators,
+      user._id,
+      collaborator.type,
+    )
+    if (!isAllowToSet) {
+      throw new Error('Permission denied')
+    }
+
+    const found = checkIsCollaboratorIncludes(
+      scope.collaborators,
+      collaborator.id,
+    )
+    if (!found) {
+      throw new Error('Collaborator not exists in the Scope')
+    }
+
+    const reuslt = await this.services.Scope.updateCollaborator(
+      scope._id,
+      collaborator.id,
+      collaborator.type,
     )
     return reuslt
   }

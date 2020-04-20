@@ -61,30 +61,43 @@ class Service<T> {
   }
 
   async addCollaborator(id: T, collaborator: AddCollaboratorData) {
-    const modelName = this.Collection.modelName
-
     const { ok, nModified: mofitied } = await this.Collection.updateOne(
       { _id: id },
       { $addToSet: { collaborators: collaborator } },
     )
 
     if (mofitied === 0) {
-      throw new Error(`${modelName} is not found`)
+      throw new Error('There was an error during the update process')
     }
 
     return { _id: id, mofitied, ok, collaborator }
   }
 
   async removeCollaborator(id: T, collaboratorId: UserId) {
-    const modelName = this.Collection.modelName
-
     const { ok, nModified: mofitied } = await this.Collection.updateOne(
       { _id: id },
       { $pull: { collaborators: { id: collaboratorId } } },
     )
 
     if (mofitied === 0) {
-      throw new Error(`${modelName} is not found`)
+      throw new Error('There was an error during the update process')
+    }
+
+    return { _id: id, mofitied, ok }
+  }
+
+  async updateCollaborator(
+    id: T,
+    collaboratorId: UserId,
+    collaboratorType: CollaboratorTypes,
+  ) {
+    const { ok, nModified: mofitied } = await this.Collection.updateOne(
+      { _id: id, 'collaborators.id': collaboratorId },
+      { $set: { 'collaborators.$.type': collaboratorType } },
+    )
+
+    if (mofitied === 0) {
+      throw new Error('There was an error during the update process')
     }
 
     return { _id: id, mofitied, ok }
