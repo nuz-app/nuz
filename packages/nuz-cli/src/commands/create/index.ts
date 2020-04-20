@@ -1,6 +1,4 @@
-import * as yargs from 'yargs'
-
-import { CommandConfig, CommandTypes, CreateCommand } from '../../types/common'
+import { Arguments } from 'yargs'
 
 import checkIsOnline from '../../utils/checkIsOnline'
 import checkIsTemplateExisted from '../../utils/checkIsTemplateExisted'
@@ -24,9 +22,8 @@ import updatePackageJson from './updatePackageJson'
 
 const execute = async ({
   name: _name,
-  // @ts-ignore
   template: _template,
-}: yargs.Argv<CreateCommand>) => {
+}: Arguments<{ name: string; template: string }>) => {
   const isOnline = await checkIsOnline()
   if (!isOnline) {
     logs.networkNotAvailable()
@@ -107,24 +104,22 @@ const execute = async ({
   return true
 }
 
-const config: CommandConfig = {
-  type: CommandTypes.create,
-  description: 'Create a module in the Micro Frontends project',
-  transform: (yarg) =>
-    yarg
-      .option('name', {
-        alias: 'n',
-        describe: 'Module name',
-        type: 'string',
-        required: false,
-      })
-      .option('template', {
-        alias: 't',
-        describe: 'Module template',
-        type: 'string',
-        required: false,
-      }),
-  execute,
+export const setCommands = (yargs) => {
+  yargs.command(
+    'create',
+    'Create new module',
+    (yarg) =>
+      yarg
+        .option('name', {
+          describe: 'Module name',
+          type: 'string',
+          required: false,
+        })
+        .option('template', {
+          describe: 'Module template',
+          type: 'string',
+          required: false,
+        }),
+    execute,
+  )
 }
-
-export default config

@@ -1,9 +1,6 @@
 import { integrityHelpers } from '@nuz/utils'
 import path from 'path'
 import webpack from 'webpack'
-import * as yargs from 'yargs'
-
-import { BuildCommand, CommandConfig, CommandTypes } from '../../types'
 
 import clearConsole from '../../utils/clearConsole'
 import * as configHelpers from '../../utils/configHelpers'
@@ -17,8 +14,8 @@ import webpackConfigFactory from '../../utils/webpackConfigFactory'
 
 import * as logs from './logs'
 
-// @ts-ignore
-const execute = async ({ clean }: yargs.Argv<BuildCommand>) => {
+const execute = async () => {
+  const shouldClean = true
   const moduleDir = paths.cwd
 
   const configIsExisted = configHelpers.exists(moduleDir)
@@ -42,7 +39,7 @@ const execute = async ({ clean }: yargs.Argv<BuildCommand>) => {
 
   logs.enableFeatures(featureConfig)
 
-  if (clean) {
+  if (shouldClean) {
     const distPath = path.join(moduleDir, path.dirname(output))
     logs.cleanFolder(distPath)
 
@@ -80,18 +77,6 @@ const execute = async ({ clean }: yargs.Argv<BuildCommand>) => {
   return exit(0)
 }
 
-const config: CommandConfig<{ clean: true }> = {
-  type: CommandTypes.build,
-  description: 'Bundle auto optimized code and minify code size for production',
-  transform: (yarg) =>
-    yarg.option('clean', {
-      alias: 'c',
-      describe: 'Clean dist folder before run build',
-      type: 'number',
-      default: true,
-      required: false,
-    }),
-  execute,
+export const setCommands = (yargs) => {
+  yargs.command('build', 'Bundle with auto optimized', (yarg) => yarg, execute)
 }
-
-export default config

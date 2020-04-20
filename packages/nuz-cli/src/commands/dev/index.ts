@@ -1,7 +1,5 @@
 import path from 'path'
-import * as yargs from 'yargs'
-
-import { CommandConfig, CommandTypes, DevCommand } from '../../types'
+import { Arguments } from 'yargs'
 
 import clearConsole from '../../utils/clearConsole'
 import * as configHelpers from '../../utils/configHelpers'
@@ -17,8 +15,8 @@ import webpackConfigFactory from '../../utils/webpackConfigFactory'
 
 import * as logs from './logs'
 
-// @ts-ignore
-const execute = async ({ port: _port, clean }: yargs.Argv<DevCommand>) => {
+const execute = async ({ port: _port }: Arguments<{ port: number }>) => {
+  const shouldClean = true
   const moduleDir = paths.cwd
 
   const configIsExisted = configHelpers.exists(moduleDir)
@@ -42,7 +40,7 @@ const execute = async ({ port: _port, clean }: yargs.Argv<DevCommand>) => {
   logs.notifyOnStart(name)
 
   logs.enableFeatures(featureConfig)
-  if (clean) {
+  if (shouldClean) {
     const distPath = path.join(moduleDir, path.dirname(output))
     logs.cleanFolder(distPath)
 
@@ -85,25 +83,16 @@ const execute = async ({ port: _port, clean }: yargs.Argv<DevCommand>) => {
   return true
 }
 
-const config: CommandConfig = {
-  type: CommandTypes.dev,
-  description: 'Run standalone development mode',
-  transform: (yarg) =>
-    yarg
-      .option('port', {
-        alias: 'p',
+export const setCommands = (yargs) => {
+  yargs.command(
+    'dev',
+    'Run standalone development mode',
+    (yarg) =>
+      yarg.option('port', {
         describe: 'Set port listen for server',
         type: 'number',
         required: false,
-      })
-      .option('clean', {
-        alias: 'c',
-        describe: 'Clean dist folder before run build',
-        type: 'number',
-        default: true,
-        required: false,
       }),
-  execute,
+    execute,
+  )
 }
-
-export default config
