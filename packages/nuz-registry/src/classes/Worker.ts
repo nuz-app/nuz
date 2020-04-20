@@ -49,6 +49,9 @@ class Worker {
     this.services = createServices(this.models)
   }
 
+  /**
+   * Prepare for worker
+   */
   async prepare() {}
 
   /**
@@ -120,9 +123,62 @@ class Worker {
       : await this.services.Module.addVersion(user._id, transformed)
     return publishedResult
   }
-  async unpublishModule() {}
-  async deprecateModule() {}
+
+  /**
+   * Unpublish a module
+   */
+  async unpublishModule() {
+    throw new Error(`Module can't be unpublish by policy`)
+  }
+
+  /**
+   * Set deprecate for the module
+   */
+  async deprecateModule(
+    tokenId: TokenId,
+    moduleId: ModuleId,
+    version: string,
+    deprecate: string | null,
+  ) {
+    const user = await this.verifyTokenOfUser(
+      tokenId,
+      UserAccessTokenTypes.publish,
+    )
+
+    const module = await this.verifyCollaboratorOfModule(
+      moduleId,
+      user._id,
+      CollaboratorTypes.contributor,
+      false,
+    )
+
+    const versions = Array.from<string>(module.versions.keys()).map((item) =>
+      versionHelpers.decode(item),
+    )
+
+    const satisfies = versionHelpers.getSatisfies(versions, version)
+    if (satisfies.length === 0) {
+      throw new Error(`Not found satisfies version with ${version}`)
+    }
+    console.log({ satisfies })
+
+    const result = this.services.Module.setDeprecate(
+      module._id,
+      satisfies,
+      deprecate,
+    )
+    return result
+  }
+
+  /**
+   * Set a tag for the module
+   */
   async setTagForModule() {}
+
+  /**
+   * Remove a tag for the module
+   */
+  async clearTagForModule() {}
 
   /**
    * Verify collaborator of the module
@@ -133,7 +189,13 @@ class Worker {
     requiredType: CollaboratorTypes,
     throwIfNotFound?: boolean,
   ) {
-    const fields = { _id: 1, name: 1, collaborators: 1, versions: 1 }
+    const fields = {
+      _id: 1,
+      name: 1,
+      collaborators: 1,
+      versions: 1,
+      createdAt: 1,
+    }
     const result = await this.services.Module.verifyCollaborator(
       {
         id: moduleId,

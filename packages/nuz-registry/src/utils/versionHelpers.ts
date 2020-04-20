@@ -1,5 +1,6 @@
 import compare from 'semver/functions/compare'
 import rcompare from 'semver/functions/rcompare'
+import satisfies from 'semver/functions/satisfies'
 import maxSatisfying from 'semver/ranges/max-satisfying'
 import valid from 'semver/ranges/valid'
 
@@ -9,6 +10,9 @@ export const getMaxSatisfying = (
   versions: string[],
   range: string,
 ): string | null => maxSatisfying(versions, range)
+
+export const getSatisfies = (versions: string[], range: string): string[] =>
+  versions.filter((version) => satisfies(version, range))
 
 export const order = (
   versions: string[],
