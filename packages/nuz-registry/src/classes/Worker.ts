@@ -24,8 +24,8 @@ import {
 import { createModels } from '../models'
 import { createServices, Services } from '../services'
 
-import checkIsCollaboratorAllowSet from 'src/utils/checkIsCollaboratorAllowSet'
-import checkIsCollaboratorIncludes from 'src/utils/checkIsCollaboratorIncludes'
+import checkIsCollaboratorAllowSet from '../utils/checkIsCollaboratorAllowSet'
+import checkIsCollaboratorIncludes from '../utils/checkIsCollaboratorIncludes'
 import checkIsNewComposition from '../utils/checkIsNewComposition'
 import createMongoConnection from '../utils/createMongoConnection'
 import ensureVersionResources from '../utils/ensureVersionResources'
@@ -537,9 +537,9 @@ class Worker {
   }
 
   /**
-   * Add the modules to the composition
+   * Set the modules for the composition
    */
-  async addModulesToComposition(
+  async setModulesForComposition(
     tokenId: TokenId,
     compositionId: CompositionId,
     modulesAsObject: ModuleAsObject,
