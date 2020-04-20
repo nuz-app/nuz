@@ -39,9 +39,9 @@ export default [
   deleteComposition,
   addCollaboratorToComposition,
   removeCollaboratorFromComposition,
+  updateCollaboratorOfComposition,
   setModulesForComposition,
   removeModulesFromComposition,
-  updateCollaboratorOfComposition,
 
   createScope,
   deleteScope,
