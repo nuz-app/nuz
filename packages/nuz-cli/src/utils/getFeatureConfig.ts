@@ -30,6 +30,7 @@ const getFeatureConfig = (dir: string, config: ModuleConfig): FeatureConfig => {
       typescript: false,
       react: false,
       css: false,
+      modules: false,
       less: false,
       sass: false,
       postcss: false,
@@ -53,6 +54,7 @@ const getFeatureConfig = (dir: string, config: ModuleConfig): FeatureConfig => {
       (globSyncInDir(`src/**/*{${stylesExtensions.join(',')}}`, dir) || [])
         .length > 0,
   )
+  const useCssModules = useIfOk(options.modules, (): any => 'auto')
 
   const useLess = useIfOk(
     options.less,
@@ -75,6 +77,7 @@ const getFeatureConfig = (dir: string, config: ModuleConfig): FeatureConfig => {
     typescript: useTypescript,
     react: useReact,
     css: useCss,
+    modules: useCssModules,
     less: useLess,
     sass: useSass,
     postcss: usePostCss,

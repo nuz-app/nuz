@@ -11,12 +11,14 @@ export interface StyleLoadersOptions {
   dir: string
   dev: boolean
   feature: Partial<FeatureConfig>
+  modules?: boolean | 'auto' | RegExp
 }
 
 const styleLoadersFactory = ({
   dir,
   dev,
   feature,
+  modules = 'auto',
 }: StyleLoadersOptions): webpack.Loader[] => {
   const resolveInApp = (moduleId: string) => paths.resolveInApp(moduleId, dir)
   const browserslist = getBrowserslist({ dir, dev })
@@ -37,12 +39,19 @@ const styleLoadersFactory = ({
     options: Object.assign(
       {
         importLoaders: 1,
-        modules: {
-          auto: /(\.m(odule)?\.\w+)$/i,
-          localIdentName: dev
-            ? '[name]_[local]-[contenthash:4]'
-            : '[contenthash:8]',
-        },
+        modules: !modules
+          ? false
+          : {
+              auto:
+                modules === true
+                  ? undefined
+                  : modules === 'auto'
+                  ? /(\.m(odule)?\.\w+)$/i
+                  : modules,
+              localIdentName: dev
+                ? '[name]_[local]-[contenthash:4]'
+                : '[contenthash:8]',
+            },
       },
       feature.css,
     ),

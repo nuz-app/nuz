@@ -164,6 +164,7 @@ export interface FeatureConfig {
   postcss: boolean | any
 
   css: boolean | any
+  modules: boolean | RegExp | 'auto'
   sass: boolean | any
   less: boolean | any
 }

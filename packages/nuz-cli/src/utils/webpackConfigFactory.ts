@@ -309,6 +309,7 @@ const webpackConfigFactory = (
       dir,
       dev,
       feature,
+      modules: feature.modules || 'auto',
     })
     const regularStyleRule = ruleFactory(
       regularStyleRegexp,
