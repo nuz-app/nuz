@@ -161,10 +161,10 @@ const webpackConfigFactory = (
     : [...JS_EXTENSIONS, ...JSON_EXTENSIONS]
 
   const cacheDirectories = {
-    bundles: (paths as any).cache('bundles'),
-    babel: (paths as any).cache('babel'),
-    terser: (paths as any).cache('terser'),
-    images: (paths as any).cache('images'),
+    bundles: (paths as any).cacheInApp('bundles'),
+    babel: (paths as any).cacheInApp('babel'),
+    terser: (paths as any).cacheInApp('terser'),
+    images: (paths as any).cacheInApp('images'),
   }
   const cacheConfig = cache
     ? {

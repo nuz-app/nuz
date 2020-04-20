@@ -41,7 +41,7 @@ const execute = async ({
 
   const { name, template, version, library } = answerInfo
 
-  const moduleDir = paths.newApp(name)
+  const moduleDir = paths.newAppInDir(paths.cwd, name)
 
   clearConsole()
   logs.notifyOnStart(name, moduleDir)

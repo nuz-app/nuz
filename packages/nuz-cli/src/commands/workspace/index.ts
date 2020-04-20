@@ -62,7 +62,7 @@ const execute = async ({
   // Create build directory for worksapce
   const publicPath = `${linkedUrl.href}`
 
-  const buildDir = paths.nuz(moduleDir, 'modules')
+  const buildDir = paths.configInDir(moduleDir, 'modules')
   fs.ensureDir(buildDir)
   if (shouldClean) {
     logs.cleanFolder(buildDir)
