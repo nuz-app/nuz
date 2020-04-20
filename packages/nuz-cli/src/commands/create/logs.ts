@@ -1,4 +1,4 @@
-import getCliScript from '../../utils/getCliScript'
+import getCurrentNodeScript from '../../utils/getCurrentNodeScript'
 import print, { error, info, log, success } from '../../utils/print'
 
 export const notifyOnStart = (name: string, dir: string) => {
@@ -60,22 +60,22 @@ export const guide = (name: string, useYarn: boolean) => {
   log()
   log(
     `Starts the development server:`,
-    print.cyan(getCliScript('dev', useYarn)),
+    print.cyan(getCurrentNodeScript('dev', useYarn)),
   )
   log()
   log(
     `Builds the app for production:`,
-    print.cyan(getCliScript('build', useYarn)),
+    print.cyan(getCurrentNodeScript('build', useYarn)),
   )
   log()
   log(
     `File serving and directory listing:`,
-    print.cyan(getCliScript('serve', useYarn)),
+    print.cyan(getCurrentNodeScript('serve', useYarn)),
   )
   log()
   log(
     'We suggest that you begin by typing:',
-    print.cyan(`cd ${name} && ${getCliScript('dev', useYarn)}`),
+    print.cyan(`cd ${name} && ${getCurrentNodeScript('dev', useYarn)}`),
   )
   log()
 }

@@ -7,7 +7,7 @@ import * as fs from '../utils/fs'
 import * as paths from '../utils/paths'
 
 export const get = (dir: string): string => {
-  const matches = glob.sync(paths.config(dir))
+  const matches = glob.sync(paths.configFileInDir(dir))
   const configPath = matches[0]
   return configPath
 }
@@ -15,7 +15,7 @@ export const get = (dir: string): string => {
 export const exists = (dir: string): boolean => !!get(dir)
 
 export const ensure = (dir: string) => {
-  const file = paths.config(dir)
+  const file = paths.configFileInDir(dir)
   const existed = fs.exists(file)
   if (!existed) {
     //

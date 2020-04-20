@@ -30,3 +30,8 @@ export const STATS_FILENAME = 'stats.json'
 export const GITHUB_USERNAME = 'lamhieu-vk'
 export const GITHUB_REPO = 'nuz'
 export const GITHUB_BRANCH = 'master'
+
+export const NUZ_DIRNAME = '.nuz'
+export const NUZ_USERS_DIR = 'users'
+export const NUZ_CONFIG_FILENAME = 'config.json'
+export const NUZ_AUTH_FILENAME = 'auth.json'

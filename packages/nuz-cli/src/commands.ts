@@ -7,7 +7,7 @@ import * as publish from './commands/publish'
 import * as serve from './commands/serve'
 import * as workspace from './commands/workspace'
 
-export const setCommands = (yargs: Argv) => {
+export const setCommands = async (yargs: Argv) => {
   build.setCommands(yargs)
   create.setCommands(yargs)
   dev.setCommands(yargs)
