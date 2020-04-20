@@ -65,7 +65,7 @@ Run standalone development mode.
 
 #### `nuz build`
 
-Bundle auto optimized code and minify code size for production.
+Bundle with auto optimized.
 
 #### `nuz serve`
 

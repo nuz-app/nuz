@@ -1,9 +1,7 @@
-import { integrityHelpers } from '@nuz/utils'
 import path from 'path'
-import * as yargs from 'yargs'
+import { Arguments } from 'yargs'
 
 import { STATS_FILENAME } from '../../lib/const'
-import { CommandConfig, CommandTypes, PublishCommand } from '../../types/common'
 
 import clearConsole from '../../utils/clearConsole'
 import * as configHelpers from '../../utils/configHelpers'
@@ -15,8 +13,7 @@ import { exit } from '../../utils/process'
 import * as logs from './logs'
 import publish from './publish'
 
-// @ts-ignore
-const execute = async ({ fallback }: yargs.Argv<PublishCommand>) => {
+const execute = async ({ fallback }: Arguments<{ fallback: string }>) => {
   const moduleDir = paths.cwd
 
   const configIsExisted = configHelpers.exists(moduleDir)
@@ -81,17 +78,16 @@ const execute = async ({ fallback }: yargs.Argv<PublishCommand>) => {
   return exit(0)
 }
 
-const config: CommandConfig<{}> = {
-  type: CommandTypes.publish,
-  description: 'Publish module to the registry server',
-  transform: (yarg) =>
-    yarg.option('fallback', {
-      alias: 'f',
-      describe: 'Set fallback for new version',
-      default: true,
-      required: true,
-    }),
-  execute,
+export const setCommands = (yargs) => {
+  yargs.command(
+    'publish',
+    'Publish module to the registry server',
+    (yarg) =>
+      yarg.option('fallback', {
+        describe: 'Set fallback for new version',
+        default: true,
+        required: true,
+      }),
+    execute,
+  )
 }
-
-export default config

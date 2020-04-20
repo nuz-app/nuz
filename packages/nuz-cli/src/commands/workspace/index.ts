@@ -4,14 +4,8 @@ import glob from 'glob'
 import path from 'path'
 import io from 'socket.io'
 import * as webpack from 'webpack'
-import * as yargs from 'yargs'
 
-import {
-  CommandConfig,
-  CommandTypes,
-  ModuleConfig,
-  WorkspaceCommand,
-} from '../../types'
+import { ModuleConfig } from '../../types'
 
 import clearConsole from '../../utils/clearConsole'
 import * as compilerName from '../../utils/compilerName'
@@ -26,16 +20,14 @@ import runWatchMode from '../../utils/runWatchMode'
 import serve from '../../utils/serve'
 import webpackConfigFactory from '../../utils/webpackConfigFactory'
 
+import { Arguments } from 'yargs'
 import * as logs from './logs'
 
 const execute = async ({
-  // @ts-ignore
   workspace: _workspace,
-  // @ts-ignore
   port: _port,
-  // @ts-ignore
-  clean,
-}: yargs.Argv<WorkspaceCommand>) => {
+}: Arguments<{ port: number; workspace: string[] }>) => {
+  const shouldClean = true
   const moduleDir = paths.cwd
 
   const configIsExisted = _workspace ? true : configHelpers.exists(moduleDir)
@@ -72,7 +64,7 @@ const execute = async ({
 
   const buildDir = paths.nuz(moduleDir, 'modules')
   fs.ensureDir(buildDir)
-  if (clean) {
+  if (shouldClean) {
     logs.cleanFolder(buildDir)
 
     await fs.emptyDir(buildDir)
@@ -238,32 +230,23 @@ const execute = async ({
   return true
 }
 
-const config: CommandConfig<{}> = {
-  type: CommandTypes.workspace,
-  description: 'Run workspace development mode',
-  transform: (yarg) =>
-    yarg
-      .option('workspace', {
-        alias: 'w',
-        describe:
-          'Workspace to link local modules, set to override in file config',
-        type: 'array',
-        required: false,
-      })
-      .option('port', {
-        alias: 'p',
-        describe: 'Set port listen for server',
-        type: 'number',
-        required: false,
-      })
-      .option('clean', {
-        alias: 'c',
-        describe: 'Clean dist folder before run build',
-        type: 'number',
-        default: true,
-        required: false,
-      }),
-  execute,
+export const setCommands = (yargs) => {
+  yargs.command(
+    'workspace',
+    'Run workspace development mode',
+    (yarg) =>
+      yarg
+        .option('workspace', {
+          describe:
+            'Workspace to link local modules, set to override in file config',
+          type: 'array',
+          required: false,
+        })
+        .option('port', {
+          describe: 'Set port listen for server',
+          type: 'number',
+          required: false,
+        }),
+    execute,
+  )
 }
-
-export default config

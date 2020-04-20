@@ -1,7 +1,7 @@
-import commands from './commands'
+import * as commands from './commands'
 
 describe('commands', () => {
-  test('exported as default is list actions', () => {
-    expect(Array.isArray(commands)).toEqual(true)
+  test('setCommands exported as function', () => {
+    expect(commands.setCommands).toBeInstanceOf(Function)
   })
 })
