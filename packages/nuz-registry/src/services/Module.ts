@@ -105,6 +105,30 @@ class Module extends Service<ModuleId> {
     console.log({ result })
     return { _id: name }
   }
+
+  async setDeprecate(
+    id: ModuleId,
+    satisfies: string[],
+    deprecate: string | null,
+  ) {
+    const versionIds = satisfies.map((item) => versionHelpers.encode(item))
+    const updateFields = versionIds.reduce(
+      (acc, versionId) =>
+        Object.assign(acc, { [`versions.${versionId}.deprecate`]: deprecate }),
+      {},
+    )
+
+    const { ok, nModified: mofitied } = await this.Collection.updateOne(
+      { _id: id },
+      { $set: updateFields },
+    )
+
+    if (mofitied === 0) {
+      throw new Error('There was an error during the update process')
+    }
+
+    return { _id: id, mofitied, ok }
+  }
 }
 
 export const createService = (collection: Models['Module']) =>
