@@ -11,30 +11,27 @@ const setConfig = async ({
   value,
 }: Arguments<{ key: string; value: string }>) => {
   const user = new User()
-
   await user.prepare()
-  await user.setConfig(key, value)
 
+  await user.setConfig(key, value)
   success(`Set ${print.dim(key)} value with ${print.dim(value)} successfully!`)
   return true
 }
 
 const getConfig = async ({ key }: Arguments<{ key: string }>) => {
   const user = new User()
-
   await user.prepare()
-  const value = await user.getConfig(key)
 
+  const value = await user.getConfig(key)
   success(`Value of ${print.dim(key)}:`, print.dim(value))
   return true
 }
 
 const listConfig = async () => {
   const user = new User()
-
   await user.prepare()
-  const value = await user.getConfig()
 
+  const value = await user.getConfig()
   success('Current config', value)
   return true
 }
@@ -70,10 +67,15 @@ export const setCommands = (yargs) => {
           type: 'string',
           required: true,
         }),
-      getConfig,
+      handleOnCommand(getConfig),
     )
 
-    child.command('list', 'List configuration', (yarg) => yarg, listConfig)
+    child.command(
+      'list',
+      'List configuration',
+      (yarg) => yarg,
+      handleOnCommand(listConfig),
+    )
 
     showHelpIfInvalid(child, child.argv, 2)
   })
