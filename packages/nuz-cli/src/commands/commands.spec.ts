@@ -1,4 +1,4 @@
-import * as commands from './commands'
+import * as commands from './'
 
 describe('commands', () => {
   test('setCommands exported as function', () => {

@@ -35,3 +35,5 @@ export const NUZ_DIRNAME = '.nuz'
 export const NUZ_USERS_DIR = 'users'
 export const NUZ_CONFIG_FILENAME = 'config.json'
 export const NUZ_AUTH_FILENAME = 'auth.json'
+export const NUZ_NULL_DIRNAME = 'default'
+export const NUZ_CONFIG_ALLOW_SET_KEYS = ['registry']
