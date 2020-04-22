@@ -5,6 +5,7 @@ import {
   NUZ_AUTH_FILENAME,
   NUZ_CONFIG_ALLOW_SET_KEYS,
   NUZ_CONFIG_FILENAME,
+  NUZ_DEFAULT_USERNAME,
 } from '../lib/const'
 
 import * as fs from '../utils/fs'
@@ -40,36 +41,39 @@ class User {
     }
   }
 
+  private async use(username: string) {
+    // Make a symlinks to use
+    const defaultUserPath = path.join(this.paths.root, `users/${username}`)
+    await fs.symlink(defaultUserPath, this.paths.nuzrc)
+  }
+
   private async initial() {
     // Clone default root dir
     const rootTemplatePath = path.join(paths.tool + '/templates/root')
     await fs.copy(rootTemplatePath, this.paths.root)
 
-    // Make a symlinks to use
-    const defaultUserPath = path.join(this.paths.root, 'users/default')
-    await fs.symlink(defaultUserPath, this.paths.nuzrc)
+    // Use default user
+    this.use(NUZ_DEFAULT_USERNAME)
   }
 
   private async writeConfig(data: UserConfig) {
     const result = await fs.writeJson(this.paths.config, data)
-
     return result
   }
 
   private async readConfig(): Promise<UserConfig> {
     const result = await fs.readJson(this.paths.config)
-
     return result as UserConfig
   }
 
   async prepare() {
-    const dirIsExisted = fs.exists(this.paths.root)
-    if (!dirIsExisted) {
+    const rootIsExisted = fs.exists(this.paths.root)
+    if (!rootIsExisted) {
       await this.initial()
     }
   }
 
-  async ready() {
+  async required() {
     return true
   }
 
@@ -77,9 +81,10 @@ class User {
   async requestLogin() {}
 
   async setConfig(key: string, value: any) {
-    await this.ready()
+    await this.required()
 
-    if (!NUZ_CONFIG_ALLOW_SET_KEYS.includes(key)) {
+    const keyIsInvalid = !NUZ_CONFIG_ALLOW_SET_KEYS.includes(key)
+    if (keyIsInvalid) {
       throw new Error(`Can't set ${key}, invalid key!`)
     }
 
@@ -91,7 +96,7 @@ class User {
   }
 
   async getConfig(key?: string) {
-    await this.ready()
+    await this.required()
 
     const config = await this.readConfig()
     return !key ? config : config[key]
