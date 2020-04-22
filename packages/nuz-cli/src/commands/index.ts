@@ -1,6 +1,7 @@
 import { Argv } from 'yargs'
 
 import * as config from './config'
+import * as user from './user'
 
 import * as build from './build'
 import * as create from './create'
@@ -11,6 +12,7 @@ import * as workspace from './workspace'
 
 export const setCommands = async (yargs: Argv) => {
   config.setCommands(yargs)
+  user.setCommands(yargs)
 
   build.setCommands(yargs)
   create.setCommands(yargs)
