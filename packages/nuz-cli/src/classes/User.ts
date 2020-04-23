@@ -3,13 +3,18 @@ import path from 'path'
 
 import {
   NUZ_AUTH_FILENAME,
-  NUZ_CONFIG_ALLOW_SET_KEYS,
   NUZ_CONFIG_FILENAME,
   NUZ_DEFAULT_USERNAME,
 } from '../lib/const'
 
 import * as fs from '../utils/fs'
 import * as paths from '../utils/paths'
+
+export enum ConfigFields {
+  registry = 'registry',
+}
+
+const NUZ_CONFIG_ALLOW_SET_KEYS = Object.values<string>(ConfigFields)
 
 type UserPaths = {
   home: string
@@ -19,7 +24,7 @@ type UserPaths = {
   auth: string
 }
 
-interface UserConfig {}
+interface UserConfig { }
 
 class User {
   private readonly paths: UserPaths
@@ -77,8 +82,8 @@ class User {
     return true
   }
 
-  async isLogged() {}
-  async requestLogin() {}
+  async isLogged() { }
+  async requestLogin() { }
 
   async setConfig(key: string, value: any) {
     await this.required()
@@ -95,15 +100,27 @@ class User {
     return true
   }
 
-  async getConfig(key?: string) {
+  async getConfig(keys?: string | string[]) {
     await this.required()
 
     const config = await this.readConfig()
-    return !key ? config : config[key]
+    const keysIsEmpty = !keys
+    if (keysIsEmpty) {
+      return config
+    }
+
+    if (typeof keys === 'string') {
+      return config[keys]
+    }
+
+    const result = (keys as string[]).reduce(
+      (acc, key) => Object.assign(acc, { [key]: config[key] })
+      , {})
+    return result
   }
 
-  async setAuth() {}
-  async getAuth() {}
+  async setAuth() { }
+  async getAuth() { }
 }
 
 export default User

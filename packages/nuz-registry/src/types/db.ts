@@ -1,3 +1,4 @@
+import { UserAccessTokenTypes } from '@nuz/shared'
 import { Document, Model, Types } from 'mongoose'
 
 import {
@@ -8,6 +9,8 @@ import {
   TokenId,
   VersionInfo,
 } from './common'
+
+export { UserAccessTokenTypes } from '@nuz/shared'
 
 /**
  * Module
@@ -40,16 +43,6 @@ export interface ScopeDocument extends Document, ScopeModel {
   _id: string
   createdAt: Date
   updatedAt: Date
-}
-
-/**
- * User
- */
-
-export enum UserAccessTokenTypes {
-  readOnly = 'readOnly',
-  publish = 'publish',
-  fullAccess = 'fullAccess',
 }
 
 export interface UserAccessToken {
