@@ -1,40 +1,9 @@
-import { Arguments } from 'yargs'
-
-import User from '../../classes/User'
-
 import handleOnCommand from '../../utils/handleOnCommand'
-import print, { success } from '../../utils/print'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
-const setConfig = async ({
-  key,
-  value,
-}: Arguments<{ key: string; value: string }>) => {
-  const user = new User()
-  await user.prepare()
-
-  await user.setConfig(key, value)
-  success(`Set ${print.dim(key)} value with ${print.dim(value)} successfully!`)
-  return true
-}
-
-const getConfig = async ({ key }: Arguments<{ key: string }>) => {
-  const user = new User()
-  await user.prepare()
-
-  const value = await user.getConfig(key)
-  success(`Value of ${print.dim(key)}:`, print.dim(value))
-  return true
-}
-
-const listConfig = async () => {
-  const user = new User()
-  await user.prepare()
-
-  const value = await user.getConfig()
-  success('Current config', value)
-  return true
-}
+import getConfig from './getConfig'
+import listConfig from './listConfig'
+import setConfig from './setConfig'
 
 export const setCommands = (yargs) => {
   yargs.command('config', 'Manage configuration', (child) => {
@@ -59,10 +28,10 @@ export const setCommands = (yargs) => {
     )
 
     child.command(
-      'get <key>',
+      'get <keys..>',
       'Get configuration',
       (yarg) =>
-        yarg.positional('key', {
+        yarg.positional('keys', {
           describe: null,
           type: 'string',
           required: true,

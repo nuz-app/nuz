@@ -1,6 +1,9 @@
 import chalk, { Chalk } from 'chalk'
+import prettyFormat from 'pretty-format'
 
 import { CHANGES_EMOJI } from '../lib/const'
+
+export const pretty = prettyFormat
 
 interface Printer extends Chalk {
   link: Chalk['green']
@@ -19,16 +22,16 @@ Object.defineProperty(printer, 'link', {
 export const log = console.log
 
 export const info = (...rest: any[]) =>
-  console.log(`${printer.dim('[info]')}`, ...rest)
+  console.log(`${printer.dim('[i]')}`, ...rest)
 
 export const success = (...rest: any[]) =>
-  console.log(`${printer.greenBright('[success]')}`, ...rest)
+  console.log(`${printer.greenBright('[s]')}`, ...rest)
 
 export const warn = (...rest: any[]) =>
-  console.warn(`${printer.yellow('[warn]')}`, ...rest)
+  console.warn(`${printer.yellow('[w]')}`, ...rest)
 
 export const error = (...rest: any[]) =>
-  console.error(`${printer.red('[error]')}`, ...rest)
+  console.error(`${printer.red('[e]')}`, ...rest)
 
 export const common = {
   configIsNotFound: () => {

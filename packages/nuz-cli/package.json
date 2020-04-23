@@ -66,6 +66,7 @@
     "postcss-flexbugs-fixes": "^4.2.1",
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.7.0",
+    "pretty-format": "^25.4.0",
     "raw-loader": "^4.0.1",
     "react-dev-utils": "^10.2.1",
     "rimraf": "^3.0.2",
