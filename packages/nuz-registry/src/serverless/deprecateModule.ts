@@ -11,7 +11,8 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.put(
     '/module/deprecate',
     onRoute(async (request, response) => {
-      const { token, module, version, deprecate } = request.body
+      const { authorization: token } = request.headers
+      const { module, version, deprecate } = request.body
 
       const formIsMissing = !token || !module || !version || !deprecate
       if (formIsMissing) {
@@ -19,7 +20,7 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
       }
 
       const item = await worker.deprecateModule(
-        token,
+        token as string,
         module,
         version,
         deprecate,

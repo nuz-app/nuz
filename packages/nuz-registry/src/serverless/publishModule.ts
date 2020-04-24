@@ -11,14 +11,15 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.post(
     '/module',
     onRoute(async (request, response) => {
-      const { token, data } = request.body
+      const { authorization: token } = request.headers
+      const { data } = request.body
 
       const formIsMissing = !token || !data
       if (formIsMissing) {
         throw new Error('Form is missing fields')
       }
 
-      const item = await worker.publishModule(token, data)
+      const item = await worker.publishModule(token as string, data)
 
       response.json(item)
       return true

@@ -11,14 +11,15 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.post(
     '/user/token',
     onRoute(async (request, response) => {
-      const { token, type } = request.body
+      const { authorization: token } = request.headers
+      const { type } = request.body
 
       const formIsMissing = !token || !type
       if (formIsMissing) {
         throw new Error('Form is missing fields')
       }
 
-      const item = await worker.createTokenForUser(token, type)
+      const item = await worker.createTokenForUser(token as string, type)
 
       response.json(item)
       return true

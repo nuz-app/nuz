@@ -11,14 +11,15 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.delete(
     '/scope',
     onRoute(async (request, response) => {
-      const { token, scope } = request.body
+      const { authorization: token } = request.headers
+      const { scope } = request.body
 
       const formIsMissing = !token || !scope
       if (formIsMissing) {
         throw new Error('Form is missing fields')
       }
 
-      const item = await worker.deleteScope(token, scope)
+      const item = await worker.deleteScope(token as string, scope)
 
       response.json(item)
       return true
