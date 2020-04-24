@@ -12,7 +12,7 @@ async function logout() {
     throw new Error('Unable to logout because you use the default profile')
   }
 
-  const request = await Worker.logout(id, token)
+  const request = await Worker.logoutFromUser(id, token)
 
   await Config.use(NUZ_DEFAULT_USERNAME)
   await Config.delete(username)

@@ -1,6 +1,8 @@
 import handleOnCommand from '../../utils/handleOnCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
+import createToken from './createToken'
+import deleteToken from './deleteToken'
 import login from './login'
 import logout from './logout'
 import whoami from './whoami'
@@ -39,7 +41,27 @@ export const setCommands = (yargs) => {
       handleOnCommand(noop),
     )
 
-    showHelpIfInvalid(child, child.argv, 2)
+    child.command('token', 'Manage token of user', (schild) => {
+      schild.usage('usage: $0 user token <type> [options]')
+
+      schild.command(
+        'create <type>',
+        'Create a token for user',
+        (yarg) => yarg,
+        handleOnCommand(createToken),
+      )
+
+      schild.command(
+        'delete <token>',
+        'Delete a token from user',
+        (yarg) => yarg,
+        handleOnCommand(deleteToken),
+      )
+
+      showHelpIfInvalid(schild, schild.argv, 3)
+    })
+
+    showHelpIfInvalid(child, child.argv, 2, 3)
   })
 
   yargs.command(

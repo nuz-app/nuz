@@ -1,3 +1,4 @@
+import { UserAccessTokenTypes } from '@nuz/shared'
 import { pick } from '@nuz/utils'
 import os from 'os'
 import path from 'path'
@@ -158,6 +159,27 @@ class Config {
 
   static async writeAuth(data: AuthData): Promise<any> {
     return fs.writeJson(this.paths.auth, data)
+  }
+
+  static async authRequired(type?: UserAccessTokenTypes): Promise<AuthData> {
+    const auth = await this.readAuth()
+    if (auth.username === NUZ_DEFAULT_USERNAME) {
+      throw new Error('You need to be logged in to do this')
+    }
+
+    if (!auth.id) {
+      throw new Error('Missing user id in auth config')
+    }
+
+    if (!auth.token) {
+      throw new Error('Missing token in auth config')
+    }
+
+    if (!auth.type) {
+      throw new Error('Unable to identify token permission')
+    }
+
+    return auth
   }
 }
 

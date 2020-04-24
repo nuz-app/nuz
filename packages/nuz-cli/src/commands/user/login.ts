@@ -1,5 +1,3 @@
-import { UserAccessTokenTypes } from '@nuz/shared'
-
 import Config, { AuthKeys } from '../../classes/Config'
 import Worker from '../../classes/Worker'
 
@@ -29,11 +27,7 @@ async function login() {
     throw new Error('Missing `username` or `password` info')
   }
 
-  const request = await Worker.login(
-    username,
-    password,
-    UserAccessTokenTypes.fullAccess,
-  )
+  const request = await Worker.loginAsUser(username, password)
 
   const userId = request?.data?._id
   const accessToken = request?.data?.accessToken
