@@ -181,6 +181,14 @@ class Worker {
   async clearTagForModule() {}
 
   /**
+   * Get collaborators of the module
+   */
+  async getCollaboratorsOfModule(moduleId: ModuleId) {
+    const reuslt = await this.services.Module.listCollaborators(moduleId)
+    return reuslt
+  }
+
+  /**
    * Verify collaborator of the module
    */
   async verifyCollaboratorOfModule(
@@ -436,6 +444,16 @@ class Worker {
   }
 
   /**
+   * Get collaborators of the composition
+   */
+  async getCollaboratorsOfComposition(compositionId: CompositionId) {
+    const reuslt = await this.services.Composition.listCollaborators(
+      compositionId,
+    )
+    return reuslt
+  }
+
+  /**
    * Verify collaborator of the composition
    */
   async verifyCollaboratorOfComposition(
@@ -637,6 +655,14 @@ class Worker {
    */
   async deleteScope(tokenId: TokenId, scopeId: ScopeId) {
     throw new Error(`Scope can't be deleted by policy`)
+  }
+
+  /**
+   * Get collaborators of the scope
+   */
+  async getCollaboratorsOfScope(scopeId: ScopeId) {
+    const reuslt = await this.services.Scope.listCollaborators(scopeId)
+    return reuslt
   }
 
   /**

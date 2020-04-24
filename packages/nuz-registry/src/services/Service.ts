@@ -1,7 +1,11 @@
-import { AddCollaboratorData, CollaboratorTypes, UserId } from '../types'
+import {
+  AddCollaboratorData,
+  Collaborator,
+  CollaboratorTypes,
+  UserId,
+} from '../types'
 
 import * as collaboratorTypesHelpers from '../utils/collaboratorTypesHelpers'
-import compareObjectId from '../utils/compareObjectId'
 
 type VerifyCollaboratorParams<T> = {
   id: T
@@ -17,6 +21,19 @@ type VerifyCollaboratorOptions = {
 class Service<T> {
   constructor(readonly Collection) {}
 
+  async listCollaborators(id: T): Promise<Collaborator[]> {
+    const modelName = this.Collection.modelName
+
+    const item = await this.Collection.findOne({
+      _id: id,
+    })
+    if (!item) {
+      throw new Error(`${modelName} is not found`)
+    }
+
+    return item.collaborators
+  }
+
   async verifyCollaborator(
     params: VerifyCollaboratorParams<T>,
     options: VerifyCollaboratorOptions = {},
@@ -28,13 +45,13 @@ class Service<T> {
 
     const fields = _fields || { name: 1, collaborators: 1, createdAt: 1 }
 
-    const module = await this.Collection.findOne(
+    const item = await this.Collection.findOne(
       {
         _id: id,
       },
       fields,
     )
-    if (!module) {
+    if (!item) {
       if (throwIfNotFound) {
         throw new Error(`${modelName} is not found`)
       }
@@ -42,7 +59,7 @@ class Service<T> {
       return null
     }
 
-    const collaborator = module.collaborators.find((item) => item.id === userId)
+    const collaborator = item.collaborators.find((item) => item.id === userId)
     if (!collaborator) {
       throw new Error(`User does not include collaborators of ${modelName}`)
     }
@@ -55,7 +72,7 @@ class Service<T> {
       throw new Error('Permission denied')
     }
 
-    return module
+    return item
   }
 
   async addCollaborator(id: T, collaborator: AddCollaboratorData) {
