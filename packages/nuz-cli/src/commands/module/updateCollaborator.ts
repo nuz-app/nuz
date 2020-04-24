@@ -11,9 +11,9 @@ async function updateCollaborator({
   user,
   type,
 }: Arguments<{ module: string; user: string; type: CollaboratorTypes }>) {
-  const auth = await Config.authRequired(UserAccessTokenTypes.fullAccess)
+  await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
-  const request = await Worker.updateCollaboratorOfModule(auth.token, id, {
+  const request = await Worker.updateCollaboratorOfModule(id, {
     id: user,
     type,
   })

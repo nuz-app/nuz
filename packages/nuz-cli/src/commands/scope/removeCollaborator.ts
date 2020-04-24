@@ -10,13 +10,9 @@ async function removeCollaborator({
   scope,
   user,
 }: Arguments<{ scope: string; user: string }>) {
-  const auth = await Config.authRequired(UserAccessTokenTypes.fullAccess)
+  await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
-  const request = await Worker.removeCollaboratorFromScope(
-    auth.token,
-    scope,
-    user,
-  )
+  const request = await Worker.removeCollaboratorFromScope(scope, user)
 
   const scopeId = request?.data?._id
   success(

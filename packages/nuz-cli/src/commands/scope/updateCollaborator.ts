@@ -11,16 +11,18 @@ async function updateCollaborator({
   user,
   type,
 }: Arguments<{ scope: string; user: string; type: CollaboratorTypes }>) {
-  const auth = await Config.authRequired(UserAccessTokenTypes.fullAccess)
+  await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
-  const request = await Worker.updateCollaboratorOfScope(auth.token, scope, {
+  const request = await Worker.updateCollaboratorOfScope(scope, {
     id: user,
     type,
   })
 
   const scopeId = request?.data?._id
   success(
-    `Updated ${print.name(user)} info in scope ${print.name(scopeId)} successfully!`,
+    `Updated ${print.name(user)} info in scope ${print.name(
+      scopeId,
+    )} successfully!`,
   )
   return true
 }

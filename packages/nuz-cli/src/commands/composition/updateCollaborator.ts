@@ -11,16 +11,12 @@ async function updateCollaborator({
   user,
   type,
 }: Arguments<{ composition: string; user: string; type: CollaboratorTypes }>) {
-  const auth = await Config.authRequired(UserAccessTokenTypes.fullAccess)
+  await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
-  const request = await Worker.updateCollaboratorOfComposition(
-    auth.token,
-    composition,
-    {
-      id: user,
-      type,
-    },
-  )
+  const request = await Worker.updateCollaboratorOfComposition(composition, {
+    id: user,
+    type,
+  })
 
   const compositionId = request?.data?._id
   success(

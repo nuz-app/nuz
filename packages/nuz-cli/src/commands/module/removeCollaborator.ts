@@ -10,13 +10,9 @@ async function removeCollaborator({
   module: id,
   user,
 }: Arguments<{ module: string; user: string }>) {
-  const auth = await Config.authRequired(UserAccessTokenTypes.fullAccess)
+  await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
-  const request = await Worker.removeCollaboratorFromModule(
-    auth.token,
-    id,
-    user,
-  )
+  const request = await Worker.removeCollaboratorFromModule(id, user)
 
   const moduleId = request?.data?._id
   success(
