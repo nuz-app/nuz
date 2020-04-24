@@ -29,10 +29,8 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
         throw new Error('Collaborator is invalid')
       }
 
-      const collaboratorId = ensureObjectId(collaborator.id)
-
       const item = await worker.updateCollaboratorOfModule(token, module, {
-        id: collaboratorId,
+        id: collaborator.id,
         type: collaborator.type as CollaboratorTypes,
       })
 

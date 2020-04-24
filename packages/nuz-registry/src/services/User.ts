@@ -100,7 +100,7 @@ class User {
   }
 
   async createToken(id: UserId, requiredType: UserAccessTokenTypes) {
-    const value = genarateTokenId(id)
+    const value = genarateTokenId()
     const accessToken = { value, type: requiredType }
     const { ok, nModified: mofitied } = await this.Collection.updateOne(
       { _id: id },

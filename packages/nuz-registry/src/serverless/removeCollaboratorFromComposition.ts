@@ -1,7 +1,6 @@
 import { Express } from 'express'
 
 import Worker from '../classes/Worker'
-import ensureObjectId from '../utils/ensureObjectId'
 import onRoute from '../utils/onRoute'
 
 import { ServerlessRoute } from './types'
@@ -22,7 +21,7 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
       const item = await worker.removeCollaboratorFromComposition(
         token,
         composition,
-        ensureObjectId(collaboratorId),
+        collaboratorId,
       )
 
       response.json(item)

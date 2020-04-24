@@ -3,3 +3,9 @@ export enum UserAccessTokenTypes {
   publish = 'publish',
   fullAccess = 'fullAccess',
 }
+
+export enum CollaboratorTypes {
+  creator = 'creator',
+  maintainer = 'maintainer',
+  contributor = 'contributor',
+}

@@ -4,7 +4,6 @@ import { CollaboratorTypes } from '../types'
 
 import Worker from '../classes/Worker'
 import * as collaboratorTypesHelpers from '../utils/collaboratorTypesHelpers'
-import ensureObjectId from '../utils/ensureObjectId'
 import onRoute from '../utils/onRoute'
 
 import { ServerlessRoute } from './types'
@@ -29,10 +28,8 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
         throw new Error('Collaborator is invalid')
       }
 
-      const collaboratorId = ensureObjectId(collaborator.id)
-
       const item = await worker.addCollaboratorToModule(token, module, {
-        id: collaboratorId,
+        id: collaborator.id,
         type: collaborator.type as CollaboratorTypes,
       })
 

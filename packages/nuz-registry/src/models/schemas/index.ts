@@ -2,7 +2,7 @@ import { Schema } from 'mongoose'
 
 import { CollaboratorTypes } from '../../types'
 
-export const userId = { type: Schema.Types.ObjectId, required: true }
+export const userId = { type: String, required: true }
 
 export const createdAt = { type: Date, required: true, default: Date.now }
 
