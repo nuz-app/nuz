@@ -3,7 +3,7 @@ import { Arguments } from 'yargs'
 
 import Config, { ConfigKeys } from '../../classes/Config'
 
-import { pretty, success } from '../../utils/print'
+import { pretty, info } from '../../utils/print'
 
 const keysAllowToSet = Object.values<string>(ConfigKeys)
 
@@ -18,7 +18,7 @@ async function getConfig({ keys }: Arguments<{ keys: string[] }>) {
   const config = await Config.readConfig()
   const values = pick(config, keys)
 
-  success(pretty(values))
+  info(pretty(values))
   return true
 }
 

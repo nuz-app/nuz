@@ -1,10 +1,10 @@
-import Config, { AuthKeys } from '../../classes/Config'
-import { pretty, success } from '../../utils/print'
+import Config from '../../classes/Config'
+import { pretty, info } from '../../utils/print'
 
 async function list() {
   const users = await Config.getUsers()
 
-  success('List users in work folder', pretty(users))
+  info('List users in work folder', pretty(users))
   return true
 }
 
