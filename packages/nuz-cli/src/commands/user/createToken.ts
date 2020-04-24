@@ -16,7 +16,7 @@ async function createToken({
   }
 
   const auth = await Config.authRequired(type)
-  const request = await Worker.createTokenForUser(auth.token, type)
+  const request = await Worker.createTokenForUser(type)
   const accessToken = request?.data?.accessToken
   if (!accessToken) {
     throw new Error('Missing access token details in response')

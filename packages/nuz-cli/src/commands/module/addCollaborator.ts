@@ -11,9 +11,9 @@ async function addCollaborator({
   user,
   type = CollaboratorTypes.contributor,
 }: Arguments<{ module: string; user: string; type: CollaboratorTypes }>) {
-  const auth = await Config.authRequired(UserAccessTokenTypes.fullAccess)
+  await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
-  const request = await Worker.addCollaboratorToModule(auth.token, id, {
+  const request = await Worker.addCollaboratorToModule(id, {
     id: user,
     type,
   })

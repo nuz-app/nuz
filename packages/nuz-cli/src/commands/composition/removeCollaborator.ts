@@ -10,13 +10,9 @@ async function removeCollaborator({
   composition,
   user,
 }: Arguments<{ composition: string; user: string }>) {
-  const auth = await Config.authRequired(UserAccessTokenTypes.fullAccess)
+  await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
-  const request = await Worker.removeCollaboratorFromScope(
-    auth.token,
-    composition,
-    user,
-  )
+  const request = await Worker.removeCollaboratorFromScope(composition, user)
 
   const compositionId = request?.data?._id
   success(

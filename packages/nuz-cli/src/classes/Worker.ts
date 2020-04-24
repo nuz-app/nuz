@@ -5,9 +5,11 @@ import * as apiUrls from '../utils/apiUrls'
 
 class Worker {
   static endpoint: string
+  static token: string
 
-  static async prepare(endpoint: string) {
+  static async prepare(endpoint: string, token: string) {
     this.endpoint = endpoint
+    this.token = token
   }
 
   static async createUser({ name, email, username, password }) {
@@ -27,16 +29,13 @@ class Worker {
   }
 
   static async logoutFromUser(id: string, token: string) {
-    return this.deleteTokenFromUser(id, token)
+    return this.deleteTokenFromUser(id, this.token)
   }
 
-  static async createTokenForUser(
-    token: string,
-    requiredType: UserAccessTokenTypes,
-  ) {
+  static async createTokenForUser(requiredType: UserAccessTokenTypes) {
     return got(
-      Object.assign(apiUrls.createTokenForUser(this.endpoint), {
-        data: { token, type: requiredType },
+      Object.assign(apiUrls.createTokenForUser(this.endpoint, this.token), {
+        data: { type: requiredType },
       }),
     )
   }
@@ -52,14 +51,10 @@ class Worker {
   /**
    * Add a collaborator to the scope
    */
-  static async addCollaboratorToScope(
-    token: string,
-    scope: string,
-    collaborator: any,
-  ) {
+  static async addCollaboratorToScope(scope: string, collaborator: any) {
     return got(
-      Object.assign(apiUrls.addCollaboratorToScope(this.endpoint), {
-        data: { token, scope, collaborator },
+      Object.assign(apiUrls.addCollaboratorToScope(this.endpoint, this.token), {
+        data: { scope, collaborator },
       }),
     )
   }
@@ -67,15 +62,14 @@ class Worker {
   /**
    * Update a collaborator of the scope
    */
-  static async updateCollaboratorOfScope(
-    token: string,
-    scope: string,
-    collaborator: any,
-  ) {
+  static async updateCollaboratorOfScope(scope: string, collaborator: any) {
     return got(
-      Object.assign(apiUrls.updateCollaboratorOfScope(this.endpoint), {
-        data: { token, scope, collaborator },
-      }),
+      Object.assign(
+        apiUrls.updateCollaboratorOfScope(this.endpoint, this.token),
+        {
+          data: { scope, collaborator },
+        },
+      ),
     )
   }
 
@@ -83,44 +77,44 @@ class Worker {
    * Remove a collaborator from the scope
    */
   static async removeCollaboratorFromScope(
-    token: string,
     scope: string,
     collaborator: string,
   ) {
     return got(
-      Object.assign(apiUrls.removeCollaboratorFromScope(this.endpoint), {
-        data: { token, scope, collaboratorId: collaborator },
-      }),
+      Object.assign(
+        apiUrls.removeCollaboratorFromScope(this.endpoint, this.token),
+        {
+          data: { scope, collaboratorId: collaborator },
+        },
+      ),
     )
   }
 
   /**
    * Add a collaborator to the module
    */
-  static async addCollaboratorToModule(
-    token: string,
-    module: string,
-    collaborator: any,
-  ) {
+  static async addCollaboratorToModule(module: string, collaborator: any) {
     return got(
-      Object.assign(apiUrls.addCollaboratorToModule(this.endpoint), {
-        data: { token, module, collaborator },
-      }),
+      Object.assign(
+        apiUrls.addCollaboratorToModule(this.endpoint, this.token),
+        {
+          data: { module, collaborator },
+        },
+      ),
     )
   }
 
   /**
    * Update a collaborator of the module
    */
-  static async updateCollaboratorOfModule(
-    token: string,
-    module: string,
-    collaborator: any,
-  ) {
+  static async updateCollaboratorOfModule(module: string, collaborator: any) {
     return got(
-      Object.assign(apiUrls.updateCollaboratorOfModule(this.endpoint), {
-        data: { token, module, collaborator },
-      }),
+      Object.assign(
+        apiUrls.updateCollaboratorOfModule(this.endpoint, this.token),
+        {
+          data: { module, collaborator },
+        },
+      ),
     )
   }
 
@@ -128,14 +122,16 @@ class Worker {
    * Remove a collaborator from the module
    */
   static async removeCollaboratorFromModule(
-    token: string,
     module: string,
     collaborator: string,
   ) {
     return got(
-      Object.assign(apiUrls.removeCollaboratorFromModule(this.endpoint), {
-        data: { token, module, collaboratorId: collaborator },
-      }),
+      Object.assign(
+        apiUrls.removeCollaboratorFromModule(this.endpoint, this.token),
+        {
+          data: { module, collaboratorId: collaborator },
+        },
+      ),
     )
   }
 
@@ -143,14 +139,16 @@ class Worker {
    * Add a collaborator to the composition
    */
   static async addCollaboratorToComposition(
-    token: string,
     composition: string,
     collaborator: any,
   ) {
     return got(
-      Object.assign(apiUrls.addCollaboratorToComposition(this.endpoint), {
-        data: { token, composition, collaborator },
-      }),
+      Object.assign(
+        apiUrls.addCollaboratorToComposition(this.endpoint, this.token),
+        {
+          data: { composition, collaborator },
+        },
+      ),
     )
   }
 
@@ -158,14 +156,16 @@ class Worker {
    * Update a collaborator of the composition
    */
   static async updateCollaboratorOfComposition(
-    token: string,
     composition: string,
     collaborator: any,
   ) {
     return got(
-      Object.assign(apiUrls.updateCollaboratorOfComposition(this.endpoint), {
-        data: { token, composition, collaborator },
-      }),
+      Object.assign(
+        apiUrls.updateCollaboratorOfComposition(this.endpoint, this.token),
+        {
+          data: { composition, collaborator },
+        },
+      ),
     )
   }
 
@@ -173,14 +173,16 @@ class Worker {
    * Remove a collaborator from the composition
    */
   static async removeCollaboratorFromComposition(
-    token: string,
     composition: string,
     collaborator: string,
   ) {
     return got(
-      Object.assign(apiUrls.removeCollaboratorFromComposition(this.endpoint), {
-        data: { token, composition, collaboratorId: collaborator },
-      }),
+      Object.assign(
+        apiUrls.removeCollaboratorFromComposition(this.endpoint, this.token),
+        {
+          data: { composition, collaboratorId: collaborator },
+        },
+      ),
     )
   }
 }

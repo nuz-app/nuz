@@ -11,16 +11,12 @@ async function addCollaborator({
   user,
   type = CollaboratorTypes.contributor,
 }: Arguments<{ composition: string; user: string; type: CollaboratorTypes }>) {
-  const auth = await Config.authRequired(UserAccessTokenTypes.fullAccess)
+  await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
-  const request = await Worker.addCollaboratorToComposition(
-    auth.token,
-    composition,
-    {
-      id: user,
-      type,
-    },
-  )
+  const request = await Worker.addCollaboratorToComposition(composition, {
+    id: user,
+    type,
+  })
 
   const compositionId = request?.data?._id
   success(
