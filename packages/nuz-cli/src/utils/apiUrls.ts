@@ -32,7 +32,12 @@ export const publishModule = (endpoint: string) => ({
  *
  */
 
-export const login = (endpoint: string) => ({
+export const createTokenForUser = (endpoint: string) => ({
   url: `${endpoint}/user/token`,
   method: 'POST',
+})
+
+export const deleteTokenFromUser = (endpoint: string) => ({
+  url: `${endpoint}/user/token`,
+  method: 'DELETE',
 })

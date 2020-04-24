@@ -10,7 +10,7 @@ export const setCommands = (yargs) => {
     child.usage('usage: $0 config <item> [options]')
 
     child.command(
-      'set <key> [value]',
+      'set <key> <value>',
       'Set configuration',
       (yarg) =>
         yarg

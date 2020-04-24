@@ -1,3 +1,4 @@
+import { pick } from '@nuz/utils'
 import os from 'os'
 import path from 'path'
 
@@ -49,12 +50,17 @@ export interface ConfigData {
 }
 
 export enum AuthKeys {
+  id = 'id',
+  username = 'username',
   token = 'token',
   type = 'type',
 }
 
 export interface AuthData {
+  [AuthKeys.id]: string
+  [AuthKeys.username]: string
   [AuthKeys.token]: string
+  [AuthKeys.type]: string
 }
 
 class Config {
@@ -93,6 +99,27 @@ class Config {
 
     await fs.copy(defaultPath, configPath)
     return true
+  }
+
+  /**
+   * Delete a user in work folder
+   */
+  static async delete(username: string): Promise<boolean> {
+    const configPath = path.join(this.paths.users, username)
+    if (!fs.exists(configPath)) {
+      return false
+    }
+
+    await fs.remove(configPath)
+    return true
+  }
+
+  /**
+   * Checking current username working
+   */
+  static async whoiam(): Promise<{ id: string; username: string }> {
+    const auth = await this.readAuth()
+    return pick(auth, ['id', 'username'])
   }
 
   static async initial() {
