@@ -48,6 +48,51 @@ class Worker {
       }),
     )
   }
+
+  /**
+   * Add a collaborator to the scope
+   */
+  static async addCollaboratorToScope(
+    token: string,
+    scope: string,
+    collaborator: any,
+  ) {
+    return got(
+      Object.assign(apiUrls.addCollaboratorToScope(this.endpoint), {
+        data: { token, scope, collaborator },
+      }),
+    )
+  }
+
+  /**
+   * Update a collaborator of the scope
+   */
+  static async updateCollaboratorOfScope(
+    token: string,
+    scope: string,
+    collaborator: any,
+  ) {
+    return got(
+      Object.assign(apiUrls.updateCollaboratorOfScope(this.endpoint), {
+        data: { token, scope, collaborator },
+      }),
+    )
+  }
+
+  /**
+   * Remove a collaborator from the scope
+   */
+  static async removeCollaboratorFromScope(
+    token: string,
+    scope: string,
+    collaborator: string,
+  ) {
+    return got(
+      Object.assign(apiUrls.removeCollaboratorFromScope(this.endpoint), {
+        data: { token, scope, collaboratorId: collaborator },
+      }),
+    )
+  }
 }
 
 export default Worker

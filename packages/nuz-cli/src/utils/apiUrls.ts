@@ -51,3 +51,18 @@ export const deleteTokenFromUser = (endpoint: string) => ({
   url: `${endpoint}/user/token`,
   method: 'DELETE',
 })
+
+export const addCollaboratorToScope = (endpoint: string) => ({
+  url: `${endpoint}/scope/collaborator`,
+  method: 'POST',
+})
+
+export const updateCollaboratorOfScope = (endpoint: string) => ({
+  url: `${endpoint}/scope/collaborator`,
+  method: 'PUT',
+})
+
+export const removeCollaboratorFromScope = (endpoint: string) => ({
+  url: `${endpoint}/scope/collaborator`,
+  method: 'DELETE',
+})

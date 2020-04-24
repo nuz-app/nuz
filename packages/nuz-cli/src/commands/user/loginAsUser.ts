@@ -17,7 +17,7 @@ const passwordQuestion = {
   message: 'Password',
 }
 
-async function login({
+async function loginAsUser({
   username: _username,
   password: _password,
 }: Arguments<{ username: string; password: string }>) {
@@ -58,4 +58,4 @@ async function login({
   return true
 }
 
-export default login
+export default loginAsUser

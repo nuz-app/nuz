@@ -58,6 +58,7 @@ async function register() {
     verifyPasswordQuestion,
     autoLoginQuestion,
   ])
+  console.log({ result })
   const { email, name, username, password, repassword, autoLogin } = result
 
   if (!email || !name || !username || !password || !repassword) {
