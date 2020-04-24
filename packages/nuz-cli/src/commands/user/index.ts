@@ -8,7 +8,12 @@ import logout from './logout'
 import register from './register'
 import whoami from './whoami'
 
-const noop = async () => {}
+const setPositionalForRegister = (yarg) =>
+  yarg.positional('username', {
+    describe: 'Username wants to log out',
+    type: 'string',
+    required: false,
+  })
 
 export const setCommands = (yargs) => {
   yargs.command('user', 'Manage user', (child) => {
@@ -29,9 +34,9 @@ export const setCommands = (yargs) => {
     )
 
     child.command(
-      'logout',
+      'logout [username]',
       'Logout of user account',
-      (yarg) => yarg,
+      setPositionalForRegister,
       handleOnCommand(logout),
     )
 
@@ -80,9 +85,9 @@ export const setCommands = (yargs) => {
   )
 
   yargs.command(
-    'logout',
+    'logout [username]',
     'Logout of user account [alias: user-logout]',
-    (yarg) => yarg,
+    setPositionalForRegister,
     handleOnCommand(logout),
   )
 
