@@ -28,9 +28,7 @@ export const publishModule = (endpoint: string) => ({
   method: 'POST',
 })
 
-/**
- *
- */
+// User
 
 export const createUser = (endpoint: string) => ({
   url: `${endpoint}/user`,
@@ -52,6 +50,8 @@ export const deleteTokenFromUser = (endpoint: string) => ({
   method: 'DELETE',
 })
 
+// Scope
+
 export const addCollaboratorToScope = (endpoint: string) => ({
   url: `${endpoint}/scope/collaborator`,
   method: 'POST',
@@ -67,6 +67,8 @@ export const removeCollaboratorFromScope = (endpoint: string) => ({
   method: 'DELETE',
 })
 
+// Module
+
 export const addCollaboratorToModule = (endpoint: string) => ({
   url: `${endpoint}/module/collaborator`,
   method: 'POST',
@@ -79,5 +81,22 @@ export const updateCollaboratorOfModule = (endpoint: string) => ({
 
 export const removeCollaboratorFromModule = (endpoint: string) => ({
   url: `${endpoint}/module/collaborator`,
+  method: 'DELETE',
+})
+
+// Composition
+
+export const addCollaboratorToComposition = (endpoint: string) => ({
+  url: `${endpoint}/composition/collaborator`,
+  method: 'POST',
+})
+
+export const updateCollaboratorOfComposition = (endpoint: string) => ({
+  url: `${endpoint}/composition/collaborator`,
+  method: 'PUT',
+})
+
+export const removeCollaboratorFromComposition = (endpoint: string) => ({
+  url: `${endpoint}/composition/collaborator`,
   method: 'DELETE',
 })
