@@ -12,14 +12,13 @@ const got = async (config: AxiosRequestConfig): Promise<any> => {
        * The request was made and the server responded with a
        * status code that falls out of the range of 2xx
        */
-      const detailsOfError = error.response.data.error
-      if (detailsOfError.message) {
-        throw new Error(detailsOfError.message)
+      if (error.response.data?.error?.message) {
+        throw new Error(error.response.data.error.message)
       }
 
       throw new Error(
         `There was an error returning from the server, details: ${jsonHelpers.stringify(
-          error.response.data.error,
+          error.response.data?.error,
         )}`,
       )
     } else if (error.request) {
