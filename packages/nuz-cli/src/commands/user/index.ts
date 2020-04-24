@@ -2,12 +2,12 @@ import handleOnCommand from '../../utils/handleOnCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
 import createToken from './createToken'
+import createUser from './createUser'
 import deleteToken from './deleteToken'
-import list from './list'
-import login from './login'
-import logout from './logout'
-import register from './register'
-import use from './use'
+import listUsers from './listUsers'
+import loginAsUser from './loginAsUser'
+import logoutFromUser from './logoutFromUser'
+import useAs from './useAs'
 import whoami from './whoami'
 
 const setPositionalForRegister = (yarg) =>
@@ -32,28 +32,28 @@ export const setCommands = (yargs) => {
       'login',
       'Login user account',
       (yarg) => yarg,
-      handleOnCommand(login),
+      handleOnCommand(loginAsUser),
     )
 
     child.command(
       'logout [username]',
       'Logout of user account',
       setPositionalForRegister,
-      handleOnCommand(logout),
+      handleOnCommand(logoutFromUser),
     )
 
     child.command(
       'register',
       'Register a new user',
       (yarg) => yarg,
-      handleOnCommand(register),
+      handleOnCommand(createUser),
     )
 
     child.command(
       'list',
       'List all users in work folder',
       (yarg) => yarg,
-      handleOnCommand(list),
+      handleOnCommand(listUsers),
     )
 
     child.command(
@@ -65,7 +65,7 @@ export const setCommands = (yargs) => {
           type: 'string',
           required: true,
         }),
-      handleOnCommand(use),
+      handleOnCommand(useAs),
     )
 
     child.command('token', 'Manage token of user', (schild) => {
@@ -85,7 +85,7 @@ export const setCommands = (yargs) => {
         handleOnCommand(deleteToken),
       )
 
-      showHelpIfInvalid(schild, schild.argv, 3)
+      showHelpIfInvalid(schild, schild.argv, 3, 4)
     })
 
     showHelpIfInvalid(child, child.argv, 2, 3)
@@ -102,20 +102,20 @@ export const setCommands = (yargs) => {
     'login',
     'Login user account [alias: user-login]',
     (yarg) => yarg,
-    handleOnCommand(login),
+    handleOnCommand(loginAsUser),
   )
 
   yargs.command(
     'logout [username]',
     'Logout of user account [alias: user-logout]',
     setPositionalForRegister,
-    handleOnCommand(logout),
+    handleOnCommand(logoutFromUser),
   )
 
   yargs.command(
     'register',
     'Register a new user [alias: user-register]',
     (yarg) => yarg,
-    handleOnCommand(register),
+    handleOnCommand(createUser),
   )
 }
