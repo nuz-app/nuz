@@ -1,5 +1,5 @@
 import { UserAccessTokenTypes } from '@nuz/shared'
-import { pick } from '@nuz/utils'
+import { pick, tokenTypesHelpers } from '@nuz/utils'
 import os from 'os'
 import path from 'path'
 
@@ -61,7 +61,7 @@ export interface AuthData {
   [AuthKeys.id]: string
   [AuthKeys.username]: string
   [AuthKeys.token]: string
-  [AuthKeys.type]: string
+  [AuthKeys.type]: UserAccessTokenTypes
 }
 
 class Config {
@@ -177,6 +177,12 @@ class Config {
 
     if (!auth.type) {
       throw new Error('Unable to identify token permission')
+    }
+
+    const permissionIsDenied =
+      type && !tokenTypesHelpers.verify(auth.type, type)
+    if (permissionIsDenied) {
+      throw new Error('Permission denied')
     }
 
     return auth

@@ -1,3 +1,5 @@
+import { tokenTypesHelpers } from '@nuz/utils'
+
 import { MONGOOSE_ERROR_CODES } from '../lib/const'
 import {
   CreateUserData,
@@ -8,7 +10,6 @@ import {
 } from '../types'
 
 import genarateTokenId from '../utils/genarateTokenId'
-import * as tokenTypesHelpers from '../utils/tokenTypesHelpers'
 
 const UPDATE_FIELDS_ALLOWED = ['email', 'name', 'password']
 
