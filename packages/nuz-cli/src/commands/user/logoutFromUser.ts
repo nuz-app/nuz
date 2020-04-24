@@ -6,7 +6,7 @@ import Worker from '../../classes/Worker'
 import { NUZ_DEFAULT_USERNAME } from '../../lib/const'
 import print, { info, success } from '../../utils/print'
 
-async function logout({
+async function logoutFromUser({
   username: _username,
 }: Arguments<{ username: string }>) {
   const isLogoutOther = !!_username
@@ -40,4 +40,4 @@ async function logout({
   return true
 }
 
-export default logout
+export default logoutFromUser
