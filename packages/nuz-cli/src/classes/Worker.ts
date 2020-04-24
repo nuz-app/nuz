@@ -3,15 +3,18 @@ import { got } from '@nuz/utils'
 import * as apiUrls from '../utils/apiUrls'
 
 class Worker {
-  constructor(private readonly endpoint: string) {}
+  static endpoint: string
 
-  async login(username: string, password: string, required: any) {
-    const request = got(
+  static async prepare(endpoint: string) {
+    this.endpoint = endpoint
+  }
+
+  static async login(username: string, password: string, required: any) {
+    return got(
       Object.assign(apiUrls.login(this.endpoint), {
         data: { username, password, type: required },
       }),
     )
-    return request
   }
 }
 
