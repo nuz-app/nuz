@@ -12,7 +12,8 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.put(
     '/composition/modules',
     onRoute(async (request, response) => {
-      const { token, composition, modules: moduleAsObject } = request.body
+      const { authorization: token } = request.headers
+      const { composition, modules: moduleAsObject } = request.body
 
       const formIsMissing = !token || !composition || !moduleAsObject
       if (formIsMissing) {
@@ -25,7 +26,7 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
       }
 
       const item = await worker.setModulesForComposition(
-        token,
+        token as string,
         composition,
         moduleAsObject,
       )

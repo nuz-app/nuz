@@ -14,7 +14,8 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.post(
     '/composition/collaborator',
     onRoute(async (request, response) => {
-      const { token, composition, collaborator } = request.body
+      const { authorization: token } = request.headers
+      const { composition, collaborator } = request.body
 
       const formIsMissing = !token || !composition || !collaborator
       if (formIsMissing) {
@@ -29,7 +30,7 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
       }
 
       const item = await worker.addCollaboratorToComposition(
-        token,
+        token as string,
         composition,
         {
           id: collaborator.id,

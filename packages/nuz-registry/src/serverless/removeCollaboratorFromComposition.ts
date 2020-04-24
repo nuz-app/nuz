@@ -11,7 +11,8 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.delete(
     '/composition/collaborator',
     onRoute(async (request, response) => {
-      const { token, composition, collaboratorId } = request.body
+      const { authorization: token } = request.headers
+      const { composition, collaboratorId } = request.body
 
       const formIsMissing = !token || !composition || !collaboratorId
       if (formIsMissing) {
@@ -19,7 +20,7 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
       }
 
       const item = await worker.removeCollaboratorFromComposition(
-        token,
+        token as string,
         composition,
         collaboratorId,
       )

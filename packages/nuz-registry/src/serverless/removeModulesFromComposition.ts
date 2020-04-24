@@ -11,7 +11,8 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.delete(
     '/composition/modules',
     onRoute(async (request, response) => {
-      const { token, composition, moduleIds } = request.body
+      const { authorization: token } = request.headers
+      const { composition, moduleIds } = request.body
 
       const formIsMissing = !token || !composition || !moduleIds
       if (formIsMissing) {
@@ -25,7 +26,7 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
       }
 
       const item = await worker.removeModulesFromComposition(
-        token,
+        token as string,
         composition,
         moduleIds,
       )

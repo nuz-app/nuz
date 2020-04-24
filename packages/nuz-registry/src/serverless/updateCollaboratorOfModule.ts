@@ -15,7 +15,8 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.put(
     '/module/collaborator',
     onRoute(async (request, response) => {
-      const { token, module, collaborator } = request.body
+      const { authorization: token } = request.headers
+      const { module, collaborator } = request.body
 
       const formIsMissing = !token || !module || !collaborator
       if (formIsMissing) {
@@ -29,7 +30,7 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
         throw new Error('Collaborator is invalid')
       }
 
-      const item = await worker.updateCollaboratorOfModule(token, module, {
+      const item = await worker.updateCollaboratorOfModule(token as string, module, {
         id: collaborator.id,
         type: collaborator.type as CollaboratorTypes,
       })
