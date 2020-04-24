@@ -7,6 +7,7 @@ import list from './list'
 import login from './login'
 import logout from './logout'
 import register from './register'
+import use from './use'
 import whoami from './whoami'
 
 const setPositionalForRegister = (yarg) =>
@@ -53,6 +54,18 @@ export const setCommands = (yargs) => {
       'List all users in work folder',
       (yarg) => yarg,
       handleOnCommand(list),
+    )
+
+    child.command(
+      'use <username>',
+      'Switch to using other user in work folder',
+      (yarg) =>
+        yarg.positional('username', {
+          describe: 'Username wants to use',
+          type: 'string',
+          required: true,
+        }),
+      handleOnCommand(use),
     )
 
     child.command('token', 'Manage token of user', (schild) => {

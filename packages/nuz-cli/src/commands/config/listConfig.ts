@@ -1,11 +1,11 @@
 import Config from '../../classes/Config'
 
-import { pretty, success } from '../../utils/print'
+import { info, pretty } from '../../utils/print'
 
 async function listConfig() {
   const config = await Config.readConfig()
 
-  success(pretty(config))
+  info(pretty(config))
   return true
 }
 
