@@ -9,13 +9,13 @@ import print, { success } from '../../utils/print'
 const usernameQuestion = {
   type: 'string',
   name: 'username',
-  message: `Username`,
+  message: 'Username',
 }
 
 const passwordQuestion = {
   type: 'password',
   name: 'password',
-  message: `Password`,
+  message: 'Password',
 }
 
 async function login() {
@@ -34,15 +34,19 @@ async function login() {
     password,
     UserAccessTokenTypes.fullAccess,
   )
+
+  const userId = request?.data?._id
   const accessToken = request?.data?.accessToken
-  if (!accessToken) {
-    throw new Error(`Not found access token in response`)
+  if (!userId || !accessToken) {
+    throw new Error(`Response data is missing data`)
   }
 
   const isNew = await Config.create(username)
   await Config.use(username)
 
   const auth = await Config.readAuth()
+  auth[AuthKeys.id] = userId
+  auth[AuthKeys.username] = username
   auth[AuthKeys.token] = accessToken.value
   auth[AuthKeys.type] = accessToken.type
 

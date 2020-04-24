@@ -48,7 +48,7 @@ export interface ScopeDocument extends Document, ScopeModel {
 export interface UserAccessToken {
   value: TokenId
   type: UserAccessTokenTypes
-  createdAt: Date
+  createdAt?: Date
 }
 
 export interface UserModel {

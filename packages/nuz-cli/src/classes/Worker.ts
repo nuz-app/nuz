@@ -11,8 +11,16 @@ class Worker {
 
   static async login(username: string, password: string, required: any) {
     return got(
-      Object.assign(apiUrls.login(this.endpoint), {
+      Object.assign(apiUrls.createTokenForUser(this.endpoint), {
         data: { username, password, type: required },
+      }),
+    )
+  }
+
+  static async logout(id: string, token: string) {
+    return got(
+      Object.assign(apiUrls.deleteTokenFromUser(this.endpoint), {
+        data: { id, token },
       }),
     )
   }

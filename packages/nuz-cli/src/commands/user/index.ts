@@ -2,6 +2,7 @@ import handleOnCommand from '../../utils/handleOnCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
 import login from './login'
+import logout from './logout'
 
 const noop = async () => {}
 
@@ -20,7 +21,7 @@ export const setCommands = (yargs) => {
       'logout',
       'Logout of user account',
       (yarg) => yarg,
-      handleOnCommand(noop),
+      handleOnCommand(logout),
     )
 
     child.command(
@@ -44,13 +45,13 @@ export const setCommands = (yargs) => {
     'logout',
     'Logout of user account [alias: user-logout]',
     (yarg) => yarg,
-    handleOnCommand(login),
+    handleOnCommand(logout),
   )
 
   yargs.command(
     'register',
     'Register a new user [alias: user-register]',
     (yarg) => yarg,
-    handleOnCommand(login),
+    handleOnCommand(noop),
   )
 }
