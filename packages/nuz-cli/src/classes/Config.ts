@@ -1,5 +1,6 @@
 import { UserAccessTokenTypes } from '@nuz/shared'
 import { pick, tokenTypesHelpers } from '@nuz/utils'
+import glob from 'glob'
 import os from 'os'
 import path from 'path'
 
@@ -155,8 +156,8 @@ class Config {
     return fs.writeJson(this.paths.config, data)
   }
 
-  static async readAuth(): Promise<AuthData> {
-    const auth = await fs.readJson(this.paths.auth)
+  static async readAuth(authPath?: string): Promise<AuthData> {
+    const auth = await fs.readJson(authPath || this.paths.auth)
     if (auth.loggedAt) {
       try {
         auth.loggedAt = new Date(auth.loggedAt)
@@ -201,6 +202,28 @@ class Config {
     }
 
     return auth
+  }
+
+  static async getUsers() {
+    const match = glob.sync(path.join(this.paths.users, '/*'))
+    const users: {
+      [username: string]: Pick<
+        AuthData,
+        AuthKeys.id | AuthKeys.username | AuthKeys.loggedAt
+      >
+    } = {}
+    for (const item of match) {
+      const userIsDefault = /\/(default)$/.test(item)
+      if (!userIsDefault) {
+        const auth = await this.readAuth(path.join(item, NUZ_AUTH_FILENAME))
+        users[auth.username] = {
+          id: auth.id,
+          username: auth.username,
+          loggedAt: auth.loggedAt,
+        }
+      }
+    }
+    return users
   }
 }
 

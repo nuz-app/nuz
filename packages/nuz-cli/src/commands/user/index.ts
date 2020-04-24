@@ -3,6 +3,7 @@ import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
 import createToken from './createToken'
 import deleteToken from './deleteToken'
+import list from './list'
 import login from './login'
 import logout from './logout'
 import register from './register'
@@ -45,6 +46,13 @@ export const setCommands = (yargs) => {
       'Register a new user',
       (yarg) => yarg,
       handleOnCommand(register),
+    )
+
+    child.command(
+      'list',
+      'List all users in work folder',
+      (yarg) => yarg,
+      handleOnCommand(list),
     )
 
     child.command('token', 'Manage token of user', (schild) => {
