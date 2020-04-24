@@ -55,6 +55,7 @@ export enum AuthKeys {
   username = 'username',
   token = 'token',
   type = 'type',
+  loggedAt = 'loggedAt',
 }
 
 export interface AuthData {
@@ -62,6 +63,7 @@ export interface AuthData {
   [AuthKeys.username]: string
   [AuthKeys.token]: string
   [AuthKeys.type]: UserAccessTokenTypes
+  [AuthKeys.loggedAt]: Date | undefined
 }
 
 class Config {
@@ -154,10 +156,23 @@ class Config {
   }
 
   static async readAuth(): Promise<AuthData> {
-    return fs.readJson(this.paths.auth)
+    const auth = await fs.readJson(this.paths.auth)
+    if (auth.loggedAt) {
+      try {
+        auth.loggedAt = new Date(auth.loggedAt)
+      } catch {
+        //
+      }
+    }
+
+    return auth
   }
 
   static async writeAuth(data: AuthData): Promise<any> {
+    if (data.loggedAt instanceof Date) {
+      data.loggedAt = data.loggedAt.toUTCString() as any
+    }
+
     return fs.writeJson(this.paths.auth, data)
   }
 

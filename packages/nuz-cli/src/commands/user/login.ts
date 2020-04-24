@@ -50,6 +50,7 @@ async function login({
   auth[AuthKeys.username] = username
   auth[AuthKeys.token] = accessToken.value
   auth[AuthKeys.type] = accessToken.type
+  auth[AuthKeys.loggedAt] = new Date()
 
   await Config.writeAuth(auth)
 
