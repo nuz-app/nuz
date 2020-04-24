@@ -3,7 +3,7 @@ import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
 import login from './login'
 import logout from './logout'
-import whoiam from './whoiam'
+import whoami from './whoami'
 
 const noop = async () => {}
 
@@ -12,10 +12,10 @@ export const setCommands = (yargs) => {
     child.usage('usage: $0 user <item> [options]')
 
     child.command(
-      'whoiam',
+      'whoami',
       'Who I am?',
       (yarg) => yarg,
-      handleOnCommand(whoiam),
+      handleOnCommand(whoami),
     )
 
     child.command(
@@ -43,10 +43,10 @@ export const setCommands = (yargs) => {
   })
 
   yargs.command(
-    'whoiam',
-    'Who I am? [alias: user-whoiam]',
+    'whoami',
+    'Who I am? [alias: user-whoami]',
     (yarg) => yarg,
-    handleOnCommand(whoiam),
+    handleOnCommand(whoami),
   )
 
   yargs.command(

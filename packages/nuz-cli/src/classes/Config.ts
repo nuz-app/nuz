@@ -117,7 +117,7 @@ class Config {
   /**
    * Checking current username working
    */
-  static async whoiam(): Promise<{ id: string; username: string }> {
+  static async whoami(): Promise<{ id: string; username: string }> {
     const auth = await this.readAuth()
     return pick(auth, ['id', 'username'])
   }
