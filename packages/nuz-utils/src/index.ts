@@ -1,8 +1,9 @@
 import * as integrityHelpers from './integrityHelpers'
 import * as jsonHelpers from './jsonHelpers'
 import * as linkedUrls from './linkedUrls'
+import * as tokenTypesHelpers from './tokenTypesHelpers'
 
-export { integrityHelpers, jsonHelpers, linkedUrls }
+export { integrityHelpers, jsonHelpers, linkedUrls, tokenTypesHelpers }
 
 export { default as checkIsObject } from './checkIsObject'
 export { default as checkIsUrlOk } from './checkIsUrlOk'

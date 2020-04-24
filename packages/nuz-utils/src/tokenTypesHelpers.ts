@@ -1,4 +1,4 @@
-import { UserAccessTokenTypes } from '../types'
+import { UserAccessTokenTypes } from '@nuz/shared'
 
 const VALUES = Object.values(UserAccessTokenTypes)
 
