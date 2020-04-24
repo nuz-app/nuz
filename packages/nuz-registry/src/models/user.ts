@@ -9,8 +9,15 @@ export const collection = 'User'
 
 const schema: Schema = new Schema(
   {
+    _id: {
+      type: String,
+      default() {
+        // @ts-ignore
+        return this.username
+      },
+    },
     name: { type: String, required: true },
-    username: { type: String, required: true, index: true, unique: true },
+    username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     accessTokens: [
@@ -36,7 +43,7 @@ const schema: Schema = new Schema(
       createdAt: true,
       updatedAt: true,
     },
-    _id: true,
+    _id: false,
   },
 )
 

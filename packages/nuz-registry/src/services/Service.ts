@@ -42,9 +42,7 @@ class Service<T> {
       return null
     }
 
-    const collaborator = module.collaborators.find((item) =>
-      compareObjectId(item.id, userId),
-    )
+    const collaborator = module.collaborators.find((item) => item.id === userId)
     if (!collaborator) {
       throw new Error(`User does not include collaborators of ${modelName}`)
     }

@@ -1,4 +1,4 @@
-import { CollaboratorTypes, TObjectId, VersionInfo } from './common'
+import { CollaboratorTypes, TObjectId, UserId, VersionInfo } from './common'
 
 export type ModuleAsObject = { [id: string]: string }
 
@@ -25,7 +25,7 @@ export interface CreateScopeData {
 }
 
 export interface AddCollaboratorData {
-  id: TObjectId
+  id: UserId
   type: CollaboratorTypes
 }
 

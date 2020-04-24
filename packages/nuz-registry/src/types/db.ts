@@ -3,10 +3,12 @@ import { Document, Model, Types } from 'mongoose'
 
 import {
   Collaborator,
+  ModuleId,
   RequiredModule,
   Schedule,
-  TObjectId,
+  ScopeId,
   TokenId,
+  UserId,
   VersionInfo,
 } from './common'
 
@@ -25,7 +27,7 @@ export interface ModuleModel {
 }
 
 export interface ModuleDocument extends Document, ModuleModel {
-  _id: string
+  _id: ModuleId
   createdAt: Date
   updatedAt: Date
 }
@@ -40,7 +42,7 @@ export interface ScopeModel {
 }
 
 export interface ScopeDocument extends Document, ScopeModel {
-  _id: string
+  _id: ScopeId
   createdAt: Date
   updatedAt: Date
 }
@@ -60,7 +62,7 @@ export interface UserModel {
 }
 
 export interface UserDocument extends Document, UserModel {
-  _id: TObjectId
+  _id: UserId
   createdAt: Date
   updatedAt: Date
   comparePassword: (password: string) => boolean

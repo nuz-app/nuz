@@ -1,4 +1,7 @@
+import { CollaboratorTypes } from '@nuz/shared'
 import { Types } from 'mongoose'
+
+export { CollaboratorTypes } from '@nuz/shared'
 
 export enum ModuleFormats {
   umd = 'umd',
@@ -9,14 +12,8 @@ export interface Resource {
   integrity: string
 }
 
-export enum CollaboratorTypes {
-  creator = 'creator',
-  maintainer = 'maintainer',
-  contributor = 'contributor',
-}
-
 export interface Collaborator {
-  id: TObjectId
+  id: UserId
   type: CollaboratorTypes
 }
 
@@ -25,7 +22,7 @@ export type TObjectId = Types.ObjectId
 export type CompositionId = string
 export type ScopeId = string
 export type ModuleId = string
-export type UserId = TObjectId
+export type UserId = string
 export type TokenId = string
 
 // tslint:disable-next-line: no-empty-interface

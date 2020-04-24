@@ -1,7 +1,6 @@
 import { Express } from 'express'
 
 import Worker from '../classes/Worker'
-import ensureObjectId from '../utils/ensureObjectId'
 import onRoute from '../utils/onRoute'
 
 import { ServerlessRoute } from './types'
@@ -19,7 +18,7 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
         throw new Error('Form is missing fields')
       }
 
-      const item = await worker.deleteTokenFromUser(ensureObjectId(id), token)
+      const item = await worker.deleteTokenFromUser(id, token)
 
       response.json(item)
       return true
