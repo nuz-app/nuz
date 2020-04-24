@@ -66,3 +66,18 @@ export const removeCollaboratorFromScope = (endpoint: string) => ({
   url: `${endpoint}/scope/collaborator`,
   method: 'DELETE',
 })
+
+export const addCollaboratorToModule = (endpoint: string) => ({
+  url: `${endpoint}/module/collaborator`,
+  method: 'POST',
+})
+
+export const updateCollaboratorOfModule = (endpoint: string) => ({
+  url: `${endpoint}/module/collaborator`,
+  method: 'PUT',
+})
+
+export const removeCollaboratorFromModule = (endpoint: string) => ({
+  url: `${endpoint}/module/collaborator`,
+  method: 'DELETE',
+})
