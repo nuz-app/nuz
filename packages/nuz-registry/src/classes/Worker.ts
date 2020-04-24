@@ -315,6 +315,8 @@ class Worker {
    * Create a user
    */
   async createUser(data: CreateUserData) {
+    // TODO: should be validate email, name, username and password
+
     const result = await this.services.User.create(data)
     return pick(result, ['_id', 'name', 'email', 'username', 'createdAt'])
   }
@@ -390,6 +392,8 @@ class Worker {
    */
   async createComposition(tokenId: TokenId, data: CreateCompositionData) {
     const { name, modules: modulesAsObject } = data
+
+    // TODO: should be validate name
 
     const modules = this.services.Composition.convertModulesToArray(
       modulesAsObject,
@@ -612,6 +616,8 @@ class Worker {
    */
   async createScope(tokenId: TokenId, data: CreateScopeData) {
     const { name } = data
+
+    // TODO: should be validate name
 
     this.services.Scope.validateScopeId(name)
 
