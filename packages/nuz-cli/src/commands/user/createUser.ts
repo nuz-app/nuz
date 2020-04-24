@@ -3,7 +3,7 @@ import Worker from '../../classes/Worker'
 import createQuestions from '../../utils/createQuestions'
 import print, { info, success } from '../../utils/print'
 
-import login from './login'
+import loginAsUser from './loginAsUser'
 
 const emailQuestion = {
   type: 'string',
@@ -73,7 +73,7 @@ async function register() {
 
   if (autoLogin) {
     info('Signing in to account...')
-    await login({ username, password } as any)
+    await loginAsUser({ username, password } as any)
   }
 
   return true
