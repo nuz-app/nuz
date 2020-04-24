@@ -5,6 +5,7 @@ import createToken from './createToken'
 import deleteToken from './deleteToken'
 import login from './login'
 import logout from './logout'
+import register from './register'
 import whoami from './whoami'
 
 const noop = async () => {}
@@ -38,7 +39,7 @@ export const setCommands = (yargs) => {
       'register',
       'Register a new user',
       (yarg) => yarg,
-      handleOnCommand(noop),
+      handleOnCommand(register),
     )
 
     child.command('token', 'Manage token of user', (schild) => {
@@ -89,6 +90,6 @@ export const setCommands = (yargs) => {
     'register',
     'Register a new user [alias: user-register]',
     (yarg) => yarg,
-    handleOnCommand(noop),
+    handleOnCommand(register),
   )
 }

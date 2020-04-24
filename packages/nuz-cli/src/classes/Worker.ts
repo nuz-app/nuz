@@ -10,6 +10,14 @@ class Worker {
     this.endpoint = endpoint
   }
 
+  static async createUser({ name, email, username, password }) {
+    return got(
+      Object.assign(apiUrls.createUser(this.endpoint), {
+        data: { data: { email, name, username, password } },
+      }),
+    )
+  }
+
   static async loginAsUser(username: string, password: string) {
     return got(
       Object.assign(apiUrls.loginUser(this.endpoint), {
