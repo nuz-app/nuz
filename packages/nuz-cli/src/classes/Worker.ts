@@ -93,6 +93,51 @@ class Worker {
       }),
     )
   }
+
+  /**
+   * Add a collaborator to the module
+   */
+  static async addCollaboratorToModule(
+    token: string,
+    module: string,
+    collaborator: any,
+  ) {
+    return got(
+      Object.assign(apiUrls.addCollaboratorToModule(this.endpoint), {
+        data: { token, module, collaborator },
+      }),
+    )
+  }
+
+  /**
+   * Update a collaborator of the module
+   */
+  static async updateCollaboratorOfModule(
+    token: string,
+    module: string,
+    collaborator: any,
+  ) {
+    return got(
+      Object.assign(apiUrls.updateCollaboratorOfModule(this.endpoint), {
+        data: { token, module, collaborator },
+      }),
+    )
+  }
+
+  /**
+   * Remove a collaborator from the module
+   */
+  static async removeCollaboratorFromModule(
+    token: string,
+    module: string,
+    collaborator: string,
+  ) {
+    return got(
+      Object.assign(apiUrls.removeCollaboratorFromModule(this.endpoint), {
+        data: { token, module, collaboratorId: collaborator },
+      }),
+    )
+  }
 }
 
 export default Worker
