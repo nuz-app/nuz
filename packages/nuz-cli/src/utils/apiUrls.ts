@@ -32,6 +32,11 @@ export const publishModule = (endpoint: string) => ({
  *
  */
 
+export const loginUser = (endpoint: string) => ({
+  url: `${endpoint}/user/login`,
+  method: 'POST',
+})
+
 export const createTokenForUser = (endpoint: string) => ({
   url: `${endpoint}/user/token`,
   method: 'POST',
