@@ -15,12 +15,12 @@ export const setCommands = (yargs) => {
       (yarg) =>
         yarg
           .positional('key', {
-            describe: null,
+            describe: 'The key you want to configure',
             type: 'string',
             required: true,
           })
           .positional('value', {
-            describe: null,
+            describe: 'New value of the key',
             type: 'string',
             required: true,
           }),
@@ -32,7 +32,7 @@ export const setCommands = (yargs) => {
       'Get configuration',
       (yarg) =>
         yarg.positional('keys', {
-          describe: null,
+          describe: 'The keys want to get information',
           type: 'string',
           required: true,
         }),
