@@ -338,14 +338,29 @@ class Worker {
   async deleteUser() {}
 
   /**
+   * Login to a user
+   */
+  async loginUser(username: string, password: string) {
+    const user = await this.services.User.login(username, password)
+
+    const result = await this.services.User.createToken(
+      user._id,
+      UserAccessTokenTypes.fullAccess,
+    )
+    return result
+  }
+
+  /**
    * Create a token for the user
    */
   async createTokenForUser(
-    username: string,
-    password: string,
+    tokenId: TokenId,
     requiredType: UserAccessTokenTypes,
   ) {
-    const user = await this.services.User.login(username, password)
+    const user = await this.verifyTokenOfUser(
+      tokenId,
+      UserAccessTokenTypes.fullAccess,
+    )
 
     const result = await this.services.User.createToken(user._id, requiredType)
     return result

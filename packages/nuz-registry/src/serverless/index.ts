@@ -5,6 +5,7 @@ import * as health from './health'
 import * as createTokenForUser from './createTokenForUser'
 import * as createUser from './createUser'
 import * as deleteTokenFromUser from './deleteTokenFromUser'
+import * as loginUser from './loginUser'
 import * as updateUser from './updateUser'
 
 import * as addCollaboratorToComposition from './addCollaboratorToComposition'
@@ -30,6 +31,7 @@ import * as updateCollaboratorOfModule from './updateCollaboratorOfModule'
 export default [
   health,
 
+  loginUser,
   createUser,
   updateUser,
   createTokenForUser,

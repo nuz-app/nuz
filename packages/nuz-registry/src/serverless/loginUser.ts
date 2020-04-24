@@ -5,20 +5,20 @@ import onRoute from '../utils/onRoute'
 
 import { ServerlessRoute } from './types'
 
-export const name = 'createUser'
+export const name = 'loginUser'
 
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.post(
-    '/user/token',
+    '/user/login',
     onRoute(async (request, response) => {
-      const { token, type } = request.body
+      const { username, password } = request.body
 
-      const formIsMissing = !token || !type
+      const formIsMissing = !username || !password
       if (formIsMissing) {
         throw new Error('Form is missing fields')
       }
 
-      const item = await worker.createTokenForUser(token, type)
+      const item = await worker.loginUser(username, password)
 
       response.json(item)
       return true
