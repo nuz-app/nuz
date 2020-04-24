@@ -1,6 +1,7 @@
 import Config, { AuthKeys } from '../../classes/Config'
 import Worker from '../../classes/Worker'
 
+import { Arguments } from 'yargs'
 import createQuestions from '../../utils/createQuestions'
 import print, { success } from '../../utils/print'
 
@@ -16,11 +17,17 @@ const passwordQuestion = {
   message: 'Password',
 }
 
-async function login() {
-  const result = await createQuestions<{ username: string; password: string }>([
-    usernameQuestion,
-    passwordQuestion,
-  ])
+async function login({
+  username: _username,
+  password: _password,
+}: Arguments<{ username: string; password: string }>) {
+  const isFilled = _username && _password
+  const result = isFilled
+    ? { username: _username, password: _password }
+    : await createQuestions<{ username: string; password: string }>([
+        usernameQuestion,
+        passwordQuestion,
+      ])
   const { username, password } = result
 
   if (!username || !password) {
@@ -46,7 +53,7 @@ async function login() {
 
   await Config.writeAuth(auth)
 
-  success(`Login successfully to ${print.bold(username)} account!`)
+  success(`Login successfully to ${print.name(username)} account!`)
   return true
 }
 
