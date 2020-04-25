@@ -21,6 +21,7 @@ const schema: Schema = new Schema(
       },
     },
     name: { type: String, required: true },
+    scope: { type: String, required: false, index: true },
     tags: {
       type: Map,
       of: String,

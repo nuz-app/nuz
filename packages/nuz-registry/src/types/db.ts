@@ -20,6 +20,7 @@ export { UserAccessTokenTypes } from '@nuz/shared'
 
 export interface ModuleModel {
   name: string
+  scope?: string
   collaborators: Collaborator[]
   tags: Map<string, string>
   versions: Map<string, VersionInfo>
