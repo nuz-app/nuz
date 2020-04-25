@@ -14,7 +14,7 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
       const { authorization: token } = request.headers
       const { module, version, deprecate } = request.body
 
-      const formIsMissing = !token || !module || !version || !deprecate
+      const formIsMissing = !token || !module || !version
       if (formIsMissing) {
         throw new Error('Form is missing fields')
       }
