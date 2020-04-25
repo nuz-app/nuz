@@ -114,7 +114,7 @@ class Module extends Service<ModuleId> {
     const versionIds = satisfies.map((item) => versionHelpers.encode(item))
     const updateFields = versionIds.reduce(
       (acc, versionId) =>
-        Object.assign(acc, { [`versions.${versionId}.deprecate`]: deprecate }),
+        Object.assign(acc, { [`versions.${versionId}.deprecated`]: deprecate }),
       {},
     )
 

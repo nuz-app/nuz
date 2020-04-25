@@ -160,7 +160,6 @@ class Worker {
     if (satisfies.length === 0) {
       throw new Error(`Not found satisfies version with ${version}`)
     }
-    console.log({ satisfies })
 
     const result = this.services.Module.setDeprecate(
       module._id,
