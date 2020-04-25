@@ -3,6 +3,7 @@ import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
 import addCollaborator from './addCollaborator'
 import removeCollaborator from './removeCollaborator'
+import setDeprecate from './setDeprecate'
 import updateCollaborator from './updateCollaborator'
 
 export const setCommands = (yargs) => {
@@ -35,6 +36,13 @@ export const setCommands = (yargs) => {
 
       showHelpIfInvalid(schild, schild.argv, 3, 4)
     })
+
+    child.command(
+      'deprecate <module> <versions> [deprecate]',
+      'Deprecate a module',
+      (yarg) => yarg,
+      handleOnCommand(setDeprecate),
+    )
 
     showHelpIfInvalid(child, child.argv, 2, 3)
   })

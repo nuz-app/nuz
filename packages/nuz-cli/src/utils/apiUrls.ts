@@ -85,6 +85,15 @@ export const removeCollaboratorFromScope = (
 
 // Module
 
+export const setDeprecateForModule = (
+  endpoint: string,
+  authorization: string,
+) => ({
+  url: `${endpoint}/module/deprecate`,
+  method: 'PUT',
+  headers: { authorization },
+})
+
 export const addCollaboratorToModule = (
   endpoint: string,
   authorization: string,
