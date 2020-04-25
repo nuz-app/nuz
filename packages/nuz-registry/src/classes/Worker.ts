@@ -27,6 +27,7 @@ import { createServices, Services } from '../services'
 import checkIsCollaboratorAllowSet from '../utils/checkIsCollaboratorAllowSet'
 import checkIsCollaboratorIncludes from '../utils/checkIsCollaboratorIncludes'
 import checkIsNewComposition from '../utils/checkIsNewComposition'
+import checkIsNewScope from '../utils/checkIsNewScope'
 import createMongoConnection from '../utils/createMongoConnection'
 import ensureVersionResources from '../utils/ensureVersionResources'
 import * as moduleIdHelpers from '../utils/moduleIdHelpers'
@@ -55,6 +56,22 @@ class Worker {
   async prepare() {}
 
   /**
+   * Get all modules in scopes
+   */
+  async getAllModulesInScopes(
+    scopeIds: ScopeId[],
+    fields?: any,
+    limit?: number,
+  ) {
+    const result = await this.services.Module.getAllInScopes(
+      scopeIds,
+      fields,
+      limit,
+    )
+    return result
+  }
+
+  /**
    * Publish a module
    */
   async publishModule(tokenId: TokenId, data: PublishModuleData) {
@@ -71,9 +88,10 @@ class Worker {
       CollaboratorTypes.contributor,
       false,
     )
+    const parsedId = moduleIdHelpers.parse(name)
+
     const moduleIsEixsted = !!module
     if (!moduleIsEixsted) {
-      const parsedId = moduleIdHelpers.parse(name)
       if (!parsedId) {
         throw new Error(`${name} is invalid module id`)
       }
@@ -85,6 +103,8 @@ class Worker {
           user._id,
           CollaboratorTypes.contributor,
         )
+
+        data.scope = scope._id
       }
     } else {
       // Check is version published
@@ -653,7 +673,33 @@ class Worker {
    * Delete a scope
    */
   async deleteScope(tokenId: TokenId, scopeId: ScopeId) {
-    throw new Error(`Scope can't be deleted by policy`)
+    const user = await this.verifyTokenOfUser(
+      tokenId,
+      UserAccessTokenTypes.fullAccess,
+    )
+
+    const scope = await this.verifyCollaboratorOfScope(
+      scopeId,
+      user._id,
+      CollaboratorTypes.maintainer,
+    )
+
+    const isNewScope = checkIsNewScope(scope.createdAt)
+    if (!isNewScope) {
+      throw new Error(`Scope can't be deleted by policy`)
+    }
+
+    const modulesPublished = await this.getAllModulesInScopes(
+      [scopeId],
+      { _id: 1 },
+      1,
+    )
+    if (modulesPublished.length > 0) {
+      throw new Error(`Scope can't be deleted by policy`)
+    }
+
+    const result = await this.services.Scope.delete(scope._id)
+    return result
   }
 
   /**

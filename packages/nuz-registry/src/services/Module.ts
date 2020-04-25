@@ -4,6 +4,7 @@ import {
   Models,
   ModuleId,
   PublishModuleData,
+  ScopeId,
   UserId,
 } from '../types'
 
@@ -19,6 +20,7 @@ class Module extends Service<ModuleId> {
   async create(userId: UserId, data: PublishModuleData) {
     const {
       name,
+      scope,
       version,
       library,
       format,
@@ -49,6 +51,7 @@ class Module extends Service<ModuleId> {
 
     const module = new this.Collection({
       name,
+      scope,
       collaborators,
       tags,
       versions,
@@ -128,6 +131,15 @@ class Module extends Service<ModuleId> {
     }
 
     return { _id: id, mofitied, ok }
+  }
+
+  async getAllInScopes(scopeIds: ScopeId[], fields?: any, limit?: number) {
+    const result = await this.Collection.find(
+      { scope: { $in: scopeIds } },
+      fields || { _id: 1 },
+      limit && { limit },
+    )
+    return result
   }
 }
 

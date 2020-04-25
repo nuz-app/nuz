@@ -38,4 +38,4 @@ export type PublishModuleData = Pick<
   | 'exportsOnly'
   | 'alias'
   | 'fallback'
-> & { name: string }
+> & { name: string; scope?: string }
