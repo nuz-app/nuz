@@ -20,7 +20,7 @@ const schema: Schema = new Schema(
         return this.name
       },
     },
-    name: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
     tags: {
       type: Map,
       of: String,
