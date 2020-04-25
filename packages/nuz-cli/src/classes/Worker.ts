@@ -91,6 +91,21 @@ class Worker {
   }
 
   /**
+   * Set deprecate for the module
+   */
+  static async setDeprecateForModule(
+    module: string,
+    version: string,
+    deprecate: string | undefined,
+  ) {
+    return got(
+      Object.assign(apiUrls.setDeprecateForModule(this.endpoint, this.token), {
+        data: { module, version, deprecate },
+      }),
+    )
+  }
+
+  /**
    * Add a collaborator to the module
    */
   static async addCollaboratorToModule(module: string, collaborator: any) {
