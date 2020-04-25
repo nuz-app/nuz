@@ -66,7 +66,6 @@ class Module extends Service<ModuleId> {
       throw error
     }
 
-    console.log({ module })
     return module
   }
 
@@ -130,7 +129,7 @@ class Module extends Service<ModuleId> {
       throw new Error('There was an error during the update process')
     }
 
-    return { _id: id, mofitied, ok }
+    return { _id: id, mofitied, ok, versions: satisfies }
   }
 
   async getAllInScopes(scopeIds: ScopeId[], fields?: any, limit?: number) {
