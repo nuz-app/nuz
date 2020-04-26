@@ -422,9 +422,9 @@ class Worker {
 
     // TODO: should be validate name
 
-    const modules = this.services.Composition.convertModulesToArray(
-      modulesAsObject,
-    )
+    const modules = !modulesAsObject
+      ? []
+      : this.services.Composition.convertModulesToArray(modulesAsObject)
 
     const user = await this.verifyTokenOfUser(
       tokenId,

@@ -69,7 +69,7 @@ class Composition extends Service<CompositionId> {
 
   async delete(id: CompositionId) {
     const { ok, deletedCount } = await this.Collection.deleteOne({ _id: id })
-    return { ok, deleted: deletedCount }
+    return { _id: id, ok, deleted: deletedCount }
   }
 
   async addModules(id: CompositionId, modules: RequiredModule[]) {
