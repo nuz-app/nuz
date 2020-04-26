@@ -5,6 +5,9 @@ import * as health from './health'
 import * as createTokenForUser from './createTokenForUser'
 import * as createUser from './createUser'
 import * as deleteTokenFromUser from './deleteTokenFromUser'
+import * as getCompositionsOfUser from './getCompositionsOfUser'
+import * as getModulesOfUser from './getModulesOfUser'
+import * as getScopesOfUser from './getScopesOfUser'
 import * as loginUser from './loginUser'
 import * as updateUser from './updateUser'
 
@@ -39,6 +42,9 @@ export default [
   updateUser,
   createTokenForUser,
   deleteTokenFromUser,
+  getModulesOfUser,
+  getCompositionsOfUser,
+  getScopesOfUser,
 
   createComposition,
   deleteComposition,
