@@ -208,6 +208,14 @@ class Worker {
   }
 
   /**
+   * Get all modules of the user
+   */
+  async getModulesOfUser(userId: UserId) {
+    const reuslt = await this.services.Module.getAllOf(userId)
+    return { _id: userId, modules: reuslt }
+  }
+
+  /**
    * Verify collaborator of the module
    */
   async verifyCollaboratorOfModule(
@@ -473,6 +481,14 @@ class Worker {
   }
 
   /**
+   * Get all compositions of the user
+   */
+  async getCompositionsOfUser(userId: UserId) {
+    const reuslt = await this.services.Composition.getAllOf(userId)
+    return { _id: userId, compositions: reuslt }
+  }
+
+  /**
    * Verify collaborator of the composition
    */
   async verifyCollaboratorOfComposition(
@@ -708,6 +724,14 @@ class Worker {
   async getCollaboratorsOfScope(scopeId: ScopeId) {
     const reuslt = await this.services.Scope.listCollaborators(scopeId)
     return reuslt
+  }
+
+  /**
+   * Get all scopes of the user
+   */
+  async getScopesOfUser(userId: UserId) {
+    const reuslt = await this.services.Scope.getAllOf(userId)
+    return { _id: userId, scopes: reuslt }
   }
 
   /**
