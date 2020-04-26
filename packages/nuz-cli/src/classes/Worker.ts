@@ -49,6 +49,28 @@ class Worker {
   }
 
   /**
+   * Create a scope
+   */
+  static async createScope(name: string) {
+    return got(
+      Object.assign(apiUrls.createScope(this.endpoint, this.token), {
+        data: { data: { name } },
+      }),
+    )
+  }
+
+  /**
+   * Delete a scope
+   */
+  static async deleteScope(scope: string) {
+    return got(
+      Object.assign(apiUrls.deleteScope(this.endpoint, this.token), {
+        data: { scope },
+      }),
+    )
+  }
+
+  /**
    * Get all collaborators of the scope
    */
   static async getCollaboratorsOfScope(scope: string) {
@@ -175,6 +197,31 @@ class Worker {
           data: { module, collaboratorId: collaborator },
         },
       ),
+    )
+  }
+
+  /**
+   * Create a composition
+   */
+  static async createComposition(
+    name: string,
+    modules?: { [id: string]: string },
+  ) {
+    return got(
+      Object.assign(apiUrls.createComposition(this.endpoint, this.token), {
+        data: { data: { name, modules } },
+      }),
+    )
+  }
+
+  /**
+   * Delete a composition
+   */
+  static async deleteComposition(composition: string) {
+    return got(
+      Object.assign(apiUrls.deleteComposition(this.endpoint, this.token), {
+        data: { composition },
+      }),
     )
   }
 

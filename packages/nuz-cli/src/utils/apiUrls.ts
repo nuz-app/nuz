@@ -56,6 +56,18 @@ export const deleteTokenFromUser = (endpoint: string) => ({
 
 // Scope
 
+export const createScope = (endpoint: string, authorization: string) => ({
+  url: `${endpoint}/scope`,
+  method: 'POST',
+  headers: { authorization },
+})
+
+export const deleteScope = (endpoint: string, authorization: string) => ({
+  url: `${endpoint}/scope`,
+  method: 'DELETE',
+  headers: { authorization },
+})
+
 export const getCollaboratorsOfScope = (
   endpoint: string,
   authorization: string,
@@ -140,6 +152,18 @@ export const removeCollaboratorFromModule = (
 })
 
 // Composition
+
+export const createComposition = (endpoint: string, authorization: string) => ({
+  url: `${endpoint}/composition`,
+  method: 'POST',
+  headers: { authorization },
+})
+
+export const deleteComposition = (endpoint: string, authorization: string) => ({
+  url: `${endpoint}/composition`,
+  method: 'DELETE',
+  headers: { authorization },
+})
 
 export const getCollaboratorsOfComposition = (
   endpoint: string,
