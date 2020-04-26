@@ -200,3 +200,21 @@ export const removeCollaboratorFromComposition = (
   method: 'DELETE',
   headers: { authorization },
 })
+
+export const setModulesForComposition = (
+  endpoint: string,
+  authorization: string,
+) => ({
+  url: `${endpoint}/composition/modules`,
+  method: 'PUT',
+  headers: { authorization },
+})
+
+export const removeModulesFromComposition = (
+  endpoint: string,
+  authorization: string,
+) => ({
+  url: `${endpoint}/composition/modules`,
+  method: 'DELETE',
+  headers: { authorization },
+})
