@@ -47,7 +47,7 @@ class Scope extends Service<ScopeId> {
 
   async delete(id: ScopeId) {
     const { ok, deletedCount } = await this.Collection.deleteOne({ _id: id })
-    return { ok, deleted: deletedCount }
+    return { _id: id, ok, deleted: deletedCount }
   }
 }
 
