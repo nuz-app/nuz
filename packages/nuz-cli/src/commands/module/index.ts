@@ -2,6 +2,7 @@ import handleOnCommand from '../../utils/handleOnCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
 import addCollaborator from './addCollaborator'
+import listCollaborators from './listCollaborators'
 import removeCollaborator from './removeCollaborator'
 import setDeprecate from './setDeprecate'
 import updateCollaborator from './updateCollaborator'
@@ -32,6 +33,13 @@ export const setCommands = (yargs) => {
         'Remove collaborator from the module',
         (yarg) => yarg,
         handleOnCommand(removeCollaborator),
+      )
+
+      schild.command(
+        'list <module>',
+        'List collaborators of the module',
+        (yarg) => yarg,
+        handleOnCommand(listCollaborators),
       )
 
       showHelpIfInvalid(schild, schild.argv, 3, 4)
