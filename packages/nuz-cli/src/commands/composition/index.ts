@@ -5,6 +5,8 @@ import addCollaborator from './addCollaborator'
 import createComposition from './createComposition'
 import deleteComposition from './deleteComposition'
 import removeCollaborator from './removeCollaborator'
+import removeModules from './removeModules'
+import setModules from './setModules'
 import updateCollaborator from './updateCollaborator'
 
 export const setCommands = (yargs) => {
@@ -55,6 +57,26 @@ export const setCommands = (yargs) => {
         showHelpIfInvalid(schild, schild.argv, 3, 4)
       },
     )
+
+    child.command('modules', 'Manage modules of composition', (schild) => {
+      schild.usage('usage: $0 composition modules <type> [options]')
+
+      schild.command(
+        'set <composition> <modules..>',
+        'Set modules for the composition',
+        (yarg) => yarg,
+        handleOnCommand(setModules),
+      )
+
+      schild.command(
+        'remove <composition> <moduleIds..>',
+        'Remove modules from the composition',
+        (yarg) => yarg,
+        handleOnCommand(removeModules),
+      )
+
+      showHelpIfInvalid(schild, schild.argv, 3, 4)
+    })
 
     showHelpIfInvalid(child, child.argv, 2, 3)
   })

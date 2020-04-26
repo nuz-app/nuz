@@ -289,6 +289,40 @@ class Worker {
       ),
     )
   }
+
+  /**
+   * Set modules for the composition
+   */
+  static async setModulesForComposition(
+    composition: string,
+    modules: { [id: string]: string },
+  ) {
+    return got(
+      Object.assign(
+        apiUrls.setModulesForComposition(this.endpoint, this.token),
+        {
+          data: { composition, modules },
+        },
+      ),
+    )
+  }
+
+  /**
+   * Remove modules from the composition
+   */
+  static async removeModulesForComposition(
+    composition: string,
+    moduleIds: string[],
+  ) {
+    return got(
+      Object.assign(
+        apiUrls.removeModulesFromComposition(this.endpoint, this.token),
+        {
+          data: { composition, moduleIds },
+        },
+      ),
+    )
+  }
 }
 
 export default Worker
