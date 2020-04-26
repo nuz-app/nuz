@@ -56,6 +56,15 @@ export const deleteTokenFromUser = (endpoint: string) => ({
 
 // Scope
 
+export const getCollaboratorsOfScope = (
+  endpoint: string,
+  authorization: string,
+) => ({
+  url: `${endpoint}/scope/collaborators`,
+  method: 'GET',
+  headers: { authorization },
+})
+
 export const addCollaboratorToScope = (
   endpoint: string,
   authorization: string,
@@ -94,6 +103,15 @@ export const setDeprecateForModule = (
   headers: { authorization },
 })
 
+export const getCollaboratorsOfModule = (
+  endpoint: string,
+  authorization: string,
+) => ({
+  url: `${endpoint}/module/collaborators`,
+  method: 'GET',
+  headers: { authorization },
+})
+
 export const addCollaboratorToModule = (
   endpoint: string,
   authorization: string,
@@ -122,6 +140,15 @@ export const removeCollaboratorFromModule = (
 })
 
 // Composition
+
+export const getCollaboratorsOfComposition = (
+  endpoint: string,
+  authorization: string,
+) => ({
+  url: `${endpoint}/composition/collaborators`,
+  method: 'GET',
+  headers: { authorization },
+})
 
 export const addCollaboratorToComposition = (
   endpoint: string,

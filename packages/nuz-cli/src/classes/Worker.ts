@@ -49,6 +49,20 @@ class Worker {
   }
 
   /**
+   * Get all collaborators of the scope
+   */
+  static async getCollaboratorsOfScope(scope: string) {
+    return got(
+      Object.assign(
+        apiUrls.getCollaboratorsOfScope(this.endpoint, this.token),
+        {
+          data: { scope },
+        },
+      ),
+    )
+  }
+
+  /**
    * Add a collaborator to the scope
    */
   static async addCollaboratorToScope(scope: string, collaborator: any) {
@@ -106,6 +120,20 @@ class Worker {
   }
 
   /**
+   * Get all collaborators of the module
+   */
+  static async getCollaboratorsOfModule(module: string) {
+    return got(
+      Object.assign(
+        apiUrls.getCollaboratorsOfModule(this.endpoint, this.token),
+        {
+          data: { module },
+        },
+      ),
+    )
+  }
+
+  /**
    * Add a collaborator to the module
    */
   static async addCollaboratorToModule(module: string, collaborator: any) {
@@ -145,6 +173,20 @@ class Worker {
         apiUrls.removeCollaboratorFromModule(this.endpoint, this.token),
         {
           data: { module, collaboratorId: collaborator },
+        },
+      ),
+    )
+  }
+
+  /**
+   * Get all collaborators of the composition
+   */
+  static async getCollaboratorsOfComposition(composition: string) {
+    return got(
+      Object.assign(
+        apiUrls.getCollaboratorsOfComposition(this.endpoint, this.token),
+        {
+          data: { composition },
         },
       ),
     )
