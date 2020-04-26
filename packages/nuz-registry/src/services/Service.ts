@@ -24,14 +24,17 @@ class Service<T> {
   async listCollaborators(id: T): Promise<Collaborator[]> {
     const modelName = this.Collection.modelName
 
-    const item = await this.Collection.findOne({
-      _id: id,
-    })
+    const item = await this.Collection.findOne(
+      {
+        _id: id,
+      },
+      { _id: 1, collaborators: 1 },
+    )
     if (!item) {
       throw new Error(`${modelName} is not found`)
     }
 
-    return item.collaborators
+    return item
   }
 
   async verifyCollaborator(
