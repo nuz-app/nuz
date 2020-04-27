@@ -211,7 +211,12 @@ class Worker {
    * Get all modules of the user
    */
   async getModulesOfUser(userId: UserId) {
-    const reuslt = await this.services.Module.getAllOf(userId)
+    const reuslt = await this.services.Module.getAllOf(userId, {
+      _id: 1,
+      name: 1,
+      scope: 1,
+      createdAt: 1,
+    })
     return { _id: userId, modules: reuslt }
   }
 
