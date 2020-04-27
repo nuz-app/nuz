@@ -1,6 +1,9 @@
 import handleOnCommand from '../../utils/handleOnCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
+import allCompositions from './allCompositions'
+import allModules from './allModules'
+import allScopes from './allScopes'
 import createToken from './createToken'
 import createUser from './createUser'
 import deleteToken from './deleteToken'
@@ -83,6 +86,33 @@ export const setCommands = (yargs) => {
         'Delete a token from user',
         (yarg) => yarg,
         handleOnCommand(deleteToken),
+      )
+
+      showHelpIfInvalid(schild, schild.argv, 3, 4)
+    })
+
+    child.command('my', 'Show my list', (schild) => {
+      schild.usage('usage: $0 user my <type> [options]')
+
+      schild.command(
+        'compositions',
+        'List compositions of current user',
+        (yarg) => yarg,
+        handleOnCommand(allCompositions),
+      )
+
+      schild.command(
+        'scopes',
+        'List scopes of current user',
+        (yarg) => yarg,
+        handleOnCommand(allScopes),
+      )
+
+      schild.command(
+        'modules',
+        'List modules of current user',
+        (yarg) => yarg,
+        handleOnCommand(allModules),
       )
 
       showHelpIfInvalid(schild, schild.argv, 3, 4)

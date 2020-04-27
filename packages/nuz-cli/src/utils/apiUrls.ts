@@ -54,6 +54,21 @@ export const deleteTokenFromUser = (endpoint: string) => ({
   method: 'DELETE',
 })
 
+export const getAllCompositionsOfUser = (endpoint: string) => ({
+  url: `${endpoint}/user/compositions`,
+  method: 'GET',
+})
+
+export const getAllScopesOfUser = (endpoint: string) => ({
+  url: `${endpoint}/user/scopes`,
+  method: 'GET',
+})
+
+export const getAllModulesOfUser = (endpoint: string) => ({
+  url: `${endpoint}/user/modules`,
+  method: 'GET',
+})
+
 // Scope
 
 export const createScope = (endpoint: string, authorization: string) => ({
