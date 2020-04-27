@@ -48,6 +48,30 @@ class Worker {
     )
   }
 
+  static async getAllCompositionsOfUser(user: string) {
+    return got(
+      Object.assign(apiUrls.getAllCompositionsOfUser(this.endpoint), {
+        data: { user },
+      }),
+    )
+  }
+
+  static async getAllScopesOfUser(user: string) {
+    return got(
+      Object.assign(apiUrls.getAllScopesOfUser(this.endpoint), {
+        data: { user },
+      }),
+    )
+  }
+
+  static async getAllModulesOfUser(user: string) {
+    return got(
+      Object.assign(apiUrls.getAllModulesOfUser(this.endpoint), {
+        data: { user },
+      }),
+    )
+  }
+
   /**
    * Create a scope
    */
