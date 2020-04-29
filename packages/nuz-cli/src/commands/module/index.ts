@@ -3,6 +3,7 @@ import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
 import addCollaborator from './addCollaborator'
 import listCollaborators from './listCollaborators'
+import publish from './publish'
 import removeCollaborator from './removeCollaborator'
 import setDeprecate from './setDeprecate'
 import updateCollaborator from './updateCollaborator'
@@ -10,6 +11,13 @@ import updateCollaborator from './updateCollaborator'
 export const setCommands = (yargs) => {
   yargs.command('module', 'Manage module', (child) => {
     child.usage('usage: $0 module <item> [options]')
+
+    child.command(
+      'publish [fallback]',
+      'Publish version for the module',
+      (yarg) => yarg,
+      handleOnCommand(publish),
+    )
 
     child.command('collaborator', 'Manage collaborator of module', (schild) => {
       schild.usage('usage: $0 module collaborator <type> [options]')

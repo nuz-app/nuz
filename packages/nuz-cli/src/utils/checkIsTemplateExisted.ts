@@ -1,8 +1,8 @@
 import { checkIsUrlOk } from '@nuz/utils'
 
-import { templatePackageJson } from './getGitUrls'
+import * as getGitUrls from './getGitUrls'
 
 const checkIsTemplateExisted = (name: string): Promise<boolean> =>
-  checkIsUrlOk(templatePackageJson(name))
+  checkIsUrlOk(getGitUrls.packageJson(name))
 
 export default checkIsTemplateExisted

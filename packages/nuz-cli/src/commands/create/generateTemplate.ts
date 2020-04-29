@@ -50,14 +50,14 @@ const generateTemplate = async (
   }: { name: string; version: string; library: string },
 ) => {
   const questions = getQuestions(name)
-  const results = await createQuestions<{ language: string; style: string }>(
+  const result = await createQuestions<{ language: string; style: string }>(
     questions,
   )
-  const useTypescript = results.language === 'typescript'
+  const useTypescript = result.language === 'typescript'
   const scriptExtension = useTypescript ? 'tsx' : 'jsx'
 
   // Clone default module to dir
-  const defaultModule = path.join(paths.tool + '/templates/default')
+  const defaultModule = path.join(paths.tool + '/templates/module')
   await fs.copy(defaultModule, dir)
 
   const inputPath = `src/index.${scriptExtension}`
@@ -66,7 +66,7 @@ const generateTemplate = async (
   // Copy copy based on style from example folder
   const usedComponentPath = path.join(
     dir,
-    `src/examples/Hello-${results.style}`,
+    `src/examples/Hello-${result.style}`,
   )
   const distComponentPath = path.join(dir, 'src/components/Hello')
   await fs.copy(usedComponentPath, distComponentPath)
@@ -99,7 +99,7 @@ const generateTemplate = async (
         '@types/react-dom': 'latest',
         typescript: '^3.8.3',
       },
-      mapStyleToDependencies[results.style] || {},
+      mapStyleToDependencies[result.style] || {},
     ),
     peerDependencies: {
       '@nuz/core': 'latest',
@@ -143,7 +143,7 @@ const generateTemplate = async (
 
   // Remove styles types if not used
   const typePath = path.join(dir, 'nuz-env.d.ts')
-  if (!useTypescript || results.style === 'none') {
+  if (!useTypescript || result.style === 'none') {
     await fs.remove(typePath)
   }
 

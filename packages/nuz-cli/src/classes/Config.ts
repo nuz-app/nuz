@@ -96,7 +96,7 @@ class Config {
     if (!fs.exists(defaultPath)) {
       warn('No default user found, creating new default profile...')
       const defaultTemplatePath = path.join(
-        paths.tool + '/templates/root/users/default',
+        paths.tool + `/templates/root/users/${NUZ_DEFAULT_USERNAME}`,
       )
       await fs.copy(defaultTemplatePath, defaultPath)
     }
