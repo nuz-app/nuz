@@ -156,6 +156,21 @@ export interface ModuleConfig {
    * Build isolated module
    */
   isolated?: boolean
+  /**
+   * Alias modules resolve
+   */
+  alias?: { [name: string]: string }
+  /**
+   * Filenames of webpack plugins
+   */
+  names?: Partial<NamesConfig>
+}
+
+export interface NamesConfig {
+  cssLocalIdentName: () => string
+  cssFilename: () => string
+  cssChunkFilename: () => string
+  imageMinifiedFilename: (resourcePath: string) => string
 }
 
 export interface FeatureConfig {

@@ -13,6 +13,7 @@ import {
   ExperimentalConfig,
   FeatureConfig,
   ModuleConfig,
+  NamesConfig,
 } from '../types'
 
 import {
@@ -65,6 +66,7 @@ const defaultConfig = {
   format: 'umd' as webpack.LibraryTarget,
   experimental: {},
   externals: {},
+  alias: {},
   // ref: https://github.com/webpack/webpack/issues/2145#issuecomment-294361203
   // suggested: `eval-source-map` (dev), `hidden-source-map` (pro)
   // devtool: 'eval-source-map' as webpack.Options.Devtool,
@@ -73,6 +75,29 @@ const defaultConfig = {
 const defaultExperimental: ExperimentalConfig = {
   multiThread: false,
 }
+
+const defaultNamesFactory = (dev: boolean): NamesConfig => ({
+  imageMinifiedFilename: (resourcePath: string) => {
+    const imageAllowMinify = IMAGE_MINIFY_REGEXP.test(resourcePath)
+    if (imageAllowMinify) {
+      const filename = path
+        .basename(resourcePath)
+        .replace(IMAGE_MINIFY_REGEXP, '')
+
+      return dev
+        ? `${filename}.[contenthash:8].min.[ext]`
+        : `${filename}.[contenthash].min.[ext]`
+    }
+
+    return dev ? `[name].[contenthash:8].[ext]` : `[name].[contenthash].[ext]`
+  },
+  cssLocalIdentName: () =>
+    dev ? '[name]-[local]-[hash:base64:5]' : '[contenthash:8]',
+  cssFilename: () =>
+    dev ? 'styles/[name].css' : 'styles/[name].[contenthash:8].css',
+  cssChunkFilename: () =>
+    dev ? 'styles/[name].chunk.css' : 'styles/[name].[contenthash:8].chunk.css',
+})
 
 const webpackConfigFactory = (
   {
@@ -95,6 +120,8 @@ const webpackConfigFactory = (
     publicPath,
     analyzer,
     shared,
+    alias,
+    names: namesCustomer,
     webpack: webpackCustomer,
     devtool: devtoolCustomer,
     experimental: experimentalCustomer,
@@ -105,6 +132,7 @@ const webpackConfigFactory = (
     defaultExperimental,
     experimentalCustomer,
   )
+  const names = Object.assign({}, defaultNamesFactory(dev), namesCustomer)
 
   const target = 'web'
   const mode = dev ? 'development' : 'production'
@@ -171,8 +199,8 @@ const webpackConfigFactory = (
     resolve: {
       extensions,
       mainFields,
+      alias,
       modules: resolveModules,
-      alias: {},
     },
     externals: [externals],
     module: {
@@ -310,6 +338,7 @@ const webpackConfigFactory = (
       dev,
       feature,
       modules: feature.modules || 'auto',
+      names,
     })
     const regularStyleRule = ruleFactory(
       regularStyleRegexp,
@@ -323,12 +352,8 @@ const webpackConfigFactory = (
     config.plugins.push(
       new ExtractCssChunks({
         dev,
-        filename: dev
-          ? 'styles/[name].css'
-          : 'styles/[name].[contenthash:8].css',
-        chunkFilename: dev
-          ? 'styles/[name].chunk.css'
-          : 'styles/[name].[contenthash:8].chunk.css',
+        filename: names.cssFilename(),
+        chunkFilename: names.cssChunkFilename(),
       }),
     )
   }
@@ -383,22 +408,7 @@ const webpackConfigFactory = (
       context: dir,
       emitFile: true,
       outputPath: 'images',
-      name: (resourcePath: string) => {
-        const imageAllowMinify = IMAGE_MINIFY_REGEXP.test(resourcePath)
-        if (imageAllowMinify) {
-          const filename = path
-            .basename(resourcePath)
-            .replace(IMAGE_MINIFY_REGEXP, '')
-
-          return dev
-            ? `${filename}.[contenthash:8].min.[ext]`
-            : `${filename}.[contenthash].min.[ext]`
-        }
-
-        return dev
-          ? `[name].[contenthash:8].[ext]`
-          : `[name].[contenthash].[ext]`
-      },
+      name: names.imageMinifiedFilename,
     },
   }
   imagesRule.use.push(imagesLoader)
@@ -444,11 +454,36 @@ const webpackConfigFactory = (
     )
 
     const terserOptions = {
-      mangle: { safari10: true },
-      output: {
-        ecma: 5 as any,
+      parse: {
+        // we want terser to parse ecma 8 code. However, we don't want it
+        // to apply any minfication steps that turns valid ecma 5 code
+        // into invalid ecma 5 code. This is why the 'compress' and 'output'
+        // sections only apply transformations that are ecma 5 safe
+        // https://github.com/facebook/create-react-app/pull/4234
+        ecma: 8,
+      },
+      compress: {
+        ecma: 5,
+        warnings: false,
+        // Disabled because of an issue with Uglify breaking seemingly valid code:
+        // https://github.com/facebook/create-react-app/issues/2376
+        // Pending further investigation:
+        // https://github.com/mishoo/UglifyJS2/issues/2011
+        comparisons: false,
+        // Disabled because of an issue with Terser breaking valid code:
+        // https://github.com/facebook/create-react-app/issues/5250
+        // Pending futher investigation:
+        // https://github.com/terser-js/terser/issues/120
+        inline: 2,
+      },
+      mangle: {
         safari10: true,
+      },
+      output: {
+        ecma: 5,
         comments: false,
+        // Turned on because emoji and regex is not minified properly using default
+        // https://github.com/facebook/create-react-app/issues/2488
         ascii_only: true,
       },
     }
@@ -458,6 +493,7 @@ const webpackConfigFactory = (
       minimizer: [
         new TerserPlugin({
           sourceMap,
+          // @ts-ignore
           terserOptions,
           cache: cache ? cacheDirectories.terser : false,
           parallel: true,
@@ -469,7 +505,7 @@ const webpackConfigFactory = (
         automaticNameDelimiter: '~',
         maxSize: 1024 * 1024,
         automaticNameMaxLength: 40,
-        maxInitialRequests: 5,
+        maxInitialRequests: 3,
         minChunks: 1,
         cacheGroups: {
           vendors: {

@@ -1,7 +1,7 @@
 import ExtractCssChunks from 'extract-css-chunks-webpack-plugin'
 import webpack from 'webpack'
 
-import { FeatureConfig } from '../../../types'
+import { FeatureConfig, NamesConfig } from '../../../types'
 
 import checkIsPackageInstalled from '../../checkIsPackageInstalled'
 import getBrowserslist from '../../getBrowserslist'
@@ -11,6 +11,7 @@ export interface StyleLoadersOptions {
   dir: string
   dev: boolean
   feature: Partial<FeatureConfig>
+  names: NamesConfig
   modules?: boolean | 'auto' | RegExp
 }
 
@@ -18,6 +19,7 @@ const styleLoadersFactory = ({
   dir,
   dev,
   feature,
+  names,
   modules = 'auto',
 }: StyleLoadersOptions): webpack.Loader[] => {
   const resolveInApp = (moduleId: string) => paths.resolveInApp(moduleId, dir)
@@ -38,19 +40,18 @@ const styleLoadersFactory = ({
     loader: resolveInApp('css-loader'),
     options: Object.assign(
       {
-        importLoaders: 1,
+        importLoaders: feature.sass && feature.postcss ? 2 : 1,
         modules: !modules
           ? false
           : {
+              context: dir,
               auto:
                 modules === true
                   ? undefined
                   : modules === 'auto'
                   ? /(\.m(odule)?\.\w+)$/i
                   : modules,
-              localIdentName: dev
-                ? '[name]_[local]-[contenthash:4]'
-                : '[contenthash:8]',
+              localIdentName: names.cssLocalIdentName(),
             },
       },
       feature.css,
