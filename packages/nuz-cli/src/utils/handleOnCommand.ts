@@ -5,8 +5,10 @@ const handleOnCommand = (fn: (...rest: any[]) => Promise<any>) => async (
   ...rest
 ) => {
   try {
-    await fn(...rest)
-    return exit(0)
+    const shouldClose = await fn(...rest)
+    if (shouldClose) {
+      return exit(0)
+    }
   } catch (err) {
     error(err)
     return exit(1)
