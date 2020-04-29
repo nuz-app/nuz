@@ -1,7 +1,7 @@
 {
   "name": "@nuz/cli",
   "description": "Cli is a tool to help create, develop, build, serve and publish a module in the simplest way",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/lamhieu-vk/nuz.git",
