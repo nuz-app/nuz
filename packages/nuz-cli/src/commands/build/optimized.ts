@@ -1,20 +1,44 @@
+import { integrityHelpers } from '@nuz/utils'
 import path from 'path'
-import { Arguments } from 'yargs'
+import * as webpack from 'webpack'
 
 import clearConsole from '../../utils/clearConsole'
 import * as configHelpers from '../../utils/configHelpers'
 import exitIfModuleInsufficient from '../../utils/exitIfModuleInsufficient'
 import * as fs from '../../utils/fs'
+import getBundleInfo from '../../utils/getBundleInfo'
 import getFeatureConfig from '../../utils/getFeatureConfig'
 import * as paths from '../../utils/paths'
-import printer, { info, pretty } from '../../utils/print'
-import { onExit } from '../../utils/process'
-import runWatchMode from '../../utils/runWatchMode'
-import serve from '../../utils/serve'
+import print, {
+  error,
+  info,
+  log,
+  pretty,
+  success,
+  warn,
+} from '../../utils/print'
 import * as webpackCompiler from '../../utils/webpackCompiler'
 import webpackConfigFactory from '../../utils/webpackConfigFactory'
 
-async function standalone({ port = 4000 }: Arguments<{ port?: number }>) {
+function showErrorsAndWarnings({
+  errors,
+  warnings,
+}: {
+  errors: string[]
+  warnings: string[]
+}) {
+  if (errors.length > 0) {
+    error('Have some errors from stats of bundle')
+    errors.forEach((item) => log(item))
+  }
+
+  if (warnings.length > 0) {
+    warn('Have some warnings from stats of bundle')
+    warnings.forEach((item) => log(item))
+  }
+}
+
+async function optimized() {
   const dir = paths.cwd
 
   const configIsExisted = configHelpers.exists(dir)
@@ -43,7 +67,7 @@ async function standalone({ port = 4000 }: Arguments<{ port?: number }>) {
   info('Features config using', pretty(featureConfig))
   const buildConfig = webpackConfigFactory(
     {
-      dev: true,
+      dev: false,
       cache: true,
       dir,
       config: moduleConfig,
@@ -51,34 +75,23 @@ async function standalone({ port = 4000 }: Arguments<{ port?: number }>) {
     featureConfig,
   )
 
-  const watcher = await runWatchMode(
-    buildConfig as webpackCompiler.AllowWebpackConfig,
-  )
+  const compiler = webpackCompiler.run(buildConfig as webpack.Configuration)
   info('Compiler was created for this module')
+  const bundle = await compiler
 
-  const server = serve(
-    Object.assign({}, serveConfig, {
-      port,
-      dir: buildConfig.output.path as string,
-    }),
-  )
-  info(`Server was created to files serving for the module`)
-  info(
-    'Module information',
-    printer.dim(
-      pretty({
-        name,
-        port,
-        url: `http://localhost:${port}/${buildConfig.output.filename}`,
-      }),
-    ),
-  )
+  const bundleInfo = getBundleInfo(bundle)
+  if (!bundleInfo.done) {
+    showErrorsAndWarnings(bundleInfo)
+    throw new Error('Have errors thrown while bundle module, please check it!')
+  }
 
-  onExit(() => {
-    server.close()
-  })
+  const outputFile = path.join(dir, output)
+  const integrity = integrityHelpers.file(outputFile)
 
-  return false
+  success(`${print.name(name)} module was built successfully!`)
+  info(`Output file integrity is ${print.blueBright(integrity)}`)
+
+  return true
 }
 
-export default standalone
+export default optimized
