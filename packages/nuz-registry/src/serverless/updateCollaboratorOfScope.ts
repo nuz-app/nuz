@@ -29,10 +29,14 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
         throw new Error('Collaborator is invalid')
       }
 
-      const item = await worker.updateCollaboratorOfScope(token as string, scope, {
-        id: collaborator.id,
-        type: collaborator.type as CollaboratorTypes,
-      })
+      const item = await worker.updateCollaboratorOfScope(
+        token as string,
+        scope,
+        {
+          id: collaborator.id,
+          type: collaborator.type as CollaboratorTypes,
+        },
+      )
 
       response.json(item)
       return true

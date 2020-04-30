@@ -64,10 +64,7 @@ const generateTemplate = async (
   const outputPath = `dist/index.js`
 
   // Copy copy based on style from example folder
-  const usedComponentPath = path.join(
-    dir,
-    `src/examples/Hello-${result.style}`,
-  )
+  const usedComponentPath = path.join(dir, `src/examples/Hello-${result.style}`)
   const distComponentPath = path.join(dir, 'src/components/Hello')
   await fs.copy(usedComponentPath, distComponentPath)
 

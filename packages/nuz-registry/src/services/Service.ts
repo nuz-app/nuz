@@ -71,7 +71,7 @@ class Service<T> {
       return null
     }
 
-    const collaborator = item.collaborators.find((item) => item.id === userId)
+    const collaborator = item.collaborators.find((coll) => coll.id === userId)
     if (!collaborator) {
       throw new Error(`User does not include collaborators of ${modelName}`)
     }

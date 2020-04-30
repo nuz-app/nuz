@@ -54,6 +54,7 @@ class Worker {
   /**
    * Prepare for worker
    */
+  // tslint:disable-next-line: no-empty
   async prepare() {}
 
   /**
@@ -204,16 +205,6 @@ class Worker {
     )
     return result
   }
-
-  /**
-   * Set a tag for the module
-   */
-  async setTagForModule() {}
-
-  /**
-   * Remove a tag for the module
-   */
-  async clearTagForModule() {}
 
   /**
    * Get collaborators of the module
@@ -393,6 +384,7 @@ class Worker {
   /**
    * Delete a user
    */
+  // tslint:disable-next-line: no-empty
   async deleteUser() {}
 
   /**
