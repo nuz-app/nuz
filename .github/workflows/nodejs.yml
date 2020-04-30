@@ -1,0 +1,88 @@
+name: nuz
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - next
+  pull_request:
+    branches:
+      - master
+      - develop
+      - next
+
+jobs:
+  lint:
+    name: Lint - ${{ matrix.os }} - Node v${{ matrix.node-version }}
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [12.x]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js ${{ env.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.node-version }}
+
+      - name: Use latest Yarn
+        run: sudo npm i -g yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Lint
+        run: yarn run lint
+
+      - name: Check commit message
+        uses: wagoid/commitlint-github-action@v1
+
+  test:
+    name: Test - ${{ matrix.os }} - Node v${{ matrix.node-version }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [10.x, 12.x]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Setup Git
+        if: matrix.os == 'windows-latest'
+        run: git config --global core.autocrlf input
+
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Use latest Yarn on ubuntu/macos
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
+        run: sudo npm i -g yarn
+
+      - name: Use latest Yarn on windows
+        if: matrix.os == 'windows-latest'
+        run: npm i -g yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Try to build with Typescript
+        run: yarn run test:types
+
+      - name: Run unit tests
+        run: yarn run test:unit -- --ci
