@@ -151,6 +151,17 @@ class Worker {
   }
 
   /**
+   * Publish version for the module
+   */
+  static async publishModule(module: string, data: any, options?: any) {
+    return got(
+      Object.assign(apiUrls.publishModule(this.endpoint, this.token), {
+        data: { module, data, options },
+      }),
+    )
+  }
+
+  /**
    * Set deprecate for the module
    */
   static async setDeprecateForModule(

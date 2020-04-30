@@ -1,3 +1,4 @@
+import { ModuleFormats } from '@nuz/shared'
 import {
   checkIsObject,
   deferedPromise,
@@ -5,12 +6,7 @@ import {
   jsonHelpers,
 } from '@nuz/utils'
 
-import {
-  BaseItemConfig,
-  InstallConfig,
-  ModuleFormats,
-  RuntimePlatforms,
-} from '../types'
+import { BaseItemConfig, InstallConfig, RuntimePlatforms } from '../types'
 
 import checkIsFunction from '../utils/checkIsFunction'
 import checkIsInitialized from '../utils/checkIsInitialized'

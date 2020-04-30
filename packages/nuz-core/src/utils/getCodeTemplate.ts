@@ -1,4 +1,4 @@
-import { ModuleFormats } from '../types/common'
+import { ModuleFormats } from '@nuz/shared'
 
 const SCRIPTS = {
   [ModuleFormats.umd]: `({%}code{%})`,

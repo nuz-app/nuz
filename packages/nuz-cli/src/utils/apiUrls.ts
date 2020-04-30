@@ -1,32 +1,32 @@
-export const createToken = (endpoint: string) => ({
-  url: `${endpoint}/permission`,
-  method: 'POST',
-})
+// export const createToken = (endpoint: string) => ({
+//   url: `${endpoint}/permission`,
+//   method: 'POST',
+// })
 
-export const deleteToken = (endpoint: string) => ({
-  url: `${endpoint}/permission`,
-  method: 'DELETE',
-})
+// export const deleteToken = (endpoint: string) => ({
+//   url: `${endpoint}/permission`,
+//   method: 'DELETE',
+// })
 
-export const setScope = (endpoint: string) => ({
-  url: `${endpoint}/permission/scope`,
-  method: 'POST',
-})
+// export const setScope = (endpoint: string) => ({
+//   url: `${endpoint}/permission/scope`,
+//   method: 'POST',
+// })
 
-export const removeScope = (endpoint: string) => ({
-  url: `${endpoint}/permission/scope`,
-  method: 'DELETE',
-})
+// export const removeScope = (endpoint: string) => ({
+//   url: `${endpoint}/permission/scope`,
+//   method: 'DELETE',
+// })
 
-export const extendScope = (endpoint: string) => ({
-  url: `${endpoint}/permission/scope`,
-  method: 'PUT',
-})
+// export const extendScope = (endpoint: string) => ({
+//   url: `${endpoint}/permission/scope`,
+//   method: 'PUT',
+// })
 
-export const publishModule = (endpoint: string) => ({
-  url: `${endpoint}/module`,
-  method: 'POST',
-})
+// export const publishModule = (endpoint: string) => ({
+//   url: `${endpoint}/module`,
+//   method: 'POST',
+// })
 
 // User
 
@@ -120,6 +120,12 @@ export const removeCollaboratorFromScope = (
 })
 
 // Module
+
+export const publishModule = (endpoint: string, authorization: string) => ({
+  url: `${endpoint}/module`,
+  method: 'PUT',
+  headers: { authorization },
+})
 
 export const setDeprecateForModule = (
   endpoint: string,

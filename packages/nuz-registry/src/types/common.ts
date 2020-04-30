@@ -1,11 +1,5 @@
-import { CollaboratorTypes } from '@nuz/shared'
+import { CollaboratorTypes, ModuleFormats } from '@nuz/shared'
 import { Types } from 'mongoose'
-
-export { CollaboratorTypes } from '@nuz/shared'
-
-export enum ModuleFormats {
-  umd = 'umd',
-}
 
 export interface Resource {
   url: string

@@ -1,3 +1,5 @@
+import { ModuleFormats } from '@nuz/shared'
+
 export enum RunModes {
   development = 'development',
   production = 'production',
@@ -6,10 +8,6 @@ export enum RunModes {
 export enum RuntimePlatforms {
   web = 'web',
   node = 'node',
-}
-
-export enum ModuleFormats {
-  umd = 'umd',
 }
 
 export interface InstallConfig {
