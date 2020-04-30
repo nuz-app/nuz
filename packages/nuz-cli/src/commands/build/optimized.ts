@@ -17,26 +17,9 @@ import print, {
   success,
   warn,
 } from '../../utils/print'
+import showErrorsAndWarnings from '../../utils/showErrorsAndWarnings'
 import * as webpackCompiler from '../../utils/webpackCompiler'
 import webpackConfigFactory from '../../utils/webpackConfigFactory'
-
-function showErrorsAndWarnings({
-  errors,
-  warnings,
-}: {
-  errors: string[]
-  warnings: string[]
-}) {
-  if (errors.length > 0) {
-    error('Have some errors from stats of bundle')
-    errors.forEach((item) => log(item))
-  }
-
-  if (warnings.length > 0) {
-    warn('Have some warnings from stats of bundle')
-    warnings.forEach((item) => log(item))
-  }
-}
 
 async function optimized() {
   const dir = paths.cwd

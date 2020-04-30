@@ -2,26 +2,9 @@ import { CHANGES_EMOJI } from '../lib/const'
 
 import clearConsole from './clearConsole'
 import getBundleInfo, { BundleInfoOutput } from './getBundleInfo'
-import print, { error, log, warn } from './print'
+import print, { error, log } from './print'
+import showErrorsAndWarnings from './showErrorsAndWarnings'
 import * as webpackCompiler from './webpackCompiler'
-
-function showErrorsAndWarnings({
-  errors,
-  warnings,
-}: {
-  errors: string[]
-  warnings: string[]
-}) {
-  if (errors.length > 0) {
-    error('Error(s) has occurred')
-    errors.forEach((item) => log(item))
-  }
-
-  if (warnings.length > 0) {
-    warn('There is an warning(s), try checking it')
-    warnings.forEach((item) => log(item))
-  }
-}
 
 function waitingForChanges(time: number) {
   const idx = Math.floor(Math.random() * CHANGES_EMOJI.length)
