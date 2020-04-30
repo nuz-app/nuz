@@ -4,6 +4,7 @@ import {
   Models,
   ModuleId,
   PublishModuleData,
+  PublishOptions,
   ScopeId,
   UserId,
 } from '../types'
@@ -17,9 +18,13 @@ class Module extends Service<ModuleId> {
     super(Collection)
   }
 
-  async create(userId: UserId, data: PublishModuleData) {
+  async create(
+    userId: UserId,
+    moduleId: ModuleId,
+    data: PublishModuleData,
+    options?: PublishOptions,
+  ) {
     const {
-      name,
       scope,
       version,
       library,
@@ -27,14 +32,13 @@ class Module extends Service<ModuleId> {
       resolve,
       exportsOnly,
       alias,
-      fallback,
     } = data
+    const { fallback } = options || {}
 
     const creator = { type: CollaboratorTypes.creator, id: userId }
     const collaborators = [creator]
 
     const versionInfo = {
-      name,
       version,
       library,
       format,
@@ -50,7 +54,7 @@ class Module extends Service<ModuleId> {
     const tags = new Map([[LASTEST_TAG, version]])
 
     const module = new this.Collection({
-      name,
+      name: moduleId,
       scope,
       collaborators,
       tags,
@@ -69,20 +73,16 @@ class Module extends Service<ModuleId> {
     return module
   }
 
-  async addVersion(userId: UserId, data: PublishModuleData) {
-    const {
-      name,
-      version,
-      library,
-      format,
-      resolve,
-      exportsOnly,
-      alias,
-      fallback,
-    } = data
+  async addVersion(
+    userId: UserId,
+    moduleId: ModuleId,
+    data: PublishModuleData,
+    options?: PublishOptions,
+  ) {
+    const { version, library, format, resolve, exportsOnly, alias } = data
+    const { fallback } = options || {}
 
     const versionInfo = {
-      name,
       version,
       library,
       format,
@@ -96,7 +96,7 @@ class Module extends Service<ModuleId> {
     const versionId = versionHelpers.encode(versionInfo.version)
 
     const result = await this.Collection.updateOne(
-      { _id: name },
+      { _id: moduleId },
       {
         $set: {
           [`versions.${versionId}`]: versionInfo,
@@ -105,7 +105,7 @@ class Module extends Service<ModuleId> {
       },
     )
     console.log({ result })
-    return { _id: name }
+    return { _id: moduleId }
   }
 
   async setDeprecate(

@@ -1,4 +1,5 @@
-import { CollaboratorTypes, TObjectId, UserId, VersionInfo } from './common'
+import { CollaboratorTypes } from '@nuz/shared'
+import { UserId, VersionInfo } from './common'
 
 export type ModuleAsObject = { [id: string]: string }
 

@@ -1,6 +1,7 @@
+import { ModuleFormats } from '@nuz/shared'
 import { Connection, Model, Schema } from 'mongoose'
 
-import { ModuleDocument, ModuleFormats } from '../types'
+import { ModuleDocument } from '../types'
 
 import {
   collaborator as collaboratorSchema,

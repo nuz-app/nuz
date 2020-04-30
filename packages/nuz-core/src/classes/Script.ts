@@ -1,6 +1,6 @@
+import { ModuleFormats } from '@nuz/shared'
 import vm from 'vm'
 
-import { ModuleFormats } from '../types/common'
 import getCodeTemplate, {
   Defined,
   setVariables,

@@ -1,9 +1,9 @@
+import { ModuleFormats } from '@nuz/shared'
 import { checkIsObject } from '@nuz/utils'
 
 import {
   BaseItemConfig,
   BootstrapConfig,
-  ModuleFormats,
   ModulesConfig,
   SharedConfig,
   VendorsConfig,

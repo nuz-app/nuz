@@ -5,16 +5,12 @@ import clearConsole from '../../utils/clearConsole'
 import * as configHelpers from '../../utils/configHelpers'
 import exitIfModuleInsufficient from '../../utils/exitIfModuleInsufficient'
 import * as fs from '../../utils/fs'
-import getFeatureConfig from '../../utils/getFeatureConfig'
 import * as paths from '../../utils/paths'
 import { info, pretty } from '../../utils/print'
 import { onExit } from '../../utils/process'
-import runWatchMode from '../../utils/runWatchMode'
-import serve from '../../utils/serve'
-import * as webpackCompiler from '../../utils/webpackCompiler'
-import webpackConfigFactory from '../../utils/webpackConfigFactory'
+import serveServer from '../../utils/serve'
 
-async function standalone({ port = 4000 }: Arguments<{ port?: number }>) {
+async function serve({ port = 4000 }: Arguments<{ port?: number }>) {
   const dir = paths.cwd
 
   const configIsExisted = configHelpers.exists(dir)
@@ -33,42 +29,28 @@ async function standalone({ port = 4000 }: Arguments<{ port?: number }>) {
 
   const { name, output, serve: serveConfig } = moduleConfig
 
-  const featureConfig = getFeatureConfig(dir, moduleConfig)
-  const distDir = path.join(dir, path.dirname(output))
+  if (!fs.exists(output)) {
+    throw new Error(`Output directory is not found, at ${output}`)
+  }
 
   clearConsole()
-  info('Clean up distributable module folder')
-  await fs.emptyDir(distDir)
 
-  info('Features config using', pretty(featureConfig))
-  const buildConfig = webpackConfigFactory(
-    {
-      dev: true,
-      cache: true,
-      dir,
-      config: moduleConfig,
-    },
-    featureConfig,
-  )
-
-  const watcher = await runWatchMode(
-    buildConfig as webpackCompiler.AllowWebpackConfig,
-  )
-  info('Compiler was created for this module')
-
-  const server = serve(
+  const outputDirname = path.dirname(output)
+  const outputFilename = path.basename(output)
+  const server = serveServer(
     Object.assign({}, serveConfig, {
       port,
-      dir: buildConfig.output.path as string,
+      dir: outputDirname,
     }),
   )
+
   info(`Server was created to files serving for the module`)
   info(
     'Module information',
     pretty({
       name,
       port,
-      url: `http://localhost:${port}/${buildConfig.output.filename}`,
+      url: `http://localhost:${port}/${outputFilename}`,
     }),
   )
 
@@ -79,4 +61,4 @@ async function standalone({ port = 4000 }: Arguments<{ port?: number }>) {
   return false
 }
 
-export default standalone
+export default serve

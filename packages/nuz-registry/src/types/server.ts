@@ -1,7 +1,5 @@
+import { ModuleFormats } from '@nuz/shared'
 import compression from 'compression'
-import { Express } from 'express'
-
-import { ModuleFormats } from './common'
 
 export enum DBTypes {
   mongodb = 'mongodb',
@@ -51,7 +49,7 @@ export interface PublishInfo {
 }
 
 export interface PublishOptions {
-  fallback?: boolean
+  fallback?: string
   schedule?: any
 }
 

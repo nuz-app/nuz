@@ -14,6 +14,7 @@ import {
   ModuleId,
   MongoOptions,
   PublishModuleData,
+  PublishOptions,
   ScopeId,
   TokenId,
   UpdateUserData,
@@ -74,8 +75,13 @@ class Worker {
   /**
    * Publish a module
    */
-  async publishModule(tokenId: TokenId, data: PublishModuleData) {
-    const { name, version, resolve } = data
+  async publishModule(
+    tokenId: TokenId,
+    moduleId: ModuleId,
+    data: PublishModuleData,
+    options: PublishOptions = {},
+  ) {
+    const { version, resolve } = data
 
     const user = await this.verifyTokenOfUser(
       tokenId,
@@ -83,17 +89,17 @@ class Worker {
     )
 
     const module = await this.verifyCollaboratorOfModule(
-      name,
+      moduleId,
       user._id,
       CollaboratorTypes.contributor,
       false,
     )
-    const parsedId = moduleIdHelpers.parse(name)
+    const parsedId = moduleIdHelpers.parse(moduleId)
 
     const moduleIsEixsted = !!module
     if (!moduleIsEixsted) {
       if (!parsedId) {
-        throw new Error(`${name} is invalid module id`)
+        throw new Error(`${moduleId} is invalid module id`)
       }
 
       const shouldVerifyScope = parsedId && parsedId.scope
@@ -112,12 +118,12 @@ class Worker {
       const versionIsExisted = module?.versions?.has(versionId)
       if (versionIsExisted) {
         throw new Error(
-          `Module ${name} was published version ${version} before!`,
+          `Module ${moduleId} was published version ${version} before!`,
         )
       }
 
       // Ensure fallback for the new version
-      if (!data.fallback) {
+      if (!options.fallback) {
         const list = Array.from<string>(
           module?.versions?.keys() || [],
         ).map((item) => versionHelpers.decode(item))
@@ -127,8 +133,8 @@ class Worker {
         }
 
         const ordered = versionHelpers.order(list, true)
-        const idxOfFallback = ordered.indexOf(version) + 1
-        data.fallback = ordered[idxOfFallback] || undefined
+        const idx = ordered.indexOf(version) + 1
+        options.fallback = ordered[idx] || undefined
       }
     }
 
@@ -139,8 +145,18 @@ class Worker {
     }
 
     const publishedResult = !moduleIsEixsted
-      ? await this.services.Module.create(user._id, transformed)
-      : await this.services.Module.addVersion(user._id, transformed)
+      ? await this.services.Module.create(
+          user._id,
+          moduleId,
+          transformed,
+          options,
+        )
+      : await this.services.Module.addVersion(
+          user._id,
+          moduleId,
+          transformed,
+          options,
+        )
     return publishedResult
   }
 

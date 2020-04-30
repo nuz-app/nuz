@@ -62,4 +62,11 @@ export const setCommands = (yargs) => {
 
     showHelpIfInvalid(child, child.argv, 2, 3)
   })
+
+  yargs.command(
+    'publish [fallback]',
+    `Publish version for the module [alias: module-publish]`,
+    (yarg) => yarg,
+    handleOnCommand(publish),
+  )
 }
