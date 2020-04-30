@@ -16,7 +16,7 @@ import * as fs from '../../utils/fs'
 import getFeatureConfig from '../../utils/getFeatureConfig'
 import * as paths from '../../utils/paths'
 import pickAssetsFromStats from '../../utils/pickAssetsFromStats'
-import printer, { info, pretty } from '../../utils/print'
+import print, { info, pretty } from '../../utils/print'
 import { onExit } from '../../utils/process'
 import runWatchMode from '../../utils/runWatchMode'
 import serve from '../../utils/serve'
@@ -82,6 +82,10 @@ async function standalone({
     const { name: childName, output } = childModuleConfig
 
     // Factory webpack config for module
+    info(
+      `Features config using in ${print.name(childName)}`,
+      pretty(childFeatureConfig),
+    )
     const childWebpackConfig = webpackConfigFactory(
       {
         dev: true,
@@ -120,8 +124,8 @@ async function standalone({
   }, {} as { [name: string]: any })
 
   const modulesConfigKeys = Object.keys(modulesConfig)
-  info(`Founds ${printer.bold(modulesConfigKeys.length)} modules in workspaces`)
-  info('Linking modules', modulesConfigKeys)
+  info(`Found ${print.bold(modulesConfigKeys.length)} module(s) in workspaces`)
+  info('Linking module(s)', modulesConfigKeys)
 
   const webpackConfigs: webpack.Configuration[] = modulesConfigKeys.map(
     (moduleName: string) => {
@@ -141,7 +145,7 @@ async function standalone({
   )
 
   const watchUrl = linkedUrls.watch(port)
-  const store = { linkedModules: null as any }
+  const store = { modules: null as any }
 
   // Create socket to watching changes and reload
   const socket = io(server, {
@@ -155,10 +159,10 @@ async function standalone({
     socket.emit(LINKED_CHANGE_EVENT, { modules })
 
   socket.on('connection', (client) => {
-    const isReady = !!store.linkedModules
+    const isReady = !!store.modules
     client.emit(LINKED_DEFINE_EVENT, {
       ready: isReady,
-      modules: store.linkedModules,
+      modules: store.modules,
     })
   })
 
@@ -195,7 +199,7 @@ async function standalone({
           },
         })
       }, {})
-      store.linkedModules = linkedModules
+      store.modules = linkedModules
 
       const changedModulesName = children.map((child) =>
         compilerName.extract((child as any).name),

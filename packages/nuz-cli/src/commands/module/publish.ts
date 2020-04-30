@@ -38,7 +38,11 @@ async function publish({ fallback }: Arguments<{ fallback: string }>) {
     throw new Error('Not found stats file of bundle')
   }
 
-  info(`Prepare to publish version ${version} for ${name} module...`)
+  info(
+    `Prepare to publish version ${print.blue(version)} for ${print.name(
+      name,
+    )} module...`,
+  )
 
   // Wait to abort if user wants to do it
   await wait(1000)
