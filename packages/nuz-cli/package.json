@@ -1,6 +1,6 @@
 {
   "name": "@nuz/cli",
-  "description": "Cli is a tool to help create, develop, build, serve and publish a module in the simplest way",
+  "description": "The command-line interfaces to manage modules and interact with the registry server",
   "version": "0.2.4",
   "repository": {
     "type": "git",

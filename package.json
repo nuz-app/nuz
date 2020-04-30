@@ -1,7 +1,7 @@
 {
   "name": "nuz",
-  "version": "0.0.2",
-  "description": "Nuz is a fancy library to implements Micro Frontends compatible with ReactJS and may support more in the future",
+  "version": "1.0.0-beta",
+  "description": "Nuz is an ecosystem to manage runtime packages for Javascript, run on Node, and browsers",
   "author": "Hieu Lam <lamhieu.vk@gmail.com> (https://lamhieu.info)",
   "repository": {
     "type": "git",

@@ -1,6 +1,6 @@
 {
   "name": "@nuz/registry",
-  "description": "Provides functions to create a stable, secure and scalable registry server",
+  "description": "A factory to create the registry server for the Nuz ecosystem",
   "version": "0.2.4",
   "repository": {
     "type": "git",

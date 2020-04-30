@@ -1,6 +1,6 @@
 {
   "name": "@nuz/core",
-  "description": "The core is define, resolve and manage  modules from the network in the application",
+  "description": "Core to manage and handles resolve runtime packages in the application",
   "version": "0.2.4",
   "repository": {
     "type": "git",
