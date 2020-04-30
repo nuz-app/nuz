@@ -6,7 +6,7 @@
 
 Nuz is like a [Node.js require](https://nodejs.org/en/knowledge/getting-started/what-is-require/) but the modules will be resolved from the network at runtime instead of bundle in the main source. This changes the way the web platform is developed, everything is almost shared and updated consistently and constantly, it also solves the problem when implement Micro Frontends.
 
-#### Take an easy to understand example
+### Take an easy to understand example
 
 When you use a require like below:
 ```js
@@ -17,7 +17,7 @@ Traditionally, the resolver will look for this module in the `node_modules` dire
 
 Use with Nuz, **module-awesome** will be resolved from the network and use it. You will not need to bundle **module-awesome** into your code when deploy to production. When you need to update, you also do not need to bundle used places!
 
-#### Practical use case example
+### Practical use case example
 
 For example, if you have a homepage like Facebook's, your business develops products under "product teams" and you have multiple teams together, you don't want teams dependent on each other and you want everything to read, from APIs to Frontends.
 
@@ -32,7 +32,7 @@ We have teams that follow the scope comment:
   - **@fb-feeds**: Manage information about newfeed users.
   - **@fb-design-system** (pink): Design system team.
 
-##### Problems that may be encountered are
+#### Problems that may be encountered are
   - The source code is too big, very hard to manage:
     - Can a member view the frontends source code of all??
     - Source code management: branching, creating PR, and release.
@@ -40,7 +40,7 @@ We have teams that follow the scope comment:
   - Decentralization of teams.
   - Debug issues, develop and release new features.
 
-##### When using Nuz, you can solve that problem by
+#### When using Nuz, you can solve that problem by
   - Split modules like Microservices for Frontends (called MicroFrontends) by teams:
     - A repository (or module) only contains a component or a feature.
     - You easily assign repository access to members of teams.
