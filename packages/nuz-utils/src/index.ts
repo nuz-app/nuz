@@ -5,6 +5,7 @@ import * as tokenTypesHelpers from './tokenTypesHelpers'
 
 export { integrityHelpers, jsonHelpers, linkedUrls, tokenTypesHelpers }
 
+export { default as checkIsProductionMode } from './checkIsProductionMode'
 export { default as checkIsObject } from './checkIsObject'
 export { default as checkIsUrlOk } from './checkIsUrlOk'
 export { default as got } from './got'

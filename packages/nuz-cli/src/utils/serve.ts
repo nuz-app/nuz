@@ -1,4 +1,4 @@
-import { loadCertificateDefault } from '@nuz/utils'
+import { checkIsProductionMode, loadCertificateDefault } from '@nuz/utils'
 import compression from 'compression'
 import cors from 'cors'
 import express from 'express'
@@ -7,8 +7,6 @@ import handler from 'serve-handler'
 import spdy from 'spdy'
 
 import { ServeConfig } from '../types'
-
-import checkIsProductionMode from './checkIsProductionMode'
 
 export type ServeFullConfig = ServeConfig & {
   port: number

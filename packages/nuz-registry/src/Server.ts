@@ -1,4 +1,4 @@
-import { loadCertificateDefault } from '@nuz/utils'
+import { checkIsProductionMode, loadCertificateDefault } from '@nuz/utils'
 
 import bodyParser from 'body-parser'
 import compression from 'compression'
@@ -13,14 +13,16 @@ import Worker from './classes/Worker'
 import serverless from './serverless'
 
 class Server {
+  private readonly dev: boolean
   private readonly worker: Worker
   private readonly app: express.Express
   private readonly server: http.Server
   private readonly serverless: ServerlessOptions
 
   constructor(options: ServerOptions) {
-    const { https, db, compression: compress = true } = options
+    const { dev, https, db, compression: compress = true } = options
 
+    this.dev = typeof dev === 'boolean' ? dev : !checkIsProductionMode()
     this.worker = new Worker(db)
 
     // Init app to listen requests

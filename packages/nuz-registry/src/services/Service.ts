@@ -21,6 +21,22 @@ type VerifyCollaboratorOptions = {
 class Service<T> {
   constructor(readonly Collection) {}
 
+  async find(ids: T[], fields?: any) {
+    const item = await this.Collection.find(
+      { _id: { $in: ids } },
+      fields || { _id: 1 },
+    )
+    return item
+  }
+
+  async findOne(id: T, fields?: any) {
+    const item = await this.Collection.findOne(
+      { _id: id },
+      fields || { _id: 1 },
+    )
+    return item
+  }
+
   async getAllOf(userId: UserId, fields?: any) {
     const items = await this.Collection.find(
       { 'collaborators.id': userId },

@@ -1,5 +1,5 @@
 import { ModuleFormats } from '@nuz/shared'
-import { checkIsObject } from '@nuz/utils'
+import { checkIsObject, checkIsProductionMode } from '@nuz/utils'
 
 import {
   BaseItemConfig,
@@ -8,8 +8,6 @@ import {
   SharedConfig,
   VendorsConfig,
 } from '../types'
-
-import checkIsProduction from '../utils/checkIsProduction'
 
 const setDefaultIfUnset = <T extends BaseItemConfig>(
   name: string,
@@ -64,7 +62,7 @@ class Config {
     shared,
     linked,
   }: ConfigInitial) {
-    this._dev = typeof dev === 'boolean' ? dev : !checkIsProduction()
+    this._dev = typeof dev === 'boolean' ? dev : !checkIsProductionMode()
 
     this._vendors = {}
     this._modules = {}

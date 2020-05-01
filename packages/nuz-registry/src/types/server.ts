@@ -26,6 +26,8 @@ export interface HttpsConfig {
 export interface ServerOptions {
   key: string
   db: MongoOptions
+  dev?: boolean
+  cache?: any
   https?: boolean | HttpsConfig
   compression?: boolean | compression.CompressionOptions
   serverless?: ServerlessOptions

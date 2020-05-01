@@ -49,6 +49,8 @@ const schema: Schema = new Schema(
           },
           alias: { type: Schema.Types.Mixed, required: false },
           exportsOnly: [String],
+          shared: [String],
+          externals: [String],
           fallback: { type: String, required: false },
           deprecated: { type: String, required: false },
         },

@@ -34,6 +34,33 @@ import ensureVersionResources from '../utils/ensureVersionResources'
 import * as moduleIdHelpers from '../utils/moduleIdHelpers'
 import * as versionHelpers from '../utils/versionHelpers'
 
+const pickVersionIfExisted = (tags, versions, requiredVersion) => {
+  const useTag = tags.get(requiredVersion)
+  const useVersion =
+    useTag || versionHelpers.getMaxSatisfying(versions, requiredVersion)
+  return useTag || useVersion
+}
+
+const pickVersionInfo = ({
+  exportsOnly,
+  createdAt,
+  format,
+  library,
+  publisher,
+  resolve,
+  shared,
+  externals,
+}) => ({
+  exportsOnly,
+  createdAt,
+  format,
+  library,
+  publisher,
+  resolve,
+  shared,
+  externals,
+})
+
 class Worker {
   private readonly connection: Connection
   private readonly models: Models
@@ -71,6 +98,14 @@ class Worker {
       limit,
     )
     return result
+  }
+
+  /**
+   * Get the modules by ids
+   */
+  async getModules(moduleIds: ModuleId[], fields?: any) {
+    const modules = await this.services.Module.find(moduleIds, fields)
+    return modules
   }
 
   /**
@@ -158,6 +193,7 @@ class Worker {
           transformed,
           options,
         )
+
     return publishedResult
   }
 
@@ -433,6 +469,17 @@ class Worker {
   async deleteTokenFromUser(userId: UserId, tokenId: TokenId) {
     const result = await this.services.User.deleteToken(userId, tokenId)
     return result
+  }
+
+  /**
+   * Get a composition by id
+   */
+  async getComposition(compositionId: CompositionId, fields?: any) {
+    const composition = await this.services.Composition.findOne(
+      compositionId,
+      fields,
+    )
+    return composition
   }
 
   /**
@@ -865,6 +912,85 @@ class Worker {
       collaboratorId,
     )
     return reuslt
+  }
+
+  /**
+   * Fetchs
+   */
+  async fetch(compositionId: CompositionId) {
+    const composition = await this.getComposition(compositionId, {
+      name: 1,
+      modules: 1,
+    })
+
+    const moduleIds = (composition?.modules || []).map((item) => item.id)
+    const modules = await this.getModules(moduleIds, {
+      _id: 1,
+      tags: 1,
+      versions: 1,
+    })
+
+    const warnings: any[] = []
+    const parsedModules = {}
+
+    for (const item of composition.modules) {
+      const requiredModule = modules.find((sub) => sub._id === item.id)
+      if (requiredModule) {
+        const allVersions = Array.from<string>(
+          requiredModule.versions.keys(),
+        ).map((sub) => versionHelpers.decode(sub))
+
+        const useVersion = pickVersionIfExisted(
+          requiredModule.tags,
+          allVersions,
+          item.version,
+        )
+        if (useVersion) {
+          const upstreamInfo = requiredModule.versions.get(
+            versionHelpers.encode(useVersion),
+          )
+          const { fallback } = upstreamInfo
+
+          const useFallback =
+            fallback &&
+            pickVersionIfExisted(requiredModule.tags, allVersions, fallback)
+          const fallbackInfo = requiredModule.versions.get(
+            versionHelpers.encode(useFallback),
+          )
+
+          if (fallback && !fallbackInfo) {
+            warnings.push({
+              id: item.id,
+              version: item.version,
+              code: 'MODULE_FALLBACK_VERSION_NOT_FOUND',
+              message: '',
+            })
+          }
+
+          parsedModules[item.id] = {
+            name: item.id,
+            upstream: pickVersionInfo(upstreamInfo),
+            fallback: fallbackInfo && pickVersionInfo(fallbackInfo),
+          }
+        } else {
+          warnings.push({
+            id: item.id,
+            version: item.version,
+            code: 'MODULE_UPSTREAM_VERSION_NOT_FOUND',
+            message: '',
+          })
+        }
+      } else {
+        warnings.push({
+          id: item.id,
+          version: item.version,
+          code: 'REQUIRED_MODULE_NOT_FOUND',
+          message: '',
+        })
+      }
+    }
+
+    return { modules: parsedModules, warnings }
   }
 }
 

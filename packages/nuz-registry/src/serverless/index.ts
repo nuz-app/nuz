@@ -34,6 +34,8 @@ import * as publishModule from './publishModule'
 import * as removeCollaboratorFromModule from './removeCollaboratorFromModule'
 import * as updateCollaboratorOfModule from './updateCollaboratorOfModule'
 
+import * as fetch from './fetch'
+
 export default [
   health,
 
@@ -68,4 +70,6 @@ export default [
   addCollaboratorToModule,
   removeCollaboratorFromModule,
   updateCollaboratorOfModule,
+
+  fetch,
 ]
