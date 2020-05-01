@@ -1,6 +1,6 @@
 import { CompositionId, ModuleId } from '../types'
 
-import Cache from './Cache'
+import Cache, { FactoryFn } from './Cache'
 
 const CONFIG = {
   COMPOSITION_TIMEOUT: 12 * 60 * 60 * 1000,
@@ -36,16 +36,16 @@ class LocalCache implements Cache {
   }
 
   async lookupComposition(compositionId: CompositionId) {
-    const compositionData = this.getComposition(compositionId)
+    const compositionData = await this.getComposition(compositionId)
     if (compositionData) {
       return { data: compositionData, factory: undefined }
     }
 
     // Factory auto cache handler
-    const factory = (
+    const factory: FactoryFn = async (
       data: any,
       deps: ModuleId[],
-      timeout = CONFIG.COMPOSITION_TIMEOUT,
+      timeout: number = CONFIG.COMPOSITION_TIMEOUT,
     ) => {
       this.setComposition(compositionId, data)
 

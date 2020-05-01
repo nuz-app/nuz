@@ -34,6 +34,8 @@ import ensureVersionResources from '../utils/ensureVersionResources'
 import * as moduleIdHelpers from '../utils/moduleIdHelpers'
 import * as versionHelpers from '../utils/versionHelpers'
 
+import Cache, { FactoryFn } from './Cache'
+
 const pickVersionIfExisted = (tags, versions, requiredVersion) => {
   const useTag = tags.get(requiredVersion)
   const useVersion =
@@ -60,27 +62,28 @@ const pickVersionInfo = ({
 })
 
 class Worker {
-  private readonly connection: Connection
-  private readonly models: Models
-  private readonly services: Services
+  private readonly _connection: Connection
+  private readonly _models: Models
+  private readonly _services: Services
 
-  constructor(options: MongoOptions) {
+  constructor(options: MongoOptions, private readonly _cache: Cache) {
     const { url } = options
 
     if (!url) {
       throw new Error('Mongo URL is required!')
     }
 
-    this.connection = createMongoConnection(url)
-    this.models = createModels(this.connection)
-    this.services = createServices(this.models)
+    this._connection = createMongoConnection(url)
+    this._models = createModels(this._connection)
+    this._services = createServices(this._models)
   }
 
   /**
    * Prepare for worker
    */
-  // tslint:disable-next-line: no-empty
-  async prepare() {}
+  async prepare() {
+    //
+  }
 
   /**
    * Get all modules in scopes
@@ -90,7 +93,7 @@ class Worker {
     fields?: any,
     limit?: number,
   ) {
-    const result = await this.services.Module.getAllInScopes(
+    const result = await this._services.Module.getAllInScopes(
       scopeIds,
       fields,
       limit,
@@ -102,7 +105,7 @@ class Worker {
    * Get the modules by ids
    */
   async getModules(moduleIds: ModuleId[], fields?: any) {
-    const modules = await this.services.Module.find(moduleIds, fields)
+    const modules = await this._services.Module.find(moduleIds, fields)
     return modules
   }
 
@@ -179,18 +182,20 @@ class Worker {
     }
 
     const publishedResult = !moduleIsEixsted
-      ? await this.services.Module.create(
+      ? await this._services.Module.create(
           user._id,
           moduleId,
           transformed,
           options,
         )
-      : await this.services.Module.addVersion(
+      : await this._services.Module.addVersion(
           user._id,
           moduleId,
           transformed,
           options,
         )
+
+    this._cache.clearAllRefsToModule(moduleId)
 
     return publishedResult
   }
@@ -232,7 +237,7 @@ class Worker {
       throw new Error(`Not found satisfies version with ${version}`)
     }
 
-    const result = this.services.Module.setDeprecate(
+    const result = this._services.Module.setDeprecate(
       module._id,
       satisfies,
       deprecate,
@@ -244,7 +249,7 @@ class Worker {
    * Get collaborators of the module
    */
   async getCollaboratorsOfModule(moduleId: ModuleId) {
-    const reuslt = await this.services.Module.listCollaborators(moduleId)
+    const reuslt = await this._services.Module.listCollaborators(moduleId)
     return reuslt
   }
 
@@ -252,7 +257,7 @@ class Worker {
    * Get all modules of the user
    */
   async getModulesOfUser(userId: UserId) {
-    const reuslt = await this.services.Module.getAllOf(userId, {
+    const reuslt = await this._services.Module.getAllOf(userId, {
       _id: 1,
       name: 1,
       scope: 1,
@@ -277,7 +282,7 @@ class Worker {
       versions: 1,
       createdAt: 1,
     }
-    const result = await this.services.Module.verifyCollaborator(
+    const result = await this._services.Module.verifyCollaborator(
       {
         id: moduleId,
         userId,
@@ -315,7 +320,7 @@ class Worker {
       throw new Error('Collaborator already exists in the Module')
     }
 
-    const reuslt = await this.services.Module.addCollaborator(
+    const reuslt = await this._services.Module.addCollaborator(
       module._id,
       collaborator,
     )
@@ -358,7 +363,7 @@ class Worker {
       throw new Error('Collaborator not exists in the Module')
     }
 
-    const reuslt = await this.services.Module.updateCollaborator(
+    const reuslt = await this._services.Module.updateCollaborator(
       module._id,
       collaborator.id,
       collaborator.type,
@@ -385,7 +390,7 @@ class Worker {
       CollaboratorTypes.maintainer,
     )) as ModuleDocument
 
-    const reuslt = await this.services.Module.removeCollaborator(
+    const reuslt = await this._services.Module.removeCollaborator(
       module._id,
       collaboratorId,
     )
@@ -398,7 +403,7 @@ class Worker {
   async createUser(data: CreateUserData) {
     // TODO: should be validate email, name, username and password
 
-    const result = await this.services.User.create(data)
+    const result = await this._services.User.create(data)
     return pick(result, ['_id', 'name', 'email', 'username', 'createdAt'])
   }
 
@@ -411,7 +416,7 @@ class Worker {
       UserAccessTokenTypes.fullAccess,
     )
 
-    const result = await this.services.User.update(user._id, data)
+    const result = await this._services.User.update(user._id, data)
     return result
   }
 
@@ -425,9 +430,9 @@ class Worker {
    * Login to a user
    */
   async loginUser(username: string, password: string) {
-    const user = await this.services.User.login(username, password)
+    const user = await this._services.User.login(username, password)
 
-    const result = await this.services.User.createToken(
+    const result = await this._services.User.createToken(
       user._id,
       UserAccessTokenTypes.fullAccess,
     )
@@ -446,7 +451,7 @@ class Worker {
       UserAccessTokenTypes.fullAccess,
     )
 
-    const result = await this.services.User.createToken(user._id, requiredType)
+    const result = await this._services.User.createToken(user._id, requiredType)
     return result
   }
 
@@ -457,7 +462,7 @@ class Worker {
     tokenId: TokenId,
     requiredType: UserAccessTokenTypes,
   ) {
-    const result = await this.services.User.verifyToken(tokenId, requiredType)
+    const result = await this._services.User.verifyToken(tokenId, requiredType)
     return result
   }
 
@@ -465,7 +470,7 @@ class Worker {
    * Delete a token from the user
    */
   async deleteTokenFromUser(userId: UserId, tokenId: TokenId) {
-    const result = await this.services.User.deleteToken(userId, tokenId)
+    const result = await this._services.User.deleteToken(userId, tokenId)
     return result
   }
 
@@ -473,7 +478,7 @@ class Worker {
    * Get a composition by id
    */
   async getComposition(compositionId: CompositionId, fields?: any) {
-    const composition = await this.services.Composition.findOne(
+    const composition = await this._services.Composition.findOne(
       compositionId,
       fields,
     )
@@ -490,14 +495,14 @@ class Worker {
 
     const modules = !modulesAsObject
       ? []
-      : this.services.Composition.convertModulesToArray(modulesAsObject)
+      : this._services.Composition.convertModulesToArray(modulesAsObject)
 
     const user = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const result = await this.services.Composition.create(user._id, {
+    const result = await this._services.Composition.create(user._id, {
       name,
       modules,
     })
@@ -524,7 +529,7 @@ class Worker {
       throw new Error(`Composition can't be deleted by policy`)
     }
 
-    const result = await this.services.Composition.delete(composition._id)
+    const result = await this._services.Composition.delete(composition._id)
     return result
   }
 
@@ -532,7 +537,7 @@ class Worker {
    * Get collaborators of the composition
    */
   async getCollaboratorsOfComposition(compositionId: CompositionId) {
-    const reuslt = await this.services.Composition.listCollaborators(
+    const reuslt = await this._services.Composition.listCollaborators(
       compositionId,
     )
     return reuslt
@@ -542,7 +547,7 @@ class Worker {
    * Get all compositions of the user
    */
   async getCompositionsOfUser(userId: UserId) {
-    const reuslt = await this.services.Composition.getAllOf(userId)
+    const reuslt = await this._services.Composition.getAllOf(userId)
     return { _id: userId, compositions: reuslt }
   }
 
@@ -554,7 +559,7 @@ class Worker {
     userId: UserId,
     requiredType: CollaboratorTypes,
   ) {
-    const result = await this.services.Composition.verifyCollaborator({
+    const result = await this._services.Composition.verifyCollaborator({
       id: compositionId,
       userId,
       requiredType,
@@ -589,7 +594,7 @@ class Worker {
       throw new Error('Collaborator already exists in the Composition')
     }
 
-    const reuslt = await this.services.Composition.addCollaborator(
+    const reuslt = await this._services.Composition.addCollaborator(
       composition._id,
       collaborator,
     )
@@ -632,7 +637,7 @@ class Worker {
       throw new Error('Collaborator not exists in the Composition')
     }
 
-    const reuslt = await this.services.Composition.updateCollaborator(
+    const reuslt = await this._services.Composition.updateCollaborator(
       composition._id,
       collaborator.id,
       collaborator.type,
@@ -659,7 +664,7 @@ class Worker {
       CollaboratorTypes.maintainer,
     )
 
-    const reuslt = await this.services.Composition.removeCollaborator(
+    const reuslt = await this._services.Composition.removeCollaborator(
       composition._id,
       collaboratorId,
     )
@@ -674,7 +679,7 @@ class Worker {
     compositionId: CompositionId,
     modulesAsObject: ModuleAsObject,
   ) {
-    const modules = this.services.Composition.convertModulesToArray(
+    const modules = this._services.Composition.convertModulesToArray(
       modulesAsObject,
     )
 
@@ -689,7 +694,7 @@ class Worker {
       CollaboratorTypes.maintainer,
     )
 
-    const result = await this.services.Composition.addModules(
+    const result = await this._services.Composition.addModules(
       composition._id,
       modules,
     )
@@ -715,7 +720,7 @@ class Worker {
       CollaboratorTypes.maintainer,
     )
 
-    const result = await this.services.Composition.removeModules(
+    const result = await this._services.Composition.removeModules(
       composition._id,
       moduleIds,
     )
@@ -730,14 +735,14 @@ class Worker {
 
     // TODO: should be validate name
 
-    this.services.Scope.validateScopeId(name)
+    this._services.Scope.validateScopeId(name)
 
     const user = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const result = await this.services.Scope.create(user._id, {
+    const result = await this._services.Scope.create(user._id, {
       name,
     })
     return pick(result, ['_id', 'name', 'modules'])
@@ -772,7 +777,7 @@ class Worker {
       throw new Error(`Scope can't be deleted by policy`)
     }
 
-    const result = await this.services.Scope.delete(scope._id)
+    const result = await this._services.Scope.delete(scope._id)
     return result
   }
 
@@ -780,7 +785,7 @@ class Worker {
    * Get collaborators of the scope
    */
   async getCollaboratorsOfScope(scopeId: ScopeId) {
-    const reuslt = await this.services.Scope.listCollaborators(scopeId)
+    const reuslt = await this._services.Scope.listCollaborators(scopeId)
     return reuslt
   }
 
@@ -788,7 +793,7 @@ class Worker {
    * Get all scopes of the user
    */
   async getScopesOfUser(userId: UserId) {
-    const reuslt = await this.services.Scope.getAllOf(userId)
+    const reuslt = await this._services.Scope.getAllOf(userId)
     return { _id: userId, scopes: reuslt }
   }
 
@@ -800,7 +805,7 @@ class Worker {
     userId: UserId,
     requiredType: CollaboratorTypes,
   ) {
-    const result = await this.services.Scope.verifyCollaborator({
+    const result = await this._services.Scope.verifyCollaborator({
       id: scopeId,
       userId,
       requiredType,
@@ -835,7 +840,7 @@ class Worker {
       throw new Error('Collaborator already exists in the Scope')
     }
 
-    const reuslt = await this.services.Scope.addCollaborator(
+    const reuslt = await this._services.Scope.addCollaborator(
       scope._id,
       collaborator,
     )
@@ -878,7 +883,7 @@ class Worker {
       throw new Error('Collaborator not exists in the Scope')
     }
 
-    const reuslt = await this.services.Scope.updateCollaborator(
+    const reuslt = await this._services.Scope.updateCollaborator(
       scope._id,
       collaborator.id,
       collaborator.type,
@@ -905,7 +910,7 @@ class Worker {
       CollaboratorTypes.maintainer,
     )
 
-    const reuslt = await this.services.Scope.removeCollaborator(
+    const reuslt = await this._services.Scope.removeCollaborator(
       scope._id,
       collaboratorId,
     )
@@ -916,6 +921,19 @@ class Worker {
    * Fetchs
    */
   async fetch(compositionId: CompositionId) {
+    let factoryCache: FactoryFn | undefined
+    if (this._cache) {
+      const { data: cached, factory } = await this._cache.lookupComposition(
+        compositionId,
+      )
+      if (cached) {
+        console.log('HIT!!!')
+        return cached
+      }
+      console.log('MISS!!!')
+      factoryCache = factory
+    }
+
     const composition = await this.getComposition(compositionId, {
       name: 1,
       modules: 1,
@@ -989,7 +1007,12 @@ class Worker {
       }
     }
 
-    return { modules: parsedModules, warnings }
+    const data = { modules: parsedModules, warnings }
+    if (factoryCache) {
+      await factoryCache(data, moduleIds)
+    }
+
+    return data
   }
 }
 

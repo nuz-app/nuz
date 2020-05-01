@@ -1,6 +1,10 @@
 import { CompositionId, ModuleId } from '../types'
 
-type FactoryFn = (data: any, deps: ModuleId[], timeout: number) => void
+export type FactoryFn = (
+  data: any,
+  deps: ModuleId[],
+  timeout?: number,
+) => Promise<void>
 
 declare class Cache {
   prepare(): Promise<any>

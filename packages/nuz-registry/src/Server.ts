@@ -8,65 +8,71 @@ import spdy from 'spdy'
 
 import { ServerlessOptions, ServerOptions } from './types'
 
+import Cache from './classes/Cache'
 import Worker from './classes/Worker'
 
 import serverless from './serverless'
 
 class Server {
-  private readonly dev: boolean
-  private readonly worker: Worker
-  private readonly app: express.Express
-  private readonly server: http.Server
-  private readonly serverless: ServerlessOptions
+  private readonly _dev: boolean
+  private readonly _worker: Worker
+  private readonly _cache: Cache
+  private readonly _app: express.Express
+  private readonly _server: http.Server
+  private readonly _serverless: ServerlessOptions
 
   constructor(options: ServerOptions) {
-    const { dev, https, db, compression: compress = true } = options
+    const { dev, cache, https, db, compression: compress = true } = options
 
-    this.dev = typeof dev === 'boolean' ? dev : !checkIsProductionMode()
-    this.worker = new Worker(db)
+    this._cache = cache
+    this._dev = typeof dev === 'boolean' ? dev : !checkIsProductionMode()
+    this._worker = new Worker(db, this._cache)
 
     // Init app to listen requests
-    this.app = express()
+    this._app = express()
 
     // Check if using secure connection
     if (https) {
       const httpsConfig =
         https === true ? Object.assign({}, loadCertificateDefault()) : https
-      this.server = spdy.createServer(httpsConfig, this.app)
+      this._server = spdy.createServer(httpsConfig, this._app)
     } else {
-      this.server = http.createServer(this.app)
+      this._server = http.createServer(this._app)
     }
 
     if (compress) {
       const compressionConfig = compress === true ? {} : compress
-      this.app.use(compression(compressionConfig))
+      this._app.use(compression(compressionConfig))
     }
 
     // Set serverless config
-    this.serverless = options.serverless || {}
+    this._serverless = options.serverless || {}
   }
 
   async middlewares(fn: (app: express.Express) => Promise<any>) {
-    return fn(this.app)
+    return fn(this._app)
   }
 
   async prepare() {
-    await this.worker.prepare()
+    const promises = [this._cache?.prepare(), this._worker.prepare()].filter(
+      Boolean,
+    )
+    await Promise.all(promises)
 
-    this.app.use(bodyParser.urlencoded({ extended: false }))
-    this.app.use(bodyParser.json())
+    this._app.use(bodyParser.urlencoded({ extended: false }))
+    this._app.use(bodyParser.json())
 
     for (const route of serverless) {
       route.execute(
-        this.app,
-        this.worker,
-        (this.serverless as any)[route.name] || {},
+        this._app,
+        this._worker,
+        (this._serverless as any)[route.name] || {},
       )
     }
   }
 
   async listen(port: number) {
-    this.server.listen(port, () =>
+    this._server.listen(port, () =>
       console.log(`Registry server listening on port ${port}!`),
     )
   }
