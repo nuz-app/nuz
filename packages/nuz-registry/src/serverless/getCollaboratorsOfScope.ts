@@ -11,13 +11,13 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.get(
     '/scope/collaborators',
     onRoute(async (request, response) => {
-      const { scope } = request.body
+      const { scope } = request.query
 
       const formIsMissing = !scope
       if (formIsMissing) {
         throw new Error('Form is missing fields')
       }
-      const item = await worker.getCollaboratorsOfScope(scope)
+      const item = await worker.getCollaboratorsOfScope(scope as string)
 
       response.json(item)
       return true

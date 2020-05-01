@@ -47,7 +47,6 @@ const pickVersionInfo = ({
   format,
   library,
   publisher,
-  resolve,
   shared,
   externals,
 }) => ({
@@ -56,7 +55,6 @@ const pickVersionInfo = ({
   format,
   library,
   publisher,
-  resolve,
   shared,
   externals,
 })
@@ -969,8 +967,9 @@ class Worker {
 
           parsedModules[item.id] = {
             name: item.id,
-            upstream: pickVersionInfo(upstreamInfo),
-            fallback: fallbackInfo && pickVersionInfo(fallbackInfo),
+            ...pickVersionInfo(upstreamInfo),
+            upstream: upstreamInfo.resolve,
+            fallback: fallbackInfo?.resolve,
           }
         } else {
           warnings.push({

@@ -57,6 +57,17 @@ export interface BootstrapConfig {
    * Allow preload modules in runtime, only support in browser
    */
   preload?: string[]
+  /**
+   * Warnings
+   */
+  warnings?: WarningsConfig[]
+}
+
+export interface WarningsConfig {
+  id: string
+  module: string
+  code: string
+  message: string
 }
 
 export interface LiveConfig {

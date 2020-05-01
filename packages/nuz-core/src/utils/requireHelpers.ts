@@ -3,7 +3,6 @@ import Globals from '../classes/Globals'
 import {
   RuntimePlatforms,
   UpstreamConfigAllowed,
-  UpstreamFullConfig,
   UpstreamHosts,
   UpstreamResolveConfig,
   UpstreamResolveResource,
@@ -30,44 +29,26 @@ type Resource = {
 }
 
 const ensureResolve = (
-  domain: string | undefined,
   resource: string | UpstreamResolveResource,
-): Resource => {
-  const left =
-    typeof resource === 'string'
-      ? resource
-      : !domain
-      ? (resource as any).url
-      : (resource as any).path
-  const url = (!domain ? left : [domain, left].join('/')) as string
+): Resource => ({
+  url: typeof resource === 'string' ? resource : (resource as any)?.url,
+  integrity: (resource as any)?.integrity as string | undefined,
+})
 
-  return {
-    url,
-    integrity: (resource && (resource as any).integrity) as string | undefined,
-  }
-}
-
-const resolveByDomain = (
-  resolve: UpstreamFullConfig['resolve'],
-  domain: string | undefined,
-  isNode: boolean,
-) => {
+const resolveByUrl = (resolve: string | UpstreamResolveConfig) => {
   const resolveUrls = { main: null as any, styles: [] as Resource[] }
 
   if (typeof resolve === 'string') {
-    // For example: resolve is 'react' -> https://unpkg.com/react
-    resolveUrls.main = ensureResolve(domain, resolve)
+    resolveUrls.main = ensureResolve(resolve)
   } else {
-    // @ts-ignore
-    const { main, web, node, styles } = resolve as UpstreamResolveConfig
+    const { main, styles } = resolve as UpstreamResolveConfig
 
-    const path = main || (isNode ? node : web)
-    resolveUrls.main = ensureResolve(domain, path)
+    resolveUrls.main = ensureResolve(main)
 
     if (styles) {
       resolveUrls.styles = styles
         .filter(Boolean)
-        .map((style) => ensureResolve(domain, style))
+        .map((style) => ensureResolve(style))
     }
   }
 
@@ -80,7 +61,7 @@ const HOSTS = {
 }
 
 export const parse = (
-  config: UpstreamConfigAllowed,
+  resolve: UpstreamConfigAllowed,
   platform: RuntimePlatforms,
 ) => {
   const isNode = platform === RuntimePlatforms.node
@@ -89,19 +70,15 @@ export const parse = (
     styles: [] as Resource[],
   }
 
-  if (!config) {
+  if (!resolve) {
     return null
   }
 
-  if (typeof config === 'string') {
-    resolveUrls.main = { url: config, integrity: '' }
+  if (typeof resolve === 'string') {
+    resolveUrls.main = { url: resolve, integrity: undefined }
     return resolveUrls
   }
 
-  const { host, resolve } = config as UpstreamFullConfig
-
-  const domain = HOSTS[host]
-  Object.assign(resolveUrls, resolveByDomain(resolve, domain, isNode))
-
+  Object.assign(resolveUrls, resolveByUrl(resolve))
   return resolveUrls
 }

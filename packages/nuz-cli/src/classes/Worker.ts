@@ -51,7 +51,7 @@ class Worker {
   static async getAllCompositionsOfUser(user: string) {
     return got(
       Object.assign(apiUrls.getAllCompositionsOfUser(this.endpoint), {
-        data: { user },
+        params: { user },
       }),
     )
   }
@@ -59,7 +59,7 @@ class Worker {
   static async getAllScopesOfUser(user: string) {
     return got(
       Object.assign(apiUrls.getAllScopesOfUser(this.endpoint), {
-        data: { user },
+        params: { user },
       }),
     )
   }
@@ -67,7 +67,7 @@ class Worker {
   static async getAllModulesOfUser(user: string) {
     return got(
       Object.assign(apiUrls.getAllModulesOfUser(this.endpoint), {
-        data: { user },
+        params: { user },
       }),
     )
   }
@@ -102,7 +102,7 @@ class Worker {
       Object.assign(
         apiUrls.getCollaboratorsOfScope(this.endpoint, this.token),
         {
-          data: { scope },
+          params: { scope },
         },
       ),
     )
@@ -184,7 +184,7 @@ class Worker {
       Object.assign(
         apiUrls.getCollaboratorsOfModule(this.endpoint, this.token),
         {
-          data: { module },
+          params: { module },
         },
       ),
     )
@@ -268,7 +268,7 @@ class Worker {
       Object.assign(
         apiUrls.getCollaboratorsOfComposition(this.endpoint, this.token),
         {
-          data: { composition },
+          params: { composition },
         },
       ),
     )

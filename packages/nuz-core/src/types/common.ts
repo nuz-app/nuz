@@ -26,20 +26,14 @@ export type LazyModule<M = unknown> = {
   module: LoadedModule<M>
 }
 
-export type UpstreamResolveResource = ({ path: string } | { url: string }) & {
+export type UpstreamResolveResource = {
+  url: string
   integrity: string
 }
 
-export type UpstreamResolveConfig = (
-  | {
-      web?: string | UpstreamResolveResource
-      node?: string | UpstreamResolveResource
-    }
-  | {
-      main?: string | UpstreamResolveResource
-    }
-) & {
-  styles?: (string | UpstreamResolveResource)[]
+export type UpstreamResolveConfig = {
+  main: string | UpstreamResolveResource
+  styles: (string | UpstreamResolveResource)[]
 }
 
 export enum UpstreamHosts {
@@ -47,16 +41,11 @@ export enum UpstreamHosts {
   unpkg = 'unpkg',
 }
 
-export interface UpstreamFullConfig {
-  host: UpstreamHosts
-  resolve: string | UpstreamResolveConfig
-}
-
 /**
  * Upstream config inside item config
  */
 export type UpstreamConfigAllowed =
-  | (UpstreamFullConfig &
+  | (UpstreamResolveConfig &
       Pick<BaseItemConfig, 'library' | 'format' | 'alias' | 'exportsOnly'>)
   | string
 

@@ -54,6 +54,12 @@ const configFactory = async (config: BootstrapConfig) => {
       },
       registryConfig.retries || 1,
     )
+
+    if (configOnRegistry.warnings) {
+      configOnRegistry.warnings.forEach(({ code, message }) => {
+        console.warn(`[${code}] ${message}`)
+      })
+    }
   }
 
   return mergeConfig(config, configOnRegistry)

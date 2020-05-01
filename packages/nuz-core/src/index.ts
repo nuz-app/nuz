@@ -2,7 +2,7 @@ import './polyfill'
 
 import './autoload'
 
-export * from './types/common'
+export * from './types'
 
 export { default as load } from './load'
 export { default as resolve } from './resolve'
