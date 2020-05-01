@@ -1,4 +1,4 @@
-import { pick } from '@nuz/utils'
+import { pick, validator } from '@nuz/utils'
 import { Connection } from 'mongoose'
 
 import {
@@ -401,7 +401,19 @@ class Worker {
    * Create a user
    */
   async createUser(data: CreateUserData) {
-    // TODO: should be validate email, name, username and password
+    if (!validator.email(data.email)) {
+      throw new Error('Email is invalid!')
+    } else if (!validator.name(data.name)) {
+      throw new Error(
+        'Name is invalid. Min length is 4 and max is 32 characters!',
+      )
+    } else if (!validator.username(data.name)) {
+      throw new Error(
+        'Username is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", max length is 24 characters!',
+      )
+    } else if (!validator.password(data.name)) {
+      throw new Error('Password is invalid. Min length is 8 ccharacters!h')
+    }
 
     const result = await this._services.User.create(data)
     return pick(result, ['_id', 'name', 'email', 'username', 'createdAt'])

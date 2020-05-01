@@ -2,8 +2,15 @@ import * as integrityHelpers from './integrityHelpers'
 import * as jsonHelpers from './jsonHelpers'
 import * as linkedUrls from './linkedUrls'
 import * as tokenTypesHelpers from './tokenTypesHelpers'
+import * as validator from './validator'
 
-export { integrityHelpers, jsonHelpers, linkedUrls, tokenTypesHelpers }
+export {
+  integrityHelpers,
+  jsonHelpers,
+  linkedUrls,
+  tokenTypesHelpers,
+  validator,
+}
 
 export { default as checkIsProductionMode } from './checkIsProductionMode'
 export { default as checkIsObject } from './checkIsObject'
