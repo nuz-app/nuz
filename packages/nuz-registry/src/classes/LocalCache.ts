@@ -22,6 +22,7 @@ class LocalCache implements Cache {
     }
   }
 
+  // tslint:disable-next-line: no-empty
   async prepare() {}
 
   async clearAllRefsToModule(moduleId: ModuleId) {
