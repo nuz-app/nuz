@@ -2,7 +2,7 @@
 
 [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/nuz)
 
-> 📌 This branch to prepare for the 1.0.0 version!
+> 📌 This branch to prepare for the 1.0.0 version, suggestions and bug reports are welcome!
 
 🔮 **Nuz** is an ecosystem to manage runtime packages for web platform.
 
