@@ -31,7 +31,7 @@ import checkIsNewComposition from '../utils/checkIsNewComposition'
 import checkIsNewScope from '../utils/checkIsNewScope'
 import createMongoConnection from '../utils/createMongoConnection'
 import ensureVersionResources from '../utils/ensureVersionResources'
-import * as moduleIdHelpers from '../utils/moduleIdHelpers'
+import parseModuleId from '../utils/parseModuleId'
 import * as versionHelpers from '../utils/versionHelpers'
 
 import Cache, { FactoryFn } from './Cache'
@@ -131,7 +131,7 @@ class Worker {
       CollaboratorTypes.contributor,
       false,
     )
-    const parsedId = moduleIdHelpers.parse(moduleId)
+    const parsedId = parseModuleId(moduleId)
 
     const moduleIsEixsted = !!module
     if (!moduleIsEixsted) {
@@ -148,6 +148,12 @@ class Worker {
         )
 
         data.scope = scope._id
+      }
+
+      if (!validator.moduleId(moduleId)) {
+        throw new Error(
+          'Module id is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", length allows 6-72 characters included scope!',
+        )
       }
     } else {
       // Check is version published
@@ -404,15 +410,13 @@ class Worker {
     if (!validator.email(data.email)) {
       throw new Error('Email is invalid!')
     } else if (!validator.name(data.name)) {
-      throw new Error(
-        'Name is invalid. Min length is 4 and max is 32 characters!',
-      )
+      throw new Error('Name is invalid. Length allows 4-32 characters!')
     } else if (!validator.username(data.name)) {
       throw new Error(
-        'Username is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", max length is 24 characters!',
+        'Username is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", length allows 6-24 characters!',
       )
     } else if (!validator.password(data.name)) {
-      throw new Error('Password is invalid. Min length is 8 ccharacters!h')
+      throw new Error('Password is invalid. Length allows >=8 characters!')
     }
 
     const result = await this._services.User.create(data)
@@ -503,7 +507,11 @@ class Worker {
   async createComposition(tokenId: TokenId, data: CreateCompositionData) {
     const { name, modules: modulesAsObject } = data
 
-    // TODO: should be validate name
+    if (!validator.compositionId(name)) {
+      throw new Error(
+        'Composition id/name is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", length allows 6-24 characters!',
+      )
+    }
 
     const modules = !modulesAsObject
       ? []
@@ -745,9 +753,11 @@ class Worker {
   async createScope(tokenId: TokenId, data: CreateScopeData) {
     const { name } = data
 
-    // TODO: should be validate name
-
-    this._services.Scope.validateScopeId(name)
+    if (!validator.scopeId(name)) {
+      throw new Error(
+        'Scope id/name is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", length allows 6-24 characters!',
+      )
+    }
 
     const user = await this.verifyTokenOfUser(
       tokenId,

@@ -1,3 +1,4 @@
+import { validator } from '@nuz/utils'
 import { Types } from 'mongoose'
 
 import { MONGOOSE_ERROR_CODES } from '../lib/const'
@@ -12,7 +13,6 @@ import {
   UserId,
 } from '../types'
 
-import * as moduleIdHelpers from '../utils/moduleIdHelpers'
 import * as versionHelpers from '../utils/versionHelpers'
 
 import Service from './Service'
@@ -29,7 +29,7 @@ class Composition extends Service<CompositionId> {
     }))
 
     for (const item of modules) {
-      if (!moduleIdHelpers.validate(item.id)) {
+      if (!validator.moduleId(item.id)) {
         throw new Error(`${item.id} is invalid module id`)
       }
 

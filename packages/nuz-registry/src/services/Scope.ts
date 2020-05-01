@@ -7,21 +7,11 @@ import {
   UserId,
 } from '../types'
 
-import * as scopeIdHelpers from '../utils/scopeIdHelpers'
-
 import Service from './Service'
 
 class Scope extends Service<ScopeId> {
   constructor(readonly Collection: Models['Scope']) {
     super(Collection)
-  }
-
-  validateScopeId(id: string) {
-    if (!scopeIdHelpers.validate(id)) {
-      throw new Error(`${id} is invalid scope id`)
-    }
-
-    return id
   }
 
   async create(userId: UserId, data: CreateScopeData) {
