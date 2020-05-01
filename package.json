@@ -1,7 +1,7 @@
 {
   "name": "nuz",
   "version": "1.0.0-beta",
-  "description": "Nuz is an ecosystem to manage runtime packages for Javascript, run on Node, and browsers",
+  "description": "Nuz is an ecosystem to manage runtime packages for web platform",
   "author": "Hieu Lam <lamhieu.vk@gmail.com> (https://lamhieu.info)",
   "repository": {
     "type": "git",

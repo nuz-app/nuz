@@ -4,7 +4,7 @@
 
 > 📌 This branch to prepare for the 1.0.0 version!
 
-🔮 **Nuz** is an ecosystem to manage runtime packages for Javascript, run on Node, and browsers.
+🔮 **Nuz** is an ecosystem to manage runtime packages for web platform.
 
 Nuz is like a [Node.js require](https://nodejs.org/en/knowledge/getting-started/what-is-require/) but the modules will be resolved from the network at runtime instead of bundle in the main source. This changes the way the web platform is developed, everything is almost shared and updated consistently and constantly, it also solves the problem when implement Micro Frontends.
 
