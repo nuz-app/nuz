@@ -2,6 +2,8 @@
 
 [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/nuz)
 
+> 📌 This is still an in-development project, and suggestions and bug reports are welcome.
+
 **Nuz** is a fancy library to implements Micro Frontends compatible with [ReactJS](https://reactjs.org) and may support more in the future. 🏃
 
 ***
