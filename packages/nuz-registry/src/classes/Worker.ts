@@ -993,6 +993,9 @@ class Worker {
       name: 1,
       modules: 1,
     })
+    if (!composition) {
+      throw new Error(`Composition ${compositionId} is not found`)
+    }
 
     const moduleIds = (composition?.modules || []).map((item) => item.id)
     const modules = await this.getModules(moduleIds, {
