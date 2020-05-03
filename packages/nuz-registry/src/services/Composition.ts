@@ -89,7 +89,6 @@ class Composition extends Service<CompositionId> {
     composition.modules = updatedModules as Types.Array<RequiredModule>
 
     const result = await composition.save()
-    console.log({ result })
 
     return { _id: id }
   }
@@ -109,7 +108,6 @@ class Composition extends Service<CompositionId> {
     composition.modules = updatedModules as Types.Array<RequiredModule>
 
     const result = await composition.save()
-    console.log({ result })
 
     return { _id: id }
   }

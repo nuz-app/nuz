@@ -104,7 +104,7 @@ class Module extends Service<ModuleId> {
         },
       },
     )
-    console.log({ result })
+
     return { _id: moduleId }
   }
 
