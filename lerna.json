@@ -1,8 +1,10 @@
 {
-  "version": "0.2.4",
+  "version": "1.0.0-beta.2",
   "npmClient": "yarn",
   "useWorkspaces": true,
-  "packages": ["packages/*"],
+  "packages": [
+    "packages/*"
+  ],
   "sort": [
     "@nuz/shared",
     "@nuz/utils",
@@ -12,9 +14,16 @@
   ],
   "command": {
     "version": {
-      "allowBranch": ["master", "next"],
+      "allowBranch": [
+        "master",
+        "next"
+      ],
       "message": "chore(release): %s",
-      "ignoreChanges": ["**/__fixtures__/**", "**/__tests__/**", "**/*.md"]
+      "ignoreChanges": [
+        "**/__fixtures__/**",
+        "**/__tests__/**",
+        "**/*.md"
+      ]
     }
   }
 }
