@@ -82,7 +82,7 @@ class Worker {
    * Prepare for worker
    */
   async prepare() {
-    //
+    // do something great!
   }
 
   /**
@@ -99,6 +99,14 @@ class Worker {
       limit,
     )
     return result
+  }
+
+  /**
+   * Get a module by id
+   */
+  async getModule(moduleId: ModuleId, fields?: any) {
+    const module = await this._services.Module.findOne(moduleId, fields)
+    return module
   }
 
   /**
@@ -269,7 +277,7 @@ class Worker {
       scope: 1,
       createdAt: 1,
     })
-    return { _id: userId, modules: reuslt }
+    return reuslt
   }
 
   /**
@@ -502,6 +510,17 @@ class Worker {
   }
 
   /**
+   * Get the compositions by ids
+   */
+  async getCompositions(compositionIds: CompositionId[], fields?: any) {
+    const compositions = await this._services.Composition.find(
+      compositionIds,
+      fields,
+    )
+    return compositions
+  }
+
+  /**
    * Create a composition
    */
   async createComposition(tokenId: TokenId, data: CreateCompositionData) {
@@ -568,7 +587,7 @@ class Worker {
    */
   async getCompositionsOfUser(userId: UserId) {
     const reuslt = await this._services.Composition.getAllOf(userId)
-    return { _id: userId, compositions: reuslt }
+    return reuslt
   }
 
   /**
@@ -748,6 +767,22 @@ class Worker {
   }
 
   /**
+   * Get a scope by id
+   */
+  async getScope(scopeId: ScopeId, fields?: any) {
+    const scope = await this._services.Scope.findOne(scopeId, fields)
+    return scope
+  }
+
+  /**
+   * Get the scopes by ids
+   */
+  async getScopes(scopeIds: ScopeId[], fields?: any) {
+    const scopes = await this._services.Scope.find(scopeIds, fields)
+    return scopes
+  }
+
+  /**
    * Create a scope
    */
   async createScope(tokenId: TokenId, data: CreateScopeData) {
@@ -816,7 +851,7 @@ class Worker {
    */
   async getScopesOfUser(userId: UserId) {
     const reuslt = await this._services.Scope.getAllOf(userId)
-    return { _id: userId, scopes: reuslt }
+    return reuslt
   }
 
   /**
@@ -940,7 +975,7 @@ class Worker {
   }
 
   /**
-   * Fetchs
+   * Fetch
    */
   async fetch(compositionId: CompositionId) {
     let factoryCache: FactoryFn | undefined
@@ -949,10 +984,8 @@ class Worker {
         compositionId,
       )
       if (cached) {
-        console.log('HIT!!!')
         return cached
       }
-      console.log('MISS!!!')
       factoryCache = factory
     }
 

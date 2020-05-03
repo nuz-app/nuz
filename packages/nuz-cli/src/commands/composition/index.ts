@@ -4,6 +4,7 @@ import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 import addCollaborator from './addCollaborator'
 import createComposition from './createComposition'
 import deleteComposition from './deleteComposition'
+import getDetails from './getDetails'
 import removeCollaborator from './removeCollaborator'
 import removeModules from './removeModules'
 import setModules from './setModules'
@@ -12,6 +13,13 @@ import updateCollaborator from './updateCollaborator'
 export const setCommands = (yargs) => {
   yargs.command('composition', 'Manage composition', (child) => {
     child.usage('usage: $0 composition <item> [options]')
+
+    child.command(
+      'get <composition> [fields..]',
+      'Get details of a composition',
+      (yarg) => yarg,
+      handleOnCommand(getDetails),
+    )
 
     child.command(
       'create <name>',

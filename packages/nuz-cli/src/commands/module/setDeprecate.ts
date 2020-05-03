@@ -18,7 +18,7 @@ async function setDeprecate({
   await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
   if (!id || !versions) {
-    throw new Error('Id or versions is inval')
+    throw new Error('Id or versions is invalid')
   }
 
   const request = await Worker.setDeprecateForModule(id, versions, deprecate)

@@ -15,6 +15,7 @@ import * as addCollaboratorToComposition from './addCollaboratorToComposition'
 import * as createComposition from './createComposition'
 import * as deleteComposition from './deleteComposition'
 import * as getCollaboratorsOfComposition from './getCollaboratorsOfComposition'
+import * as getComposition from './getComposition'
 import * as removeCollaboratorFromComposition from './removeCollaboratorFromComposition'
 import * as removeModulesFromComposition from './removeModulesFromComposition'
 import * as setModulesForComposition from './setModulesForComposition'
@@ -24,12 +25,14 @@ import * as addCollaboratorToScope from './addCollaboratorToScope'
 import * as createScope from './createScope'
 import * as deleteScope from './deleteScope'
 import * as getCollaboratorsOfScope from './getCollaboratorsOfScope'
+import * as getScope from './getScope'
 import * as removeCollaboratorFromScope from './removeCollaboratorFromScope'
 import * as updateCollaboratorOfScope from './updateCollaboratorOfScope'
 
 import * as addCollaboratorToModule from './addCollaboratorToModule'
 import * as deprecateModule from './deprecateModule'
 import * as getCollaboratorsOfModule from './getCollaboratorsOfModule'
+import * as getModule from './getModule'
 import * as publishModule from './publishModule'
 import * as removeCollaboratorFromModule from './removeCollaboratorFromModule'
 import * as updateCollaboratorOfModule from './updateCollaboratorOfModule'
@@ -48,6 +51,7 @@ export default [
   getCompositionsOfUser,
   getScopesOfUser,
 
+  getComposition,
   createComposition,
   deleteComposition,
   getCollaboratorsOfComposition,
@@ -57,6 +61,7 @@ export default [
   setModulesForComposition,
   removeModulesFromComposition,
 
+  getScope,
   createScope,
   deleteScope,
   getCollaboratorsOfScope,
@@ -64,6 +69,7 @@ export default [
   removeCollaboratorFromScope,
   updateCollaboratorOfScope,
 
+  getModule,
   publishModule,
   deprecateModule,
   getCollaboratorsOfModule,

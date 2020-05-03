@@ -5,21 +5,21 @@ import onRoute from '../utils/onRoute'
 
 import { ServerlessRoute } from './types'
 
-export const name = 'getModulesOfUser'
+export const name = 'getScope'
 
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.get(
-    '/user/modules',
+    '/scope',
     onRoute(async (request, response) => {
-      const { user: id } = request.query
+      const { scope: id, fields } = request.query
 
       const formIsMissing = !id
       if (formIsMissing) {
-        throw new Error('Missing user id to get the modules')
+        throw new Error('Missing scope id')
       }
-      const result = await worker.getModulesOfUser(id as string)
+      const item = await worker.getScope(id as string, fields)
 
-      response.json({ user: id, modules: result })
+      response.json({ scope: item })
       return true
     }),
   )

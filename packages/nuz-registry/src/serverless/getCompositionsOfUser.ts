@@ -17,9 +17,9 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
       if (formIsMissing) {
         throw new Error('Missing user id to get the compositions')
       }
-      const item = await worker.getCompositionsOfUser(id as string)
+      const result = await worker.getCompositionsOfUser(id as string)
 
-      response.json(item)
+      response.json({ user: id, compositions: result })
       return true
     }),
   )

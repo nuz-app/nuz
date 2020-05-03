@@ -4,12 +4,20 @@ import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 import addCollaborator from './addCollaborator'
 import createScope from './createScope'
 import deleteScope from './deleteScope'
+import getDetails from './getDetails'
 import removeCollaborator from './removeCollaborator'
 import updateCollaborator from './updateCollaborator'
 
 export const setCommands = (yargs) => {
   yargs.command('scope', 'Manage scope', (child) => {
     child.usage('usage: $0 scope <item> [options]')
+
+    child.command(
+      'get <scope> [fields..]',
+      'Get details of a scope',
+      (yarg) => yarg,
+      handleOnCommand(getDetails),
+    )
 
     child.command(
       'create <name>',

@@ -41,6 +41,12 @@ export const getAllModulesOfUser = (endpoint: string) => ({
 
 // Scope
 
+export const getScope = (endpoint: string, authorization: string) => ({
+  url: `${endpoint}/scope`,
+  method: 'GET',
+  headers: { authorization },
+})
+
 export const createScope = (endpoint: string, authorization: string) => ({
   url: `${endpoint}/scope`,
   method: 'POST',
@@ -90,6 +96,12 @@ export const removeCollaboratorFromScope = (
 })
 
 // Module
+
+export const getModule = (endpoint: string, authorization: string) => ({
+  url: `${endpoint}/module`,
+  method: 'GET',
+  headers: { authorization },
+})
 
 export const publishModule = (endpoint: string, authorization: string) => ({
   url: `${endpoint}/module`,
@@ -143,6 +155,12 @@ export const removeCollaboratorFromModule = (
 })
 
 // Composition
+
+export const getComposition = (endpoint: string, authorization: string) => ({
+  url: `${endpoint}/composition`,
+  method: 'GET',
+  headers: { authorization },
+})
 
 export const createComposition = (endpoint: string, authorization: string) => ({
   url: `${endpoint}/composition`,

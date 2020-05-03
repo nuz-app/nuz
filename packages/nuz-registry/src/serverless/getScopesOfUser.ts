@@ -17,9 +17,9 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
       if (formIsMissing) {
         throw new Error('Missing user id to get the scopes')
       }
-      const item = await worker.getScopesOfUser(id as string)
+      const result = await worker.getScopesOfUser(id as string)
 
-      response.json(item)
+      response.json({ user: id, scopes: result })
       return true
     }),
   )

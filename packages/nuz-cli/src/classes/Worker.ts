@@ -73,6 +73,17 @@ class Worker {
   }
 
   /**
+   * Get a scope
+   */
+  static async getScope(scope: string, fields?: string[]) {
+    return got(
+      Object.assign(apiUrls.getScope(this.endpoint, this.token), {
+        params: { scope, fields },
+      }),
+    )
+  }
+
+  /**
    * Create a scope
    */
   static async createScope(name: string) {
@@ -147,6 +158,17 @@ class Worker {
           data: { scope, collaboratorId: collaborator },
         },
       ),
+    )
+  }
+
+  /**
+   * Get a module
+   */
+  static async getModule(module: string, fields?: string[]) {
+    return got(
+      Object.assign(apiUrls.getModule(this.endpoint, this.token), {
+        params: { module, fields },
+      }),
     )
   }
 
@@ -232,6 +254,17 @@ class Worker {
           data: { module, collaboratorId: collaborator },
         },
       ),
+    )
+  }
+
+  /**
+   * Get a composition
+   */
+  static async getComposition(composition: string, fields?: string[]) {
+    return got(
+      Object.assign(apiUrls.getComposition(this.endpoint, this.token), {
+        params: { composition, fields },
+      }),
     )
   }
 
