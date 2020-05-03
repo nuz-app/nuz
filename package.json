@@ -23,7 +23,6 @@
   "scripts": {
     "postinstall": "lerna bootstrap",
     "reinstall": "rimraf **/node_modules **/yarn.lock && yarn",
-    "version": "lerna version --force-publish",
     "clean": "lerna run clean --parallel",
     "build": "lerna run build",
     "test:types": "tsc --build tsconfig.test.json",

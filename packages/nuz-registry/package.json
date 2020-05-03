@@ -1,7 +1,7 @@
 {
   "name": "@nuz/registry",
   "description": "A factory to create the registry server for the Nuz ecosystem",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/lamhieu-vk/nuz.git",
@@ -26,7 +26,7 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@nuz/utils": "^1.0.0-beta.2",
+    "@nuz/utils": "^1.0.0-beta.3",
     "bcrypt": "^4.0.1",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
@@ -38,7 +38,7 @@
     "tslib": "^1.11.1"
   },
   "devDependencies": {
-    "@nuz/shared": "^1.0.0-beta.2",
+    "@nuz/shared": "^1.0.0-beta.3",
     "@types/compression": "^1.7.0",
     "@types/express": "^4.17.3",
     "@types/mongoose": "^5.7.11",
