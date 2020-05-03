@@ -1,6 +1,7 @@
 export * from './types'
 
 import * as health from './health'
+import * as root from './root'
 
 import * as createTokenForUser from './createTokenForUser'
 import * as createUser from './createUser'
@@ -40,6 +41,7 @@ import * as updateCollaboratorOfModule from './updateCollaboratorOfModule'
 import * as fetch from './fetch'
 
 export default [
+  root,
   health,
 
   loginUser,
