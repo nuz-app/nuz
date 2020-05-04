@@ -109,14 +109,12 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          path: website
 
       - name: Use Node.js ${{ env.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.node-version }}
-
-      - name: Move to website directory
-        run: cd website
 
       - name: Use latest Yarn
         run: sudo npm i -g yarn
@@ -124,7 +122,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Move to website folder and run build
+      - name: Build document website
         env:
           ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_API_KEY }}
           ALGOLIA_INDEX_NAME: ${{ secrets.ALGOLIA_INDEX_NAME }}
