@@ -97,7 +97,8 @@ jobs:
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      website-directory: website
+      website-directory: ./website
+      website-build: ./website/build
 
     strategy:
       matrix:
@@ -136,7 +137,7 @@ jobs:
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           publish_branch: gh-pages
-          publish_dir: ./website/build
+          publish_dir: ${{ env.website-build }}
           commit_message: 'chore: deploy document website ${{ github.event.head_commit.id }}'
           # cname: docs.nuz.app
         
