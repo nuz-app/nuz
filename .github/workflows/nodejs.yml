@@ -97,6 +97,7 @@ jobs:
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      website-directory: website
 
     strategy:
       matrix:
@@ -108,7 +109,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          path: website
+          fetch-depth: 0
 
       - name: Use Node.js ${{ env.node-version }}
         uses: actions/setup-node@v1
@@ -118,10 +119,12 @@ jobs:
       - name: Use latest Yarn
         run: sudo npm i -g yarn
 
-      - name: Install dependencies
+      - name: Install dependencies in website directory
+        working-directory: ${{ env.website-directory }}
         run: yarn install
 
       - name: Build document website
+        working-directory: ${{ env.website-directory }}
         env:
           ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_API_KEY }}
           ALGOLIA_INDEX_NAME: ${{ secrets.ALGOLIA_INDEX_NAME }}
@@ -133,6 +136,7 @@ jobs:
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           publish_branch: gh-pages
-          publish_dir: ./build
+          publish_dir: ./website/build
           commit_message: 'chore: deploy document website ${{ github.event.head_commit.id }}'
           # cname: docs.nuz.app
+        
