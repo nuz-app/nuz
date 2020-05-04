@@ -4,7 +4,7 @@ We are happy with your help in making the Nuz project better. Please read the pr
 
 ## 📃 Overview
 
-Before we jump into detailed guidelines for opening and triaging issues and submitting pull requests, here is some information about how our project is [structured and resources](https://github.com/lamhieu-vk/nuz/tree/develop/docs) you should refer to as you start contributing.
+Before we jump into detailed guidelines for opening and triaging issues and submitting pull requests, here is some information about how our project is [structured and resources](https://github.com/nuz-app/nuz/tree/develop/docs) you should refer to as you start contributing.
 
 ## 📎 Project roles
 
@@ -27,7 +27,7 @@ Once you've come up with a good design, go ahead and submit a pull request (PR).
   *Note: we do not merge pull requests directly into master.*
 * Limit yourself to one feature or bug fix per pull request.
 * Should include tests that prove your code works.
-* Follow appropriate style for code contributions and [commit messages](https://github.com/lamhieu-vk/nuz/blob/develop/CONTRIBUTING.md#commit-conventions).
+* Follow appropriate style for code contributions and [commit messages](https://github.com/nuz-app/nuz/blob/develop/CONTRIBUTING.md#commit-conventions).
 * Be sure your author field in git is properly filled out with your full name and email address so we can credit you.
 
 If your pull request is working in process or not ready to merge, please add `WIP:` prefix in pull request name.

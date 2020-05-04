@@ -5,12 +5,12 @@
   "author": "Hieu Lam <lamhieu.vk@gmail.com> (https://lamhieu.info)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lamhieu-vk/nuz.git"
+    "url": "git+https://github.com/nuz-app/nuz.git"
   },
   "bugs": {
-    "url": "https://github.com/lamhieu-vk/nuz/issues"
+    "url": "https://github.com/nuz-app/nuz/issues"
   },
-  "homepage": "https://github.com/lamhieu-vk/nuz#readme",
+  "homepage": "https://github.com/nuz-app/nuz#readme",
   "directories": {
     "doc": "docs",
     "example": "examples"

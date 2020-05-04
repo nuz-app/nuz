@@ -27,9 +27,9 @@ export const CHANGES_EMOJI = [
 
 export const STATS_FILENAME = 'stats.json'
 
-export const GITHUB_USERNAME = 'lamhieu-vk'
+export const GITHUB_USERNAME = 'nuz-app'
 export const GITHUB_REPO = 'nuz'
-export const GITHUB_BRANCH = 'master'
+export const GITHUB_BRANCH = 'next'
 
 export const NUZ_DIRNAME = '.nuz'
 export const NUZ_USERS_DIR = 'users'

@@ -4,12 +4,12 @@ The template is [with-typescript](https://github.com/zeit/next.js/tree/canary/ex
 
 ## What is different?
 
-- Installed [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core) as `dependencies` and [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli) as `devDependencies`.
+- Installed [@nuz/core](https://github.com/nuz-app/nuz/tree/develop/packages/nuz-core) as `dependencies` and [@nuz/cli](https://github.com/nuz-app/nuz/tree/develop/packages/nuz-cli) as `devDependencies`.
 - Add script `dev-workspace` in package.json.
-- A new folder named `workspace` includes `modules` created by [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli).
-- File `pages/_app.tsx` default of next with some config for [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core).
-- Updated `next.config.js` file to use helper of [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core) for [Next.js](https://github.com/zeit/next.js), support **server-side-rendering**.
-- Updated `pages/index.tsx` file to use [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core).
+- A new folder named `workspace` includes `modules` created by [@nuz/cli](https://github.com/nuz-app/nuz/tree/develop/packages/nuz-cli).
+- File `pages/_app.tsx` default of next with some config for [@nuz/core](https://github.com/nuz-app/nuz/tree/develop/packages/nuz-core).
+- Updated `next.config.js` file to use helper of [@nuz/core](https://github.com/nuz-app/nuz/tree/develop/packages/nuz-core) for [Next.js](https://github.com/zeit/next.js), support **server-side-rendering**.
+- Updated `pages/index.tsx` file to use [@nuz/core](https://github.com/nuz-app/nuz/tree/develop/packages/nuz-core).
 
 ## Getting started
 
@@ -92,7 +92,7 @@ $ yarn start
 
 Deploy the example using [ZEIT Now](https://zeit.co/now):
 
-[![Deploy with ZEIT Now](https://zeit.co/button)](https://zeit.co/import/project?template=https://github.com/lamhieu-vk/nuz/tree/develop/examples/apps/create-next-app)
+[![Deploy with ZEIT Now](https://zeit.co/button)](https://zeit.co/import/project?template=https://github.com/nuz-app/nuz/tree/develop/examples/apps/create-next-app)
 
 _Live Example: https://create-next-app.nuz.now.sh_
 

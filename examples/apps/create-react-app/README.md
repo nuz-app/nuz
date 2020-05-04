@@ -4,11 +4,11 @@ The template created by [create-react-app](https://www.npmjs.com/package/create-
 
 ## What is different?
 
-- Installed [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core) [react-helmet](https://www.npmjs.com/package/react-helmet) as `dependencies` and [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli) as `devDependencies`.
+- Installed [@nuz/core](https://github.com/nuz-app/nuz/tree/develop/packages/nuz-core) [react-helmet](https://www.npmjs.com/package/react-helmet) as `dependencies` and [@nuz/cli](https://github.com/nuz-app/nuz/tree/develop/packages/nuz-cli) as `devDependencies`.
 - Add script `dev-workspace` in package.json.
-- A new folder named `workspace` includes `modules` created by [@nuz/cli](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-cli).
+- A new folder named `workspace` includes `modules` created by [@nuz/cli](https://github.com/nuz-app/nuz/tree/develop/packages/nuz-cli).
 - Updated `src/client.js` file to bootstrap in-app.
-- Updated `src/App.js` file to use [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core).
+- Updated `src/App.js` file to use [@nuz/core](https://github.com/nuz-app/nuz/tree/develop/packages/nuz-core).
 
 ## Getting started
 
@@ -40,7 +40,7 @@ $ npm run start
 $ yarn start
 ```
 
-##### Start workspace mode of [@nuz/core](https://github.com/lamhieu-vk/nuz/tree/develop/packages/nuz-core):
+##### Start workspace mode of [@nuz/core](https://github.com/nuz-app/nuz/tree/develop/packages/nuz-core):
 ```sh
 # with npm
 $ npm run dev-workspace
@@ -85,7 +85,7 @@ $ yarn start
 
 Deploy the example using [ZEIT Now](https://zeit.co/now):
 
-[![Deploy with ZEIT Now](https://zeit.co/button)](https://zeit.co/import/project?template=https://github.com/lamhieu-vk/nuz/tree/develop/examples/apps/create-react-app)
+[![Deploy with ZEIT Now](https://zeit.co/button)](https://zeit.co/import/project?template=https://github.com/nuz-app/nuz/tree/develop/examples/apps/create-react-app)
 
 _Live Example: https://create-react-app.nuz.now.sh_
 
