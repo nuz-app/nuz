@@ -86,3 +86,48 @@ jobs:
 
       - name: Run unit tests
         run: yarn run test:unit -- --ci
+
+  Deploy:
+    needs: 
+      - test
+      - lint
+
+    name: Deploy - ${{ matrix.os }} - Node v${{ matrix.node-version }}
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [12.x]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js ${{ env.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.node-version }}
+
+      - name: Use latest Yarn
+        run: sudo npm i -g yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Move to website folder and run build
+        run: cd website && yarn run lint
+
+      - name: Deploy document website
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_branch: gh-pages
+          publish_dir: ./build
+          commit_message: 'chore: deploy document website ${{ github.event.head_commit.id }}'
+          # cname: docs.nuz.app
