@@ -115,6 +115,9 @@ jobs:
         with:
           node-version: ${{ env.node-version }}
 
+      - name: Move to website directory
+        run: cd website
+
       - name: Use latest Yarn
         run: sudo npm i -g yarn
 
@@ -122,7 +125,11 @@ jobs:
         run: yarn install
 
       - name: Move to website folder and run build
-        run: cd website && yarn run build
+        env:
+          ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_API_KEY }}
+          ALGOLIA_INDEX_NAME: ${{ secrets.ALGOLIA_INDEX_NAME }}
+          ALGOLIA_APP_ID: ${{ secrets.ALGOLIA_APP_ID }}
+        run: yarn run build
 
       - name: Deploy document website
         uses: peaceiris/actions-gh-pages@v3

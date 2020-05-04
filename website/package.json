@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "start": "env-cmd docusaurus start",
-    "build": "env-cmd docusaurus build",
-    "swizzle": "env-cmd docusaurus swizzle",
-    "deploy": "env-cmd docusaurus deploy"
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy"
   },
   "dependencies": {
     "@docusaurus/core": "^2.0.0-alpha.54",
