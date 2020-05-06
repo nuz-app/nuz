@@ -283,7 +283,10 @@ const webpackConfigFactory = (
         resolveInApp('@babel/preset-env'),
         feature.react && resolveInApp('@babel/preset-react'),
       ].filter(Boolean) as string[],
-      plugins: [resolveInApp('@babel/plugin-transform-runtime')],
+      plugins: [
+        resolveInApp('@babel/plugin-transform-runtime'),
+        resolveInApp('@babel/plugin-transform-modules-commonjs'),
+      ],
     },
   })
 
