@@ -59,6 +59,10 @@ class Server {
     )
     await Promise.all(promises)
 
+    this._app.disable('x-powered-by')
+    this._app.enable('trust proxy')
+    this._app.enable('strict routing')
+
     this._app.use(bodyParser.urlencoded({ extended: false }))
     this._app.use(bodyParser.json())
 
