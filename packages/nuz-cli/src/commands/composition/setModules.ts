@@ -5,6 +5,7 @@ import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
 
 import print, { info, pretty, success } from '../../utils/print'
+import timer from '../../utils/timer'
 
 const pickIdAndversion = (key: string) => {
   const arr = key.split('@')
@@ -36,12 +37,13 @@ async function setModules({
     return Object.assign(acc, { [id]: version })
   }, {})
 
+  const tick = timer()
   const request = await Worker.setModulesForComposition(composition, modules)
   const compositionId = request?.data?._id
 
   info('Composition id', print.name(compositionId))
   info(pretty(modules))
-  success('Done!')
+  success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 

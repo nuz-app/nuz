@@ -2,9 +2,12 @@ import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
 
 import print, { info, pretty, success } from '../../utils/print'
+import timer from '../../utils/timer'
 
 async function allCompositions() {
   const auth = await Config.authRequired()
+
+  const tick = timer()
   const request = await Worker.getAllCompositionsOfUser(auth.id)
   const compositions = request?.data?.compositions
 
@@ -14,7 +17,7 @@ async function allCompositions() {
     )} items`,
   )
   info(pretty(compositions))
-  success('Done!')
+  success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 

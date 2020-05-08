@@ -5,6 +5,7 @@ import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
 
 import print, { info, success } from '../../utils/print'
+import tick from '../../utils/tick'
 
 async function removeModules({
   composition,
@@ -12,6 +13,7 @@ async function removeModules({
 }: Arguments<{ composition: string; moduleIds: string[] }>) {
   await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
+  const tick = timer()
   const request = await Worker.removeModulesForComposition(
     composition,
     moduleIds,
@@ -20,7 +22,7 @@ async function removeModules({
 
   info('Composition id', print.name(compositionId))
   info('Removed modules', print.dim(moduleIds.join(', ')))
-  success('Done!')
+  success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 

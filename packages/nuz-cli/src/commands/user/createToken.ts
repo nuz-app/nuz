@@ -4,7 +4,8 @@ import { Arguments } from 'yargs'
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
 
-import print, { success } from '../../utils/print'
+import print, { info, success } from '../../utils/print'
+import timer from '../../utils/timer'
 
 const typesAllowed = Object.values(UserAccessTokenTypes)
 
@@ -16,20 +17,22 @@ async function createToken({
   }
 
   const auth = await Config.authRequired(type)
+
+  const tick = timer()
   const request = await Worker.createTokenForUser(type)
   const accessToken = request?.data?.accessToken
   if (!accessToken) {
     throw new Error('Missing access token details in response')
   }
 
-  success(
+  info(
     `Successfully created token ${print.dim(
       accessToken.value,
     )} type is ${print.bold(accessToken.type)} for ${print.name(
       auth.username,
     )} account`,
   )
-
+  success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 

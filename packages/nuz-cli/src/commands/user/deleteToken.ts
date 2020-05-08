@@ -4,19 +4,21 @@ import { Arguments } from 'yargs'
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
 
-import print, { success } from '../../utils/print'
+import print, { info, success } from '../../utils/print'
+import timer from '../../utils/timer'
 
 async function deleteToken({ token }: Arguments<{ token: string }>) {
   const auth = await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
+  const tick = timer()
   const request = await Worker.deleteTokenFromUser(auth.id, token)
 
-  success(
+  info(
     `Successfully deleted token ${print.dim(token)} from ${print.name(
       auth.username,
     )} account`,
   )
-
+  success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 

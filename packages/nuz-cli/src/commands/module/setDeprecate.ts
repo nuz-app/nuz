@@ -5,6 +5,7 @@ import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
 
 import print, { info, success } from '../../utils/print'
+import timer from '../../utils/timer'
 
 async function setDeprecate({
   module: id,
@@ -21,6 +22,7 @@ async function setDeprecate({
     throw new Error('Id or versions is invalid')
   }
 
+  const tick = timer()
   const request = await Worker.setDeprecateForModule(id, versions, deprecate)
   const moduleId = request?.data?._id
   const versionsUpdated = request?.data?.versions
@@ -34,7 +36,7 @@ async function setDeprecate({
     info('Deprecate removed!')
   }
 
-  success('Done!')
+  success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 

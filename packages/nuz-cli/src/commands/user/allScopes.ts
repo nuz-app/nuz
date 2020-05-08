@@ -2,9 +2,12 @@ import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
 
 import print, { info, pretty, success } from '../../utils/print'
+import timer from '../../utils/timer'
 
 async function allScopes() {
   const auth = await Config.authRequired()
+
+  const tick = timer()
   const request = await Worker.getAllScopesOfUser(auth.id)
   const scopes = request?.data?.scopes
 
@@ -14,7 +17,7 @@ async function allScopes() {
     )} items`,
   )
   info(pretty(scopes))
-  success('Done!')
+  success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 

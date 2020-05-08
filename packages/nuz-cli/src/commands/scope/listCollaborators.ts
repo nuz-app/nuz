@@ -2,9 +2,11 @@ import { Arguments } from 'yargs'
 
 import Worker from '../../classes/Worker'
 
-import print, { info, log, pretty } from '../../utils/print'
+import print, { info, log, pretty, success } from '../../utils/print'
+import timer from '../../utils/timer'
 
 async function listCollaborators({ scope: id }: Arguments<{ scope: string }>) {
+  const tick = timer()
   const request = await Worker.getCollaboratorsOfScope(id)
 
   const scopeId = request?.data?._id
@@ -12,6 +14,7 @@ async function listCollaborators({ scope: id }: Arguments<{ scope: string }>) {
 
   info(`Collaborators of ${print.name(scopeId)} scope`)
   log(pretty(collaborators))
+  success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 

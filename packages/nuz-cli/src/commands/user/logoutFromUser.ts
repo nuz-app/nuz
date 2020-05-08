@@ -5,6 +5,7 @@ import Worker from '../../classes/Worker'
 
 import { NUZ_DEFAULT_USERNAME } from '../../lib/const'
 import print, { info, success } from '../../utils/print'
+import timer from '../../utils/timer'
 
 async function logoutFromUser({
   username: _username,
@@ -23,6 +24,7 @@ async function logoutFromUser({
     throw new Error('Unable to logout because you use the default profile')
   }
 
+  const tick = timer()
   const request = await Worker.logoutFromUser(id, token)
   info(`Logged out of ${print.name(username)} account`)
 
@@ -36,7 +38,7 @@ async function logoutFromUser({
   info(`Deleting ${print.name(username)} work folder...`)
   await Config.delete(username)
 
-  success('Done!')
+  success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 

@@ -4,7 +4,8 @@ import { Arguments } from 'yargs'
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
 
-import print, { success } from '../../utils/print'
+import print, { info, success } from '../../utils/print'
+import timer from '../../utils/timer'
 
 async function addCollaborator({
   module: id,
@@ -13,15 +14,17 @@ async function addCollaborator({
 }: Arguments<{ module: string; user: string; type: CollaboratorTypes }>) {
   await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
+  const tick = timer()
   const request = await Worker.addCollaboratorToModule(id, {
     id: user,
     type,
   })
 
   const moduleId = request?.data?._id
-  success(
+  info(
     `Added ${print.name(user)} to module ${print.name(moduleId)} successfully!`,
   )
+  success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 

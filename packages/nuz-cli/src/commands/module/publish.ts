@@ -12,6 +12,7 @@ import * as fs from '../../utils/fs'
 import * as paths from '../../utils/paths'
 import pickAssetsFromStats from '../../utils/pickAssetsFromStats'
 import print, { info, success } from '../../utils/print'
+import timer from '../../utils/timer'
 
 function checkIsUrl(url: string) {
   try {
@@ -81,10 +82,12 @@ async function publish({ fallback }: Arguments<{ fallback: string }>) {
   const data = { version, library, resolve, format: ModuleFormats.umd }
   const options = { fallback }
 
+  const tick = timer()
   const request = await Worker.publishModule(name, data, options)
   const moduleId = request?.data?._id
 
-  success('Published was successfully!')
+  info('Published was successfully!')
+  success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 

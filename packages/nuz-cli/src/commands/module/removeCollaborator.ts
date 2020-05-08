@@ -4,7 +4,8 @@ import { Arguments } from 'yargs'
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
 
-import print, { success } from '../../utils/print'
+import print, { info, success } from '../../utils/print'
+import timer from '../../utils/timer'
 
 async function removeCollaborator({
   module: id,
@@ -12,14 +13,16 @@ async function removeCollaborator({
 }: Arguments<{ module: string; user: string }>) {
   await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
+  const tick = timer()
   const request = await Worker.removeCollaboratorFromModule(id, user)
 
   const moduleId = request?.data?._id
-  success(
+  info(
     `Removed ${print.name(user)} from module ${print.name(
       moduleId,
     )} successfully!`,
   )
+  success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 

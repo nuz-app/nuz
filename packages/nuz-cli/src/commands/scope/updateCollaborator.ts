@@ -4,7 +4,8 @@ import { Arguments } from 'yargs'
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
 
-import print, { success } from '../../utils/print'
+import print, { info, success } from '../../utils/print'
+import timer from '../../utils/timer'
 
 async function updateCollaborator({
   scope,
@@ -13,17 +14,19 @@ async function updateCollaborator({
 }: Arguments<{ scope: string; user: string; type: CollaboratorTypes }>) {
   await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
+  const tick = timer()
   const request = await Worker.updateCollaboratorOfScope(scope, {
     id: user,
     type,
   })
 
   const scopeId = request?.data?._id
-  success(
+  info(
     `Updated ${print.name(user)} info in scope ${print.name(
       scopeId,
     )} successfully!`,
   )
+  success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 

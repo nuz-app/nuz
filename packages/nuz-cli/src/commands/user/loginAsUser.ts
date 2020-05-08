@@ -3,7 +3,8 @@ import Worker from '../../classes/Worker'
 
 import { Arguments } from 'yargs'
 import createQuestions from '../../utils/createQuestions'
-import print, { success } from '../../utils/print'
+import print, { info, success } from '../../utils/print'
+import timer from '../../utils/timer'
 
 const usernameQuestion = {
   type: 'string',
@@ -34,6 +35,7 @@ async function loginAsUser({
     throw new Error('Missing `username` or `password` info')
   }
 
+  const tick = timer()
   const request = await Worker.loginAsUser(username, password)
 
   const userId = request?.data?._id
@@ -54,7 +56,8 @@ async function loginAsUser({
 
   await Config.writeAuth(auth)
 
-  success(`Login successfully to ${print.name(username)} account!`)
+  info(`Login successfully to ${print.name(username)} account!`)
+  success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 

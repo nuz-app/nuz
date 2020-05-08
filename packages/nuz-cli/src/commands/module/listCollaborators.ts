@@ -2,11 +2,13 @@ import { Arguments } from 'yargs'
 
 import Worker from '../../classes/Worker'
 
-import print, { info, log, pretty } from '../../utils/print'
+import print, { info, log, pretty, success } from '../../utils/print'
+import timer from '../../utils/timer'
 
 async function listCollaborators({
   module: id,
 }: Arguments<{ module: string }>) {
+  const tick = timer()
   const request = await Worker.getCollaboratorsOfModule(id)
 
   const moduleId = request?.data?._id
@@ -14,6 +16,7 @@ async function listCollaborators({
 
   info(`Collaborators of ${print.name(moduleId)} module`)
   log(pretty(collaborators))
+  success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 

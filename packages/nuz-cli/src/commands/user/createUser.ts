@@ -2,6 +2,7 @@ import Worker from '../../classes/Worker'
 
 import createQuestions from '../../utils/createQuestions'
 import print, { info, success } from '../../utils/print'
+import timer from '../../utils/timer'
 
 import loginAsUser from './loginAsUser'
 
@@ -68,12 +69,15 @@ async function register() {
     throw new Error('Password and verify password is not matched')
   }
 
+  const tick = timer()
   const request = await Worker.createUser({ email, name, username, password })
-  success(`Successfully created ${print.name(username)} user account`)
+  info(`Successfully created ${print.name(username)} user account`)
 
   if (autoLogin) {
     info('Signing in to account...')
     await loginAsUser({ username, password } as any)
+  } else {
+    success(`Done in ${print.bold(tick())}ms.`)
   }
 
   return true

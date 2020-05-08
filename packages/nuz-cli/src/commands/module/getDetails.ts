@@ -3,6 +3,7 @@ import { Arguments } from 'yargs'
 import Worker from '../../classes/Worker'
 
 import print, { info, log, pretty, success } from '../../utils/print'
+import timer from '../../utils/timer'
 
 async function getDetails({
   module: id,
@@ -15,6 +16,7 @@ async function getDetails({
     throw new Error('Missing module id or fields to get details of module')
   }
 
+  const tick = timer()
   const request = await Worker.getModule(
     id,
     (!fields || fields.length) === 0 ? undefined : fields,
@@ -28,7 +30,7 @@ async function getDetails({
     log(pretty(details))
   }
 
-  success('Done!')
+  success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 
