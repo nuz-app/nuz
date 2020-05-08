@@ -6,7 +6,7 @@ import express from 'express'
 import http from 'http'
 import spdy from 'spdy'
 
-import { ServerlessOptions, ServerOptions } from './types'
+import { ServerlessOptions, ServerOptions, StorageTypes } from './types'
 
 import Cache from './classes/Cache'
 import Worker from './classes/Worker'
@@ -17,16 +17,41 @@ class Server {
   private readonly _dev: boolean
   private readonly _worker: Worker
   private readonly _cache: Cache
+  private readonly _storageType: StorageTypes
+  private readonly _storage: any
   private readonly _app: express.Express
   private readonly _server: http.Server
   private readonly _serverless: ServerlessOptions
 
   constructor(options: ServerOptions) {
-    const { dev, cache, https, db, compression: compress = true } = options
+    const {
+      dev,
+      cache,
+      https,
+      db,
+      compression: compress = true,
+      storageType,
+      storage,
+    } = options
 
     this._cache = cache
+    this._storage = storage
+    this._storageType =
+      storageType || this._storage ? StorageTypes.provided : StorageTypes.self
     this._dev = typeof dev === 'boolean' ? dev : !checkIsProductionMode()
-    this._worker = new Worker(db, this._cache)
+
+    this._worker = new Worker(db, {
+      cache: this._cache,
+      storageType: this._storageType,
+      storage: this._storage,
+    })
+
+    const storageIsRequired =
+      storageType === StorageTypes.provided || storageType === StorageTypes.full
+    const storageIsMissing = storageIsRequired && !this._storage
+    if (storageIsMissing) {
+      throw new Error('Storage is required in full or provided mode')
+    }
 
     // Init app to listen requests
     this._app = express()
@@ -70,7 +95,10 @@ class Server {
       route.execute(
         this._app,
         this._worker,
-        (this._serverless as any)[route.name] || {},
+        Object.assign(
+          { dev: this._dev },
+          (this._serverless as any)[route.name],
+        ),
       )
     }
   }

@@ -1,11 +1,13 @@
 import { ModuleFormats } from '@nuz/shared'
 import compression from 'compression'
 
+import { StorageTypes } from './common'
+
 export enum DBTypes {
   mongodb = 'mongodb',
 }
 
-export interface MongoOptions {
+export interface MongoConfig {
   url: string
 }
 
@@ -24,12 +26,20 @@ export interface HttpsConfig {
 }
 
 export interface ServerOptions {
-  db: MongoOptions
+  db: MongoConfig
   dev?: boolean
   cache?: any
   https?: boolean | HttpsConfig
   compression?: boolean | compression.CompressionOptions
   serverless?: ServerlessOptions
+  storageType?: StorageTypes
+  storage?: any
+}
+
+export interface WorkerOptions {
+  storageType: StorageTypes
+  cache?: any
+  storage?: any
 }
 
 export interface LocalDBOptions {
@@ -52,6 +62,7 @@ export interface PublishInfo {
 export interface PublishOptions {
   fallback?: string
   schedule?: any
+  selfHosted?: boolean
 }
 
 export interface RollbackInfo {

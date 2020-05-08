@@ -3,6 +3,7 @@ import { Types } from 'mongoose'
 
 export interface Resource {
   url: string
+  path: string
   integrity: string
 }
 
@@ -39,3 +40,9 @@ export type VersionInfo = {
 }
 
 export type RequiredModule = { id: string; version: string }
+
+export enum StorageTypes {
+  self = 'self',
+  provided = 'provided',
+  full = 'full',
+}

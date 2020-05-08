@@ -1,7 +1,5 @@
-export const parse = (value: string) => {
-  const url = new URL(value)
-
-  const paths = url.pathname.split('/-/')
+export const parse = (pathname: string) => {
+  const paths = pathname.split('/-/')
   if (!paths[1]) {
     throw new Error('URL is invalid')
   }
@@ -11,7 +9,7 @@ export const parse = (value: string) => {
   const [, version, file] = paths[1].match(/^([^\/]+)\/([\s\S]+)$/i)
 
   return {
-    url,
+    pathname,
     paths,
     moduleId,
     version,
@@ -23,5 +21,8 @@ export const create = (
   moduleId: string,
   version: string,
   file: string,
-  domain: string,
-) => `https://${domain}/${moduleId}/-/${version}/${file}`
+  origin: string,
+) => `${origin}/${moduleId}/-/${version}/${file}`
+
+export const key = (moduleId: string, version: string, file: string) =>
+  `${moduleId}/${version}/${file}`

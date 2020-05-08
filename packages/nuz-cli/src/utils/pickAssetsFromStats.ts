@@ -34,6 +34,7 @@ const pickAssetsFromStats = (
     }
 
     return {
+      path: filename,
       url: publicPath + filename,
       integrity: !options.useIntegrity
         ? undefined

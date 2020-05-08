@@ -93,3 +93,6 @@ typings/
 
 # Keys
 keys/
+
+# Temp
+tmp/

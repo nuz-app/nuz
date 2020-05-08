@@ -1,4 +1,4 @@
-import { pick, validator } from '@nuz/utils'
+import { assetsUrlHelpers, pick, validator } from '@nuz/utils'
 import { Connection } from 'mongoose'
 
 import {
@@ -12,16 +12,19 @@ import {
   ModuleAsObject,
   ModuleDocument,
   ModuleId,
-  MongoOptions,
+  MongoConfig,
   PublishModuleData,
   PublishOptions,
   ScopeId,
+  StorageTypes,
   TokenId,
   UpdateUserData,
   UserAccessTokenTypes,
   UserId,
+  WorkerOptions,
 } from '../types'
 
+import { FILE_LENGTH_LIMIT, FILE_SIZE_LIMIT } from '../lib/const'
 import { createModels } from '../models'
 import { createServices, Services } from '../services'
 
@@ -35,6 +38,7 @@ import parseModuleId from '../utils/parseModuleId'
 import * as versionHelpers from '../utils/versionHelpers'
 
 import Cache, { FactoryFn } from './Cache'
+import Storage from './Storage'
 
 const pickVersionIfExisted = (tags, versions, requiredVersion) => {
   const useTag = tags.get(requiredVersion)
@@ -65,9 +69,12 @@ class Worker {
   private readonly _connection: Connection
   private readonly _models: Models
   private readonly _services: Services
+  private readonly _cache: Cache
+  private readonly _storageType: StorageTypes
+  private readonly _storage: Storage
 
-  constructor(options: MongoOptions, private readonly _cache: Cache) {
-    const { url } = options
+  constructor(config: MongoConfig, options: WorkerOptions) {
+    const { url } = config
 
     if (!url) {
       throw new Error('Mongo URL is required!')
@@ -76,6 +83,17 @@ class Worker {
     this._connection = createMongoConnection(url)
     this._models = createModels(this._connection)
     this._services = createServices(this._models)
+
+    this._cache = options?.cache
+    this._storageType = options?.storageType as StorageTypes
+    this._storage = options?.storage
+  }
+
+  checkIsUseStorage(selfHosted: boolean) {
+    return (
+      this._storageType === StorageTypes.provided ||
+      (this._storageType === StorageTypes.full && !selfHosted)
+    )
   }
 
   /**
@@ -124,9 +142,37 @@ class Worker {
     tokenId: TokenId,
     moduleId: ModuleId,
     data: PublishModuleData,
-    options: PublishOptions = {},
+    files: any[],
+    options: PublishOptions,
   ) {
+    // tslint:disable-next-line: prefer-const
+    let { fallback, selfHosted } = Object.assign({}, options)
     const { version, resolve } = data
+
+    const isUseStorage =
+      this._storageType === StorageTypes.provided ||
+      (this._storageType === StorageTypes.full && !selfHosted)
+
+    if (isUseStorage) {
+      const filesIsEmpty = !files || files.length === 0
+      if (filesIsEmpty) {
+        throw new Error('Files is required to store')
+      }
+
+      if (files.length > FILE_LENGTH_LIMIT) {
+        throw new Error(
+          `Exceeded the allowed file number of a version, limit is ${FILE_LENGTH_LIMIT}!`,
+        )
+      }
+
+      for (const file of files) {
+        if (file.size > FILE_SIZE_LIMIT) {
+          throw new Error(
+            `File ${file.originalname} is exceeds the allowed size, limit is ${FILE_SIZE_LIMIT} byte!`,
+          )
+        }
+      }
+    }
 
     const user = await this.verifyTokenOfUser(
       tokenId,
@@ -174,7 +220,7 @@ class Worker {
       }
 
       // Ensure fallback for the new version
-      if (!options.fallback) {
+      if (!fallback) {
         const list = Array.from<string>(
           module?.versions?.keys() || [],
         ).map((item) => versionHelpers.decode(item))
@@ -185,8 +231,33 @@ class Worker {
 
         const ordered = versionHelpers.order(list, true)
         const idx = ordered.indexOf(version) + 1
-        options.fallback = ordered[idx] || undefined
+        fallback = ordered[idx] || undefined
       }
+    }
+
+    if (isUseStorage) {
+      const uploadResult = await this._storage.uploadFiles(
+        { id: moduleId, version },
+        files,
+      )
+      const pickFilename = (key: string) =>
+        key.replace(new RegExp(`^${moduleId}/${version}/`), '')
+
+      const mapOfFiles = {}
+      for (const item of uploadResult) {
+        const fileName = pickFilename(item.Key)
+        const fileUrl = await this._storage.createUrl(
+          moduleId,
+          version,
+          fileName,
+        )
+        mapOfFiles[fileName] = fileUrl
+      }
+
+      resolve.main.url = mapOfFiles[resolve.main.path]
+      resolve.styles = resolve.styles.map((item) =>
+        Object.assign(item, { url: mapOfFiles[item.path] }),
+      )
     }
 
     const resolved = await ensureVersionResources(resolve)
@@ -196,17 +267,14 @@ class Worker {
     }
 
     const publishedResult = !moduleIsEixsted
-      ? await this._services.Module.create(
-          user._id,
-          moduleId,
-          transformed,
-          options,
-        )
+      ? await this._services.Module.create(user._id, moduleId, transformed, {
+          fallback,
+        })
       : await this._services.Module.addVersion(
           user._id,
           moduleId,
           transformed,
-          options,
+          { fallback },
         )
 
     this._cache.clearAllRefsToModule(moduleId)

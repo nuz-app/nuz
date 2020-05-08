@@ -7,21 +7,14 @@ import { STATS_FILENAME } from '../../lib/const'
 
 import Worker from '../../classes/Worker'
 
+import checkIsUrl from '../../utils/checkIsUrl'
 import * as configHelpers from '../../utils/configHelpers'
 import * as fs from '../../utils/fs'
 import * as paths from '../../utils/paths'
 import pickAssetsFromStats from '../../utils/pickAssetsFromStats'
-import print, { info, success } from '../../utils/print'
+import pickFilesFromStats from '../../utils/pickFilesFromStats'
+import print, { info, pretty, success } from '../../utils/print'
 import timer from '../../utils/timer'
-
-function checkIsUrl(url: string) {
-  try {
-    const v = new URL(url)
-    return true
-  } catch {
-    return false
-  }
-}
 
 function checkIsHaveSlash(url: string) {
   try {
@@ -76,14 +69,17 @@ async function publish({ fallback }: Arguments<{ fallback: string }>) {
   // Wait to abort if user wants to do it
   await wait(1000)
 
+  const useIntegrity = false
   const stats = await fs.readJson(statsPath)
-  const resolve = pickAssetsFromStats(stats, { useIntegrity: true })
+  const resolve = pickAssetsFromStats(stats, { useIntegrity })
+  const files = pickFilesFromStats(stats)
 
   const data = { version, library, resolve, format: ModuleFormats.umd }
   const options = { fallback }
+  console.log(data, 'xxxxxx', files)
 
   const tick = timer()
-  const request = await Worker.publishModule(name, data, options)
+  const request = await Worker.publishModule(name, data, files, options)
   const moduleId = request?.data?._id
 
   info('Published was successfully!')

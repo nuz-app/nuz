@@ -23,7 +23,6 @@ async function setConfig({
     config[key] = value
   }
 
-  console.log({ config, key, value })
   await Config.writeConfig(config)
 
   success(

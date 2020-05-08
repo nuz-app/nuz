@@ -1,5 +1,7 @@
 import { UserAccessTokenTypes } from '@nuz/shared'
 import { got } from '@nuz/utils'
+import FormData from 'form-data'
+import fs from 'fs'
 
 import * as apiUrls from '../utils/apiUrls'
 
@@ -175,10 +177,23 @@ class Worker {
   /**
    * Publish version for the module
    */
-  static async publishModule(module: string, data: any, options?: any) {
+  static async publishModule(
+    module: string,
+    data: any,
+    files: fs.ReadStream[],
+    options?: any,
+  ) {
+    const form = new FormData()
+    files.forEach((file, idx) => form.append(`files`, file))
+    form.append('module', module)
+    form.append('data', JSON.stringify(data))
+    form.append('options', JSON.stringify(options))
+
+    const api = apiUrls.publishModule(this.endpoint, this.token)
     return got(
-      Object.assign(apiUrls.publishModule(this.endpoint, this.token), {
-        data: { module, data, options },
+      Object.assign(api, {
+        data: form,
+        headers: Object.assign(form.getHeaders(), api.headers),
       }),
     )
   }

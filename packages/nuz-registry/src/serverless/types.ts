@@ -5,5 +5,10 @@ import Worker from '../classes/Worker'
 export type ServerlessRoute = (
   app: Express,
   worker: Worker,
-  options?: any,
+  options: ServerlessConfig,
 ) => any
+
+export interface ServerlessConfig {
+  [key: string]: any
+  dev: boolean
+}

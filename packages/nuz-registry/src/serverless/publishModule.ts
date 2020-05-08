@@ -1,33 +1,72 @@
+import { jsonHelpers } from '@nuz/utils'
 import { Express } from 'express'
+import fs from 'fs'
+import multer from 'multer'
+import os from 'os'
+import path from 'path'
 
 import Worker from '../classes/Worker'
 import onRoute from '../utils/onRoute'
 
-import { ServerlessRoute } from './types'
+import { ServerlessConfig, ServerlessRoute } from './types'
 
 export const name = 'publishModule'
 
-export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
-  app.put(
-    '/module',
-    onRoute(async (request, response) => {
-      const { authorization: token } = request.headers
-      const { module: id, data, options = {} } = request.body
+export const execute: ServerlessRoute = (
+  app: Express,
+  worker: Worker,
+  config: ServerlessConfig,
+) => {
+  const tmpDir = config.dev
+    ? path.join(fs.realpathSync(process.cwd()), 'tmp')
+    : os.tmpdir()
+  const upload = multer({
+    dest: tmpDir,
+  })
 
-      const formIsMissing = !token || !id || !data
-      if (formIsMissing) {
-        throw new Error('Form is missing fields')
-      }
+  const cleanUp = (files: any[]) =>
+    (files || []).forEach((file) =>
+      fs.unlink(
+        file.path,
+        (error) =>
+          error && console.warn(`Can't unlink temporary file at ${file.path}`),
+      ),
+    )
 
+  const onFiles = upload.array('files')
+  const onPublish = onRoute(async (request, response) => {
+    const { authorization: token } = request.headers
+    const { module: id, data: _data, options: _options } = request.body
+
+    const data = jsonHelpers.parse(_data)
+    const options = jsonHelpers.parse(_options) || {}
+    const files = (request as any).files
+
+    console.log({ data, options, files })
+
+    const formIsMissing = !token || !id || !data
+    if (formIsMissing) {
+      cleanUp(files)
+      throw new Error('Form is missing fields')
+    }
+
+    try {
       const item = await worker.publishModule(
         token as string,
         id,
         data,
+        files,
         options,
       )
 
       response.json(item)
-      return true
-    }),
-  )
+    } catch (error) {
+      cleanUp(files)
+      throw error
+    }
+
+    return true
+  })
+
+  app.put('/module', onFiles, onPublish)
 }

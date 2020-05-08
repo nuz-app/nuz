@@ -5,7 +5,7 @@ import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
 
 import print, { info, success } from '../../utils/print'
-import tick from '../../utils/tick'
+import timer from '../../utils/timer'
 
 async function removeModules({
   composition,

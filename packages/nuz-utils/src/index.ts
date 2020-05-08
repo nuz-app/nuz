@@ -1,3 +1,4 @@
+import * as assetsUrlHelpers from './assetsUrlHelpers'
 import * as integrityHelpers from './integrityHelpers'
 import * as jsonHelpers from './jsonHelpers'
 import * as linkedUrls from './linkedUrls'
@@ -10,6 +11,7 @@ export {
   linkedUrls,
   tokenTypesHelpers,
   validator,
+  assetsUrlHelpers,
 }
 
 export { default as checkIsProductionMode } from './checkIsProductionMode'

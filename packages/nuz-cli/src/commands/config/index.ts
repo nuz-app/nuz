@@ -12,30 +12,14 @@ export const setCommands = (yargs) => {
     child.command(
       'set <key> <value>',
       'Set configuration',
-      (yarg) =>
-        yarg
-          .positional('key', {
-            describe: 'The key you want to configure',
-            type: 'string',
-            required: true,
-          })
-          .positional('value', {
-            describe: 'New value of the key',
-            type: 'string',
-            required: true,
-          }),
+      (yarg) => yarg,
       handleOnCommand(setConfig),
     )
 
     child.command(
       'get <keys..>',
       'Get configuration',
-      (yarg) =>
-        yarg.positional('keys', {
-          describe: 'The keys want to get information',
-          type: 'string',
-          required: true,
-        }),
+      (yarg) => yarg,
       handleOnCommand(getConfig),
     )
 
