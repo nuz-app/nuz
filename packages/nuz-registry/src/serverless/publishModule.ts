@@ -42,8 +42,6 @@ export const execute: ServerlessRoute = (
     const options = jsonHelpers.parse(_options) || {}
     const files = (request as any).files
 
-    console.log({ data, options, files })
-
     const formIsMissing = !token || !id || !data
     if (formIsMissing) {
       cleanUp(files)

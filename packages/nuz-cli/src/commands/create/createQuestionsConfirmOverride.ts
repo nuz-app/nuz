@@ -11,8 +11,8 @@ const getQuestions = (dir: string) => ({
 const createQuestionsConfirmOverride = async (dir: string) => {
   const questions = getQuestions(dir)
 
-  const results = await createQuestions<{ isConfirmed: boolean }>([questions])
-  return results.isConfirmed
+  const result = await createQuestions<{ isConfirmed: boolean }>([questions])
+  return result.isConfirmed
 }
 
 export default createQuestionsConfirmOverride

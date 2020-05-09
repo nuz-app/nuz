@@ -23,7 +23,13 @@ export const setCommands = (yargs) => {
     child.command(
       'publish [fallback]',
       'Publish version for the module',
-      (yarg) => yarg,
+      (yarg) =>
+        yarg.option('self-hosted', {
+          describe: 'Is publish as self hosted',
+          type: 'boolean',
+          default: false,
+          required: false,
+        }),
       handleOnCommand(publish),
     )
 

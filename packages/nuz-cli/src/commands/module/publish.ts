@@ -1,5 +1,4 @@
 import { ModuleFormats } from '@nuz/shared'
-import { wait } from '@nuz/utils'
 import path from 'path'
 import { Arguments } from 'yargs'
 
@@ -7,13 +6,13 @@ import { STATS_FILENAME } from '../../lib/const'
 
 import Worker from '../../classes/Worker'
 
-import checkIsUrl from '../../utils/checkIsUrl'
 import * as configHelpers from '../../utils/configHelpers'
+import createQuestions from '../../utils/createQuestions'
 import * as fs from '../../utils/fs'
 import * as paths from '../../utils/paths'
 import pickAssetsFromStats from '../../utils/pickAssetsFromStats'
 import pickFilesFromStats from '../../utils/pickFilesFromStats'
-import print, { info, pretty, success } from '../../utils/print'
+import print, { info, success } from '../../utils/print'
 import timer from '../../utils/timer'
 
 import optimized from '../build/optimized'
@@ -30,7 +29,8 @@ function checkIsHaveSlash(url: string) {
 async function publish({
   fallback,
   selfHosted = false,
-}: Arguments<{ fallback: string; selfHosted: boolean }>) {
+  yes = false,
+}: Arguments<{ fallback: string; selfHosted: boolean; yes: boolean }>) {
   const dir = paths.cwd
 
   const configIsExisted = configHelpers.exists(dir)
@@ -45,25 +45,31 @@ async function publish({
     throw new Error('Config file is invalid')
   }
 
-  info('Please ensure module was built before publish')
-
   const { name, library, version, output, publicPath } = moduleConfig
 
-  if (selfHosted) {
-    // const publicPathIsUrl = checkIsUrl(publicPath)
-    // if (!publicPathIsUrl) {
-    //   throw new Error('The public path needs to be a valid url')
-    // }
-
-    const publicPathIsHaveSlash = checkIsHaveSlash(publicPath)
-    if (!publicPathIsHaveSlash) {
-      throw new Error('The public path needs have slash at end')
-    }
-
-    await optimized({ publicPath } as any)
-  } else {
-    await optimized({ publicPath: '/' } as any)
+  const publicPathUsed = selfHosted ? publicPath : '/'
+  const publicPathIsHaveSlash = checkIsHaveSlash(publicPathUsed)
+  if (!publicPathIsHaveSlash) {
+    throw new Error('The public path needs have slash at end')
   }
+
+  const result = yes
+    ? { isConfirmed: true }
+    : await createQuestions<{ isConfirmed: boolean }>([
+        {
+          type: 'confirm',
+          name: 'isConfirmed',
+          default: true,
+          message: `Are you sure want to publish version ${print.bold(
+            version,
+          )} ?`,
+        },
+      ])
+  if (!result.isConfirmed) {
+    return true
+  }
+
+  await optimized({ publicPath: publicPathUsed } as any)
 
   const distDir = path.join(dir, path.dirname(output))
   const statsPath = path.join(distDir, STATS_FILENAME)

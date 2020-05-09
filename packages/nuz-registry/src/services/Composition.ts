@@ -63,7 +63,6 @@ class Composition extends Service<CompositionId> {
       throw error
     }
 
-    console.log({ composition })
     return composition
   }
 

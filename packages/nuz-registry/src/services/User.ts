@@ -30,7 +30,6 @@ class User {
       throw error
     }
 
-    console.log({ user })
     return user
   }
 

@@ -31,7 +31,6 @@ class Scope extends Service<ScopeId> {
       throw error
     }
 
-    console.log({ scope })
     return scope
   }
 
