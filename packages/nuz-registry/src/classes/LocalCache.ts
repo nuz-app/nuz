@@ -81,7 +81,7 @@ class LocalCache implements Cache {
     return this.data.compositions.get(compositionId)
   }
 
-  private async deleteComposition(compositionId: CompositionId) {
+  async deleteComposition(compositionId: CompositionId) {
     return this.data.compositions.delete(compositionId)
   }
 

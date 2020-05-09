@@ -277,7 +277,7 @@ class Worker {
           { fallback },
         )
 
-    this._cache.clearAllRefsToModule(moduleId)
+    this._cache?.clearAllRefsToModule(moduleId)
 
     return publishedResult
   }
@@ -805,6 +805,8 @@ class Worker {
       composition._id,
       modules,
     )
+
+    this._cache?.deleteComposition(composition._id)
     return result
   }
 
@@ -831,6 +833,8 @@ class Worker {
       composition._id,
       moduleIds,
     )
+
+    this._cache?.deleteComposition(composition._id)
     return result
   }
 

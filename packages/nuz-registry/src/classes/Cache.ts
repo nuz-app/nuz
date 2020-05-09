@@ -15,6 +15,8 @@ declare class Cache {
     compositionId: CompositionId,
   ): Promise<{ data?: any; factory?: FactoryFn }>
 
+  deleteComposition(compositionId: CompositionId): Promise<any>
+
   flushAll(): Promise<void>
 }
 
