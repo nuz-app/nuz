@@ -36,11 +36,6 @@ export type UpstreamResolveConfig = {
   styles: (string | UpstreamResolveResource)[]
 }
 
-export enum UpstreamHosts {
-  self = 'self',
-  unpkg = 'unpkg',
-}
-
 /**
  * Upstream config inside item config
  */

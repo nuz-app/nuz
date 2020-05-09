@@ -22,7 +22,7 @@ export const ensure = (dir: string) => {
   }
 }
 
-const REQUIRED_FIELDS = ['name', 'version', 'library', 'input', 'output']
+const REQUIRED_FIELDS = ['name', 'version', 'input', 'output']
 
 export const extract = (
   dir: string,

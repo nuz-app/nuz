@@ -26,7 +26,6 @@ export interface Schedule {}
 
 export type VersionInfo = {
   version: string
-  library: string
   publisher: string
   createdAt: Date
   format: ModuleFormats
@@ -34,6 +33,8 @@ export type VersionInfo = {
     main: Resource
     styles: Resource[]
   }
+  files: Resource[]
+  library?: string
   exportsOnly?: string[]
   alias?: { [key: string]: string }
   fallback?: string

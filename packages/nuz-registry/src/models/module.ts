@@ -35,7 +35,6 @@ const schema: Schema = new Schema(
       of: new Schema(
         {
           version: { type: String, required: true },
-          library: { type: String, required: true },
           format: {
             type: String,
             required: true,
@@ -52,6 +51,7 @@ const schema: Schema = new Schema(
           exportsOnly: [String],
           shared: [String],
           externals: [String],
+          library: { type: String, required: false },
           fallback: { type: String, required: false },
           deprecated: { type: String, required: false },
         },

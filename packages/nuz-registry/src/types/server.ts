@@ -42,23 +42,6 @@ export interface WorkerOptions {
   storage?: any
 }
 
-export interface LocalDBOptions {
-  path?: string
-}
-
-export interface PublishInfo {
-  name: string
-  version: string
-  library: string
-  resolve: {
-    main: string
-    styles: string[]
-  }
-  alias?: { [key: string]: string }
-  exportsOnly?: string[]
-  format?: ModuleFormats
-}
-
 export interface PublishOptions {
   fallback?: string
   schedule?: any

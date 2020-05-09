@@ -134,7 +134,7 @@ class Modules {
       wsWarningIsShowed = true
 
       console.warn(
-        `Please make sure the workspace server was started! \n Start workspace by command: \n > nuz workspace --port ${config.port}`,
+        `Please make sure the workspace server was started on port ${config.port}.`,
       )
     }
 
@@ -174,6 +174,13 @@ class Modules {
     return Object.create(this._globals.getContext())
   }
 
+  private flushContext(library?: string) {
+    const key = library || 'default'
+
+    this._globals.deleteDependency(key)
+    this._globals.delete(key)
+  }
+
   private bindVendors() {
     const vendors = this._config.getVendors()
 
@@ -203,7 +210,7 @@ class Modules {
 
     const { upstream } = item
 
-    const resolveUrls = requireHelpers.parse(upstream, this._platform) || {}
+    const resolveUrls = requireHelpers.parse(upstream) || {}
     const { main, styles } = resolveUrls || ({} as any)
 
     const preloadScript = DOMHelpers.preloadScript(main.url, {
@@ -278,7 +285,7 @@ class Modules {
       throw error
     }
 
-    const moduleInContext = library ? context[library] : context
+    const moduleInContext = library ? context[library] : context?.default
 
     let exportsModule = Object.assign(
       {},
@@ -298,6 +305,8 @@ class Modules {
       throw new Error('Module is not exported!')
     }
 
+    this.flushContext(library)
+
     return exportsModule
   }
 
@@ -309,8 +318,7 @@ class Modules {
     const { library, format, alias, exportsOnly } = pickIfSet(upstream, item)
     const { timeout, retries } = ensureInstallConfig(options)
 
-    const { main, styles } =
-      requireHelpers.parse(upstream, this._platform) || {}
+    const { main, styles } = requireHelpers.parse(upstream) || {}
 
     const moduleScript = await getScript(
       main.url,
@@ -469,8 +477,7 @@ class Modules {
     const urls = modulesKeys.reduce((acc, key) => {
       const item = modules[key]
 
-      const { main, styles } =
-        requireHelpers.parse(item.upstream as any, this._platform) || {}
+      const { main, styles } = requireHelpers.parse(item.upstream as any) || {}
 
       return acc.concat(
         getUrlOrigin(main.url) as string,

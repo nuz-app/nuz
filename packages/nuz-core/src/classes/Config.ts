@@ -14,7 +14,7 @@ const setDefaultIfUnset = <T extends BaseItemConfig>(
   item: T,
 ): T => {
   const isObject = checkIsObject(item)
-  const isInvalid = !(isObject && item.library)
+  const isInvalid = !isObject
   if (isInvalid) {
     throw new Error(`Module ${name} is invalid config`)
   }

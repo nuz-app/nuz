@@ -3,7 +3,6 @@ import Globals from '../classes/Globals'
 import {
   RuntimePlatforms,
   UpstreamConfigAllowed,
-  UpstreamHosts,
   UpstreamResolveConfig,
   UpstreamResolveResource,
 } from '../types'
@@ -55,16 +54,7 @@ const resolveByUrl = (resolve: string | UpstreamResolveConfig) => {
   return resolveUrls
 }
 
-const HOSTS = {
-  [UpstreamHosts.unpkg]: 'https://unpkg.com',
-  [UpstreamHosts.self]: undefined,
-}
-
-export const parse = (
-  resolve: UpstreamConfigAllowed,
-  platform: RuntimePlatforms,
-) => {
-  const isNode = platform === RuntimePlatforms.node
+export const parse = (resolve: UpstreamConfigAllowed) => {
   const resolveUrls = {
     main: undefined as any,
     styles: [] as Resource[],

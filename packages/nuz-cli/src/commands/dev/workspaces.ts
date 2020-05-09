@@ -182,7 +182,7 @@ async function standalone({
         }
 
         const childModuleAssets = pickAssetsFromStats(item)
-        const childModuleResolve = {
+        const childModuleUpstreamResolve = {
           main: childModuleAssets.resolve.main.url,
           styles: childModuleAssets.resolve.styles.map((style) => style.url),
         }
@@ -192,10 +192,7 @@ async function standalone({
             shared: childModuleInfo.config.shared,
             library: childModuleInfo.webpack.output.library,
             format: childModuleInfo.webpack.output.libraryTarget,
-            upstream: {
-              host: 'self',
-              resolve: childModuleResolve,
-            },
+            upstream: childModuleUpstreamResolve,
           },
         })
       }, {})

@@ -1,17 +1,11 @@
 import { ModuleConfig } from '../types'
 
 const exitIfModuleInsufficient = (moduleConfig: ModuleConfig) => {
-  const { name, library, input, output } = moduleConfig || {}
+  const { name, input, output } = moduleConfig || {}
 
   if (!name) {
     throw new Error(
       'Missing `name` field in `nuz.config.js` file, this is module name!',
-    )
-  }
-
-  if (!library) {
-    throw new Error(
-      'Missing `library` field in `nuz.config.js` file, this is library name of module!',
     )
   }
 
