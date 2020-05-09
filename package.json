@@ -30,7 +30,11 @@
     "test": "yarn test:types && yarn test:unit",
     "lint": "lerna run lint --parallel",
     "lint:fix": "lerna run lint:fix --parallel",
-    "dev": "tsc --build --watch tsconfig.dev.json"
+    "dev": "tsc --build --watch tsconfig.dev.json",
+    "version:beta": "lerna version --conventional-prerelease --conventional-commits --force-publish --no-changelog --preid beta",
+    "version:release": "lerna version --conventional-graduate --conventional-commits --force-publish",
+    "publish:git": "lerna publish from-git",
+    "publish:package": "lerna publish from-package"
   },
   "husky": {
     "hooks": {
