@@ -1,5 +1,5 @@
 import { CollaboratorTypes } from '@nuz/shared'
-import { UserId, VersionInfo } from './common'
+import { Resource, UserId, VersionInfo } from './common'
 
 export type ModuleAsObject = { [id: string]: string }
 
@@ -39,4 +39,4 @@ export type PublishModuleData = Pick<
   | 'exportsOnly'
   | 'alias'
   | 'fallback'
-> & { name: string; scope?: string }
+> & { name: string; scope?: string; files: Resource[] }

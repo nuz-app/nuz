@@ -183,8 +183,8 @@ async function standalone({
 
         const childModuleAssets = pickAssetsFromStats(item)
         const childModuleResolve = {
-          main: childModuleAssets.main.url,
-          styles: childModuleAssets.styles.map((style) => style.url),
+          main: childModuleAssets.resolve.main.url,
+          styles: childModuleAssets.resolve.styles.map((style) => style.url),
         }
 
         return Object.assign(acc, {

@@ -22,6 +22,7 @@ export const collaborator = new Schema(
 export const resource = new Schema(
   {
     url: { type: String, required: true },
+    path: { type: String, required: true },
     integrity: { type: String, required: true },
   },
   { _id: false },

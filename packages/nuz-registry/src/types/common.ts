@@ -4,7 +4,8 @@ import { Types } from 'mongoose'
 export interface Resource {
   url: string
   path: string
-  integrity: string
+  md5sum: string
+  // integrity: string
 }
 
 export interface Collaborator {

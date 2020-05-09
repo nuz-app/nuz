@@ -1,6 +1,7 @@
 import { integrityHelpers } from '@nuz/utils'
 import path from 'path'
 import * as webpack from 'webpack'
+import { Arguments } from 'yargs'
 
 import clearConsole from '../../utils/clearConsole'
 import * as configHelpers from '../../utils/configHelpers'
@@ -9,19 +10,12 @@ import * as fs from '../../utils/fs'
 import getBundleInfo from '../../utils/getBundleInfo'
 import getFeatureConfig from '../../utils/getFeatureConfig'
 import * as paths from '../../utils/paths'
-import print, {
-  error,
-  info,
-  log,
-  pretty,
-  success,
-  warn,
-} from '../../utils/print'
+import print, { info, pretty, success } from '../../utils/print'
 import showErrorsAndWarnings from '../../utils/showErrorsAndWarnings'
 import * as webpackCompiler from '../../utils/webpackCompiler'
 import webpackConfigFactory from '../../utils/webpackConfigFactory'
 
-async function optimized() {
+async function optimized({ publicPath }: Arguments<{ publicPath?: string }>) {
   const dir = paths.cwd
 
   const configIsExisted = configHelpers.exists(dir)
@@ -37,8 +31,11 @@ async function optimized() {
   }
 
   exitIfModuleInsufficient(moduleConfig)
+  if (publicPath) {
+    moduleConfig.publicPath = publicPath
+  }
 
-  const { name, output, serve: serveConfig } = moduleConfig
+  const { name, output } = moduleConfig
 
   const featureConfig = getFeatureConfig(dir, moduleConfig)
   const distDir = path.join(dir, path.dirname(output))

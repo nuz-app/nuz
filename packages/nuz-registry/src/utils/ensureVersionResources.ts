@@ -1,22 +1,18 @@
 import { integrityHelpers } from '@nuz/utils'
 
-import { VersionInfo } from '../types'
+import { Resource, VersionInfo } from '../types'
 
-const getOrVerifyIntegrity = async (
-  item: string | { url: string; integrity: string | null },
-) => {
+const getOrVerifyIntegrity = async (item: string | Resource) => {
   const isObject = typeof item === 'object'
   const itemUrl = (item as any).url
-  const itemIntegrity = (item as any).integrity
 
   const url = isObject ? itemUrl : item
-  const integrity = (await integrityHelpers.url(url)) as string
-
-  const integrityIsNotMatched =
-    isObject && itemIntegrity && integrity !== itemIntegrity
-  if (integrityIsNotMatched) {
+  let integrity
+  try {
+    integrity = (await integrityHelpers.url(url)) as string
+  } catch {
     throw new Error(
-      `Integrity of resource is not matched. Expected: "${itemIntegrity}" but received "${integrity}"!`,
+      `Can't get integrity of file, make sure the file was uploaded to the CDNs, url: ${url}.`,
     )
   }
 

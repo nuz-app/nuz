@@ -92,6 +92,7 @@ export const loadStyle = (href: string, config?: StyleConfig) => {
         href,
         type: 'text/css',
         rel: 'stylesheet',
+        crossOrigin: 'anonymous',
       },
       config,
     ),

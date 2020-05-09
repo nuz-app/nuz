@@ -5,10 +5,13 @@ import fs from 'fs'
 import throat from 'throat'
 import util from 'util'
 
-import { ModuleId } from 'src/types'
+import { ModuleId } from '../types'
+import { TransformFile } from '../utils/validateAndTransformFiles'
+
 import Storage, { UploadFilesData } from './Storage'
 
 const PERMISSION_FILE_UPLOAD = 'public-read'
+const PROMISES_LIMIT = 4
 
 const readFile = util.promisify(fs.readFile)
 
@@ -75,7 +78,7 @@ class DigitalOceanStorage implements Storage {
   // tslint:disable-next-line: no-empty
   async prepare() {}
 
-  async uploadFiles(data: UploadFilesData, files: any[]) {
+  async uploadFiles(data: UploadFilesData, files: TransformFile[]) {
     const { id, version } = data
 
     if (!id || !version) {
@@ -86,14 +89,14 @@ class DigitalOceanStorage implements Storage {
 
     const promises = Promise.all(
       files.map(
-        throat(5, async (file) =>
+        throat(PROMISES_LIMIT, async (file) =>
           this._s3
             .upload({
               ACL: PERMISSION_FILE_UPLOAD,
               Bucket: this._bucket,
-              ContentType: file.mimetype,
-              Key: assetsUrlHelpers.key(id, version, file.originalname),
-              Body: await readFile(file.path),
+              ContentType: file.mimeType,
+              Key: file.key,
+              Body: await readFile(file.tempPath),
             })
             .promise(),
         ),

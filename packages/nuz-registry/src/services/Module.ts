@@ -30,6 +30,7 @@ class Module extends Service<ModuleId> {
       library,
       format,
       resolve,
+      files,
       exportsOnly,
       alias,
     } = data
@@ -43,6 +44,7 @@ class Module extends Service<ModuleId> {
       library,
       format,
       resolve,
+      files,
       exportsOnly,
       alias,
       fallback,
@@ -79,7 +81,15 @@ class Module extends Service<ModuleId> {
     data: PublishModuleData,
     options?: PublishOptions,
   ) {
-    const { version, library, format, resolve, exportsOnly, alias } = data
+    const {
+      version,
+      library,
+      format,
+      resolve,
+      files,
+      exportsOnly,
+      alias,
+    } = data
     const { fallback } = options || {}
 
     const versionInfo = {
@@ -87,6 +97,7 @@ class Module extends Service<ModuleId> {
       library,
       format,
       resolve,
+      files,
       exportsOnly,
       alias,
       fallback,

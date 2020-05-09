@@ -47,6 +47,7 @@ const schema: Schema = new Schema(
             main: resourceSchema,
             styles: [resourceSchema],
           },
+          files: [resourceSchema],
           alias: { type: Schema.Types.Mixed, required: false },
           exportsOnly: [String],
           shared: [String],

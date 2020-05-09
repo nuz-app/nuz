@@ -16,6 +16,8 @@ import pickFilesFromStats from '../../utils/pickFilesFromStats'
 import print, { info, pretty, success } from '../../utils/print'
 import timer from '../../utils/timer'
 
+import optimized from '../build/optimized'
+
 function checkIsHaveSlash(url: string) {
   try {
     const lastChar = url[url.length - 1]
@@ -25,7 +27,10 @@ function checkIsHaveSlash(url: string) {
   }
 }
 
-async function publish({ fallback }: Arguments<{ fallback: string }>) {
+async function publish({
+  fallback,
+  selfHosted = false,
+}: Arguments<{ fallback: string; selfHosted: boolean }>) {
   const dir = paths.cwd
 
   const configIsExisted = configHelpers.exists(dir)
@@ -44,20 +49,26 @@ async function publish({ fallback }: Arguments<{ fallback: string }>) {
 
   const { name, library, version, output, publicPath } = moduleConfig
 
+  if (selfHosted) {
+    // const publicPathIsUrl = checkIsUrl(publicPath)
+    // if (!publicPathIsUrl) {
+    //   throw new Error('The public path needs to be a valid url')
+    // }
+
+    const publicPathIsHaveSlash = checkIsHaveSlash(publicPath)
+    if (!publicPathIsHaveSlash) {
+      throw new Error('The public path needs have slash at end')
+    }
+
+    await optimized({ publicPath } as any)
+  } else {
+    await optimized({ publicPath: '/' } as any)
+  }
+
   const distDir = path.join(dir, path.dirname(output))
   const statsPath = path.join(distDir, STATS_FILENAME)
   if (!fs.exists(statsPath)) {
     throw new Error('Not found stats file of bundle')
-  }
-
-  const publicPathIsUrl = checkIsUrl(publicPath)
-  if (!publicPathIsUrl) {
-    throw new Error('The public path needs to be a valid url')
-  }
-
-  const publicPathIsHaveSlash = checkIsHaveSlash(publicPath)
-  if (!publicPathIsHaveSlash) {
-    throw new Error('The public path needs have slash at end')
   }
 
   info(
@@ -66,17 +77,19 @@ async function publish({ fallback }: Arguments<{ fallback: string }>) {
     )} module...`,
   )
 
-  // Wait to abort if user wants to do it
-  await wait(1000)
-
   const useIntegrity = false
   const stats = await fs.readJson(statsPath)
-  const resolve = pickAssetsFromStats(stats, { useIntegrity })
+  const assets = pickAssetsFromStats(stats, { useIntegrity })
   const files = pickFilesFromStats(stats)
 
-  const data = { version, library, resolve, format: ModuleFormats.umd }
-  const options = { fallback }
-  console.log(data, 'xxxxxx', files)
+  const data = {
+    version,
+    library,
+    resolve: assets.resolve,
+    files: assets.files,
+    format: ModuleFormats.umd,
+  }
+  const options = { fallback, selfHosted }
 
   const tick = timer()
   const request = await Worker.publishModule(name, data, files, options)

@@ -1,4 +1,4 @@
-import { assetsUrlHelpers, pick, validator } from '@nuz/utils'
+import { integrityHelpers, pick, validator } from '@nuz/utils'
 import { Connection } from 'mongoose'
 
 import {
@@ -15,6 +15,7 @@ import {
   MongoConfig,
   PublishModuleData,
   PublishOptions,
+  Resource,
   ScopeId,
   StorageTypes,
   TokenId,
@@ -24,7 +25,6 @@ import {
   WorkerOptions,
 } from '../types'
 
-import { FILE_LENGTH_LIMIT, FILE_SIZE_LIMIT } from '../lib/const'
 import { createModels } from '../models'
 import { createServices, Services } from '../services'
 
@@ -35,6 +35,7 @@ import checkIsNewScope from '../utils/checkIsNewScope'
 import createMongoConnection from '../utils/createMongoConnection'
 import ensureVersionResources from '../utils/ensureVersionResources'
 import parseModuleId from '../utils/parseModuleId'
+import validateAndTransformFiles from '../utils/validateAndTransformFiles'
 import * as versionHelpers from '../utils/versionHelpers'
 
 import Cache, { FactoryFn } from './Cache'
@@ -142,37 +143,23 @@ class Worker {
     tokenId: TokenId,
     moduleId: ModuleId,
     data: PublishModuleData,
-    files: any[],
+    filesUploaded: any[],
     options: PublishOptions,
   ) {
     // tslint:disable-next-line: prefer-const
     let { fallback, selfHosted } = Object.assign({}, options)
-    const { version, resolve } = data
+    // tslint:disable-next-line: prefer-const
+    let { version, resolve, files } = data
 
     const isUseStorage =
       this._storageType === StorageTypes.provided ||
       (this._storageType === StorageTypes.full && !selfHosted)
-
-    if (isUseStorage) {
-      const filesIsEmpty = !files || files.length === 0
-      if (filesIsEmpty) {
-        throw new Error('Files is required to store')
-      }
-
-      if (files.length > FILE_LENGTH_LIMIT) {
-        throw new Error(
-          `Exceeded the allowed file number of a version, limit is ${FILE_LENGTH_LIMIT}!`,
-        )
-      }
-
-      for (const file of files) {
-        if (file.size > FILE_SIZE_LIMIT) {
-          throw new Error(
-            `File ${file.originalname} is exceeds the allowed size, limit is ${FILE_SIZE_LIMIT} byte!`,
-          )
-        }
-      }
-    }
+    const transformedFiles = isUseStorage
+      ? validateAndTransformFiles(filesUploaded, data.files, {
+          id: moduleId,
+          version,
+        })
+      : []
 
     const user = await this.verifyTokenOfUser(
       tokenId,
@@ -238,32 +225,34 @@ class Worker {
     if (isUseStorage) {
       const uploadResult = await this._storage.uploadFiles(
         { id: moduleId, version },
-        files,
+        transformedFiles,
       )
-      const pickFilename = (key: string) =>
-        key.replace(new RegExp(`^${moduleId}/${version}/`), '')
 
-      const mapOfFiles = {}
-      for (const item of uploadResult) {
-        const fileName = pickFilename(item.Key)
-        const fileUrl = await this._storage.createUrl(
-          moduleId,
-          version,
-          fileName,
-        )
-        mapOfFiles[fileName] = fileUrl
+      const bindStaticUrl = async (item: Resource) => {
+        const url = await this._storage.createUrl(moduleId, version, item.path)
+
+        let integrity
+        try {
+          integrity = (await integrityHelpers.url(url)) as string
+        } catch {
+          throw new Error(
+            `Can't get integrity of file, make sure the file was uploaded to the CDNs, url: ${url}.`,
+          )
+        }
+
+        Object.assign(item, { url, integrity })
       }
 
-      resolve.main.url = mapOfFiles[resolve.main.path]
-      resolve.styles = resolve.styles.map((item) =>
-        Object.assign(item, { url: mapOfFiles[item.path] }),
+      const promises = Promise.all(
+        [...files, ...resolve.styles, resolve.main].map(bindStaticUrl),
       )
+      await promises
     }
 
-    const resolved = await ensureVersionResources(resolve)
     const transformed = {
       ...data,
-      resolve: resolved as any,
+      files,
+      resolve,
     }
 
     const publishedResult = !moduleIsEixsted

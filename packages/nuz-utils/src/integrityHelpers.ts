@@ -3,7 +3,7 @@ import fs from 'fs'
 
 import got from './got'
 
-const DEFAULT_ALGORITHM = 'sha512'
+const DEFAULT_ALGORITHM = 'sha384'
 const DEFAULT_TIMEOUT = 60000
 
 export const file = (path: string, algorithm: string = DEFAULT_ALGORITHM) => {

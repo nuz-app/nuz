@@ -59,6 +59,7 @@ export const execute: ServerlessRoute = (
         options,
       )
 
+      cleanUp(files)
       response.json(item)
     } catch (error) {
       cleanUp(files)
