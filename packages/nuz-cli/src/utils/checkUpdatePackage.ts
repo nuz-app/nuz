@@ -6,7 +6,6 @@ import print, { error, log } from './print'
 
 async function checkUpdatePackage() {
   const pkg = require(paths.packageJsonInDir(paths.tool))
-  pkg.version = '1.0.0-beta.1'
 
   let update: Result | null = null
 
