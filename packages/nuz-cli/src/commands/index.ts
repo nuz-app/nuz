@@ -12,6 +12,8 @@ import * as serve from './serve'
 import * as tools from './tools'
 import * as user from './user'
 
+import checkUpdate from './tools/checkUpdate'
+
 export const setCommands = async (yargs: Argv) => {
   dev.setCommands(yargs)
   build.setCommands(yargs)
@@ -26,6 +28,8 @@ export const setCommands = async (yargs: Argv) => {
   tools.setCommands(yargs)
 
   showHelpIfInvalid(yargs, yargs.argv, 1, 2)
+
+  await checkUpdate()
 
   return yargs
 }

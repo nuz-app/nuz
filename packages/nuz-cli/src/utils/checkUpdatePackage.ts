@@ -2,7 +2,7 @@ import checkForUpdate, { Result } from 'update-check'
 
 import checkIsYarnInstalled from './checkIsYarnInstalled'
 import * as paths from './paths'
-import print, { error, info, log } from './print'
+import print, { error, log } from './print'
 
 async function checkUpdatePackage() {
   const pkg = require(paths.packageJsonInDir(paths.tool))
@@ -11,7 +11,10 @@ async function checkUpdatePackage() {
   let update: Result | null = null
 
   try {
-    update = await checkForUpdate(pkg)
+    update = await checkForUpdate(pkg, {
+      interval: 3600000, // 1h
+      distTag: 'latest',
+    })
   } catch (err) {
     error(`Failed to check for updates: ${err}`)
   }
@@ -19,7 +22,7 @@ async function checkUpdatePackage() {
   if (update) {
     const useYarn = checkIsYarnInstalled()
     log()
-    info(
+    log(
       `The latest available version is ${print.cyan(
         update.latest,
       )}, please update it!`,
