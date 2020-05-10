@@ -1,7 +1,7 @@
 {
   "name": "@nuz/registry",
   "description": "A factory to create the registry server for the Nuz ecosystem",
-  "version": "1.0.0-beta.15",
+  "version": "1.0.0-beta.16",
   "repository": {
     "type": "git",
     "url": "https://github.com/nuz-app/nuz.git",
@@ -26,8 +26,8 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@nuz/shared": "^1.0.0-beta.15",
-    "@nuz/utils": "^1.0.0-beta.15",
+    "@nuz/shared": "^1.0.0-beta.16",
+    "@nuz/utils": "^1.0.0-beta.16",
     "aws-sdk": "^2.672.0",
     "bcrypt": "^4.0.1",
     "body-parser": "^1.19.0",

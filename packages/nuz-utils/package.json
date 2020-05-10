@@ -1,7 +1,7 @@
 {
   "name": "@nuz/utils",
   "description": "Includes utils using in nuz packages",
-  "version": "1.0.0-beta.15",
+  "version": "1.0.0-beta.16",
   "repository": {
     "type": "git",
     "url": "https://github.com/nuz-app/nuz.git",
@@ -27,7 +27,7 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@nuz/shared": "^1.0.0-beta.15",
+    "@nuz/shared": "^1.0.0-beta.16",
     "axios": "^0.19.2",
     "selfsigned": "^1.10.7",
     "tslib": "^1.11.1"
