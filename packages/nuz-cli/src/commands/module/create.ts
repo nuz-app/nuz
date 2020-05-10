@@ -1,4 +1,6 @@
+import { deferedPromise } from '@nuz/utils'
 import inquirer from 'inquirer'
+import ProgressBar from 'progress'
 import { Arguments } from 'yargs'
 
 import checkIsOnline from '../../utils/checkIsOnline'
@@ -158,7 +160,29 @@ async function create({
           result.template,
         )} template, this might take a moment`,
       )
-      await downloadAndExtractTemplate(dir, result.template)
+
+      const downloadDefered = deferedPromise<boolean>()
+      await Promise.all([
+        downloadAndExtractTemplate(dir, result.template, (response) => {
+          const totalLength = response.headers['content-length']
+
+          const progressBar = new ProgressBar(
+            `${print.dim('[>] [:bar] :percent :etas')}`,
+            {
+              width: 40,
+              complete: '=',
+              incomplete: ' ',
+              renderThrottle: 1,
+              total: parseInt(totalLength, 10),
+            },
+          )
+
+          response.data.on('data', (chunk) => progressBar.tick(chunk.length))
+          response.data.on('end', () => downloadDefered.resolve(true))
+        }),
+        downloadDefered.promise,
+      ])
+
       info(
         `Use the downloaded ${print.name(
           result.template,
