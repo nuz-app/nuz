@@ -176,7 +176,6 @@ class Modules {
 
   private flushContext(library?: string) {
     const key = library || 'default'
-
     this._globals.deleteDependency(key)
     this._globals.delete(key)
   }
@@ -305,7 +304,7 @@ class Modules {
       throw new Error('Module is not exported!')
     }
 
-    this.flushContext(library)
+    // this.flushContext(library)
 
     return exportsModule
   }

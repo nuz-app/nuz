@@ -70,7 +70,7 @@ class Linked {
     )
 
     // Bind event on `change`, received modules as changed modules
-    this._socket.on(LINKED_CHANGE_EVENT, ({ modules: changedModules }: any) => {
+    this._socket.on(LINKED_CHANGE_EVENT, ({ changes: changedModules }: any) => {
       const includingModulesChanged = changedModules.some((name: any) =>
         this._watching.includes(name),
       )

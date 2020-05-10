@@ -145,7 +145,7 @@ async function standalone({
   )
 
   const watchUrl = linkedUrls.watch(port)
-  const store = { modules: null as any }
+  const store = { modules: null as any, changes: null as any }
 
   // Create socket to watching changes and reload
   const socket = io(server, {
@@ -155,8 +155,8 @@ async function standalone({
   })
 
   // Create socket helpers
-  const emitOnChange = (modules: string[]) =>
-    socket.emit(LINKED_CHANGE_EVENT, { modules })
+  const emitOnChange = (changes: string[]) =>
+    socket.emit(LINKED_CHANGE_EVENT, { changes })
 
   socket.on('connection', (client) => {
     const isReady = !!store.modules
@@ -196,7 +196,9 @@ async function standalone({
           },
         })
       }, {})
-      store.modules = linkedModules
+      if (!store.modules) {
+        store.modules = linkedModules
+      }
 
       const changedModulesName = children.map((child) =>
         compilerName.extract((child as any).name),
