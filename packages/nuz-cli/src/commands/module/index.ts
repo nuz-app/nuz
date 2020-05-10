@@ -2,6 +2,7 @@ import handleOnCommand from '../../utils/handleOnCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
 import addCollaborator from './addCollaborator'
+import create from './create'
 import getDetails from './getDetails'
 import listCollaborators from './listCollaborators'
 import publish from './publish'
@@ -12,6 +13,13 @@ import updateCollaborator from './updateCollaborator'
 export const setCommands = (yargs) => {
   yargs.command('module', 'Manage module', (child) => {
     child.usage('usage: $0 module <item> [options]')
+
+    child.command(
+      'create [name] [template]',
+      'Create new module',
+      (yarg) => yarg,
+      handleOnCommand(create),
+    )
 
     child.command(
       'get <module> [fields..]',
@@ -76,6 +84,13 @@ export const setCommands = (yargs) => {
 
     showHelpIfInvalid(child, child.argv, 2, 3)
   })
+
+  yargs.command(
+    'create [name] [template]',
+    'Create new module [alias: module-create]',
+    (yarg) => yarg,
+    handleOnCommand(create),
+  )
 
   yargs.command(
     'publish [fallback]',

@@ -1,12 +1,12 @@
 import { getPackageJsonInDir } from '@nuz/utils'
 import path from 'path'
 
-import * as fs from '../../utils/fs'
+import * as fs from '../../../utils/fs'
 
 interface ModuleInfo {
   name: string
-  library: string
   version: string
+  library?: string
 }
 
 const updatePackageJson = async (dir: string, info: ModuleInfo) => {
@@ -21,7 +21,10 @@ const updatePackageJson = async (dir: string, info: ModuleInfo) => {
   } = packageJson
   const { name, library, version } = info
 
-  fs.writeJson(packageJsonPath, { name, library, version, ...rest })
+  fs.writeJson(
+    packageJsonPath,
+    Object.assign({ name, version }, library && { library }, rest),
+  )
 }
 
 export default updatePackageJson

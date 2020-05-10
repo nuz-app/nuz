@@ -1,7 +1,7 @@
 import path from 'path'
 
-import * as fs from '../../utils/fs'
-import getPathInTemplate from '../../utils/getPathInTemplate'
+import * as fs from '../../../utils/fs'
+import getPathInTemplate from '../../../utils/getPathInTemplate'
 
 const filesMap = {
   '.gitignore': 'gitignore',

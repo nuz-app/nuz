@@ -9,6 +9,7 @@ import * as dev from './dev'
 import * as modules from './module'
 import * as scope from './scope'
 import * as serve from './serve'
+import * as tools from './tools'
 import * as user from './user'
 
 export const setCommands = async (yargs: Argv) => {
@@ -21,6 +22,8 @@ export const setCommands = async (yargs: Argv) => {
   scope.setCommands(yargs)
   modules.setCommands(yargs)
   composition.setCommands(yargs)
+
+  tools.setCommands(yargs)
 
   showHelpIfInvalid(yargs, yargs.argv, 1, 2)
 

@@ -1,10 +1,10 @@
 import glob from 'glob'
 import path from 'path'
 
-import createQuestions from '../../utils/createQuestions'
-import * as fs from '../../utils/fs'
-import * as paths from '../../utils/paths'
-import print from '../../utils/print'
+import createQuestions from '../../../utils/createQuestions'
+import * as fs from '../../../utils/fs'
+import * as paths from '../../../utils/paths'
+import print from '../../../utils/print'
 
 const CONFIG_FILE = `
 // Main fields load from './package.json'
@@ -25,7 +25,7 @@ const getQuestions = (name: string) => [
     type: 'list',
     name: 'language',
     default: 'Javascirpt',
-    message: `Which ${print.bold('languages')} using for ${print.name(
+    message: `Which ${print.bold('language')} using for ${print.name(
       name,
     )} module?`,
     choices: ['javascript', 'typescript'],
@@ -47,7 +47,7 @@ const generateTemplate = async (
     name,
     version,
     library,
-  }: { name: string; version: string; library: string },
+  }: { name: string; version: string; library?: string },
 ) => {
   const questions = getQuestions(name)
   const result = await createQuestions<{ language: string; style: string }>(
@@ -74,10 +74,7 @@ const generateTemplate = async (
 
   // Write `package.json` file for module
   const packageJsonPath = path.join(dir, 'package.json')
-  const packageJson = {
-    name,
-    version,
-    library,
+  const packageJson = Object.assign({ name, version }, library && { library }, {
     source: inputPath,
     main: outputPath,
     scripts: {
@@ -103,7 +100,7 @@ const generateTemplate = async (
       react: 'latest',
       'react-dom': 'latest',
     },
-  }
+  })
   fs.writeJson(packageJsonPath, packageJson)
 
   // Write `nuz.config.js` config file for module
