@@ -57,17 +57,10 @@ class Linked {
     }
 
     // Bind event on `define`, received modules as linked modules
-    this._socket.on(
-      LINKED_DEFINE_EVENT,
-      ({ ready, modules: linkedModules }: any) => {
-        this._modules = linkedModules || {}
-
-        // Waiting until bundles is ready
-        if (ready) {
-          dfPromise.resolve(true)
-        }
-      },
-    )
+    this._socket.on(LINKED_DEFINE_EVENT, ({ modules: linkedModules }: any) => {
+      this._modules = linkedModules || {}
+      dfPromise.resolve(true)
+    })
 
     // Bind event on `change`, received modules as changed modules
     this._socket.on(LINKED_CHANGE_EVENT, ({ changes: changedModules }: any) => {
