@@ -61,6 +61,7 @@ function reactHelpersFactory(
             const props = Object.assign({ key }, item.attributes)
             return <TagComponent {...props} />
           })
+
       if (injectHeadIsNotFound) {
         console.warn(
           'Please provide injectHead component to render links tag in head!',

@@ -45,9 +45,9 @@ const pickAssetsFromStats = (
   }
 
   const transformAsset = transformAssetFactory(outputPath, publicPath as string)
-  const main = transformAsset(assets.find((item) => /\.js(\.map)?$/.test(item)))
+  const main = transformAsset(assets.find((item) => /\.js$/.test(item)))
   const styles = assets
-    .filter((item) => /\.css(\.map)?$/.test(item))
+    .filter((item) => /\.css$/.test(item))
     .map(transformAsset)
   const resolve = {
     main,

@@ -28,6 +28,7 @@ import {
 
 import checkIsPackageInstalled from './checkIsPackageInstalled'
 import * as compilerName from './compilerName'
+import * as fs from './fs'
 import * as paths from './paths'
 
 import styleLoadersFactory from './webpack/factories/styleLoaders'
@@ -59,6 +60,18 @@ const ruleFactory = (
   exclude,
   use: use || [],
 })
+
+const getOutput = (dir: string, output: string) => {
+  const distDir = path.isAbsolute(output)
+    ? path.dirname(output)
+    : path.join(dir, path.dirname(output))
+  const distFilename = path.basename(output)
+
+  return {
+    directory: distDir,
+    filename: distFilename,
+  }
+}
 
 const defaultConfig = {
   isolated: false,
@@ -138,14 +151,14 @@ const webpackConfigFactory = (
   const mode = dev ? 'development' : 'production'
   const devtool = !devtoolCustomer
     ? dev
-      ? 'eval-source-map'
+      ? 'source-map'
       : 'hidden-source-map'
     : devtoolCustomer
   const sourceMap = !!devtool
   const bail = !dev
   const inputFile = path.join(dir, input)
-  const distPath = path.join(dir, path.dirname(output))
-  const distFile = path.basename(output)
+  const { directory: distDir, filename: distFilename } = getOutput(dir, output)
+  const distChunkFilename = '[id].js'
   const umdNamedDefine = format === 'umd'
   const scriptType = 'text/javascript'
   const loadTimeout = 120000
@@ -181,7 +194,7 @@ const webpackConfigFactory = (
     bail,
     mode,
     target,
-    devtool,
+    devtool: false,
     cache: cacheConfig,
     context: dir,
     entry: inputFile,
@@ -190,8 +203,9 @@ const webpackConfigFactory = (
       umdNamedDefine,
       globalObject,
       publicPath,
-      path: distPath,
-      filename: distFile,
+      path: distDir,
+      filename: distFilename,
+      chunkFilename: distChunkFilename,
       libraryTarget: format,
       chunkLoadTimeout: loadTimeout,
       jsonpScriptType: scriptType,
@@ -217,6 +231,13 @@ const webpackConfigFactory = (
     new WebpackProcessBar({
       name,
       color: 'green',
+    }),
+  )
+
+  config.plugins.push(
+    new webpack.SourceMapDevToolPlugin({
+      filename: '[file].map',
+      publicPath,
     }),
   )
 

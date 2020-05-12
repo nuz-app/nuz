@@ -1,5 +1,6 @@
 import { SHARED_CONFIG_KEY } from '@nuz/shared'
 import { jsonHelpers } from '@nuz/utils'
+import getScript from './getScript'
 
 export interface PreloadConfig {
   [attr: string]: any
@@ -46,7 +47,7 @@ export const createElement = (defined: DefinedElement) => {
       return
     }
 
-    element[key] = attributes[key]
+    element.setAttribute(key, attributes[key])
   })
 
   return element
@@ -84,20 +85,30 @@ interface StyleConfig {
   [attr: string]: any
 }
 
-export const loadStyle = (href: string, config?: StyleConfig) => {
+export const loadStyle = async (href: string, config?: StyleConfig) => {
+  let style
+  if (domIsExsted()) {
+    const element = document.querySelector(`style[data-href="${href}"]`)
+    style = element?.innerHTML
+  }
+
+  if (!style) {
+    style = await getScript(href, { integrity: config?.integrity })
+  }
+
   const defined = defineElement(
-    'link',
+    'style',
     Object.assign(
       {
-        href,
         type: 'text/css',
-        rel: 'stylesheet',
-        crossOrigin: 'anonymous',
+        'data-href': href,
+        dangerouslySetInnerHTML: {
+          __html: style,
+        },
       },
       config,
     ),
   )
-
   if (domIsExsted()) {
     appendToHead(createElement(defined))
   }

@@ -24,13 +24,14 @@ const styleLoadersFactory = ({
 }: StyleLoadersOptions): webpack.Loader[] => {
   const resolveInApp = (moduleId: string) => paths.resolveInApp(moduleId, dir)
   const browserslist = getBrowserslist({ dir, dev })
-
+  const sourceMap = dev
   const loaders = [] as webpack.Loader[]
 
   // Set ExtractCssChunks loader for preprocessor
   loaders.push({
     loader: ExtractCssChunks.loader,
     options: {
+      sourceMap,
       hmr: dev,
     },
   })
@@ -40,6 +41,7 @@ const styleLoadersFactory = ({
     loader: resolveInApp('css-loader'),
     options: Object.assign(
       {
+        sourceMap,
         importLoaders: feature.sass && feature.postcss ? 2 : 1,
         modules: !modules
           ? false
@@ -85,6 +87,7 @@ const styleLoadersFactory = ({
     options: Object.assign(
       {
         ident: 'postcss',
+        sourceMap,
       },
       feature.postcss === true ? {} : feature.postcss,
       {
@@ -106,6 +109,7 @@ const styleLoadersFactory = ({
       loader: resolveInApp('sass-loader'),
       options: Object.assign(
         {
+          sourceMap,
           implementation: dartSassIsInstalled
             ? require(paths.resolveInApp('dart-sass', dir))
             : require(paths.resolveInApp('node-sass', dir)),
@@ -124,7 +128,10 @@ const styleLoadersFactory = ({
     // Set less loader
     loaders.push({
       loader: resolveInApp('less-loader'),
-      options: feature.less === true ? {} : feature.less,
+      options: Object.assign(
+        { sourceMap },
+        feature.less === true ? {} : feature.less,
+      ),
     })
   }
 

@@ -132,7 +132,6 @@ class Modules {
 
     if (!wsWarningIsShowed && config.port) {
       wsWarningIsShowed = true
-
       console.warn(
         `Please make sure the workspace server was started on port ${config.port}.`,
       )
@@ -186,11 +185,11 @@ class Modules {
     const keys = Object.keys(vendors)
     for (const key of keys) {
       const vendor = interopRequireDefault(vendors[key])
-      const exportsModule = moduleHelpers.define(vendor, {
+      const moduleExports = moduleHelpers.define(vendor, {
         module: true,
         vendor: true,
       })
-      this._globals.setDependency(key, exportsModule)
+      this._globals.setDependency(key, moduleExports)
     }
   }
 
@@ -200,9 +199,9 @@ class Modules {
       return false
     }
 
-    const key = this.getKey(item)
+    const cacheId = item.name
     const called =
-      this._pingResources.has(key) || this._resolvedModules.has(key)
+      this._pingResources.has(cacheId) || this._resolvedModules.has(cacheId)
     if (called) {
       return true
     }
@@ -221,7 +220,7 @@ class Modules {
       }),
     )
 
-    this._pingResources.set(key, {
+    this._pingResources.set(cacheId, {
       script: preloadScript,
       styles: preloadStyles,
     })
@@ -246,13 +245,13 @@ class Modules {
 
     const resolvedDependency = await Promise.resolve(dependencyFactory())
 
-    const exportsModule = moduleHelpers.define(resolvedDependency, {
+    const moduleExports = moduleHelpers.define(resolvedDependency, {
       module: true,
       shared: true,
     })
-    this._globals.setDependency(name, exportsModule)
+    this._globals.setDependency(name, moduleExports)
 
-    this._resolvedDependencies.set(name, exportsModule)
+    this._resolvedDependencies.set(name, moduleExports)
     return resolvedDependency
   }
 
@@ -286,27 +285,27 @@ class Modules {
 
     const moduleInContext = library ? context[library] : context?.default
 
-    let exportsModule = Object.assign(
+    let moduleExports = Object.assign(
       {},
       interopRequireDefault(moduleInContext),
       moduleInContext,
     )
-    exportsModule = moduleHelpers.transform(exportsModule, {
+    moduleExports = moduleHelpers.transform(moduleExports, {
       alias,
       exportsOnly,
     })
-    exportsModule = moduleHelpers.define(exportsModule, {
+    moduleExports = moduleHelpers.define(moduleExports, {
       module: true,
       upstream: true,
     })
 
-    if (!checkIsFunction(exportsModule.default)) {
+    if (!checkIsFunction(moduleExports.default)) {
       throw new Error('Module is not exported!')
     }
 
     // this.flushContext(library)
 
-    return exportsModule
+    return moduleExports
   }
 
   private async resolveOnUpstream(
@@ -328,7 +327,7 @@ class Modules {
       retries,
     )
 
-    const exportsModule = await this.runScript({
+    const moduleExports = await this.runScript({
       code: moduleScript,
       format,
       library,
@@ -336,12 +335,14 @@ class Modules {
       exportsOnly,
     })
 
-    const moduleStyles = (styles || []).map((style) =>
-      DOMHelpers.loadStyle(style.url, { integrity: style.integrity }),
+    const moduleStyles = await Promise.all(
+      (styles || []).map((style) =>
+        DOMHelpers.loadStyle(style.url, { integrity: style.integrity }),
+      ),
     )
 
     return {
-      module: exportsModule,
+      module: moduleExports,
       styles: moduleStyles,
     }
   }
@@ -381,21 +382,21 @@ class Modules {
       return null
     }
 
-    let exportsModule = Object.assign(
+    let moduleExports = Object.assign(
       {},
       interopRequireDefault(resolvedInLocal),
     )
-    exportsModule = moduleHelpers.transform(exportsModule, {
+    moduleExports = moduleHelpers.transform(moduleExports, {
       alias,
       exportsOnly,
     })
-    exportsModule = moduleHelpers.define(exportsModule, {
+    moduleExports = moduleHelpers.define(moduleExports, {
       module: true,
       local: true,
     })
 
     return {
-      module: exportsModule,
+      module: moduleExports,
       styles: [],
     }
   }
@@ -449,21 +450,17 @@ class Modules {
     item: RequiredBaseItem,
     options?: InstallConfig,
   ): Promise<LoadResults<M>> {
-    const { name } = item
-
-    if (!name) {
+    if (!item.name) {
       throw new Error('Not found name in item config')
     }
 
-    const resolvedCache = this._resolvedModules
-
-    const key = this.getKey(item)
-    // if (resolvedCache.has(key)) {
-    //   return resolvedCache.get(key) as any
-    // }
+    const cacheId = item.name
+    if (this._resolvedModules.has(cacheId)) {
+      return this._resolvedModules.get(cacheId) as any
+    }
 
     const resolvedModule = await this.resolve(item, options)
-    resolvedCache.set(key, resolvedModule)
+    this._resolvedModules.set(cacheId, resolvedModule)
 
     return resolvedModule
   }
@@ -474,9 +471,8 @@ class Modules {
     const modulesKeys = Object.keys(modules)
 
     const urls = modulesKeys.reduce((acc, key) => {
-      const item = modules[key]
-
-      const { main, styles } = requireHelpers.parse(item.upstream as any) || {}
+      const { main, styles } =
+        requireHelpers.parse(modules[key]?.upstream as any) || {}
 
       return acc.concat(
         getUrlOrigin(main.url) as string,
@@ -557,6 +553,7 @@ class Modules {
   getTagsInHead(): TagElement[] {
     const preconnects = Array.from(this._dnsPrefetchs.values())
     const resources = this._pingResources.values()
+    const resolvedModule = this._resolvedModules.values()
 
     const tags = [
       this._ssr && DOMHelpers.sharedConfig(this._config.raw()),
@@ -565,6 +562,10 @@ class Modules {
 
     resources.forEach((item) => {
       tags.push(item.script, ...(item.styles || []))
+    })
+
+    resolvedModule.forEach((item) => {
+      tags.push(...(item.styles || []))
     })
 
     return tags

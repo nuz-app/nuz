@@ -86,13 +86,23 @@ async function standalone({
       `Features config using in ${print.name(childName)}`,
       pretty(childFeatureConfig),
     )
+
+    // Create dist info
+    const distDir = path.join(bundlesDir, childName)
+    const distFilename = path.basename(output)
+    const distPublicPath = publicPath + childName + '/'
+
+    // Create webpack config
     const childWebpackConfig = webpackConfigFactory(
       {
         dev: true,
         cache: true,
         module: childName,
         dir: childModuleDir,
-        config: childModuleConfig,
+        config: Object.assign(childModuleConfig, {
+          publicPath: distPublicPath,
+          output: path.join(distDir, distFilename),
+        }),
       },
       childFeatureConfig,
     )
@@ -100,15 +110,6 @@ async function standalone({
     if (!childWebpackConfig.output) {
       throw new Error('Webpack output is not defined')
     }
-
-    // Create dist info
-    const distDir = path.join(bundlesDir, childName)
-    const distFilename = path.basename(output)
-
-    // Override webpack config with new dist info
-    childWebpackConfig.output.path = distDir
-    childWebpackConfig.output.filename = distFilename
-    childWebpackConfig.output.publicPath = publicPath + childName + '/'
 
     // Create module info
     const moduleInfo = {
