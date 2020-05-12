@@ -1,5 +1,10 @@
 import { SHARED_CONFIG_KEY } from '@nuz/shared'
-import { checkIsObject, jsonHelpers } from '@nuz/utils'
+import {
+  checkIsObject,
+  checkIsUrl,
+  getRegistryFetchUrl,
+  jsonHelpers,
+} from '@nuz/utils'
 
 import { BootstrapConfig, RegistryConfig, RuntimePlatforms } from './types'
 
@@ -22,6 +27,12 @@ const mergeConfig = (
     modules: Object.assign({}, modules, localConfig.modules),
   })
 
+const getRegistryUrl = (registry: any) => {
+  let value = typeof registry === 'string' ? registry : (registry as any).url
+  value = checkIsUrl(value) ? value : getRegistryFetchUrl(value)
+  return value
+}
+
 const configFactory = async (config: BootstrapConfig) => {
   const configIsInvalid = !validator.bootstrapConfig(config)
   if (configIsInvalid) {
@@ -41,10 +52,7 @@ const configFactory = async (config: BootstrapConfig) => {
 
   if (registryIsDefined && !configOnRegistry) {
     const registryConfig = (config.registry || {}) as RegistryConfig
-    const registryUrl =
-      typeof config.registry === 'string'
-        ? config.registry
-        : (config.registry as any).url
+    const registryUrl = getRegistryUrl(config.registry)
 
     configOnRegistry = await fetchConfig<BootstrapConfig>(
       registryUrl,

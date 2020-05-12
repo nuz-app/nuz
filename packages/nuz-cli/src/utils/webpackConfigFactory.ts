@@ -80,9 +80,6 @@ const defaultConfig = {
   experimental: {},
   externals: {},
   alias: {},
-  // ref: https://github.com/webpack/webpack/issues/2145#issuecomment-294361203
-  // suggested: `eval-source-map` (dev), `hidden-source-map` (pro)
-  // devtool: 'eval-source-map' as webpack.Options.Devtool,
 }
 
 const defaultExperimental: ExperimentalConfig = {
@@ -136,7 +133,6 @@ const webpackConfigFactory = (
     alias,
     names: namesCustomer,
     webpack: webpackCustomer,
-    devtool: devtoolCustomer,
     experimental: experimentalCustomer,
   } = Object.assign({}, defaultConfig, moduleConfig)
 
@@ -149,12 +145,7 @@ const webpackConfigFactory = (
 
   const target = 'web'
   const mode = dev ? 'development' : 'production'
-  const devtool = !devtoolCustomer
-    ? dev
-      ? 'source-map'
-      : 'hidden-source-map'
-    : devtoolCustomer
-  const sourceMap = !!devtool
+  const sourceMap = true
   const bail = !dev
   const inputFile = path.join(dir, input)
   const { directory: distDir, filename: distFilename } = getOutput(dir, output)
@@ -234,12 +225,21 @@ const webpackConfigFactory = (
     }),
   )
 
-  config.plugins.push(
-    new webpack.SourceMapDevToolPlugin({
-      filename: '[file].map',
-      publicPath,
-    }),
-  )
+  // Push source maps builder to plugins
+  const sourceMapsPlugins = dev
+    ? [
+        new webpack.SourceMapDevToolPlugin({
+          test: /\.s?[ac]ss$/,
+        }),
+        new webpack.EvalSourceMapDevToolPlugin(),
+      ]
+    : [
+        new webpack.SourceMapDevToolPlugin({
+          filename: '[file].map',
+          publicPath,
+        }),
+      ]
+  config.plugins.push(...sourceMapsPlugins)
 
   if (feature.react) {
     // tslint:disable-next-line: prettier

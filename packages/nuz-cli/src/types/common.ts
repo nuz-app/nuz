@@ -105,10 +105,6 @@ export interface ModuleConfig {
    */
   publicPath: string
   /**
-   * Set devtool
-   */
-  devtool?: webpack.Options.Devtool
-  /**
    * Extends externals module
    */
   externals?: webpack.ExternalsElement | webpack.ExternalsElement[]

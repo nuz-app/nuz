@@ -323,6 +323,8 @@ class Modules {
       {
         timeout,
         integrity: main.integrity,
+        dev: this._dev,
+        sourceMap: this._dev,
       },
       retries,
     )
@@ -337,7 +339,10 @@ class Modules {
 
     const moduleStyles = await Promise.all(
       (styles || []).map((style) =>
-        DOMHelpers.loadStyle(style.url, { integrity: style.integrity }),
+        DOMHelpers.loadStyle(style.url, {
+          dev: this._dev,
+          integrity: style.integrity,
+        }),
       ),
     )
 

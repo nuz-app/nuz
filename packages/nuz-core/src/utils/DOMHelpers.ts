@@ -82,10 +82,13 @@ export const dnsPrefetch = (href: string, isPreconnect: boolean = false) => {
 
 interface StyleConfig {
   integrity: string | undefined
+  dev: boolean
   [attr: string]: any
 }
 
 export const loadStyle = async (href: string, config?: StyleConfig) => {
+  const { integrity, dev, ...rest } = config || {}
+
   let style
   if (domIsExsted()) {
     const element = document.querySelector(`style[data-href="${href}"]`)
@@ -93,7 +96,7 @@ export const loadStyle = async (href: string, config?: StyleConfig) => {
   }
 
   if (!style) {
-    style = await getScript(href, { integrity: config?.integrity })
+    style = await getScript(href, { dev, sourceMap: dev, integrity })
   }
 
   const defined = defineElement(
@@ -106,7 +109,7 @@ export const loadStyle = async (href: string, config?: StyleConfig) => {
           __html: style,
         },
       },
-      config,
+      rest,
     ),
   )
   if (domIsExsted()) {

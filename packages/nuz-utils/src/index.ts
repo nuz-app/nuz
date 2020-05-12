@@ -1,3 +1,5 @@
+export { default as qs } from 'qs'
+
 import * as assetsUrlHelpers from './assetsUrlHelpers'
 import * as integrityHelpers from './integrityHelpers'
 import * as jsonHelpers from './jsonHelpers'
@@ -26,3 +28,5 @@ export { default as deferedPromise, DeferedPromise } from './deferedPromise'
 export { default as pick } from './pick'
 export { default as wait } from './wait'
 export { default as hashFile } from './hashFile'
+export { default as checkIsUrl } from './checkIsUrl'
+export { default as getRegistryFetchUrl } from './getRegistryFetchUrl'
