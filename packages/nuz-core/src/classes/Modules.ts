@@ -510,7 +510,7 @@ class Modules {
     }
 
     // Check and prepare connections for resources
-    this.optimizeConnection()
+    await this.optimizeConnection()
 
     // Preload resources
     await this.preload()
@@ -561,7 +561,7 @@ class Modules {
   getTagsInHead(): TagElement[] {
     const preconnects = Array.from(this._dnsPrefetchs.values())
     const resources = this._pingResources.values()
-    const resolvedModule = this._resolvedModules.values()
+    // const resolvedModule = this._resolvedModules.values()
 
     const tags = [
       this._ssr && DOMHelpers.sharedConfig(this._config.raw()),
@@ -572,9 +572,9 @@ class Modules {
       tags.push(item.script, ...(item.styles || []))
     })
 
-    resolvedModule.forEach((item) => {
-      tags.push(...(item.styles || []))
-    })
+    // resolvedModule.forEach((item) => {
+    //   tags.push(...(item.styles || []))
+    // })
 
     return tags
   }

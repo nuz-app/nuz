@@ -1,7 +1,7 @@
 import { REACT_DOM_INJECTED } from '@nuz/shared'
 
-import checkIsReady from './checkIsReady'
 import getTagsInHead from './getTagsInHead'
+import { wait as checkIsReady } from './waitToReady'
 
 import * as DOMHelpers from './utils/DOMHelpers'
 

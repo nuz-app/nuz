@@ -18,6 +18,8 @@ import getRuntimePlatform from './utils/getRuntimePlatform'
 import uniq from './utils/uniq'
 import * as validator from './utils/validator'
 
+import * as waitToReady from './waitToReady'
+
 const mergeConfig = (
   localConfig: BootstrapConfig,
   { modules, preload }: BootstrapConfig = {},
@@ -94,6 +96,8 @@ const bootstrap = async (config: BootstrapConfig) => {
       // Lock config, not allow changing any config
       // Note: change config after initialized is dangerous!
       _config.lock()
+
+      waitToReady.ok()
 
       return true
     },
