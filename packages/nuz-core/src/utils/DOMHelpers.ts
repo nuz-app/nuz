@@ -1,10 +1,13 @@
 import { SHARED_CONFIG_KEY } from '@nuz/shared'
 import { jsonHelpers } from '@nuz/utils'
+
+import appendQueryToUrl, { AppendConfig } from './appendQueryToUrl'
 import getScript from './getScript'
 
 export interface PreloadConfig {
   [attr: string]: any
   integrity: string | undefined
+  sourceMap: boolean
 }
 
 export interface DefinedElement {
@@ -53,19 +56,35 @@ export const createElement = (defined: DefinedElement) => {
   return element
 }
 
-export const preloadStyle = (href: string, config: PreloadConfig) => {
+export const preloadStyle = (
+  href: string,
+  { sourceMap, ...rest }: PreloadConfig,
+) => {
+  const updatedHref = appendQueryToUrl(href, { sourceMap } as AppendConfig)
   const defined = defineElement(
     'link',
-    Object.assign({ href, as: 'style' }, defaultConfigForPreload, config),
+    Object.assign(
+      { href: updatedHref, as: 'style' },
+      defaultConfigForPreload,
+      rest,
+    ),
   )
 
   return defined
 }
 
-export const preloadScript = (href: string, config: PreloadConfig) => {
+export const preloadScript = (
+  href: string,
+  { sourceMap, ...rest }: PreloadConfig,
+) => {
+  const updatedHref = appendQueryToUrl(href, { sourceMap } as AppendConfig)
   const defined = defineElement(
     'link',
-    Object.assign({ href, as: 'fetch' }, defaultConfigForPreload, config),
+    Object.assign(
+      { href: updatedHref, as: 'fetch' },
+      defaultConfigForPreload,
+      rest,
+    ),
   )
 
   return defined
@@ -81,13 +100,13 @@ export const dnsPrefetch = (href: string, isPreconnect: boolean = false) => {
 }
 
 interface StyleConfig {
-  integrity: string | undefined
-  dev: boolean
   [attr: string]: any
+  integrity: string | undefined
+  sourceMap: boolean
 }
 
 export const loadStyle = async (href: string, config?: StyleConfig) => {
-  const { integrity, dev, ...rest } = config || {}
+  const { integrity, sourceMap, ...rest } = config || {}
 
   let style
   if (domIsExsted()) {
@@ -96,7 +115,7 @@ export const loadStyle = async (href: string, config?: StyleConfig) => {
   }
 
   if (!style) {
-    style = await getScript(href, { dev, sourceMap: dev, integrity })
+    style = await getScript(href, { sourceMap, integrity })
   }
 
   const defined = defineElement(

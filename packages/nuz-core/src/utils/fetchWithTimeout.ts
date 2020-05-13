@@ -1,18 +1,21 @@
 import AbortController from 'abort-controller'
 
+import appendQueryToUrl, { AppendConfig } from './appendQueryToUrl'
+
 export interface FetchOptions extends RequestInit {
   timeout?: number
-  dev?: boolean
   sourceMap?: boolean
 }
 
-const fetchWithTimeout = (
+async function fetchWithTimeout(
   url: string,
-  { timeout, dev, sourceMap, ...rest }: FetchOptions = {},
-): Promise<Response> => {
-  const timeoutIsEmpty = !timeout || timeout < 0
-  if (timeoutIsEmpty) {
-    return fetch(url, Object.assign({}, rest))
+  { timeout, sourceMap, ...rest }: FetchOptions = {},
+): Promise<Response> {
+  const isNotUseTimeout = !timeout || timeout < 0
+  const updatedUrl = appendQueryToUrl(url, { sourceMap } as AppendConfig)
+
+  if (isNotUseTimeout) {
+    return fetch(updatedUrl, Object.assign({}, rest))
   }
 
   const controller = new AbortController()
@@ -20,21 +23,16 @@ const fetchWithTimeout = (
 
   return Promise.race([
     fetch(
-      url,
+      updatedUrl,
       Object.assign({}, rest, {
         signal,
-        headers: Object.assign(
-          {},
-          rest.headers,
-          dev && { 'x-nuz-dev': 1 },
-          sourceMap && { 'x-nuz-sourcemap': 1 },
-        ),
+        headers: Object.assign({}, rest.headers),
       }),
     ),
     new Promise((_, reject) => {
       setTimeout(() => {
         controller.abort()
-        reject(new Error(`Fetch to ${url} is timedout!`))
+        reject(new Error(`Fetch to ${url} is timed out!`))
       }, timeout)
     }) as any,
   ])

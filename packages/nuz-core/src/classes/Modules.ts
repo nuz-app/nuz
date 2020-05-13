@@ -212,10 +212,12 @@ class Modules {
     const { main, styles } = resolveUrls || ({} as any)
 
     const preloadScript = DOMHelpers.preloadScript(main.url, {
+      sourceMap: this._dev,
       integrity: main.integrity,
     })
     const preloadStyles = styles.map((style: any) =>
       DOMHelpers.preloadStyle(style.url, {
+        sourceMap: this._dev,
         integrity: style.integrity,
       }),
     )
@@ -323,7 +325,6 @@ class Modules {
       {
         timeout,
         integrity: main.integrity,
-        dev: this._dev,
         sourceMap: this._dev,
       },
       retries,
@@ -340,7 +341,7 @@ class Modules {
     const moduleStyles = await Promise.all(
       (styles || []).map((style) =>
         DOMHelpers.loadStyle(style.url, {
-          dev: this._dev,
+          sourceMap: this._dev,
           integrity: style.integrity,
         }),
       ),
