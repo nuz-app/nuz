@@ -15,7 +15,7 @@ async function fetchWithTimeout(
   const updatedUrl = appendQueryToUrl(url, { sourceMap } as AppendConfig)
 
   if (isNotUseTimeout) {
-    return fetch(updatedUrl, Object.assign({}, rest))
+    return fetch(updatedUrl, rest)
   }
 
   const controller = new AbortController()
@@ -26,7 +26,6 @@ async function fetchWithTimeout(
       updatedUrl,
       Object.assign({}, rest, {
         signal,
-        headers: Object.assign({}, rest.headers),
       }),
     ),
     new Promise((_, reject) => {
