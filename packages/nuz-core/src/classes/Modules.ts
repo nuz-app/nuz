@@ -184,7 +184,8 @@ class Modules {
 
     const keys = Object.keys(vendors)
     for (const key of keys) {
-      const vendor = interopRequireDefault(vendors[key])
+      const item = vendors[key]
+      const vendor = Object.assign({}, item, interopRequireDefault(item))
       const moduleExports = moduleHelpers.define(vendor, {
         module: true,
         vendor: true,
@@ -460,8 +461,9 @@ class Modules {
       throw new Error('Not found name in item config')
     }
 
+    const isPreventCache = !this._ssr
     const cacheId = item.name
-    if (this._resolvedModules.has(cacheId)) {
+    if (isPreventCache && this._resolvedModules.has(cacheId)) {
       return this._resolvedModules.get(cacheId) as any
     }
 

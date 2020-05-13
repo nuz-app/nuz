@@ -102,7 +102,7 @@ const defaultNamesFactory = (dev: boolean): NamesConfig => ({
     return dev ? `[name].[contenthash:8].[ext]` : `[name].[contenthash].[ext]`
   },
   cssLocalIdentName: () =>
-    dev ? '[name]-[local]-[hash:base64:5]' : '[contenthash:8]',
+    dev ? '[name]-[local]-[hash:base64:6]' : '[contenthash:8]',
   cssFilename: () =>
     dev ? 'styles/[name].css' : 'styles/[name].[contenthash:8].css',
   cssChunkFilename: () =>

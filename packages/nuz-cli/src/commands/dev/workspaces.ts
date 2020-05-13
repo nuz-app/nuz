@@ -174,8 +174,10 @@ async function standalone({
       const { children = [] } = data || {}
 
       const linkedModules = children.reduce((acc, item) => {
-        const outputPaths = (item.outputPath as string).split('/')
-        const name = outputPaths[outputPaths.length - 1]
+        const name = item.name?.replace(
+          /^(@nuz\/cli\(([\S\s]+)\))/,
+          '$2',
+        ) as string
         const childModuleInfo = modulesConfig[name]
         if (!childModuleInfo) {
           throw Error(`Not found config of ${name} module`)
