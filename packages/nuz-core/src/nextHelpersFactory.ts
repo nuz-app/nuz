@@ -3,6 +3,7 @@ import fs from 'fs'
 import path from 'path'
 
 import { worker } from './bootstrap'
+import { factoryInjectReact } from './reactHelpersFactory'
 
 export interface NextHelpersConfig {
   require: NodeRequire
@@ -51,6 +52,11 @@ const nextHelpersFactory = ({
     })
 
   const injectNext = () => {
+    factoryInjectReact({
+      React: require('react'),
+      ReactDOM: require('react-dom'),
+    })()
+
     const nextServerRender = require('next/dist/next-server/server/render')
     const renderToHTML = nextServerRender.renderToHTML.bind(nextServerRender)
 

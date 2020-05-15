@@ -97,6 +97,7 @@ const bootstrap = async (config: BootstrapConfig) => {
       // Note: change config after initialized is dangerous!
       _config.lock()
 
+      // Fire a callback if everything's ok
       waitToReady.ok()
 
       return true

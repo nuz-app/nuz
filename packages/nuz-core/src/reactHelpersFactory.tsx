@@ -19,6 +19,33 @@ export interface AppProps {
   injectHead?: React.ElementType
 }
 
+export function factoryInjectReact({ React, ReactDOM }) {
+  const originalRender = ReactDOM.render.bind(ReactDOM)
+  const originalHydrate = ReactDOM.hydrate.bind(ReactDOM)
+
+  return () => {
+    if (ReactDOM[REACT_DOM_INJECTED]) {
+      return false
+    }
+
+    const renderFactory = (fn: any) =>
+      async function renderInjected(element, container, callback?) {
+        await checkIsReady()
+
+        return fn(element, container, callback)
+      }
+
+    Object.assign(ReactDOM, {
+      render: renderFactory(originalRender),
+      hydrate: renderFactory(originalHydrate),
+    })
+
+    Object.defineProperty(ReactDOM, REACT_DOM_INJECTED, { value: true })
+
+    return true
+  }
+}
+
 const defaultOptions = {
   autoInject: true,
 }
@@ -31,13 +58,13 @@ function reactHelpersFactory(
 
   if (!React) {
     throw new Error(
-      'React fields in config is required to use "reactHelpersFactory" helper!',
+      'React fields in config is required to use `reactHelpersFactory` helper!',
     )
   }
 
   if (!ReactDOM) {
     throw new Error(
-      'ReactDOM fields in config is required to use "reactHelpersFactory" helper!',
+      'ReactDOM fields in config is required to use `reactHelpersFactory` helper!',
     )
   }
 
@@ -49,10 +76,10 @@ function reactHelpersFactory(
     children,
     ...rest
   }) => {
-    const definedTags = getTagsInHead()
     const head = useMemo(() => {
+      const definedTags = getTagsInHead() || []
       const injectHeadIsNotFound = !InjectHead
-      const headTags = injectHeadIsNotFound
+      const tags = injectHeadIsNotFound
         ? definedTags
         : definedTags.map((item) => {
             const { type: TagComponent, attributes } = item
@@ -75,7 +102,7 @@ function reactHelpersFactory(
         }
 
         // tslint:disable-next-line: semicolon
-        ;(headTags as DOMHelpers.DefinedElement[]).forEach((item) => {
+        ;(tags as DOMHelpers.DefinedElement[]).forEach((item) => {
           const tagElement = DOMHelpers.createElement(item)
           DOMHelpers.appendToHead(tagElement)
         })
@@ -84,7 +111,7 @@ function reactHelpersFactory(
       }
 
       // @ts-ignore
-      return <InjectHead>{headTags}</InjectHead>
+      return <InjectHead>{tags}</InjectHead>
     }, [])
 
     return (
@@ -95,31 +122,7 @@ function reactHelpersFactory(
     )
   }
 
-  const originalRender = ReactDOM.render.bind(ReactDOM)
-  const originalHydrate = ReactDOM.hydrate.bind(ReactDOM)
-
-  const injectReact = () => {
-    if (ReactDOM[REACT_DOM_INJECTED]) {
-      return false
-    }
-
-    const renderFactory = (fn: any) =>
-      async function renderInjected(element, container, callback?) {
-        await checkIsReady()
-
-        return fn(element, container, callback)
-      }
-
-    Object.assign(ReactDOM, {
-      render: renderFactory(originalRender),
-      hydrate: renderFactory(originalHydrate),
-    })
-
-    Object.defineProperty(ReactDOM, REACT_DOM_INJECTED, { value: true })
-
-    return true
-  }
-
+  const injectReact = factoryInjectReact({ React, ReactDOM })
   if (autoInject) {
     injectReact()
   }
