@@ -1,4 +1,9 @@
-import { integrityHelpers, pick, validator } from '@nuz/utils'
+import {
+  ensureOriginSlash,
+  integrityHelpers,
+  pick,
+  validator,
+} from '@nuz/utils'
 import { Connection } from 'mongoose'
 
 import {
@@ -33,7 +38,6 @@ import checkIsCollaboratorIncludes from '../utils/checkIsCollaboratorIncludes'
 import checkIsNewComposition from '../utils/checkIsNewComposition'
 import checkIsNewScope from '../utils/checkIsNewScope'
 import createMongoConnection from '../utils/createMongoConnection'
-import ensureVersionResources from '../utils/ensureVersionResources'
 import parseModuleId from '../utils/parseModuleId'
 import validateAndTransformFiles from '../utils/validateAndTransformFiles'
 import * as versionHelpers from '../utils/versionHelpers'
@@ -72,7 +76,8 @@ class Worker {
   private readonly _services: Services
   private readonly _cache: Cache
   private readonly _storageType: StorageTypes
-  private readonly _storage: Storage
+  private readonly _storage: Storage | null
+  private readonly _static: string | null
 
   constructor(config: MongoConfig, options: WorkerOptions) {
     const { url } = config
@@ -88,6 +93,9 @@ class Worker {
     this._cache = options?.cache
     this._storageType = options?.storageType as StorageTypes
     this._storage = options?.storage
+    this._static = options?.static
+      ? (ensureOriginSlash(options.static) as string)
+      : null
   }
 
   checkIsUseStorage(selfHosted: boolean) {
@@ -147,7 +155,10 @@ class Worker {
     options: PublishOptions,
   ) {
     // tslint:disable-next-line: prefer-const
-    let { fallback, selfHosted } = Object.assign({}, options)
+    let { fallback, selfHosted, static: staticOrigin } = Object.assign(
+      {},
+      options,
+    )
     // tslint:disable-next-line: prefer-const
     let { version, resolve, files } = data
 
@@ -173,6 +184,17 @@ class Worker {
       false,
     )
     const parsedId = parseModuleId(moduleId)
+
+    const staticIsNotMatched =
+      ensureOriginSlash(staticOrigin as string) !==
+      ensureOriginSlash(this._static as string)
+    const staticIsAllowed =
+      this._storageType !== StorageTypes.self && staticIsNotMatched
+    if (staticIsAllowed) {
+      throw new Error(
+        `Static origin is not allowed by the registry server, allowed ${this._static}`,
+      )
+    }
 
     const moduleIsEixsted = !!module
     if (!moduleIsEixsted) {
@@ -223,17 +245,17 @@ class Worker {
     }
 
     if (isUseStorage) {
-      const uploadResult = await this._storage.uploadFiles(
+      const uploadResult = await this._storage?.uploadFiles(
         { id: moduleId, version },
         transformedFiles,
       )
 
       const bindStaticUrl = async (item: Resource) => {
-        const url = await this._storage.createUrl(moduleId, version, item.path)
+        const url = await this._storage?.createUrl(moduleId, version, item.path)
 
         let integrity
         try {
-          integrity = (await integrityHelpers.url(url)) as string
+          integrity = url && ((await integrityHelpers.url(url)) as string)
         } catch {
           throw new Error(
             `Can't get integrity of file, make sure the file was uploaded to the CDNs, url: ${url}.`,
@@ -506,6 +528,16 @@ class Worker {
    */
   // tslint:disable-next-line: no-empty
   async deleteUser() {}
+
+  /**
+   * Get server config
+   */
+  async getConfig() {
+    return {
+      static: this._static,
+      storageType: this._storageType,
+    }
+  }
 
   /**
    * Login to a user

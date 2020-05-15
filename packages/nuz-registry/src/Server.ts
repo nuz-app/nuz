@@ -17,6 +17,7 @@ class Server {
   private readonly _dev: boolean
   private readonly _worker: Worker
   private readonly _cache: Cache
+  private readonly _static: string | null
   private readonly _storageType: StorageTypes
   private readonly _storage: any
   private readonly _app: express.Express
@@ -32,19 +33,16 @@ class Server {
       compression: compress = true,
       storageType,
       storage,
+      static: staticOrigin,
     } = options
 
     this._cache = cache
     this._storage = storage
     this._storageType =
       storageType || this._storage ? StorageTypes.provided : StorageTypes.self
+    this._static =
+      this._storageType === StorageTypes.self ? null : (staticOrigin as string)
     this._dev = typeof dev === 'boolean' ? dev : !checkIsProductionMode()
-
-    this._worker = new Worker(db, {
-      cache: this._cache,
-      storageType: this._storageType,
-      storage: this._storage,
-    })
 
     const storageIsRequired =
       storageType === StorageTypes.provided || storageType === StorageTypes.full
@@ -52,6 +50,18 @@ class Server {
     if (storageIsMissing) {
       throw new Error('Storage is required in full or provided mode')
     }
+
+    const staticIsMissing = storageIsRequired && !this._static
+    if (staticIsMissing) {
+      throw new Error('')
+    }
+
+    this._worker = new Worker(db, {
+      cache: this._cache,
+      storageType: this._storageType,
+      storage: this._storage,
+      static: this._static,
+    })
 
     // Init app to listen requests
     this._app = express()

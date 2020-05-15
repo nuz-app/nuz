@@ -1,10 +1,12 @@
-import Config, { AuthKeys } from '../../classes/Config'
+import Config, { AuthKeys, ConfigKeys } from '../../classes/Config'
 import Worker from '../../classes/Worker'
 
 import { Arguments } from 'yargs'
 import createQuestions from '../../utils/createQuestions'
 import print, { info, success } from '../../utils/print'
 import timer from '../../utils/timer'
+
+import setConfig from '../config/setConfig'
 
 const usernameQuestion = {
   type: 'string',
@@ -35,11 +37,21 @@ async function loginAsUser({
     throw new Error('Missing `username` or `password` info')
   }
 
+  const config = await Config.readConfig()
+  info(
+    `Logging in to the registry server at ${print.bold(
+      config[ConfigKeys.registry],
+    )}`,
+  )
+
   const tick = timer()
   const request = await Worker.loginAsUser(username, password)
 
   const userId = request?.data?._id
   const accessToken = request?.data?.accessToken
+  const staticOrigin = request?.data?.static
+  const providedType = request?.data?.providedType
+
   if (!userId || !accessToken) {
     throw new Error(`Response data is missing data`)
   }
@@ -55,6 +67,11 @@ async function loginAsUser({
   auth[AuthKeys.loggedAt] = new Date()
 
   await Config.writeAuth(auth)
+
+  await setConfig({
+    key: ConfigKeys.static,
+    value: staticOrigin,
+  } as any)
 
   info(`Login successfully to ${print.name(username)} account!`)
   success(`Done in ${print.bold(tick())}ms.`)

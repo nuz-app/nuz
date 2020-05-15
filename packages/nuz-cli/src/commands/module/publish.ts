@@ -4,6 +4,7 @@ import { Arguments } from 'yargs'
 
 import { STATS_FILENAME } from '../../lib/const'
 
+import Config, { ConfigKeys } from '../../classes/Config'
 import Worker from '../../classes/Worker'
 
 import * as configHelpers from '../../utils/configHelpers'
@@ -47,7 +48,8 @@ async function publish({
 
   const { name, library, version, output, publicPath } = moduleConfig
 
-  const publicPathUsed = selfHosted ? publicPath : '/'
+  const registryPublicPath = (await Config.readConfig())[ConfigKeys.static]
+  const publicPathUsed = selfHosted ? publicPath : registryPublicPath
   const publicPathIsHaveSlash = checkIsHaveSlash(publicPathUsed)
   if (!publicPathIsHaveSlash) {
     throw new Error('The public path needs have slash at end')
@@ -95,7 +97,7 @@ async function publish({
     files: assets.files,
     format: ModuleFormats.umd,
   }
-  const options = { fallback, selfHosted }
+  const options = { fallback, selfHosted, static: publicPathUsed }
 
   const tick = timer()
   const request = await Worker.publishModule(name, data, files, options)

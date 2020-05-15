@@ -1,4 +1,5 @@
 {
   "_": "This is the file containing the system configuration, please do not be foolish! :<",
-  "registry": "https://registry.nuz.app"
+  "registry": "https://registry.nuz.app",
+  "static": "https://static.nuz.app"
 }

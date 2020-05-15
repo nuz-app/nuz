@@ -19,8 +19,9 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
       }
 
       const item = await worker.loginUser(username, password)
+      const config = await worker.getConfig()
 
-      response.json(item)
+      response.json(Object.assign({}, item, config))
       return true
     }),
   )

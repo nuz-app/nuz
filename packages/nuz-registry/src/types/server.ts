@@ -34,16 +34,19 @@ export interface ServerOptions {
   serverless?: ServerlessOptions
   storageType?: StorageTypes
   storage?: any
+  static?: string
 }
 
 export interface WorkerOptions {
   storageType: StorageTypes
+  storage: any | null
+  static: string | null
   cache?: any
-  storage?: any
 }
 
 export interface PublishOptions {
   fallback?: string
+  static?: string
   schedule?: any
   selfHosted?: boolean
 }

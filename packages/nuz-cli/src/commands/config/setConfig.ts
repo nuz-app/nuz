@@ -1,3 +1,4 @@
+import { checkIsUrl } from '@nuz/utils'
 import { Arguments } from 'yargs'
 
 import Config, { ConfigKeys } from '../../classes/Config'
@@ -17,8 +18,13 @@ async function setConfig({
     throw new Error(`Can't set ${key} to config because key is invalid`)
   }
 
-  if (key === ConfigKeys.registry) {
-    config[key] = new URL(value).origin
+  if (key === ConfigKeys.registry || key === ConfigKeys.static) {
+    if (!checkIsUrl(value)) {
+      throw new Error(`Can't set value because it is invalid, value ${value}`)
+    }
+
+    const slash = key === ConfigKeys.static ? '/' : ''
+    config[key] = new URL(value).origin + slash
   } else {
     config[key] = value
   }

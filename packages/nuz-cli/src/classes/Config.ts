@@ -45,10 +45,12 @@ const pathsFactory = (): ConfigPaths => {
 
 export enum ConfigKeys {
   registry = 'registry',
+  static = 'static',
 }
 
 export interface ConfigData {
   [ConfigKeys.registry]: string
+  [ConfigKeys.static]: string
 }
 
 export enum AuthKeys {
