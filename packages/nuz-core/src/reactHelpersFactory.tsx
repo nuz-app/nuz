@@ -1,7 +1,5 @@
 import { REACT_DOM_INJECTED } from '@nuz/shared'
 
-import Measure from './classes/Measure'
-
 import * as DOMHelpers from './utils/DOMHelpers'
 
 import getTagsInHead from './getTagsInHead'
@@ -32,12 +30,7 @@ export function factoryInjectReact({ React, ReactDOM }) {
 
     const renderFactory = (fn: any) =>
       async function renderInjected(element, container, callback?) {
-        const measure = new Measure()
-
-        measure.start('client.prepare')
         await waitToReady.wait()
-        measure.end('client.prepare')
-        measure.print()
 
         return fn(element, container, callback)
       }
