@@ -9,7 +9,7 @@ export { default as resolve } from './resolve'
 export { default as bootstrap } from './bootstrap'
 
 export { default as getTagsInHead } from './getTagsInHead'
-export { wait as checkIsReady } from './waitToReady'
+export { wait as waitToReady } from './waitToReady'
 
 export {
   default as reactHelpersFactory,

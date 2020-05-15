@@ -9,8 +9,10 @@ export interface FetchOptions extends RequestInit {
 
 async function fetchWithTimeout(
   url: string,
-  { timeout, sourceMap, ...rest }: FetchOptions = {},
+  options: FetchOptions,
 ): Promise<Response> {
+  const { timeout, sourceMap, ...rest } = options || {}
+
   const isNotUseTimeout = !timeout || timeout < 0
   const updatedUrl = appendQueryToUrl(url, { sourceMap } as AppendConfig)
 

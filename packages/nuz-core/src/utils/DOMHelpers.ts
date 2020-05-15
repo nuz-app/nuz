@@ -1,5 +1,6 @@
 import { SHARED_CONFIG_KEY } from '@nuz/shared'
 import { jsonHelpers } from '@nuz/utils'
+import LRUCache from 'lru-cache'
 
 import appendQueryToUrl, { AppendConfig } from './appendQueryToUrl'
 import getScript from './getScript'
@@ -103,10 +104,11 @@ interface StyleConfig {
   [attr: string]: any
   integrity: string | undefined
   sourceMap: boolean
+  resolver?: LRUCache<any, any>
 }
 
 export const loadStyle = async (href: string, config?: StyleConfig) => {
-  const { integrity, sourceMap, ...rest } = config || {}
+  const { resolver, integrity, sourceMap, ...rest } = config || {}
 
   let style
   if (domIsExsted()) {
@@ -115,7 +117,7 @@ export const loadStyle = async (href: string, config?: StyleConfig) => {
   }
 
   if (!style) {
-    style = await getScript(href, { sourceMap, integrity })
+    style = await getScript(href, { resolver, sourceMap, integrity })
   }
 
   const defined = defineElement(

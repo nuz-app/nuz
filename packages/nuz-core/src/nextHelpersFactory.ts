@@ -66,7 +66,7 @@ const nextHelpersFactory = ({
         await worker.refresh()
 
         const html = await renderToHTML(...rest)
-        await worker.teardown()
+        worker.teardown()
 
         return html
       },

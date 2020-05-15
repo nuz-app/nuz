@@ -5,6 +5,7 @@ import {
   DeferedPromise,
   jsonHelpers,
 } from '@nuz/utils'
+import LRUCache from 'lru-cache'
 
 import { BaseItemConfig, InstallConfig, RuntimePlatforms } from '../types'
 
@@ -39,6 +40,12 @@ const getUrlOrigin = (url: string) => {
   }
 }
 
+const initialCacheInNode = (): LRUCache<any, any> =>
+  new LRUCache({
+    max: 50,
+    maxAge: 1000 * 60 * 60,
+  })
+
 const ensureInstallConfig = ({
   timeout,
   retries,
@@ -72,7 +79,7 @@ let wsWarningIsShowed = false
 
 type TagElement = DOMHelpers.DefinedElement
 
-export interface LoadResults<M = unknown> {
+export interface LoadResult<M = unknown> {
   module: M
   styles: TagElement[]
 }
@@ -84,13 +91,14 @@ class Modules {
   private readonly _globals: Globals
   private readonly _dev: boolean
   private readonly _ssr: boolean
-  private readonly _resolvedModules: Caches<string, LoadResults<any>>
+  private readonly _resolvedModules: Caches<string, LoadResult<any>>
   private readonly _resolvedDependencies: Caches<string, any>
   private readonly _pingResources: Caches<
     string,
     { script: TagElement; styles: TagElement[] }
   >
   private readonly _dnsPrefetchs: Set<TagElement>
+  private readonly _resolvedResources?: LRUCache<any, any>
   // @ts-ignore
   private _linked: Linked
 
@@ -119,6 +127,10 @@ class Modules {
     const isNode = this._platform === RuntimePlatforms.node
     const isUseSSR = this._config.isSSR()
     this._ssr = isUseSSR && isNode
+
+    // Create resolved resources cache
+    this._resolvedResources =
+      this._ssr && !this._dev ? initialCacheInNode() : undefined
 
     if (!isUseSSR && isNode) {
       throw new Error(`Can't run in Node environment if not enable SSR mode!`)
@@ -159,14 +171,10 @@ class Modules {
     return (item && item.name) as string
   }
 
-  private async canUseLocal(item: RequiredBaseItem) {
+  private canUseLocal(item: RequiredBaseItem) {
     const { name, local } = item
 
-    return !!(
-      local ||
-      requireHelpers.local(name, this._globals) ||
-      (await this._linked.exists(name))
-    )
+    return !!(local || requireHelpers.local(name, this._globals))
   }
 
   private createContext() {
@@ -194,16 +202,16 @@ class Modules {
     }
   }
 
-  private async ping(item: RequiredBaseItem) {
-    const canUseLocal = this._dev && (await this.canUseLocal(item))
+  private ping(item: RequiredBaseItem, options: { styles: boolean }) {
+    const { styles: isPingStyles } = options || {}
+
+    const canUseLocal = this._dev && this.canUseLocal(item)
     if (canUseLocal) {
       return false
     }
 
     const cacheId = item.name
-    const called =
-      this._pingResources.has(cacheId) || this._resolvedModules.has(cacheId)
-    if (called) {
+    if (this._pingResources.has(cacheId)) {
       return true
     }
 
@@ -216,12 +224,15 @@ class Modules {
       sourceMap: this._dev,
       integrity: main.integrity,
     })
-    const preloadStyles = styles.map((style: any) =>
-      DOMHelpers.preloadStyle(style.url, {
-        sourceMap: this._dev,
-        integrity: style.integrity,
-      }),
-    )
+
+    const preloadStyles = !isPingStyles
+      ? []
+      : styles.map((style: any) =>
+          DOMHelpers.preloadStyle(style.url, {
+            sourceMap: this._dev,
+            integrity: style.integrity,
+          }),
+        )
 
     this._pingResources.set(cacheId, {
       script: preloadScript,
@@ -324,6 +335,7 @@ class Modules {
     const moduleScript = await getScript(
       main.url,
       {
+        resolver: this._resolvedResources,
         timeout,
         integrity: main.integrity,
         sourceMap: this._dev,
@@ -343,6 +355,7 @@ class Modules {
       (styles || []).map((style) =>
         DOMHelpers.loadStyle(style.url, {
           sourceMap: this._dev,
+          resolver: this._resolvedResources,
           integrity: style.integrity,
         }),
       ),
@@ -456,7 +469,7 @@ class Modules {
   private async load<M = unknown>(
     item: RequiredBaseItem,
     options?: InstallConfig,
-  ): Promise<LoadResults<M>> {
+  ): Promise<LoadResult<M>> {
     if (!item.name) {
       throw new Error('Not found name in item config')
     }
@@ -509,11 +522,12 @@ class Modules {
       await this.linkModules()
     }
 
-    // Check and prepare connections for resources
-    await this.optimizeConnection()
-
-    // Preload resources
-    await this.preload()
+    await Promise.all([
+      // Check and prepare connections for resources
+      this.optimizeConnection(),
+      // Preload resources
+      this.preload(),
+    ])
 
     // Fired event to inform for other know modules is ready
     this._readyPromise.resolve(true)
@@ -527,11 +541,11 @@ class Modules {
     const modules = this.getAllModules()
     const preload = this._config.getPreload()
 
-    const pings: Promise<boolean>[] = []
+    const pings: boolean[] = []
     for (const name of preload) {
       const item = modules[name] as RequiredBaseItem
       if (item) {
-        pings.push(this.ping(item))
+        pings.push(this.ping(item, { styles: true }))
       }
     }
 
@@ -543,7 +557,7 @@ class Modules {
     return resolved.module
   }
 
-  async loadByName<M = unknown>(name: string): Promise<LoadResults<M>> {
+  async loadByName<M = unknown>(name: string): Promise<LoadResult<M>> {
     await this.ready()
 
     const modules = this.getAllModules()
@@ -559,22 +573,33 @@ class Modules {
 
   // Ensure modules is ready before use!
   getTagsInHead(): TagElement[] {
+    const modules = this.getAllModules()
+    const resolvedModule = this._resolvedModules.entries()
+    if (this._ssr) {
+      for (const [id] of resolvedModule) {
+        this.ping(modules[id] as RequiredBaseItem, {
+          styles: false,
+        })
+      }
+    }
+
     const preconnects = Array.from(this._dnsPrefetchs.values())
     const resources = this._pingResources.values()
-    // const resolvedModule = this._resolvedModules.values()
 
     const tags = [
       this._ssr && DOMHelpers.sharedConfig(this._config.raw()),
       ...preconnects,
     ].filter(Boolean) as TagElement[]
 
-    resources.forEach((item) => {
+    for (const item of resources) {
       tags.push(item.script, ...(item.styles || []))
-    })
+    }
 
-    // resolvedModule.forEach((item) => {
-    //   tags.push(...(item.styles || []))
-    // })
+    if (this._ssr) {
+      for (const [_, item] of resolvedModule) {
+        tags.push(...(item.styles || []))
+      }
+    }
 
     return tags
   }

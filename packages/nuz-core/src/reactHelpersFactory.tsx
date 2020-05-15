@@ -1,9 +1,11 @@
 import { REACT_DOM_INJECTED } from '@nuz/shared'
 
-import getTagsInHead from './getTagsInHead'
-import { wait as checkIsReady } from './waitToReady'
+import Measure from './classes/Measure'
 
 import * as DOMHelpers from './utils/DOMHelpers'
+
+import getTagsInHead from './getTagsInHead'
+import * as waitToReady from './waitToReady'
 
 export interface ReactHelpersConfig {
   React: any
@@ -30,7 +32,12 @@ export function factoryInjectReact({ React, ReactDOM }) {
 
     const renderFactory = (fn: any) =>
       async function renderInjected(element, container, callback?) {
-        await checkIsReady()
+        const measure = new Measure()
+
+        measure.start('client.prepare')
+        await waitToReady.wait()
+        measure.end('client.prepare')
+        measure.print()
 
         return fn(element, container, callback)
       }
@@ -84,7 +91,11 @@ function reactHelpersFactory(
         : definedTags.map((item) => {
             const { type: TagComponent, attributes } = item
 
-            const key = `${attributes.rel}-${attributes.href}`
+            const key = [
+              attributes.type,
+              attributes.rel,
+              attributes.href || attributes['data-href'],
+            ].join('-')
             const props = Object.assign({ key }, item.attributes)
             return <TagComponent {...props} />
           })

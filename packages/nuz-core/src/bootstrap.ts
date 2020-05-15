@@ -91,7 +91,7 @@ const bootstrap = async (config: BootstrapConfig) => {
 
       // Prepare externals and preload modules if it defined
       const modules = getModules()
-      await modules.prepare()
+      await Promise.all([modules.prepare(), modules.ready()])
 
       // Lock config, not allow changing any config
       // Note: change config after initialized is dangerous!
@@ -116,6 +116,8 @@ const bootstrap = async (config: BootstrapConfig) => {
   )
 
   await worker.setup()
+
+  return worker
 }
 
 export default bootstrap
