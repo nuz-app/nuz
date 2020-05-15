@@ -1,7 +1,7 @@
 {
   "name": "@nuz/core",
   "description": "Core to manage and handles resolve runtime packages in the application",
-  "version": "1.0.0-beta.21",
+  "version": "1.0.0-beta.22",
   "repository": {
     "type": "git",
     "url": "https://github.com/nuz-app/nuz.git",
@@ -27,8 +27,8 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@nuz/shared": "^1.0.0-beta.21",
-    "@nuz/utils": "^1.0.0-beta.21",
+    "@nuz/shared": "^1.0.0-beta.22",
+    "@nuz/utils": "^1.0.0-beta.22",
     "abort-controller": "^3.0.0",
     "cross-fetch": "^3.0.4",
     "lru-cache": "^5.1.1",
