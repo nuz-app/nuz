@@ -41,7 +41,6 @@ function validateAndTransformFiles(
   }
 
   const totalSize = filesUploaded.reduce((total, item) => total + item.size, 0)
-  console.log({ totalSize })
   if (totalSize > TOTAL_FILE_SIZE_LIMIT) {
     throw new Error(
       `Exceeded total files size limit allowed, limit is ${TOTAL_FILE_SIZE_LIMIT}!`,
