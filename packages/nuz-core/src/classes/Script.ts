@@ -41,7 +41,7 @@ class Script {
     )
   }
 
-  async runInContext(context: any) {
+  runInContext(context: any) {
     const name = this.generateId()
     const code = this.getContextTemplate({
       name,
@@ -62,7 +62,7 @@ class Script {
     )
   }
 
-  async runInScript(context: any) {
+  runInScript(context: any) {
     const name = this.generateId()
     const code = this.getScriptTemplate({
       name,

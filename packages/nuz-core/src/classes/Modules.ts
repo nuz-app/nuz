@@ -56,26 +56,22 @@ const ensureInstallConfig = ({
   retries: retries || 1,
 })
 
-const pickExportFromContext = (context) => {
+const pickNamedExports = (context, library?: string): string => {
+  if (library !== '[name]' && context[library as string]) {
+    return library as string
+  } else if (context.default) {
+    return 'default'
+  } else if (context.main) {
+    return 'main'
+  }
+
   const keysOf = Object.keys(context)
   const lastKey = keysOf[keysOf.length - 1]
-  const lastExport = context[lastKey]
-
-  return lastExport
+  return lastKey
 }
 
-const pickModuleFromContext = (context, library?: string) => {
-  let moduleExports
-  if (library && library !== '[name]') {
-    moduleExports = context[library] || context.default
-  }
-
-  if (!moduleExports) {
-    moduleExports = context.main || pickExportFromContext(context)
-  }
-
-  return moduleExports
-}
+const pickModuleFromContext = (context, library?: string) =>
+  context[pickNamedExports(context, library)]
 
 const pickIfSet = (upstream: any, config: RequiredBaseItem) => {
   const isObject = checkIsObject(upstream)
@@ -202,10 +198,12 @@ class Modules {
     return Object.create(this._globals.getContext())
   }
 
-  private flushContext(library?: string) {
-    const key = library || 'default'
-    this._globals.deleteDependency(key)
-    this._globals.delete(key)
+  private flushContext(context: any, library?: string) {
+    const namedExports = pickNamedExports(context, library)
+
+    context[namedExports] = undefined
+    this._globals.deleteDependency(namedExports)
+    this._globals.delete(namedExports)
   }
 
   private bindVendors() {
@@ -294,14 +292,14 @@ class Modules {
     return shared.map((item) => this.loadDependency(item))
   }
 
-  private async runScript({
+  private runScript({
     code,
     format,
     library,
     alias,
     exportsOnly,
   }: BaseItemConfig & { format: ModuleFormats; code: string }) {
-    const context = this.createContext()
+    let context = this.createContext()
 
     try {
       const script = new Script(code, {
@@ -309,9 +307,9 @@ class Modules {
       })
 
       if (this._ssr) {
-        await script.runInContext(context)
+        context = script.runInContext(context)
       } else {
-        await script.runInScript(context)
+        context = script.runInScript(context)
       }
     } catch (error) {
       console.error(`Module installed uncaught error, details:`, error)
@@ -338,7 +336,8 @@ class Modules {
       throw new Error('Module is not exported!')
     }
 
-    // this.flushContext(library)
+    // TODO: must be checked prcoess before flush context
+    // this.flushContext(context, library)
 
     return moduleExports
   }
@@ -364,7 +363,7 @@ class Modules {
       retries,
     )
 
-    const moduleExports = await this.runScript({
+    const moduleExports = this.runScript({
       code: moduleScript,
       format,
       library,
