@@ -1,6 +1,11 @@
 import { assetsUrlHelpers, hashFile } from '@nuz/utils'
 
-import { FILE_LENGTH_LIMIT, FILE_SIZE_LIMIT } from '../lib/const'
+import {
+  OTHER_FILE_SIZE_LIMIT,
+  SOURCE_CODE_FILE_SIZE_LIMIT,
+  SOURCE_MAP_FILE_SIZE_LIMIT,
+  TOTAL_FILE_SIZE_LIMIT,
+} from '../lib/const'
 import { ModuleId } from '../types'
 
 export interface TransformFile {
@@ -15,6 +20,14 @@ export interface TransformFile {
   key: string
 }
 
+function checkIsSourceMap(name: string) {
+  return /\.map$/.test(name)
+}
+
+function checkIsSourceCode(name: string) {
+  return /\.(css|js)$/.test(name)
+}
+
 function validateAndTransformFiles(
   filesUploaded: any[],
   filesInfo: any[],
@@ -27,17 +40,33 @@ function validateAndTransformFiles(
     throw new Error('Files is required to store')
   }
 
-  if (filesUploaded.length > FILE_LENGTH_LIMIT) {
+  const totalSize = filesUploaded.reduce((total, item) => total + item.size, 0)
+  console.log({ totalSize })
+  if (totalSize > TOTAL_FILE_SIZE_LIMIT) {
     throw new Error(
-      `Exceeded the allowed file number of a version, limit is ${FILE_LENGTH_LIMIT}!`,
+      `Exceeded total files size limit allowed, limit is ${TOTAL_FILE_SIZE_LIMIT}!`,
     )
   }
 
   const transformedFiles: TransformFile[] = []
   for (const file of filesUploaded) {
-    if (file.size > FILE_SIZE_LIMIT) {
+    if (
+      checkIsSourceMap(file.originalname) &&
+      file.size > SOURCE_MAP_FILE_SIZE_LIMIT
+    ) {
       throw new Error(
-        `File ${file.originalname} is exceeds the allowed size, limit is ${FILE_SIZE_LIMIT} byte!`,
+        `File ${file.originalname} is exceeds the allowed size for source map, limit is ${SOURCE_MAP_FILE_SIZE_LIMIT} byte!`,
+      )
+    } else if (
+      checkIsSourceCode(file.originalname) &&
+      file.size > SOURCE_CODE_FILE_SIZE_LIMIT
+    ) {
+      throw new Error(
+        `File ${file.originalname} is exceeds the allowed size for code, limit is ${SOURCE_CODE_FILE_SIZE_LIMIT} byte!`,
+      )
+    } else if (file.size > OTHER_FILE_SIZE_LIMIT) {
+      throw new Error(
+        `File ${file.originalname} is exceeds the allowed size for other file, limit is ${OTHER_FILE_SIZE_LIMIT} byte!`,
       )
     }
 
