@@ -27,9 +27,9 @@ const pickIdAndversion = (key: string) => {
 }
 
 async function setModules({
-  composition,
+  compose,
   modules: modulesAsArray,
-}: Arguments<{ composition: string; modules: string[] }>) {
+}: Arguments<{ compose: string; modules: string[] }>) {
   await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
   const modules = modulesAsArray.reduce((acc, idAndVersion) => {
@@ -38,10 +38,10 @@ async function setModules({
   }, {})
 
   const tick = timer()
-  const request = await Worker.setModulesForComposition(composition, modules)
-  const compositionId = request?.data?._id
+  const request = await Worker.setModulesForCompose(compose, modules)
+  const composeId = request?.data?._id
 
-  info('Composition id', print.name(compositionId))
+  info('Compose id', print.name(composeId))
   info(pretty(modules))
   success(`Done in ${print.bold(tick())}ms.`)
   return true

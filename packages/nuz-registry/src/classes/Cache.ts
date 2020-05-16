@@ -1,4 +1,4 @@
-import { CompositionId, ModuleId } from '../types'
+import { ComposeId, ModuleId } from '../types'
 
 export type FactoryFn = (
   data: any,
@@ -11,11 +11,11 @@ declare class Cache {
 
   clearAllRefsToModule(moduleId: ModuleId): Promise<any>
 
-  lookupComposition(
-    compositionId: CompositionId,
+  lookupCompose(
+    composeId: ComposeId,
   ): Promise<{ data?: any; factory?: FactoryFn }>
 
-  deleteComposition(compositionId: CompositionId): Promise<any>
+  deleteCompose(composeId: ComposeId): Promise<any>
 
   flushAll(): Promise<void>
 }

@@ -5,21 +5,21 @@ import onRoute from '../utils/onRoute'
 
 import { ServerlessRoute } from './types'
 
-export const name = 'getComposition'
+export const name = 'getComposeOfUser'
 
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.get(
-    '/composition',
+    '/user/composes',
     onRoute(async (request, response) => {
-      const { composition: id, fields } = request.query
+      const { user: id } = request.query
 
       const formIsMissing = !id
       if (formIsMissing) {
-        throw new Error('Missing composition id')
+        throw new Error('Missing user id to get the composes')
       }
-      const item = await worker.getComposition(id as string, fields)
+      const result = await worker.getComposeOfUser(id as string)
 
-      response.json({ composition: item })
+      response.json({ user: id, composes: result })
       return true
     }),
   )

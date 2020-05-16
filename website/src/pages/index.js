@@ -71,7 +71,7 @@ const conpects = [
     ),
   },
   {
-    title: <>Composition</>,
+    title: <>Compose</>,
     description: (
       <>
         The component is an information panel listing the desired modules and versions. You can think of it like the "dependencies" list in the package.json file when using npm.

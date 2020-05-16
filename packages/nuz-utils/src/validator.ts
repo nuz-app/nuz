@@ -19,7 +19,7 @@ export const password = (value: string) =>
   typeof value === 'string' && value.length >= 8
 
 export const COMPOSITION_ID_REGEXP = /([a-zA-Z0-9\-\_]+)$/
-export const compositionId = (value: string) =>
+export const composeId = (value: string) =>
   typeof value === 'string' &&
   value.length >= 6 &&
   value.length <= 24 &&

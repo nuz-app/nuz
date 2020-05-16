@@ -9,8 +9,8 @@ import { Connection } from 'mongoose'
 import {
   AddCollaboratorData,
   CollaboratorTypes,
-  CompositionId,
-  CreateCompositionData,
+  ComposeId,
+  CreateComposeData,
   CreateScopeData,
   CreateUserData,
   Models,
@@ -35,7 +35,7 @@ import { createServices, Services } from '../services'
 
 import checkIsCollaboratorAllowSet from '../utils/checkIsCollaboratorAllowSet'
 import checkIsCollaboratorIncludes from '../utils/checkIsCollaboratorIncludes'
-import checkIsNewComposition from '../utils/checkIsNewComposition'
+import checkIsNewCompose from '../utils/checkIsNewCompose'
 import checkIsNewScope from '../utils/checkIsNewScope'
 import createMongoConnection from '../utils/createMongoConnection'
 import parseModuleId from '../utils/parseModuleId'
@@ -588,49 +588,43 @@ class Worker {
   }
 
   /**
-   * Get a composition by id
+   * Get a compose by id
    */
-  async getComposition(compositionId: CompositionId, fields?: any) {
-    const composition = await this._services.Composition.findOne(
-      compositionId,
-      fields,
-    )
-    return composition
+  async getCompose(composeId: ComposeId, fields?: any) {
+    const compose = await this._services.Compose.findOne(composeId, fields)
+    return compose
   }
 
   /**
-   * Get the compositions by ids
+   * Get the composes by ids
    */
-  async getCompositions(compositionIds: CompositionId[], fields?: any) {
-    const compositions = await this._services.Composition.find(
-      compositionIds,
-      fields,
-    )
-    return compositions
+  async getAllCompose(composeIds: ComposeId[], fields?: any) {
+    const composes = await this._services.Compose.find(composeIds, fields)
+    return composes
   }
 
   /**
-   * Create a composition
+   * Create a compose
    */
-  async createComposition(tokenId: TokenId, data: CreateCompositionData) {
+  async createCompose(tokenId: TokenId, data: CreateComposeData) {
     const { name, modules: modulesAsObject } = data
 
-    if (!validator.compositionId(name)) {
+    if (!validator.composeId(name)) {
       throw new Error(
-        'Composition id/name is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", length allows 6-24 characters!',
+        'Compose id/name is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", length allows 6-24 characters!',
       )
     }
 
     const modules = !modulesAsObject
       ? []
-      : this._services.Composition.convertModulesToArray(modulesAsObject)
+      : this._services.Compose.convertModulesToArray(modulesAsObject)
 
     const user = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const result = await this._services.Composition.create(user._id, {
+    const result = await this._services.Compose.create(user._id, {
       name,
       modules,
     })
@@ -638,57 +632,55 @@ class Worker {
   }
 
   /**
-   * Delete a composition
+   * Delete a compose
    */
-  async deleteComposition(tokenId: TokenId, compositionId: CompositionId) {
+  async deleteCompose(tokenId: TokenId, composeId: ComposeId) {
     const user = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const composition = await this.verifyCollaboratorOfComposition(
-      compositionId,
+    const compose = await this.verifyCollaboratorOfCompose(
+      composeId,
       user._id,
       CollaboratorTypes.maintainer,
     )
 
-    const isNewComposition = checkIsNewComposition(composition.createdAt)
-    if (!isNewComposition) {
-      throw new Error(`Composition can't be deleted by policy`)
+    const isNewCompose = checkIsNewCompose(compose.createdAt)
+    if (!isNewCompose) {
+      throw new Error(`Compose can't be deleted by policy`)
     }
 
-    const result = await this._services.Composition.delete(composition._id)
+    const result = await this._services.Compose.delete(compose._id)
     return result
   }
 
   /**
-   * Get collaborators of the composition
+   * Get collaborators of the compose
    */
-  async getCollaboratorsOfComposition(compositionId: CompositionId) {
-    const reuslt = await this._services.Composition.listCollaborators(
-      compositionId,
-    )
+  async getCollaboratorsOfCompose(composeId: ComposeId) {
+    const reuslt = await this._services.Compose.listCollaborators(composeId)
     return reuslt
   }
 
   /**
-   * Get all compositions of the user
+   * Get all composes of the user
    */
-  async getCompositionsOfUser(userId: UserId) {
-    const reuslt = await this._services.Composition.getAllOf(userId)
+  async getComposeOfUser(userId: UserId) {
+    const reuslt = await this._services.Compose.getAllOf(userId)
     return reuslt
   }
 
   /**
-   * Verify collaborator of the composition
+   * Verify collaborator of the compose
    */
-  async verifyCollaboratorOfComposition(
-    compositionId: CompositionId,
+  async verifyCollaboratorOfCompose(
+    composeId: ComposeId,
     userId: UserId,
     requiredType: CollaboratorTypes,
   ) {
-    const result = await this._services.Composition.verifyCollaborator({
-      id: compositionId,
+    const result = await this._services.Compose.verifyCollaborator({
+      id: composeId,
       userId,
       requiredType,
     })
@@ -696,11 +688,11 @@ class Worker {
   }
 
   /**
-   * Add collaborator to the composition
+   * Add collaborator to the compose
    */
-  async addCollaboratorToComposition(
+  async addCollaboratorToCompose(
     tokenId: TokenId,
-    compositionId: CompositionId,
+    composeId: ComposeId,
     collaborator: AddCollaboratorData,
   ) {
     const user = await this.verifyTokenOfUser(
@@ -708,33 +700,33 @@ class Worker {
       UserAccessTokenTypes.fullAccess,
     )
 
-    const composition = await this.verifyCollaboratorOfComposition(
-      compositionId,
+    const compose = await this.verifyCollaboratorOfCompose(
+      composeId,
       user._id,
       CollaboratorTypes.maintainer,
     )
 
     const found = checkIsCollaboratorIncludes(
-      composition.collaborators,
+      compose.collaborators,
       collaborator.id,
     )
     if (found) {
-      throw new Error('Collaborator already exists in the Composition')
+      throw new Error('Collaborator already exists in the Compose')
     }
 
-    const reuslt = await this._services.Composition.addCollaborator(
-      composition._id,
+    const reuslt = await this._services.Compose.addCollaborator(
+      compose._id,
       collaborator,
     )
     return reuslt
   }
 
   /**
-   * Update collaborator of the composition
+   * Update collaborator of the compose
    */
-  async updateCollaboratorOfComposition(
+  async updateCollaboratorOfCompose(
     tokenId: TokenId,
-    compositionId: CompositionId,
+    composeId: ComposeId,
     collaborator: AddCollaboratorData,
   ) {
     const user = await this.verifyTokenOfUser(
@@ -742,14 +734,14 @@ class Worker {
       UserAccessTokenTypes.fullAccess,
     )
 
-    const composition = await this.verifyCollaboratorOfComposition(
-      compositionId,
+    const compose = await this.verifyCollaboratorOfCompose(
+      composeId,
       user._id,
       CollaboratorTypes.maintainer,
     )
 
     const isAllowToSet = checkIsCollaboratorAllowSet(
-      composition.collaborators,
+      compose.collaborators,
       user._id,
       collaborator.type,
     )
@@ -758,15 +750,15 @@ class Worker {
     }
 
     const found = checkIsCollaboratorIncludes(
-      composition.collaborators,
+      compose.collaborators,
       collaborator.id,
     )
     if (!found) {
-      throw new Error('Collaborator not exists in the Composition')
+      throw new Error('Collaborator not exists in the Compose')
     }
 
-    const reuslt = await this._services.Composition.updateCollaborator(
-      composition._id,
+    const reuslt = await this._services.Compose.updateCollaborator(
+      compose._id,
       collaborator.id,
       collaborator.type,
     )
@@ -774,11 +766,11 @@ class Worker {
   }
 
   /**
-   * Remove collaborator from the composition
+   * Remove collaborator from the compose
    */
-  async removeCollaboratorFromComposition(
+  async removeCollaboratorFromCompose(
     tokenId: TokenId,
-    compositionId: CompositionId,
+    composeId: ComposeId,
     collaboratorId: UserId,
   ) {
     const user = await this.verifyTokenOfUser(
@@ -786,28 +778,28 @@ class Worker {
       UserAccessTokenTypes.fullAccess,
     )
 
-    const composition = await this.verifyCollaboratorOfComposition(
-      compositionId,
+    const compose = await this.verifyCollaboratorOfCompose(
+      composeId,
       user._id,
       CollaboratorTypes.maintainer,
     )
 
-    const reuslt = await this._services.Composition.removeCollaborator(
-      composition._id,
+    const reuslt = await this._services.Compose.removeCollaborator(
+      compose._id,
       collaboratorId,
     )
     return reuslt
   }
 
   /**
-   * Set the modules for the composition
+   * Set the modules for the compose
    */
-  async setModulesForComposition(
+  async setModulesForCompose(
     tokenId: TokenId,
-    compositionId: CompositionId,
+    composeId: ComposeId,
     modulesAsObject: ModuleAsObject,
   ) {
-    const modules = this._services.Composition.convertModulesToArray(
+    const modules = this._services.Compose.convertModulesToArray(
       modulesAsObject,
     )
 
@@ -816,27 +808,24 @@ class Worker {
       UserAccessTokenTypes.fullAccess,
     )
 
-    const composition = await this.verifyCollaboratorOfComposition(
-      compositionId,
+    const compose = await this.verifyCollaboratorOfCompose(
+      composeId,
       user._id,
       CollaboratorTypes.maintainer,
     )
 
-    const result = await this._services.Composition.addModules(
-      composition._id,
-      modules,
-    )
+    const result = await this._services.Compose.addModules(compose._id, modules)
 
-    this._cache?.deleteComposition(composition._id)
+    this._cache?.deleteCompose(compose._id)
     return result
   }
 
   /**
-   * Remove the modules from composition
+   * Remove the modules from compose
    */
-  async removeModulesFromComposition(
+  async removeModulesFromCompose(
     tokenId: TokenId,
-    compositionId: CompositionId,
+    composeId: ComposeId,
     moduleIds: ModuleId[],
   ) {
     const user = await this.verifyTokenOfUser(
@@ -844,18 +833,18 @@ class Worker {
       UserAccessTokenTypes.fullAccess,
     )
 
-    const composition = await this.verifyCollaboratorOfComposition(
-      compositionId,
+    const compose = await this.verifyCollaboratorOfCompose(
+      composeId,
       user._id,
       CollaboratorTypes.maintainer,
     )
 
-    const result = await this._services.Composition.removeModules(
-      composition._id,
+    const result = await this._services.Compose.removeModules(
+      compose._id,
       moduleIds,
     )
 
-    this._cache?.deleteComposition(composition._id)
+    this._cache?.deleteCompose(compose._id)
     return result
   }
 
@@ -1070,11 +1059,11 @@ class Worker {
   /**
    * Fetch
    */
-  async fetch(compositionId: CompositionId) {
+  async fetch(composeId: ComposeId) {
     let factoryCache: FactoryFn | undefined
     if (this._cache) {
-      const { data: cached, factory } = await this._cache.lookupComposition(
-        compositionId,
+      const { data: cached, factory } = await this._cache.lookupCompose(
+        composeId,
       )
       if (cached) {
         return cached
@@ -1082,15 +1071,15 @@ class Worker {
       factoryCache = factory
     }
 
-    const composition = await this.getComposition(compositionId, {
+    const compose = await this.getCompose(composeId, {
       name: 1,
       modules: 1,
     })
-    if (!composition) {
-      throw new Error(`Composition ${compositionId} is not found`)
+    if (!compose) {
+      throw new Error(`Compose ${composeId} is not found`)
     }
 
-    const moduleIds = (composition?.modules || []).map((item) => item.id)
+    const moduleIds = (compose?.modules || []).map((item) => item.id)
     const modules = await this.getModules(moduleIds, {
       _id: 1,
       tags: 1,
@@ -1100,7 +1089,7 @@ class Worker {
     const warnings: any[] = []
     const parsedModules = {}
 
-    for (const item of composition.modules) {
+    for (const item of compose.modules) {
       const requiredModule = modules.find((sub) => sub._id === item.id)
       if (requiredModule) {
         const allVersions = Array.from<string>(

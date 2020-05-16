@@ -7,23 +7,23 @@ import Worker from '../../classes/Worker'
 import print, { info, success } from '../../utils/print'
 import timer from '../../utils/timer'
 
-async function removeModules({
-  composition,
-  moduleIds,
-}: Arguments<{ composition: string; moduleIds: string[] }>) {
+async function removeCollaborator({
+  compose,
+  user,
+}: Arguments<{ compose: string; user: string }>) {
   await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
   const tick = timer()
-  const request = await Worker.removeModulesForComposition(
-    composition,
-    moduleIds,
-  )
-  const compositionId = request?.data?._id
+  const request = await Worker.removeCollaboratorFromScope(compose, user)
 
-  info('Composition id', print.name(compositionId))
-  info('Removed modules', print.dim(moduleIds.join(', ')))
+  const composeId = request?.data?._id
+  info(
+    `Removed ${print.name(user)} from compose ${print.name(
+      composeId,
+    )} successfully!`,
+  )
   success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 
-export default removeModules
+export default removeCollaborator

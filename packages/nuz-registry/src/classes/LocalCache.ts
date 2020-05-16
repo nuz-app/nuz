@@ -1,4 +1,4 @@
-import { CompositionId, ModuleId } from '../types'
+import { ComposeId, ModuleId } from '../types'
 
 import Cache, { FactoryFn } from './Cache'
 
@@ -9,15 +9,15 @@ const CONFIG = {
 class LocalCache implements Cache {
   private readonly data: {
     refs: Map<string, Set<string>>
-    compositions: Map<string, any>
+    composes: Map<string, any>
   }
 
   constructor() {
-    const compositions = new Map<string, any>()
+    const composes = new Map<string, any>()
     const refs = new Map<string, Set<string>>()
 
     this.data = {
-      compositions,
+      composes,
       refs,
     }
   }
@@ -26,20 +26,20 @@ class LocalCache implements Cache {
   async prepare() {}
 
   async clearAllRefsToModule(moduleId: ModuleId) {
-    const compositionIds = Array.from(
+    const composeIds = Array.from(
       (await this.getModuleRefs(moduleId)) || [],
     )
-    for (const compositionId of compositionIds) {
-      this.deleteComposition(compositionId)
+    for (const composeId of composeIds) {
+      this.deleteCompose(composeId)
     }
 
     this.deleteModuleRefs(moduleId)
   }
 
-  async lookupComposition(compositionId: CompositionId) {
-    const compositionData = await this.getComposition(compositionId)
-    if (compositionData) {
-      return { data: compositionData, factory: undefined }
+  async lookupCompose(composeId: ComposeId) {
+    const composeData = await this.getCompose(composeId)
+    if (composeData) {
+      return { data: composeData, factory: undefined }
     }
 
     // Factory auto cache handler
@@ -48,21 +48,21 @@ class LocalCache implements Cache {
       deps: ModuleId[],
       timeout: number = CONFIG.COMPOSITION_TIMEOUT,
     ) => {
-      this.setComposition(compositionId, data)
+      this.setCompose(composeId, data)
 
       // Actively delete cache when it expires
       setTimeout(() => {
-        this.deleteComposition(compositionId)
+        this.deleteCompose(composeId)
 
         // Remove refs to dependencies
         for (const moduleId of deps) {
-          this.removeModuleRefs(moduleId, [compositionId])
+          this.removeModuleRefs(moduleId, [composeId])
         }
       }, timeout)
 
       // Add refs to dependencies
       for (const moduleId of deps) {
-        this.addModuleRefs(moduleId, [compositionId])
+        this.addModuleRefs(moduleId, [composeId])
       }
     }
 
@@ -70,47 +70,47 @@ class LocalCache implements Cache {
   }
 
   async flushAll() {
-    await Promise.all([this.clearCompositions(), this.clearModulesRefs()])
+    await Promise.all([this.clearCompose(), this.clearModulesRefs()])
   }
 
-  private async setComposition(compositionId: CompositionId, data: any) {
-    this.data.compositions.set(compositionId, data)
+  private async setCompose(composeId: ComposeId, data: any) {
+    this.data.composes.set(composeId, data)
   }
 
-  private async getComposition(compositionId: CompositionId) {
-    return this.data.compositions.get(compositionId)
+  private async getCompose(composeId: ComposeId) {
+    return this.data.composes.get(composeId)
   }
 
-  async deleteComposition(compositionId: CompositionId) {
-    return this.data.compositions.delete(compositionId)
+  async deleteCompose(composeId: ComposeId) {
+    return this.data.composes.delete(composeId)
   }
 
-  private async clearCompositions() {
-    return this.data.compositions.clear()
+  private async clearCompose() {
+    return this.data.composes.clear()
   }
 
   private async addModuleRefs(
     moduleId: ModuleId,
-    compositionIds: CompositionId[],
+    composeIds: ComposeId[],
   ) {
     const value = this.data.refs.get(moduleId)
     if (value) {
-      for (const compositionId of compositionIds) {
-        value.add(compositionId)
+      for (const composeId of composeIds) {
+        value.add(composeId)
       }
     } else {
-      this.data.refs.set(moduleId, new Set(compositionIds))
+      this.data.refs.set(moduleId, new Set(composeIds))
     }
   }
 
   private async removeModuleRefs(
     moduleId: ModuleId,
-    compositionIds: CompositionId[],
+    composeIds: ComposeId[],
   ) {
     const value = this.data.refs.get(moduleId)
     if (value) {
-      for (const compositionId of compositionIds) {
-        value.delete(compositionId)
+      for (const composeId of composeIds) {
+        value.delete(composeId)
       }
     }
 

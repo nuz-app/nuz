@@ -6,15 +6,15 @@ import print, { info, log, pretty, success } from '../../utils/print'
 import timer from '../../utils/timer'
 
 async function listCollaborators({
-  composition: id,
-}: Arguments<{ composition: string }>) {
+  compose: id,
+}: Arguments<{ compose: string }>) {
   const tick = timer()
-  const request = await Worker.getCollaboratorsOfComposition(id)
+  const request = await Worker.getCollaboratorsOfCompose(id)
 
-  const compositionId = request?.data?._id
+  const composeId = request?.data?._id
   const collaborators = request?.data?.collaborators
 
-  info(`Collaborators of ${print.name(compositionId)} composition`)
+  info(`Collaborators of ${print.name(composeId)} compose`)
   log(pretty(collaborators))
   success(`Done in ${print.bold(tick())}ms.`)
   return true

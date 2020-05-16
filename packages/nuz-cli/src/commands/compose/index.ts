@@ -2,8 +2,8 @@ import handleOnCommand from '../../utils/handleOnCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
 import addCollaborator from './addCollaborator'
-import createComposition from './createComposition'
-import deleteComposition from './deleteComposition'
+import createCompose from './createCompose'
+import deleteCompose from './deleteCompose'
 import getDetails from './getDetails'
 import removeCollaborator from './removeCollaborator'
 import removeModules from './removeModules'
@@ -11,53 +11,53 @@ import setModules from './setModules'
 import updateCollaborator from './updateCollaborator'
 
 export const setCommands = (yargs) => {
-  yargs.command('composition', 'Manage composition', (child) => {
-    child.usage('usage: $0 composition <item> [options]')
+  yargs.command('compose', 'Manage compose', (child) => {
+    child.usage('usage: $0 compose <item> [options]')
 
     child.command(
-      'get <composition> [fields..]',
-      'Get details of a composition',
+      'get <compose> [fields..]',
+      'Get details of a compose',
       (yarg) => yarg,
       handleOnCommand(getDetails),
     )
 
     child.command(
       'create <name>',
-      'Create a composition',
+      'Create a compose',
       (yarg) => yarg,
-      handleOnCommand(createComposition),
+      handleOnCommand(createCompose),
     )
 
     child.command(
       'delete <name>',
-      'Delete a composition',
+      'Delete a compose',
       (yarg) => yarg,
-      handleOnCommand(deleteComposition),
+      handleOnCommand(deleteCompose),
     )
 
     child.command(
       'collaborator',
-      'Manage collaborator of composition',
+      'Manage collaborator of compose',
       (schild) => {
-        schild.usage('usage: $0 composition collaborator <type> [options]')
+        schild.usage('usage: $0 compose collaborator <type> [options]')
 
         schild.command(
-          'add <composition> <user> [type]',
-          'Add collaborator to the composition',
+          'add <compose> <user> [type]',
+          'Add collaborator to the compose',
           (yarg) => yarg,
           handleOnCommand(addCollaborator),
         )
 
         schild.command(
-          'update <composition> <user> <type>',
-          'Update collaborator of the composition',
+          'update <compose> <user> <type>',
+          'Update collaborator of the compose',
           (yarg) => yarg,
           handleOnCommand(updateCollaborator),
         )
 
         schild.command(
-          'remove <composition> <user>',
-          'Remove collaborator from the composition',
+          'remove <compose> <user>',
+          'Remove collaborator from the compose',
           (yarg) => yarg,
           handleOnCommand(removeCollaborator),
         )
@@ -66,19 +66,19 @@ export const setCommands = (yargs) => {
       },
     )
 
-    child.command('modules', 'Manage modules of composition', (schild) => {
-      schild.usage('usage: $0 composition modules <type> [options]')
+    child.command('modules', 'Manage modules of compose', (schild) => {
+      schild.usage('usage: $0 compose modules <type> [options]')
 
       schild.command(
-        'set <composition> <modules..>',
-        'Set modules for the composition',
+        'set <compose> <modules..>',
+        'Set modules for the compose',
         (yarg) => yarg,
         handleOnCommand(setModules),
       )
 
       schild.command(
-        'remove <composition> <moduleIds..>',
-        'Remove modules from the composition',
+        'remove <compose> <moduleIds..>',
+        'Remove modules from the compose',
         (yarg) => yarg,
         handleOnCommand(removeModules),
       )

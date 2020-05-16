@@ -50,9 +50,9 @@ class Worker {
     )
   }
 
-  static async getAllCompositionsOfUser(user: string) {
+  static async getAllComposeOfUser(user: string) {
     return got(
-      Object.assign(apiUrls.getAllCompositionsOfUser(this.endpoint), {
+      Object.assign(apiUrls.getAllComposeOfUser(this.endpoint), {
         params: { user },
       }),
     )
@@ -273,135 +273,135 @@ class Worker {
   }
 
   /**
-   * Get a composition
+   * Get a compose
    */
-  static async getComposition(composition: string, fields?: string[]) {
+  static async getCompose(compose: string, fields?: string[]) {
     return got(
-      Object.assign(apiUrls.getComposition(this.endpoint, this.token), {
-        params: { composition, fields },
+      Object.assign(apiUrls.getCompose(this.endpoint, this.token), {
+        params: { compose, fields },
       }),
     )
   }
 
   /**
-   * Create a composition
+   * Create a compose
    */
-  static async createComposition(
+  static async createCompose(
     name: string,
     modules?: { [id: string]: string },
   ) {
     return got(
-      Object.assign(apiUrls.createComposition(this.endpoint, this.token), {
+      Object.assign(apiUrls.createCompose(this.endpoint, this.token), {
         data: { data: { name, modules } },
       }),
     )
   }
 
   /**
-   * Delete a composition
+   * Delete a compose
    */
-  static async deleteComposition(composition: string) {
+  static async deleteCompose(compose: string) {
     return got(
-      Object.assign(apiUrls.deleteComposition(this.endpoint, this.token), {
-        data: { composition },
+      Object.assign(apiUrls.deleteCompose(this.endpoint, this.token), {
+        data: { compose },
       }),
     )
   }
 
   /**
-   * Get all collaborators of the composition
+   * Get all collaborators of the compose
    */
-  static async getCollaboratorsOfComposition(composition: string) {
+  static async getCollaboratorsOfCompose(compose: string) {
     return got(
       Object.assign(
-        apiUrls.getCollaboratorsOfComposition(this.endpoint, this.token),
+        apiUrls.getCollaboratorsOfCompose(this.endpoint, this.token),
         {
-          params: { composition },
+          params: { compose },
         },
       ),
     )
   }
 
   /**
-   * Add a collaborator to the composition
+   * Add a collaborator to the compose
    */
-  static async addCollaboratorToComposition(
-    composition: string,
+  static async addCollaboratorToCompose(
+    compose: string,
     collaborator: any,
   ) {
     return got(
       Object.assign(
-        apiUrls.addCollaboratorToComposition(this.endpoint, this.token),
+        apiUrls.addCollaboratorToCompose(this.endpoint, this.token),
         {
-          data: { composition, collaborator },
+          data: { compose, collaborator },
         },
       ),
     )
   }
 
   /**
-   * Update a collaborator of the composition
+   * Update a collaborator of the compose
    */
-  static async updateCollaboratorOfComposition(
-    composition: string,
+  static async updateCollaboratorOfCompose(
+    compose: string,
     collaborator: any,
   ) {
     return got(
       Object.assign(
-        apiUrls.updateCollaboratorOfComposition(this.endpoint, this.token),
+        apiUrls.updateCollaboratorOfCompose(this.endpoint, this.token),
         {
-          data: { composition, collaborator },
+          data: { compose, collaborator },
         },
       ),
     )
   }
 
   /**
-   * Remove a collaborator from the composition
+   * Remove a collaborator from the compose
    */
-  static async removeCollaboratorFromComposition(
-    composition: string,
+  static async removeCollaboratorFromCompose(
+    compose: string,
     collaborator: string,
   ) {
     return got(
       Object.assign(
-        apiUrls.removeCollaboratorFromComposition(this.endpoint, this.token),
+        apiUrls.removeCollaboratorFromCompose(this.endpoint, this.token),
         {
-          data: { composition, collaboratorId: collaborator },
+          data: { compose, collaboratorId: collaborator },
         },
       ),
     )
   }
 
   /**
-   * Set modules for the composition
+   * Set modules for the compose
    */
-  static async setModulesForComposition(
-    composition: string,
+  static async setModulesForCompose(
+    compose: string,
     modules: { [id: string]: string },
   ) {
     return got(
       Object.assign(
-        apiUrls.setModulesForComposition(this.endpoint, this.token),
+        apiUrls.setModulesForCompose(this.endpoint, this.token),
         {
-          data: { composition, modules },
+          data: { compose, modules },
         },
       ),
     )
   }
 
   /**
-   * Remove modules from the composition
+   * Remove modules from the compose
    */
-  static async removeModulesForComposition(
-    composition: string,
+  static async removeModulesForCompose(
+    compose: string,
     moduleIds: string[],
   ) {
     return got(
       Object.assign(
-        apiUrls.removeModulesFromComposition(this.endpoint, this.token),
+        apiUrls.removeModulesFromCompose(this.endpoint, this.token),
         {
-          data: { composition, moduleIds },
+          data: { compose, moduleIds },
         },
       ),
     )

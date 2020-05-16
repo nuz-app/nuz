@@ -6,16 +6,16 @@ import onRoute from '../utils/onRoute'
 
 import { ServerlessRoute } from './types'
 
-export const name = 'setModulesForComposition'
+export const name = 'setModulesForCompose'
 
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.put(
-    '/composition/modules',
+    '/compose/modules',
     onRoute(async (request, response) => {
       const { authorization: token } = request.headers
-      const { composition, modules: moduleAsObject } = request.body
+      const { compose, modules: moduleAsObject } = request.body
 
-      const formIsMissing = !token || !composition || !moduleAsObject
+      const formIsMissing = !token || !compose || !moduleAsObject
       if (formIsMissing) {
         throw new Error('Form is missing fields')
       }
@@ -25,9 +25,9 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
         throw new Error('Modules is invalid')
       }
 
-      const item = await worker.setModulesForComposition(
+      const item = await worker.setModulesForCompose(
         token as string,
-        composition,
+        compose,
         moduleAsObject,
       )
 

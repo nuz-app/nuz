@@ -6,21 +6,21 @@ import * as root from './root'
 import * as createTokenForUser from './createTokenForUser'
 import * as createUser from './createUser'
 import * as deleteTokenFromUser from './deleteTokenFromUser'
-import * as getCompositionsOfUser from './getCompositionsOfUser'
+import * as getComposeOfUser from './getComposeOfUser'
 import * as getModulesOfUser from './getModulesOfUser'
 import * as getScopesOfUser from './getScopesOfUser'
 import * as loginUser from './loginUser'
 import * as updateUser from './updateUser'
 
-import * as addCollaboratorToComposition from './addCollaboratorToComposition'
-import * as createComposition from './createComposition'
-import * as deleteComposition from './deleteComposition'
-import * as getCollaboratorsOfComposition from './getCollaboratorsOfComposition'
-import * as getComposition from './getComposition'
-import * as removeCollaboratorFromComposition from './removeCollaboratorFromComposition'
-import * as removeModulesFromComposition from './removeModulesFromComposition'
-import * as setModulesForComposition from './setModulesForComposition'
-import * as updateCollaboratorOfComposition from './updateCollaboratorOfComposition'
+import * as addCollaboratorToCompose from './addCollaboratorToCompose'
+import * as createCompose from './createCompose'
+import * as deleteCompose from './deleteCompose'
+import * as getCollaboratorsOfCompose from './getCollaboratorsOfCompose'
+import * as getCompose from './getCompose'
+import * as removeCollaboratorFromCompose from './removeCollaboratorFromCompose'
+import * as removeModulesFromCompose from './removeModulesFromCompose'
+import * as setModulesForCompose from './setModulesForCompose'
+import * as updateCollaboratorOfCompose from './updateCollaboratorOfCompose'
 
 import * as addCollaboratorToScope from './addCollaboratorToScope'
 import * as createScope from './createScope'
@@ -50,18 +50,18 @@ export default [
   createTokenForUser,
   deleteTokenFromUser,
   getModulesOfUser,
-  getCompositionsOfUser,
+  getComposeOfUser,
   getScopesOfUser,
 
-  getComposition,
-  createComposition,
-  deleteComposition,
-  getCollaboratorsOfComposition,
-  addCollaboratorToComposition,
-  removeCollaboratorFromComposition,
-  updateCollaboratorOfComposition,
-  setModulesForComposition,
-  removeModulesFromComposition,
+  getCompose,
+  createCompose,
+  deleteCompose,
+  getCollaboratorsOfCompose,
+  addCollaboratorToCompose,
+  removeCollaboratorFromCompose,
+  updateCollaboratorOfCompose,
+  setModulesForCompose,
+  removeModulesFromCompose,
 
   getScope,
   createScope,

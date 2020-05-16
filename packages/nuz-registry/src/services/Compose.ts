@@ -4,8 +4,8 @@ import { Types } from 'mongoose'
 import { MONGOOSE_ERROR_CODES } from '../lib/const'
 import {
   CollaboratorTypes,
-  CompositionId,
-  CreateCompositionData,
+  ComposeId,
+  CreateComposeData,
   Models,
   ModuleAsObject,
   ModuleId,
@@ -17,8 +17,8 @@ import * as versionHelpers from '../utils/versionHelpers'
 
 import Service from './Service'
 
-class Composition extends Service<CompositionId> {
-  constructor(readonly Collection: Models['Composition']) {
+class Compose extends Service<ComposeId> {
+  constructor(readonly Collection: Models['Compose']) {
     super(Collection)
   }
 
@@ -43,7 +43,7 @@ class Composition extends Service<CompositionId> {
 
   async create(
     userId: UserId,
-    data: Omit<CreateCompositionData, 'modules'> & {
+    data: Omit<CreateComposeData, 'modules'> & {
       modules: RequiredModule[]
     },
   ) {
@@ -52,67 +52,67 @@ class Composition extends Service<CompositionId> {
     const creator = { type: CollaboratorTypes.creator, id: userId }
     const collaborators = [creator]
 
-    const composition = new this.Collection({ name, collaborators, modules })
+    const compose = new this.Collection({ name, collaborators, modules })
     try {
-      await composition.save()
+      await compose.save()
     } catch (error) {
       if (error.code === MONGOOSE_ERROR_CODES.UNIQUE_KEY_EXISTED) {
-        throw new Error('Composition is already existed')
+        throw new Error('Compose is already existed')
       }
 
       throw error
     }
 
-    return composition
+    return compose
   }
 
-  async delete(id: CompositionId) {
+  async delete(id: ComposeId) {
     const { ok, deletedCount } = await this.Collection.deleteOne({ _id: id })
     return { _id: id, ok, deleted: deletedCount }
   }
 
-  async addModules(id: CompositionId, modules: RequiredModule[]) {
-    const composition = await this.Collection.findOne(
+  async addModules(id: ComposeId, modules: RequiredModule[]) {
+    const compose = await this.Collection.findOne(
       { _id: id },
       { modules: 1 },
     )
-    if (!composition) {
-      throw new Error('Composition is not found')
+    if (!compose) {
+      throw new Error('Compose is not found')
     }
 
     const moduleIds = modules.map((item) => item.id)
-    const updatedModules = composition.modules.filter(
+    const updatedModules = compose.modules.filter(
       (item) => !moduleIds.includes(item.id),
     )
     updatedModules.push(...modules)
-    composition.modules = updatedModules as Types.Array<RequiredModule>
+    compose.modules = updatedModules as Types.Array<RequiredModule>
 
-    const result = await composition.save()
+    const result = await compose.save()
 
     return { _id: id }
   }
 
-  async removeModules(id: CompositionId, moduleIds: ModuleId[]) {
-    const composition = await this.Collection.findOne(
+  async removeModules(id: ComposeId, moduleIds: ModuleId[]) {
+    const compose = await this.Collection.findOne(
       { _id: id },
       { modules: 1 },
     )
-    if (!composition) {
-      throw new Error('Composition is not found')
+    if (!compose) {
+      throw new Error('Compose is not found')
     }
 
-    const updatedModules = composition.modules.filter(
+    const updatedModules = compose.modules.filter(
       (item) => !moduleIds.includes(item.id),
     )
-    composition.modules = updatedModules as Types.Array<RequiredModule>
+    compose.modules = updatedModules as Types.Array<RequiredModule>
 
-    const result = await composition.save()
+    const result = await compose.save()
 
     return { _id: id }
   }
 }
 
-export const createService = (collection: Models['Composition']) =>
-  new Composition(collection)
+export const createService = (collection: Models['Compose']) =>
+  new Compose(collection)
 
-export default Composition
+export default Compose

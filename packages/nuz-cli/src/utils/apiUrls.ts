@@ -24,8 +24,8 @@ export const deleteTokenFromUser = (endpoint: string) => ({
   method: 'DELETE',
 })
 
-export const getAllCompositionsOfUser = (endpoint: string) => ({
-  url: `${endpoint}/user/compositions`,
+export const getAllComposeOfUser = (endpoint: string) => ({
+  url: `${endpoint}/user/composes`,
   method: 'GET',
 })
 
@@ -154,76 +154,76 @@ export const removeCollaboratorFromModule = (
   headers: { authorization },
 })
 
-// Composition
+// Compose
 
-export const getComposition = (endpoint: string, authorization: string) => ({
-  url: `${endpoint}/composition`,
+export const getCompose = (endpoint: string, authorization: string) => ({
+  url: `${endpoint}/compose`,
   method: 'GET',
   headers: { authorization },
 })
 
-export const createComposition = (endpoint: string, authorization: string) => ({
-  url: `${endpoint}/composition`,
+export const createCompose = (endpoint: string, authorization: string) => ({
+  url: `${endpoint}/compose`,
   method: 'POST',
   headers: { authorization },
 })
 
-export const deleteComposition = (endpoint: string, authorization: string) => ({
-  url: `${endpoint}/composition`,
+export const deleteCompose = (endpoint: string, authorization: string) => ({
+  url: `${endpoint}/compose`,
   method: 'DELETE',
   headers: { authorization },
 })
 
-export const getCollaboratorsOfComposition = (
+export const getCollaboratorsOfCompose = (
   endpoint: string,
   authorization: string,
 ) => ({
-  url: `${endpoint}/composition/collaborators`,
+  url: `${endpoint}/compose/collaborators`,
   method: 'GET',
   headers: { authorization },
 })
 
-export const addCollaboratorToComposition = (
+export const addCollaboratorToCompose = (
   endpoint: string,
   authorization: string,
 ) => ({
-  url: `${endpoint}/composition/collaborator`,
+  url: `${endpoint}/compose/collaborator`,
   method: 'POST',
   headers: { authorization },
 })
 
-export const updateCollaboratorOfComposition = (
+export const updateCollaboratorOfCompose = (
   endpoint: string,
   authorization: string,
 ) => ({
-  url: `${endpoint}/composition/collaborator`,
+  url: `${endpoint}/compose/collaborator`,
   method: 'PUT',
   headers: { authorization },
 })
 
-export const removeCollaboratorFromComposition = (
+export const removeCollaboratorFromCompose = (
   endpoint: string,
   authorization: string,
 ) => ({
-  url: `${endpoint}/composition/collaborator`,
+  url: `${endpoint}/compose/collaborator`,
   method: 'DELETE',
   headers: { authorization },
 })
 
-export const setModulesForComposition = (
+export const setModulesForCompose = (
   endpoint: string,
   authorization: string,
 ) => ({
-  url: `${endpoint}/composition/modules`,
+  url: `${endpoint}/compose/modules`,
   method: 'PUT',
   headers: { authorization },
 })
 
-export const removeModulesFromComposition = (
+export const removeModulesFromCompose = (
   endpoint: string,
   authorization: string,
 ) => ({
-  url: `${endpoint}/composition/modules`,
+  url: `${endpoint}/compose/modules`,
   method: 'DELETE',
   headers: { authorization },
 })

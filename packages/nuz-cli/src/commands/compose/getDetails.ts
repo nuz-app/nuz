@@ -6,29 +6,29 @@ import print, { info, log, pretty, success } from '../../utils/print'
 import timer from '../../utils/timer'
 
 async function getDetails({
-  composition: id,
+  compose: id,
   fields,
 }: Arguments<{
-  composition: string
+  compose: string
   fields: string[]
 }>) {
   if (!id || !fields) {
     throw new Error(
-      'Missing composition id or fields to get details of composition',
+      'Missing compose id or fields to get details of compose',
     )
   }
 
   const tick = timer()
-  const request = await Worker.getComposition(
+  const request = await Worker.getCompose(
     id,
     (!fields || fields.length) === 0 ? undefined : fields,
   )
 
-  const details = request?.data?.composition
+  const details = request?.data?.compose
   if (!details) {
-    info(`Not found ${print.name(id)} composition`)
+    info(`Not found ${print.name(id)} compose`)
   } else {
-    info(`Details of ${print.name(id)} composition`)
+    info(`Details of ${print.name(id)} compose`)
     log(pretty(details))
   }
 

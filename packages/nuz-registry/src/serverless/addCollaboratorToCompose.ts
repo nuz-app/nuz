@@ -8,16 +8,16 @@ import onRoute from '../utils/onRoute'
 
 import { ServerlessRoute } from './types'
 
-export const name = 'updateCollaboratorOfComposition'
+export const name = 'addCollaboratorToCompose'
 
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
-  app.put(
-    '/composition/collaborator',
+  app.post(
+    '/compose/collaborator',
     onRoute(async (request, response) => {
       const { authorization: token } = request.headers
-      const { composition, collaborator } = request.body
+      const { compose, collaborator } = request.body
 
-      const formIsMissing = !token || !composition || !collaborator
+      const formIsMissing = !token || !compose || !collaborator
       if (formIsMissing) {
         throw new Error('Form is missing fields')
       }
@@ -29,12 +29,13 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
         throw new Error('Collaborator is invalid')
       }
 
-      const collaboratorId = collaborator.id
-
-      const item = await worker.updateCollaboratorOfComposition(
+      const item = await worker.addCollaboratorToCompose(
         token as string,
-        composition,
-        { id: collaboratorId, type: collaborator.type as CollaboratorTypes },
+        compose,
+        {
+          id: collaborator.id,
+          type: collaborator.type as CollaboratorTypes,
+        },
       )
 
       response.json(item)

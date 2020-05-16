@@ -7,27 +7,27 @@ import Worker from '../../classes/Worker'
 import print, { info, success } from '../../utils/print'
 import timer from '../../utils/timer'
 
-async function addCollaborator({
-  composition,
+async function updateCollaborator({
+  compose,
   user,
-  type = CollaboratorTypes.contributor,
-}: Arguments<{ composition: string; user: string; type: CollaboratorTypes }>) {
+  type,
+}: Arguments<{ compose: string; user: string; type: CollaboratorTypes }>) {
   await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
   const tick = timer()
-  const request = await Worker.addCollaboratorToComposition(composition, {
+  const request = await Worker.updateCollaboratorOfCompose(compose, {
     id: user,
     type,
   })
 
-  const compositionId = request?.data?._id
+  const composeId = request?.data?._id
   info(
-    `Added ${print.name(user)} to composition ${print.name(
-      compositionId,
+    `Updated ${print.name(user)} info in compose ${print.name(
+      composeId,
     )} successfully!`,
   )
   success(`Done in ${print.bold(tick())}ms.`)
   return true
 }
 
-export default addCollaborator
+export default updateCollaborator

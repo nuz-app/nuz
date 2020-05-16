@@ -70,15 +70,15 @@ export interface UserDocument extends Document, UserModel {
 }
 
 /**
- * Composition
+ * Compose
  */
-export interface CompositionModel {
+export interface ComposeModel {
   name: string
   collaborators: Collaborator[]
   modules: Types.Array<RequiredModule>
 }
 
-export interface CompositionDocument extends Document, CompositionModel {
+export interface ComposeDocument extends Document, ComposeModel {
   _id: string
   createdAt: Date
   updatedAt: Date
@@ -87,6 +87,6 @@ export interface CompositionDocument extends Document, CompositionModel {
 export interface Models {
   User: Model<UserDocument>
   Module: Model<ModuleDocument>
-  Composition: Model<CompositionDocument>
+  Compose: Model<ComposeDocument>
   Scope: Model<ScopeDocument>
 }

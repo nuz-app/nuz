@@ -3,7 +3,7 @@ import { Argv } from 'yargs'
 import showHelpIfInvalid from '../utils/showHelpIfInvalid'
 
 import * as build from './build'
-import * as composition from './composition'
+import * as compose from './compose'
 import * as config from './config'
 import * as dev from './dev'
 import * as modules from './module'
@@ -23,7 +23,7 @@ export const setCommands = async (yargs: Argv) => {
   user.setCommands(yargs)
   scope.setCommands(yargs)
   modules.setCommands(yargs)
-  composition.setCommands(yargs)
+  compose.setCommands(yargs)
 
   tools.setCommands(yargs)
 

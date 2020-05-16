@@ -5,21 +5,25 @@ import onRoute from '../utils/onRoute'
 
 import { ServerlessRoute } from './types'
 
-export const name = 'createComposition'
+export const name = 'removeCollaboratorFromCompose'
 
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
-  app.post(
-    '/composition',
+  app.delete(
+    '/compose/collaborator',
     onRoute(async (request, response) => {
       const { authorization: token } = request.headers
-      const { data } = request.body
+      const { compose, collaboratorId } = request.body
 
-      const formIsMissing = !token || !data
+      const formIsMissing = !token || !compose || !collaboratorId
       if (formIsMissing) {
         throw new Error('Form is missing fields')
       }
 
-      const item = await worker.createComposition(token as string, data)
+      const item = await worker.removeCollaboratorFromCompose(
+        token as string,
+        compose,
+        collaboratorId,
+      )
 
       response.json(item)
       return true

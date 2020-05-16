@@ -5,19 +5,21 @@ import onRoute from '../utils/onRoute'
 
 import { ServerlessRoute } from './types'
 
-export const name = 'fetch'
+export const name = 'createCompose'
 
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
-  app.get(
-    '/fetch',
+  app.post(
+    '/compose',
     onRoute(async (request, response) => {
-      const { compose } = request.query
+      const { authorization: token } = request.headers
+      const { data } = request.body
 
-      const formIsMissing = !compose
+      const formIsMissing = !token || !data
       if (formIsMissing) {
-        throw new Error('Missing compose id to fetch data')
+        throw new Error('Form is missing fields')
       }
-      const item = await worker.fetch(compose as string)
+
+      const item = await worker.createCompose(token as string, data)
 
       response.json(item)
       return true

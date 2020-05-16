@@ -1,10 +1,10 @@
 import { Connection, Model, Schema } from 'mongoose'
 
-import { CompositionDocument } from '../types'
+import { ComposeDocument } from '../types'
 
 import { collaborator as collaboratorSchema } from './schemas'
 
-export const collection = 'Composition'
+export const collection = 'Compose'
 
 const schema: Schema = new Schema(
   {
@@ -47,4 +47,4 @@ schema.index(
 
 export const createModel = (
   connection: Connection,
-): Model<CompositionDocument> => connection.model(collection, schema)
+): Model<ComposeDocument> => connection.model(collection, schema)

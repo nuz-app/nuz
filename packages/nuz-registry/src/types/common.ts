@@ -15,7 +15,7 @@ export interface Collaborator {
 
 export type TObjectId = Types.ObjectId
 
-export type CompositionId = string
+export type ComposeId = string
 export type ScopeId = string
 export type ModuleId = string
 export type UserId = string

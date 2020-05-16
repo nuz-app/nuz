@@ -1,7 +1,7 @@
 import handleOnCommand from '../../utils/handleOnCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
-import allCompositions from './allCompositions'
+import allCompose from './allCompose'
 import allModules from './allModules'
 import allScopes from './allScopes'
 import createToken from './createToken'
@@ -95,10 +95,10 @@ export const setCommands = (yargs) => {
       schild.usage('usage: $0 user my <type> [options]')
 
       schild.command(
-        'compositions',
-        'List compositions of current user',
+        'composes',
+        'List composes of current user',
         (yarg) => yarg,
-        handleOnCommand(allCompositions),
+        handleOnCommand(allCompose),
       )
 
       schild.command(

@@ -16,7 +16,7 @@ export interface UpdateUserData {
   password: string
 }
 
-export interface CreateCompositionData {
+export interface CreateComposeData {
   name: string
   modules: ModuleAsObject
 }
