@@ -163,6 +163,7 @@ export interface ModuleConfig {
 }
 
 export interface NamesConfig {
+  chunkFilename: () => string
   cssLocalIdentName: () => string
   cssFilename: () => string
   cssChunkFilename: () => string

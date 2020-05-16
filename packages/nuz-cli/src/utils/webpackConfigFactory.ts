@@ -28,7 +28,6 @@ import {
 
 import checkIsPackageInstalled from './checkIsPackageInstalled'
 import * as compilerName from './compilerName'
-import * as fs from './fs'
 import * as paths from './paths'
 
 import styleLoadersFactory from './webpack/factories/styleLoaders'
@@ -45,7 +44,7 @@ export interface FactoryConfig {
 }
 
 const TYPESCRIPT_REGEXP = /.tsx?/
-const JAVASCRIPT_REGEXP = /.jsx?/
+const JAVASCRIPT_REGEXP = /.m?jsx?/
 const IMAGE_REGEXP = /\.(png|jpe?g|gif)$/i
 const SVG_REGEXP = /\.svg$/i
 const IMAGE_MINIFY_REGEXP = /(\.min\.(png|jpe?g|gif|svg))$/i
@@ -101,6 +100,7 @@ const defaultNamesFactory = (dev: boolean): NamesConfig => ({
 
     return dev ? `[name].[contenthash:8].[ext]` : `[name].[contenthash].[ext]`
   },
+  chunkFilename: () => '[name]-[contenthash].js',
   cssLocalIdentName: () =>
     dev ? '[name]-[local]-[hash:base64:6]' : '[contenthash:8]',
   cssFilename: () =>
@@ -149,7 +149,7 @@ const webpackConfigFactory = (
   const bail = !dev
   const inputFile = path.join(dir, input)
   const { directory: distDir, filename: distFilename } = getOutput(dir, output)
-  const distChunkFilename = 'chunk-[id].js'
+  const distChunkFilename = names.chunkFilename()
   const umdNamedDefine = format === 'umd'
   const scriptType = 'text/javascript'
   const loadTimeout = 120000
@@ -190,16 +190,17 @@ const webpackConfigFactory = (
     context: dir,
     entry: inputFile,
     output: {
-      library,
+      // Ref https://github.com/webpack/webpack/issues/959#issuecomment-546506221
+      library: library || '[name]',
       umdNamedDefine,
       globalObject,
       publicPath,
       path: distDir,
       filename: distFilename,
-      chunkFilename: distChunkFilename,
       libraryTarget: format,
       chunkLoadTimeout: loadTimeout,
       jsonpScriptType: scriptType,
+      chunkFilename: distChunkFilename,
     },
     resolve: {
       extensions,
@@ -214,6 +215,8 @@ const webpackConfigFactory = (
     plugins: [] as any[],
     optimization: {
       namedModules: true,
+      usedExports: true,
+      splitChunks: false,
     },
   }
 
@@ -229,9 +232,12 @@ const webpackConfigFactory = (
   const sourceMapsPlugins = dev
     ? [
         new webpack.SourceMapDevToolPlugin({
-          test: /\.s?[ac]ss$/,
+          test: /\.css$/,
         }),
-        new webpack.EvalSourceMapDevToolPlugin(),
+        new webpack.EvalSourceMapDevToolPlugin({
+          // @ts-ignore
+          test: /.js$/,
+        }),
       ]
     : [
         new webpack.SourceMapDevToolPlugin({
@@ -281,7 +287,7 @@ const webpackConfigFactory = (
   // Config babel and typescript to transplie scripts
   const scriptRule = ruleFactory(
     feature.typescript ? TYPESCRIPT_REGEXP : JAVASCRIPT_REGEXP,
-    /(node_modules|bower_components)/,
+    /node_modules/,
   )
 
   if (experimental.multiThread) {
@@ -523,35 +529,10 @@ const webpackConfigFactory = (
           parallel: true,
         }),
       ],
-      usedExports: true,
-      splitChunks: {
-        chunks: 'all',
-        name: true,
-        automaticNameDelimiter: '~',
-        minSize: 50 * 1024,
-        maxSize: 375 * 1024,
-        automaticNameMaxLength: 40,
-        maxInitialRequests: 3,
-        minChunks: 1,
-        cacheGroups: {
-          vendors: {
-            name: 'vendors',
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/]/,
-            priority: -10,
-            reuseExistingChunk: true,
-          },
-          default: {
-            priority: -20,
-            reuseExistingChunk: true,
-          },
-        },
-      },
     })
   } else {
     Object.assign(config.optimization, {
       minimize: false,
-      splitChunks: false,
     })
   }
 

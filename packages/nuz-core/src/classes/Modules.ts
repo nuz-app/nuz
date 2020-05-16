@@ -56,6 +56,27 @@ const ensureInstallConfig = ({
   retries: retries || 1,
 })
 
+const pickExportFromContext = (context) => {
+  const keysOf = Object.keys(context)
+  const lastKey = keysOf[keysOf.length - 1]
+  const lastExport = context[lastKey]
+
+  return lastExport
+}
+
+const pickModuleFromContext = (context, library?: string) => {
+  let moduleExports
+  if (library && library !== '[name]') {
+    moduleExports = context[library] || context.default
+  }
+
+  if (!moduleExports) {
+    moduleExports = context.main || pickExportFromContext(context)
+  }
+
+  return moduleExports
+}
+
 const pickIfSet = (upstream: any, config: RequiredBaseItem) => {
   const isObject = checkIsObject(upstream)
   if (!isObject) {
@@ -297,7 +318,7 @@ class Modules {
       throw error
     }
 
-    const moduleInContext = library ? context[library] : context?.default
+    const moduleInContext = pickModuleFromContext(context, library)
 
     let moduleExports = Object.assign(
       {},
