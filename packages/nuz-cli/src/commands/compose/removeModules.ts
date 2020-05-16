@@ -14,10 +14,7 @@ async function removeModules({
   await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
   const tick = timer()
-  const request = await Worker.removeModulesForCompose(
-    compose,
-    moduleIds,
-  )
+  const request = await Worker.removeModulesForCompose(compose, moduleIds)
   const composeId = request?.data?._id
 
   info('Compose id', print.name(composeId))

@@ -13,9 +13,7 @@ async function getDetails({
   fields: string[]
 }>) {
   if (!id || !fields) {
-    throw new Error(
-      'Missing compose id or fields to get details of compose',
-    )
+    throw new Error('Missing compose id or fields to get details of compose')
   }
 
   const tick = timer()

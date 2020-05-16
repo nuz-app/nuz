@@ -17,9 +17,7 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
       if (formIsMissing) {
         throw new Error('Form is missing fields')
       }
-      const item = await worker.getCollaboratorsOfCompose(
-        compose as string,
-      )
+      const item = await worker.getCollaboratorsOfCompose(compose as string)
 
       response.json(item)
       return true

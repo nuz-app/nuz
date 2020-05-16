@@ -26,9 +26,7 @@ class LocalCache implements Cache {
   async prepare() {}
 
   async clearAllRefsToModule(moduleId: ModuleId) {
-    const composeIds = Array.from(
-      (await this.getModuleRefs(moduleId)) || [],
-    )
+    const composeIds = Array.from((await this.getModuleRefs(moduleId)) || [])
     for (const composeId of composeIds) {
       this.deleteCompose(composeId)
     }
@@ -89,10 +87,7 @@ class LocalCache implements Cache {
     return this.data.composes.clear()
   }
 
-  private async addModuleRefs(
-    moduleId: ModuleId,
-    composeIds: ComposeId[],
-  ) {
+  private async addModuleRefs(moduleId: ModuleId, composeIds: ComposeId[]) {
     const value = this.data.refs.get(moduleId)
     if (value) {
       for (const composeId of composeIds) {
@@ -103,10 +98,7 @@ class LocalCache implements Cache {
     }
   }
 
-  private async removeModuleRefs(
-    moduleId: ModuleId,
-    composeIds: ComposeId[],
-  ) {
+  private async removeModuleRefs(moduleId: ModuleId, composeIds: ComposeId[]) {
     const value = this.data.refs.get(moduleId)
     if (value) {
       for (const composeId of composeIds) {

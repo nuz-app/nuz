@@ -286,10 +286,7 @@ class Worker {
   /**
    * Create a compose
    */
-  static async createCompose(
-    name: string,
-    modules?: { [id: string]: string },
-  ) {
+  static async createCompose(name: string, modules?: { [id: string]: string }) {
     return got(
       Object.assign(apiUrls.createCompose(this.endpoint, this.token), {
         data: { data: { name, modules } },
@@ -325,10 +322,7 @@ class Worker {
   /**
    * Add a collaborator to the compose
    */
-  static async addCollaboratorToCompose(
-    compose: string,
-    collaborator: any,
-  ) {
+  static async addCollaboratorToCompose(compose: string, collaborator: any) {
     return got(
       Object.assign(
         apiUrls.addCollaboratorToCompose(this.endpoint, this.token),
@@ -342,10 +336,7 @@ class Worker {
   /**
    * Update a collaborator of the compose
    */
-  static async updateCollaboratorOfCompose(
-    compose: string,
-    collaborator: any,
-  ) {
+  static async updateCollaboratorOfCompose(compose: string, collaborator: any) {
     return got(
       Object.assign(
         apiUrls.updateCollaboratorOfCompose(this.endpoint, this.token),
@@ -381,22 +372,16 @@ class Worker {
     modules: { [id: string]: string },
   ) {
     return got(
-      Object.assign(
-        apiUrls.setModulesForCompose(this.endpoint, this.token),
-        {
-          data: { compose, modules },
-        },
-      ),
+      Object.assign(apiUrls.setModulesForCompose(this.endpoint, this.token), {
+        data: { compose, modules },
+      }),
     )
   }
 
   /**
    * Remove modules from the compose
    */
-  static async removeModulesForCompose(
-    compose: string,
-    moduleIds: string[],
-  ) {
+  static async removeModulesForCompose(compose: string, moduleIds: string[]) {
     return got(
       Object.assign(
         apiUrls.removeModulesFromCompose(this.endpoint, this.token),

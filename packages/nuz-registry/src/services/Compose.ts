@@ -72,10 +72,7 @@ class Compose extends Service<ComposeId> {
   }
 
   async addModules(id: ComposeId, modules: RequiredModule[]) {
-    const compose = await this.Collection.findOne(
-      { _id: id },
-      { modules: 1 },
-    )
+    const compose = await this.Collection.findOne({ _id: id }, { modules: 1 })
     if (!compose) {
       throw new Error('Compose is not found')
     }
@@ -93,10 +90,7 @@ class Compose extends Service<ComposeId> {
   }
 
   async removeModules(id: ComposeId, moduleIds: ModuleId[]) {
-    const compose = await this.Collection.findOne(
-      { _id: id },
-      { modules: 1 },
-    )
+    const compose = await this.Collection.findOne({ _id: id }, { modules: 1 })
     if (!compose) {
       throw new Error('Compose is not found')
     }
