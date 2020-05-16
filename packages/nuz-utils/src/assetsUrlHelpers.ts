@@ -1,3 +1,5 @@
+import ensureOriginSlash from './ensureOriginSlash'
+
 export const parse = (pathname: string) => {
   const paths = pathname.split('/-/')
   if (!paths[1]) {
@@ -23,6 +25,12 @@ export const create = (
   file: string,
   origin: string,
 ) => `${origin}/${moduleId}/-/${version}/${file}`
+
+export const createOrigin = (
+  moduleId: string,
+  version: string,
+  origin: string,
+) => `${ensureOriginSlash(origin)}${moduleId}/-/${version}/`
 
 export const key = (moduleId: string, version: string, file: string) =>
   `${moduleId}/${version}/${file}`

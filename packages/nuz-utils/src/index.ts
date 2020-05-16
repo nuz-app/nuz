@@ -1,5 +1,4 @@
-export { default as qs } from 'qs'
-
+import * as qs from 'qs'
 import * as assetsUrlHelpers from './assetsUrlHelpers'
 import * as integrityHelpers from './integrityHelpers'
 import * as jsonHelpers from './jsonHelpers'
@@ -8,6 +7,7 @@ import * as tokenTypesHelpers from './tokenTypesHelpers'
 import * as validator from './validator'
 
 export {
+  qs,
   integrityHelpers,
   jsonHelpers,
   linkedUrls,

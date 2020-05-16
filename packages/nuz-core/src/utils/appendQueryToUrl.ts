@@ -13,9 +13,12 @@ function appendQueryToUrl(value: string, config: AppendConfig) {
 
   try {
     const url = new URL(value)
-    url.search = Object.assign(qs.parse(url.search) || {}, {
-      sourceMap,
-    })
+    url.search = qs.stringify(
+      Object.assign(qs.parse((url.search || '').replace(/^\?/, '')) || {}, {
+        sourceMap,
+      }),
+    )
+
     return url.href
   } catch {
     return value

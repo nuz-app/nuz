@@ -1,4 +1,5 @@
 import { ModuleFormats } from '@nuz/shared'
+import { assetsUrlHelpers } from '@nuz/utils'
 import path from 'path'
 import { Arguments } from 'yargs'
 
@@ -48,8 +49,10 @@ async function publish({
 
   const { name, library, version, output, publicPath } = moduleConfig
 
-  const registryPublicPath = (await Config.readConfig())[ConfigKeys.static]
-  const publicPathUsed = selfHosted ? publicPath : registryPublicPath
+  const staticOrigin = (await Config.readConfig())[ConfigKeys.static]
+  const publicPathUsed = selfHosted
+    ? publicPath
+    : assetsUrlHelpers.createOrigin(name, version, staticOrigin)
   const publicPathIsHaveSlash = checkIsHaveSlash(publicPathUsed)
   if (!publicPathIsHaveSlash) {
     throw new Error('The public path needs have slash at end')
@@ -97,7 +100,7 @@ async function publish({
     files: assets.files,
     format: ModuleFormats.umd,
   }
-  const options = { fallback, selfHosted, static: publicPathUsed }
+  const options = { fallback, selfHosted, static: staticOrigin }
 
   const tick = timer()
   const request = await Worker.publishModule(name, data, files, options)

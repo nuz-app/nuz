@@ -149,7 +149,7 @@ const webpackConfigFactory = (
   const bail = !dev
   const inputFile = path.join(dir, input)
   const { directory: distDir, filename: distFilename } = getOutput(dir, output)
-  const distChunkFilename = '[id].js'
+  const distChunkFilename = 'chunk-[id].js'
   const umdNamedDefine = format === 'umd'
   const scriptType = 'text/javascript'
   const loadTimeout = 120000
@@ -523,22 +523,25 @@ const webpackConfigFactory = (
           parallel: true,
         }),
       ],
+      usedExports: true,
       splitChunks: {
         chunks: 'all',
         name: true,
         automaticNameDelimiter: '~',
-        maxSize: 1024 * 1024,
+        minSize: 50 * 1024,
+        maxSize: 375 * 1024,
         automaticNameMaxLength: 40,
         maxInitialRequests: 3,
         minChunks: 1,
         cacheGroups: {
           vendors: {
+            name: 'vendors',
+            chunks: 'all',
             test: /[\\/]node_modules[\\/]/,
             priority: -10,
             reuseExistingChunk: true,
           },
           default: {
-            minChunks: 2,
             priority: -20,
             reuseExistingChunk: true,
           },

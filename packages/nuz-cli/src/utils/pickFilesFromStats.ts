@@ -5,11 +5,10 @@ import webpack from 'webpack'
 function pickFilesFromStats(
   stats: webpack.Stats.ToJsonOutput,
 ): fs.ReadStream[] {
-  const { outputPath, entrypoints } = stats
-  const { assets } = (entrypoints || {}).main
+  const { outputPath, assets } = stats
 
-  const files = assets.map((filename) =>
-    fs.createReadStream(path.join(outputPath as string, filename)),
+  const files = (assets || []).map((asset) =>
+    fs.createReadStream(path.join(outputPath as string, asset.name)),
   )
   return files
 }

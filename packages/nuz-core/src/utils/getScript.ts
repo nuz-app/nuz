@@ -18,7 +18,6 @@ const getScript = async (
   const mergedConfig = Object.assign({}, defaultConfig, config)
 
   if (mergedConfig?.resolver?.has(url)) {
-    console.log(`get script - hit - ${url}`)
     return mergedConfig.resolver.get(url)
   }
 

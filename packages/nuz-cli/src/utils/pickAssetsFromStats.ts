@@ -37,7 +37,7 @@ const pickAssetsFromStats = (
   stats: webpack.Stats.ToJsonOutput,
   options: PickOptions = {},
 ): { resolve: PickOutput; files: PickResouce[] } => {
-  const { outputPath, publicPath, entrypoints } = stats
+  const { outputPath, publicPath, assets: allAssets, entrypoints } = stats
   const { assets } = (entrypoints || {}).main
 
   if (!outputPath || !assets) {
@@ -54,7 +54,7 @@ const pickAssetsFromStats = (
     styles,
   }
 
-  const files = assets.map(transformAsset)
+  const files = (allAssets || []).map((item) => transformAsset(item.name))
 
   return { resolve, files }
 }
