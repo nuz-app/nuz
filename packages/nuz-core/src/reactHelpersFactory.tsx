@@ -19,10 +19,7 @@ export interface AppProps {
   injectHead?: React.ElementType
 }
 
-export function factoryInjectReact({
-  React,
-  ReactDOM,
-}) {
+export function factoryInjectReact({ React, ReactDOM }) {
   const originalRender = ReactDOM.render.bind(ReactDOM)
   const originalHydrate = ReactDOM.hydrate.bind(ReactDOM)
 
