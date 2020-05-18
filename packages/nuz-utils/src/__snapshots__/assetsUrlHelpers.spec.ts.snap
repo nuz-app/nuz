@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`create Fails Throw if invalid module id 1`] = `"Module is invalid, value @"`;
+
+exports[`create Fails Throw if invalid module id 2`] = `"Module is invalid, value 0.0.0"`;
+
+exports[`create Fails Throw if invalid version 1`] = `"Version is invalid, value 0-0"`;
+
+exports[`create Fails Throw if invalid version 2`] = `"Version is invalid, value .."`;
+
+exports[`createOrigin Fails Throw if invalid module id 1`] = `"Module is invalid, value @"`;
+
+exports[`createOrigin Fails Throw if invalid module id 2`] = `"Module is invalid, value 0.0.0"`;
+
+exports[`createOrigin Fails Throw if invalid version 1`] = `"Version is invalid, value 0-0"`;
+
+exports[`createOrigin Fails Throw if invalid version 2`] = `"Version is invalid, value .."`;
+
+exports[`parse Fails Throw if invalid module id 1`] = `"Module is invalid, value @"`;
+
+exports[`parse Fails Throw if invalid module id 2`] = `"Module is invalid, value 0.0.0"`;
+
+exports[`parse Fails Throw if invalid pathname 1`] = `"URL is invalid"`;
+
+exports[`parse Fails Throw if invalid version 1`] = `"Version is invalid, value 0-0"`;
+
+exports[`parse Fails Throw if invalid version 2`] = `"Version is invalid, value .."`;
