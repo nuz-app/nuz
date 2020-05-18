@@ -1,5 +1,5 @@
 const pick = <T = unknown>(data: any, keys: string[]): T => {
-  const result = {} as T
+  const result = {} as any
 
   for (const key of keys) {
     if (data[key] !== undefined) {

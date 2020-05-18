@@ -9,7 +9,8 @@ const POINTS = {
   5: UserAccessTokenTypes.publish,
   10: UserAccessTokenTypes.fullAccess,
 }
-export const parse = (value: UserAccessTokenTypes) => POINTS[value] || -1
+export const parse = (value: UserAccessTokenTypes): UserAccessTokenTypes | -1 =>
+  (POINTS as any)[value] || -1
 
 export const verify = (
   value: UserAccessTokenTypes,

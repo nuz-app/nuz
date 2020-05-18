@@ -1,3 +1,4 @@
+// @ts-ignore
 import selfsigned from 'selfsigned'
 
 const generateSelfCertificate = (

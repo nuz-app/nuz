@@ -19,7 +19,10 @@ export interface AppProps {
   injectHead?: React.ElementType
 }
 
-export function factoryInjectReact({ React, ReactDOM }) {
+export function factoryInjectReact({
+  React,
+  ReactDOM,
+}) {
   const originalRender = ReactDOM.render.bind(ReactDOM)
   const originalHydrate = ReactDOM.hydrate.bind(ReactDOM)
 
@@ -29,7 +32,11 @@ export function factoryInjectReact({ React, ReactDOM }) {
     }
 
     const renderFactory = (fn: any) =>
-      async function renderInjected(element, container, callback?) {
+      async function renderInjected(
+        element: JSX.Element,
+        container: Element,
+        callback?: () => any,
+      ) {
         await waitToReady.wait()
 
         return fn(element, container, callback)

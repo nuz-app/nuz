@@ -3,6 +3,7 @@ import {
   integrityHelpers,
   pick,
   validator,
+  versionHelpers,
 } from '@nuz/utils'
 import { Connection } from 'mongoose'
 
@@ -40,7 +41,6 @@ import checkIsNewScope from '../utils/checkIsNewScope'
 import createMongoConnection from '../utils/createMongoConnection'
 import parseModuleId from '../utils/parseModuleId'
 import validateAndTransformFiles from '../utils/validateAndTransformFiles'
-import * as versionHelpers from '../utils/versionHelpers'
 
 import Cache, { FactoryFn } from './Cache'
 import Storage from './Storage'

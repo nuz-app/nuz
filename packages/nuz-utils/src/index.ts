@@ -5,6 +5,7 @@ import * as jsonHelpers from './jsonHelpers'
 import * as linkedUrls from './linkedUrls'
 import * as tokenTypesHelpers from './tokenTypesHelpers'
 import * as validator from './validator'
+import * as versionHelpers from './versionHelpers'
 
 export {
   qs,
@@ -14,6 +15,7 @@ export {
   tokenTypesHelpers,
   validator,
   assetsUrlHelpers,
+  versionHelpers,
 }
 
 export { default as checkIsProductionMode } from './checkIsProductionMode'

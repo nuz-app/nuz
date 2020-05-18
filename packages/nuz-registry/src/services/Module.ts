@@ -1,3 +1,5 @@
+import { versionHelpers } from '@nuz/utils'
+
 import { LASTEST_TAG, MONGOOSE_ERROR_CODES } from '../lib/const'
 import {
   CollaboratorTypes,
@@ -8,8 +10,6 @@ import {
   ScopeId,
   UserId,
 } from '../types'
-
-import * as versionHelpers from '../utils/versionHelpers'
 
 import Service from './Service'
 

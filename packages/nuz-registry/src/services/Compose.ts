@@ -1,4 +1,4 @@
-import { validator } from '@nuz/utils'
+import { validator, versionHelpers } from '@nuz/utils'
 import { Types } from 'mongoose'
 
 import { MONGOOSE_ERROR_CODES } from '../lib/const'
@@ -12,8 +12,6 @@ import {
   RequiredModule,
   UserId,
 } from '../types'
-
-import * as versionHelpers from '../utils/versionHelpers'
 
 import Service from './Service'
 
