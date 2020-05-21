@@ -6,17 +6,14 @@ import {
   SOURCE_MAP_FILE_SIZE_LIMIT,
   TOTAL_FILE_SIZE_LIMIT,
 } from '../lib/const'
-import { ModuleId } from '../types'
+import { ModuleId, Resource, VersionSizes } from '../types'
 
-export interface TransformFile {
+export interface TransformFile extends Resource {
   fileName: string
   originalName: string
-  assetPath: string
   tempPath: string
   mimeType: string
   encoding: string
-  size: number
-  md5sum: string
   key: string
 }
 
@@ -31,9 +28,9 @@ function checkIsSourceCode(name: string) {
 function validateAndTransformFiles(
   filesUploaded: any[],
   filesInfo: any[],
-  moduleInfo: { id: ModuleId; version: string },
-): TransformFile[] {
-  const { id, version } = moduleInfo
+  moduleInfo: { id: ModuleId; version: string; resolve: any },
+): { files: TransformFile[]; sizes: VersionSizes } {
+  const { id, version, resolve } = moduleInfo
 
   const filesIsEmpty = !filesUploaded || filesUploaded.length === 0
   if (filesIsEmpty) {
@@ -47,7 +44,16 @@ function validateAndTransformFiles(
     )
   }
 
-  const transformedFiles: TransformFile[] = []
+  const mainPaths = resolve.main.path
+  const stylesPaths = (resolve.styles || []).map((item) => item.path)
+
+  const files: TransformFile[] = []
+  const sizes = {
+    total: 0,
+    main: 0,
+    styles: 0,
+  }
+
   for (const file of filesUploaded) {
     if (
       checkIsSourceMap(file.originalname) &&
@@ -69,28 +75,39 @@ function validateAndTransformFiles(
       )
     }
 
-    file.md5sum = hashFile(file.path, 'md5')
-    file.assetPath = filesInfo.find((item) => file.md5sum === item.md5sum)?.path
-    if (!file.assetPath) {
+    file.md5sum = hashFile(file.tempPath, 'md5')
+    file.path = filesInfo.find((item) => file.md5sum === item.md5sum)?.path
+    if (!file.path) {
       throw new Error(
         `File ${file.originalname} is invalid, not match with stats info!`,
       )
     }
 
-    transformedFiles.push({
-      fileName: file.filename,
-      originalName: file.originalname,
-      assetPath: file.assetPath,
-      tempPath: file.path,
-      mimeType: file.mimetype,
-      encoding: file.encoding,
+    if (mainPaths.includes(file.path)) {
+      sizes.main += file.size
+    } else if (stylesPaths.includes(file.path)) {
+      sizes.styles += file.size
+    }
+
+    sizes.total += file.size
+
+    files.push({
+      // NOTE: `url` will be added after upload to storage
+      url: null as any,
+      path: file.path,
       size: file.size,
       md5sum: file.md5sum,
-      key: assetsUrlHelpers.key(id, version, file.assetPath),
+
+      fileName: file.filename,
+      originalName: file.originalname,
+      tempPath: file.tempPath,
+      mimeType: file.mimetype,
+      encoding: file.encoding,
+      key: assetsUrlHelpers.key(id, version, file.path),
     })
   }
 
-  return transformedFiles
+  return { files, sizes }
 }
 
 export default validateAndTransformFiles

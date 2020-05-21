@@ -5,6 +5,7 @@ export interface Resource {
   url: string
   path: string
   md5sum: string
+  size: number
   // integrity: string
 }
 
@@ -24,6 +25,12 @@ export type TokenId = string
 // tslint:disable-next-line: no-empty-interface
 export interface Schedule {}
 
+export interface VersionSizes {
+  total: number
+  main: number
+  styles: number
+}
+
 export type VersionInfo = {
   version: string
   publisher: string
@@ -34,6 +41,7 @@ export type VersionInfo = {
     styles: Resource[]
   }
   files: Resource[]
+  sizes: VersionSizes
   library?: string
   exportsOnly?: string[]
   alias?: { [key: string]: string }

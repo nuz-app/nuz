@@ -6,7 +6,8 @@ import { ModuleDocument } from '../types'
 import {
   collaborator as collaboratorSchema,
   createdAt as createdAtSchema,
-  resource as resourceSchema,
+  detailsResource as detailsResourceSchema,
+  resolveResource as resolveResourceSchema,
   userId as userIdSchema,
 } from './schemas'
 
@@ -43,10 +44,15 @@ const schema: Schema = new Schema(
           publisher: userIdSchema,
           createdAt: createdAtSchema,
           resolve: {
-            main: resourceSchema,
-            styles: [resourceSchema],
+            main: resolveResourceSchema,
+            styles: [resolveResourceSchema],
           },
-          files: [resourceSchema],
+          files: [detailsResourceSchema],
+          sizes: {
+            total: { type: Number, required: true, default: -1 },
+            main: { type: Number, required: true, default: -1 },
+            styles: { type: Number, required: true, default: -1 },
+          },
           alias: { type: Schema.Types.Mixed, required: false },
           exportsOnly: [String],
           shared: [String],

@@ -31,6 +31,7 @@ class Module extends Service<ModuleId> {
       format,
       resolve,
       files,
+      sizes,
       exportsOnly,
       alias,
     } = data
@@ -45,6 +46,7 @@ class Module extends Service<ModuleId> {
       format,
       resolve,
       files,
+      sizes,
       exportsOnly,
       alias,
       fallback,
@@ -87,6 +89,7 @@ class Module extends Service<ModuleId> {
       format,
       resolve,
       files,
+      sizes,
       exportsOnly,
       alias,
     } = data
@@ -98,6 +101,7 @@ class Module extends Service<ModuleId> {
       format,
       resolve,
       files,
+      sizes,
       exportsOnly,
       alias,
       fallback,

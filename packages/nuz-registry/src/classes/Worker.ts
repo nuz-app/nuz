@@ -28,6 +28,7 @@ import {
   UpdateUserData,
   UserAccessTokenTypes,
   UserId,
+  VersionSizes,
   WorkerOptions,
 } from '../types'
 
@@ -40,7 +41,9 @@ import checkIsNewCompose from '../utils/checkIsNewCompose'
 import checkIsNewScope from '../utils/checkIsNewScope'
 import createMongoConnection from '../utils/createMongoConnection'
 import parseModuleId from '../utils/parseModuleId'
-import validateAndTransformFiles from '../utils/validateAndTransformFiles'
+import validateAndTransformFiles, {
+  TransformFile,
+} from '../utils/validateAndTransformFiles'
 
 import Cache, { FactoryFn } from './Cache'
 import Storage from './Storage'
@@ -165,12 +168,15 @@ class Worker {
     const isUseStorage =
       this._storageType === StorageTypes.provided ||
       (this._storageType === StorageTypes.full && !selfHosted)
-    const transformedFiles = isUseStorage
+    const filesAndSizes = isUseStorage
       ? validateAndTransformFiles(filesUploaded, data.files, {
           id: moduleId,
           version,
+          resolve,
         })
-      : []
+      : { files: [], sizes: null }
+
+    files = filesAndSizes.files as TransformFile[]
 
     const user = await this.verifyTokenOfUser(
       tokenId,
@@ -247,7 +253,7 @@ class Worker {
     if (isUseStorage) {
       const uploadResult = await this._storage?.uploadFiles(
         { id: moduleId, version },
-        transformedFiles,
+        files,
       )
 
       const bindStaticUrl = async (item: Resource) => {
@@ -274,6 +280,7 @@ class Worker {
     const transformed = {
       ...data,
       files,
+      sizes: filesAndSizes.sizes as VersionSizes,
       resolve,
     }
 

@@ -38,5 +38,6 @@ export type PublishModuleData = Pick<
   | 'resolve'
   | 'exportsOnly'
   | 'alias'
+  | 'sizes'
   | 'fallback'
 > & { name: string; scope?: string; files: Resource[] }

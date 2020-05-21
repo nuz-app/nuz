@@ -27,9 +27,10 @@ export const execute: ServerlessRoute = (
   const cleanUp = (files: any[]) =>
     (files || []).forEach((file) =>
       fs.unlink(
-        file.path,
+        file.tempPath,
         (error) =>
-          error && console.warn(`Can't unlink temporary file at ${file.path}`),
+          error &&
+          console.warn(`Can't unlink temporary file at ${file.tempPath}`),
       ),
     )
 
@@ -40,7 +41,9 @@ export const execute: ServerlessRoute = (
 
     const data = jsonHelpers.parse(_data)
     const options = jsonHelpers.parse(_options) || {}
-    const files = (request as any).files
+    const files = (request as any).files.map((item) =>
+      Object.assign(item, { path: undefined, tempPath: item.path }),
+    )
 
     const formIsMissing = !token || !id || !data
     if (formIsMissing) {

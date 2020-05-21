@@ -19,10 +19,20 @@ export const collaborator = new Schema(
   { _id: false },
 )
 
-export const resource = new Schema(
+export const detailsResource = new Schema(
   {
     url: { type: String, required: true },
     path: { type: String, required: true },
+    size: { type: Number, required: true },
+    integrity: { type: String, required: true },
+    md5sum: { type: String, required: true },
+  },
+  { _id: false },
+)
+
+export const resolveResource = new Schema(
+  {
+    url: { type: String, required: true },
     integrity: { type: String, required: true },
   },
   { _id: false },
