@@ -13,13 +13,6 @@ import logoutFromUser from './logoutFromUser'
 import useAs from './useAs'
 import whoami from './whoami'
 
-const setPositionalForRegister = (yarg) =>
-  yarg.positional('username', {
-    describe: 'Username wants to log out',
-    type: 'string',
-    required: false,
-  })
-
 export const setCommands = (yargs) => {
   yargs.command('user', 'Manage user', (child) => {
     child.usage('usage: $0 user <item> [options]')
@@ -32,16 +25,21 @@ export const setCommands = (yargs) => {
     )
 
     child.command(
-      'login',
+      'login [username]',
       'Login user account',
-      (yarg) => yarg,
+      (yarg) =>
+        yarg.option('registry', {
+          describe: 'Log into the specified registry',
+          type: 'string',
+          required: false,
+        }),
       handleOnCommand(loginAsUser),
     )
 
     child.command(
       'logout [username]',
       'Logout of user account',
-      setPositionalForRegister,
+      (yarg) => yarg,
       handleOnCommand(logoutFromUser),
     )
 
@@ -131,14 +129,19 @@ export const setCommands = (yargs) => {
   yargs.command(
     'login',
     'Login user account [alias: user-login]',
-    (yarg) => yarg,
+    (yarg) =>
+      yarg.option('registry', {
+        describe: 'Log into the specified registry',
+        type: 'string',
+        required: false,
+      }),
     handleOnCommand(loginAsUser),
   )
 
   yargs.command(
     'logout [username]',
     'Logout of user account [alias: user-logout]',
-    setPositionalForRegister,
+    (yarg) => yarg,
     handleOnCommand(logoutFromUser),
   )
 

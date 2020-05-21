@@ -23,26 +23,37 @@ const passwordQuestion = {
 async function loginAsUser({
   username: _username,
   password: _password,
-}: Arguments<{ username: string; password: string }>) {
-  const isFilled = _username && _password
-  const result = isFilled
-    ? { username: _username, password: _password }
-    : await createQuestions<{ username: string; password: string }>([
-        usernameQuestion,
-        passwordQuestion,
-      ])
-  const { username, password } = result
+  registry: _registry,
+}: Arguments<{ username?: string; password?: string; registry?: string }>) {
+  const placeholder = { username: _username, password: _password }
+
+  const isFilled = !!(_username && _password)
+  const result =
+    !isFilled &&
+    (await createQuestions<{ username: string; password: string }>(
+      // @ts-ignore
+      [!_username && usernameQuestion, !_password && passwordQuestion].filter(
+        Boolean,
+      ),
+    ))
+  const { username, password } = Object.assign(placeholder, result)
 
   if (!username || !password) {
     throw new Error('Missing `username` or `password` info')
   }
 
-  const config = await Config.readConfig()
-  info(
-    `Logging in to the registry server at ${print.bold(
-      config[ConfigKeys.registry],
-    )}`,
-  )
+  let registry = _registry
+  if (registry) {
+    await setConfig({
+      key: ConfigKeys.registry,
+      value: registry,
+    } as any)
+  } else {
+    const config = await Config.readConfig()
+    registry = config[ConfigKeys.registry]
+  }
+
+  info(`Logging in to the registry server at ${print.bold(registry)}`)
 
   const tick = timer()
   const request = await Worker.loginAsUser(username, password)
