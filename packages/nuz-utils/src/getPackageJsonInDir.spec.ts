@@ -25,17 +25,16 @@ describe('getPackageJsonInDir', () => {
       // @ts-ignore            
       expect(getPackageJsonInDir(1234)).toBe(null)
     })
+
+    it('With an any wrong string', () => {
+      expect(getPackageJsonInDir("nuz")).toBe(null)
+    })
   })
 
   describe('Get package.json success', () => {
-    it('With an empty string', () => {
-      getPackageJsonInDir('')
-      expect(require).toBeCalledWith('/package.json')
-    })
-
-    it('With an any string', () => {
-      getPackageJsonInDir('nuz')
-      expect(require).toBeCalledWith('nuz/package.json')
+    it('With a correct url', () => {
+      const x = require('../package.json')
+      expect(getPackageJsonInDir('..')).toEqual(x)
     })
   })
 })
