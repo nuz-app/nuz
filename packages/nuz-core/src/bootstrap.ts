@@ -1,12 +1,7 @@
-import { SHARED_CONFIG_KEY } from '@nuz/shared'
-import {
-  checkIsObject,
-  checkIsUrl,
-  getRegistryFetchUrl,
-  jsonHelpers,
-} from '@nuz/utils'
+import { NUZ_REGISTRY_URL, SHARED_CONFIG_KEY } from '@nuz/shared'
+import { checkIsObject, ensureOrigin, getConfigUrl } from '@nuz/utils'
 
-import { BootstrapConfig, RegistryConfig, RuntimePlatforms } from './types'
+import { BootstrapConfig, RuntimePlatforms } from './types'
 
 import Worker from './classes/Worker'
 
@@ -16,7 +11,6 @@ import getModules, { initModules } from './utils/effects/getModules'
 import fetchConfig from './utils/fetchConfig'
 import getRuntimePlatform from './utils/getRuntimePlatform'
 import uniq from './utils/uniq'
-import * as validator from './utils/validator'
 
 import * as waitToReady from './waitToReady'
 
@@ -29,50 +23,43 @@ const mergeConfig = (
     modules: Object.assign({}, modules, localConfig.modules),
   })
 
-const getRegistryUrl = (registry: any) => {
-  let value = typeof registry === 'string' ? registry : (registry as any).url
-  value = checkIsUrl(value) ? value : getRegistryFetchUrl(value)
-  return value
-}
-
 const configFactory = async (config: BootstrapConfig) => {
-  const configIsInvalid = !validator.bootstrapConfig(config)
-  if (configIsInvalid) {
-    throw new Error(
-      `Bootstrap config is invalid, config: ${jsonHelpers.stringify(config)}`,
-    )
+  if (!config) {
+    throw new Error(`Config bootstrap is required`)
   }
 
-  const isNode = getRuntimePlatform() === RuntimePlatforms.node
-  const registryIsDefined = !!config.registry
-  const sharedIsValid =
-    !isNode && registryIsDefined && checkIsObject(window[SHARED_CONFIG_KEY])
+  const registryUrl = ensureOrigin(
+    config?.registry || NUZ_REGISTRY_URL,
+  ) as string
 
-  let configOnRegistry = !sharedIsValid
+  const isNode = getRuntimePlatform() === RuntimePlatforms.node
+  const composeIsDefined = !!config.compose
+  const sharedIsValid =
+    !isNode && composeIsDefined && checkIsObject(window[SHARED_CONFIG_KEY])
+
+  let configOfCompose = !sharedIsValid
     ? undefined
     : (window[SHARED_CONFIG_KEY] as BootstrapConfig)
 
-  if (registryIsDefined && !configOnRegistry) {
-    const registryConfig = (config.registry || {}) as RegistryConfig
-    const registryUrl = getRegistryUrl(config.registry)
+  if (composeIsDefined && !configOfCompose) {
+    const configUrl = getConfigUrl(config.compose as string, registryUrl)
 
-    configOnRegistry = await fetchConfig<BootstrapConfig>(
-      registryUrl,
+    configOfCompose = await fetchConfig<BootstrapConfig>(
+      configUrl,
       {
-        timeout: registryConfig.timeout || -1,
-        integrity: registryConfig.integrity || '',
+        timeout: 10000,
       },
-      registryConfig.retries || 1,
+      1,
     )
 
-    if (configOnRegistry.warnings) {
-      configOnRegistry.warnings.forEach(({ code, message }) => {
+    if (configOfCompose.warnings) {
+      configOfCompose.warnings.forEach(({ code, message }) => {
         console.warn(`[${code}] ${message}`)
       })
     }
   }
 
-  return mergeConfig(config, configOnRegistry)
+  return mergeConfig(config, configOfCompose)
 }
 
 export let worker

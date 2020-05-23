@@ -9,13 +9,6 @@ export interface VendorsConfig {
   [dependency: string]: any
 }
 
-export interface RegistryConfig {
-  url: string
-  timeout?: number
-  retries?: number
-  integrity?: string
-}
-
 export interface LinkedConfig {
   port?: number
 }
@@ -34,9 +27,13 @@ export interface BootstrapConfig {
    */
   ssr?: boolean
   /**
-   * Config registry to resolve
+   * Config registry server endpoint
    */
-  registry?: string | RegistryConfig
+  registry?: string
+  /**
+   * Compose of application
+   */
+  compose?: string
   /**
    * Linked info, use for workspace
    */
