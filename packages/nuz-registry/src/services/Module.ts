@@ -151,7 +151,7 @@ class Module extends Service<ModuleId> {
     const result = await this.Collection.find(
       { scope: { $in: scopeIds } },
       fields || { _id: 1 },
-      limit && { limit },
+      !limit ? { limit: 1 } : { limit },
     )
     return result
   }

@@ -2,6 +2,8 @@ import axios, { AxiosRequestConfig } from 'axios'
 
 import * as jsonHelpers from './jsonHelpers'
 
+export type GotRequestConfig = AxiosRequestConfig
+
 const got = async (config: AxiosRequestConfig): Promise<any> => {
   try {
     const response = await axios(config)

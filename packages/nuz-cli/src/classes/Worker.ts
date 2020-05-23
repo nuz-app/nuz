@@ -1,5 +1,5 @@
 import { UserAccessTokenTypes } from '@nuz/shared'
-import { got } from '@nuz/utils'
+import { got, GotRequestConfig } from '@nuz/utils'
 import FormData from 'form-data'
 import fs from 'fs'
 
@@ -18,7 +18,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.createUser(this.endpoint), {
         data: { data: { email, name, username, password } },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -26,7 +26,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.loginUser(this.endpoint), {
         data: { username, password },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -38,7 +38,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.createTokenForUser(this.endpoint, this.token), {
         data: { type: requiredType },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -46,7 +46,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.deleteTokenFromUser(this.endpoint), {
         data: { id, token },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -54,7 +54,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.getAllComposeOfUser(this.endpoint), {
         params: { user },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -62,7 +62,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.getAllScopesOfUser(this.endpoint), {
         params: { user },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -70,7 +70,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.getAllModulesOfUser(this.endpoint), {
         params: { user },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -81,7 +81,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.getScope(this.endpoint, this.token), {
         params: { scope, fields },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -92,7 +92,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.createScope(this.endpoint, this.token), {
         data: { data: { name } },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -103,7 +103,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.deleteScope(this.endpoint, this.token), {
         data: { scope },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -117,7 +117,7 @@ class Worker {
         {
           params: { scope },
         },
-      ),
+      ) as GotRequestConfig,
     )
   }
 
@@ -128,7 +128,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.addCollaboratorToScope(this.endpoint, this.token), {
         data: { scope, collaborator },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -142,7 +142,7 @@ class Worker {
         {
           data: { scope, collaborator },
         },
-      ),
+      ) as GotRequestConfig,
     )
   }
 
@@ -159,7 +159,7 @@ class Worker {
         {
           data: { scope, collaboratorId: collaborator },
         },
-      ),
+      ) as GotRequestConfig,
     )
   }
 
@@ -170,7 +170,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.getModule(this.endpoint, this.token), {
         params: { module, fields },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -194,7 +194,7 @@ class Worker {
       Object.assign(api, {
         data: form,
         headers: Object.assign(form.getHeaders(), api.headers),
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -209,7 +209,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.setDeprecateForModule(this.endpoint, this.token), {
         data: { module, version, deprecate },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -223,7 +223,7 @@ class Worker {
         {
           params: { module },
         },
-      ),
+      ) as GotRequestConfig,
     )
   }
 
@@ -237,7 +237,7 @@ class Worker {
         {
           data: { module, collaborator },
         },
-      ),
+      ) as GotRequestConfig,
     )
   }
 
@@ -251,7 +251,7 @@ class Worker {
         {
           data: { module, collaborator },
         },
-      ),
+      ) as GotRequestConfig,
     )
   }
 
@@ -268,7 +268,7 @@ class Worker {
         {
           data: { module, collaboratorId: collaborator },
         },
-      ),
+      ) as GotRequestConfig,
     )
   }
 
@@ -279,7 +279,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.getCompose(this.endpoint, this.token), {
         params: { compose, fields },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -290,7 +290,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.createCompose(this.endpoint, this.token), {
         data: { data: { name, modules } },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -301,7 +301,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.deleteCompose(this.endpoint, this.token), {
         data: { compose },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -315,7 +315,7 @@ class Worker {
         {
           params: { compose },
         },
-      ),
+      ) as GotRequestConfig,
     )
   }
 
@@ -329,7 +329,7 @@ class Worker {
         {
           data: { compose, collaborator },
         },
-      ),
+      ) as GotRequestConfig,
     )
   }
 
@@ -343,7 +343,7 @@ class Worker {
         {
           data: { compose, collaborator },
         },
-      ),
+      ) as GotRequestConfig,
     )
   }
 
@@ -360,7 +360,7 @@ class Worker {
         {
           data: { compose, collaboratorId: collaborator },
         },
-      ),
+      ) as GotRequestConfig,
     )
   }
 
@@ -374,7 +374,7 @@ class Worker {
     return got(
       Object.assign(apiUrls.setModulesForCompose(this.endpoint, this.token), {
         data: { compose, modules },
-      }),
+      }) as GotRequestConfig,
     )
   }
 
@@ -388,7 +388,7 @@ class Worker {
         {
           data: { compose, moduleIds },
         },
-      ),
+      ) as GotRequestConfig,
     )
   }
 }

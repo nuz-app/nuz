@@ -21,7 +21,7 @@ export {
 export { default as checkIsProductionMode } from './checkIsProductionMode'
 export { default as checkIsObject } from './checkIsObject'
 export { default as checkIsUrlOk } from './checkIsUrlOk'
-export { default as got } from './got'
+export { default as got, GotRequestConfig } from './got'
 export { default as getPackageJsonInDir } from './getPackageJsonInDir'
 export { default as compareFilesByHash } from './compareFilesByHash'
 export { default as generateSelfCertificate } from './generateSelfCertificate'

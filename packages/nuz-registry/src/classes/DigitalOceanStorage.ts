@@ -1,9 +1,10 @@
 import { assetsUrlHelpers } from '@nuz/utils'
 
-import aws from 'aws-sdk'
 import fs from 'fs'
 import throat from 'throat'
 import util from 'util'
+
+import aws = require('aws-sdk')
 
 import { ModuleId } from '../types'
 import { TransformFile } from '../utils/validateAndTransformFiles'
@@ -66,9 +67,16 @@ class DigitalOceanStorage implements Storage {
       )
     }
 
+    let awsKit
+    try {
+      awsKit = require('aws-sdk')
+    } catch {
+      throw new Error('Please install `aws-sdk` to use DigitalOceanStorage')
+    }
+
     this._origin = origin
     this._bucket = bucket
-    this._s3 = new aws.S3({
+    this._s3 = new awsKit.S3({
       endpoint,
       accessKeyId,
       secretAccessKey,
