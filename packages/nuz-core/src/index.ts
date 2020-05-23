@@ -7,16 +7,17 @@ export * from './types'
 export { default as load } from './load'
 export { default as resolve } from './resolve'
 export { default as bootstrap } from './bootstrap'
-
 export { default as getTagsInHead } from './getTagsInHead'
-export { wait as waitToReady } from './waitToReady'
+
+export { wait as checkIsReady } from './waitToReady'
 
 export {
   default as reactHelpersFactory,
-  ReactHelpersFactoryOptions,
-  ReactHelpersConfig,
-} from './reactHelpersFactory'
+  default as reactIntegrate,
+  ReactFactoryDependencies,
+} from './factories/react'
 export {
   default as nextHelpersFactory,
-  NextHelpersConfig,
-} from './nextHelpersFactory'
+  default as nextIntegrate,
+  NextFactoryConfig,
+} from './factories/next'

@@ -1,27 +1,50 @@
 import { REACT_DOM_INJECTED } from '@nuz/shared'
 
-import * as DOMHelpers from './utils/DOMHelpers'
+import getTagsInHead from '../getTagsInHead'
+import * as DOMHelpers from '../utils/DOMHelpers'
+import * as waitToReady from '../waitToReady'
 
-import getTagsInHead from './getTagsInHead'
-import * as waitToReady from './waitToReady'
-
-export interface ReactHelpersConfig {
-  React: any
-  ReactDOM: any
-}
-
-export interface ReactHelpersFactoryOptions {
-  autoInject?: boolean
-}
-
-export interface AppProps {
+export interface ReactAppProps {
   component?: React.ElementType
   injectHead?: React.ElementType
 }
 
-export function factoryInjectReact({ React, ReactDOM }) {
-  const originalRender = ReactDOM.render.bind(ReactDOM)
-  const originalHydrate = ReactDOM.hydrate.bind(ReactDOM)
+export interface ReactFactoryDependencies {
+  react: any
+  'react-dom': any
+}
+
+function ensureDependendies(deps: Partial<ReactFactoryDependencies>) {
+  const dependencies = {} as ReactFactoryDependencies
+
+  dependencies.react = deps.react
+  if (!dependencies.react) {
+    try {
+      dependencies.react = require('react')
+      // tslint:disable-next-line: no-empty
+    } catch {}
+  }
+
+  dependencies['react-dom'] = deps['react-dom']
+  if (!dependencies['react-dom']) {
+    try {
+      dependencies['react-dom'] = require('react-dom')
+      // tslint:disable-next-line: no-empty
+    } catch {}
+  }
+
+  return dependencies
+}
+
+export function injectReactDOMFactory(
+  ReactDOM: ReactFactoryDependencies['react-dom'],
+): () => void {
+  if (!ReactDOM) {
+    throw new Error('No `react-dom` dependency found, please provide to use')
+  }
+
+  const renderOriginal = ReactDOM.render.bind(ReactDOM)
+  const hydrateOriginal = ReactDOM.hydrate.bind(ReactDOM)
 
   return () => {
     if (ReactDOM[REACT_DOM_INJECTED]) {
@@ -40,8 +63,8 @@ export function factoryInjectReact({ React, ReactDOM }) {
       }
 
     Object.assign(ReactDOM, {
-      render: renderFactory(originalRender),
-      hydrate: renderFactory(originalHydrate),
+      render: renderFactory(renderOriginal),
+      hydrate: renderFactory(hydrateOriginal),
     })
 
     Object.defineProperty(ReactDOM, REACT_DOM_INJECTED, { value: true })
@@ -50,31 +73,20 @@ export function factoryInjectReact({ React, ReactDOM }) {
   }
 }
 
-const defaultOptions = {
-  autoInject: true,
-}
+function reactHelpersFactory(deps: Partial<ReactFactoryDependencies> = {}) {
+  const dependencies = ensureDependendies(deps)
 
-function reactHelpersFactory(
-  { React, ReactDOM }: ReactHelpersConfig,
-  options?: ReactHelpersFactoryOptions,
-) {
-  const { autoInject } = Object.assign({}, defaultOptions, options)
-
-  if (!React) {
-    throw new Error(
-      'React fields in config is required to use `reactHelpersFactory` helper!',
-    )
+  if (!dependencies.react) {
+    throw new Error('No `react` dependency found, please provide to use')
+  } else if (!dependencies['react-dom']) {
+    throw new Error('No `react-dom` dependency found, please provide to use')
   }
 
-  if (!ReactDOM) {
-    throw new Error(
-      'ReactDOM fields in config is required to use `reactHelpersFactory` helper!',
-    )
-  }
+  const { react: React, 'react-dom': ReactDOM } = dependencies
 
   const { useMemo } = React
 
-  const App: React.FunctionComponent<AppProps> = ({
+  const App: React.FunctionComponent<ReactAppProps> = ({
     component: Component = 'main',
     injectHead: InjectHead,
     children,
@@ -99,7 +111,7 @@ function reactHelpersFactory(
 
       if (injectHeadIsNotFound) {
         console.warn(
-          'Please provide injectHead component to render links tag in head!',
+          'Please provide `injectHead` component to render tags in head!',
         )
         console.warn(
           'Suggestion: use `next/head` for Next.js or `react-helmet` for creact-react-app',
@@ -123,19 +135,16 @@ function reactHelpersFactory(
     }, [])
 
     return (
-      <Component {...rest} id="main">
+      <Component {...rest} id="nuz-main">
         {head}
         {children}
       </Component>
     )
   }
 
-  const injectReact = factoryInjectReact({ React, ReactDOM })
-  if (autoInject) {
-    injectReact()
-  }
+  injectReactDOMFactory(ReactDOM)()
 
-  return { App, injectReact }
+  return { App }
 }
 
 export default reactHelpersFactory

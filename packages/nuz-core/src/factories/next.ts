@@ -2,23 +2,27 @@ import { compareFilesByHash } from '@nuz/utils'
 import fs from 'fs'
 import path from 'path'
 
-import { worker } from './bootstrap'
-import { factoryInjectReact } from './reactHelpersFactory'
+import { worker } from '../bootstrap'
 
-export interface NextHelpersConfig {
+import { injectReactDOMFactory } from './react'
+
+export interface NextFactoryConfig {
   require: NodeRequire
   autoInject?: boolean
 }
 
 const LOADABLE_UPDATED_PATH = path.join(
   __dirname,
-  '../bundled/next/loadable.js',
+  '../../bundled/next/loadable.js',
 )
 
-const nextHelpersFactory = ({
-  require,
-  autoInject = true,
-}: NextHelpersConfig) => {
+const nextHelpersFactory = (config: NextFactoryConfig) => {
+  const { require, autoInject = true } = config || {}
+
+  if (!require) {
+    throw new Error('`require` is required in config, please provide to use')
+  }
+
   const loadableInApp = require.resolve('next/dist/next-server/lib/loadable')
 
   // Replace loadable file of Next.js
@@ -52,10 +56,7 @@ const nextHelpersFactory = ({
     })
 
   const injectNext = () => {
-    factoryInjectReact({
-      React: require('react'),
-      ReactDOM: require('react-dom'),
-    })()
+    injectReactDOMFactory(require('react-dom'))()
 
     const nextServerRender = require('next/dist/next-server/server/render')
     const renderToHTML = nextServerRender.renderToHTML.bind(nextServerRender)
@@ -77,7 +78,7 @@ const nextHelpersFactory = ({
     injectNext()
   }
 
-  return { withNuz }
+  return { withNuz, injectNext }
 }
 
 export default nextHelpersFactory
