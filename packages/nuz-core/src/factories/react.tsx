@@ -99,9 +99,9 @@ function reactIntegrate(deps: Partial<ReactFactoryDependencies> = {}) {
         ? definedElements
         : definedElements.map((item) => {
             const { type: TagComponent, attributes } = item
-            const { type, ref, href, 'data-href': dataHref } = attributes
+            const { type, rel, href, 'data-href': dataHref } = attributes
 
-            const key = `${type}:${ref}:${href || dataHref}`
+            const key = `${type}:${rel}:${href || dataHref}`
             const props = Object.assign({ key }, item.attributes)
 
             return <TagComponent {...props} />

@@ -560,13 +560,7 @@ class Modules {
     const cacheId = this.moduleCacheId(item)
     // In server-side mode will not use cache resolved modules
     // maybe cache the module resources rather than cache resolved
-    if (this._ssr) {
-      resolvedModule = await this.resolve(item, options)
-
-      return resolvedModule
-    }
-
-    if (this._resolvedModules.has(cacheId)) {
+    if (!this._ssr && this._resolvedModules.has(cacheId)) {
       return this._resolvedModules.get(cacheId) as any
     }
 
@@ -728,10 +722,16 @@ class Modules {
    */
   getElementsInHead(): TagElement[] {
     const modules = this.getAllModules()
-    const resolvedModule = this._resolvedModules.entries()
+    const resolvedModules = this._resolvedModules.entries()
     if (this._ssr) {
-      for (const [id] of resolvedModule) {
-        this.ping(modules[id] as RequiredBaseItem, {
+      const valuesOf = Object.values(modules)
+      for (const [id] of resolvedModules) {
+        let item = modules[id]
+        if (!item) {
+          item = valuesOf.find((m) => m.id === id) as BaseItemConfig
+        }
+
+        this.ping(item as RequiredBaseItem, {
           styles: false,
         })
       }
@@ -750,7 +750,7 @@ class Modules {
     }
 
     if (this._ssr) {
-      for (const [_, item] of resolvedModule) {
+      for (const [_, item] of resolvedModules) {
         tags.push(...(item.styles || []))
       }
     }

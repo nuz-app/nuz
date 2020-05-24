@@ -80,7 +80,7 @@ class Config {
     this._vendors = {}
     this._modules = {}
     this._shared = {}
-    this._linked = linked
+    this._linked = Object.assign({}, linked)
     this._ssr = ssr as boolean
     this._preload = preload || []
     this._locked = false
