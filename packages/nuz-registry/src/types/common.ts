@@ -47,7 +47,7 @@ export type VersionInfo = {
   alias?: { [key: string]: string }
   fallback?: string
   deprecated?: string
-  shared?: string[],
+  shared?: string[]
   externals?: string[]
 }
 

@@ -11,6 +11,7 @@ export interface MongoConfig {
   url: string
 }
 
+// tslint:disable-next-line: no-empty-interface
 export interface ServerlessOptions {}
 
 export interface HttpsConfig {

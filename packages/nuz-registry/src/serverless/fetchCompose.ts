@@ -17,7 +17,7 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
       if (formIsMissing) {
         throw new Error('Missing compose id to fetch data')
       }
-      
+
       const item = await worker.fetchCompose(compose as string)
       response.json(item)
       return true
