@@ -4,7 +4,6 @@ import { CollaboratorTypes } from '../types'
 
 import Worker from '../classes/Worker'
 import * as collaboratorTypesHelpers from '../utils/collaboratorTypesHelpers'
-import ensureObjectId from '../utils/ensureObjectId'
 import onRoute from '../utils/onRoute'
 
 import { ServerlessRoute } from './types'

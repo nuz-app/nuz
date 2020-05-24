@@ -13,7 +13,8 @@
     "strict": true,
     "noImplicitAny": false,
     "composite": true,
-    "noEmitOnError": true
+    "noEmitOnError": true,
+    "noUnusedLocals": true
   },
   "exclude": [
     "**/examples/**"

@@ -51,9 +51,7 @@ async function standalone({ port = 4000 }: Arguments<{ port?: number }>) {
     featureConfig,
   )
 
-  const watcher = await runWatchMode(
-    buildConfig as webpackCompiler.AllowWebpackConfig,
-  )
+  await runWatchMode(buildConfig as webpackCompiler.AllowWebpackConfig)
   info('Compiler was created for this module')
 
   const server = serve(

@@ -52,15 +52,20 @@ export type ConfigInitial = Pick<
 >
 
 class Config {
+  // @ts-ignore
   private _registry: string
+  // @ts-ignore
   private _global: boolean
   private _vendors: VendorsConfig
   private _modules: ModulesConfig
   private _shared: SharedConfig
+  // @ts-ignore
   private _linked: BootstrapConfig['linked']
   private _preload: BootstrapConfig['preload']
   private _locked: boolean
+  // @ts-ignore
   private _dev: boolean
+  // @ts-ignore
   private _ssr: boolean
 
   constructor({

@@ -70,7 +70,7 @@ async function register() {
   }
 
   const tick = timer()
-  const request = await Worker.createUser({ email, name, username, password })
+  await Worker.createUser({ email, name, username, password })
   info(`Successfully created ${print.name(username)} user account`)
 
   if (autoLogin) {

@@ -110,7 +110,7 @@ class Module extends Service<ModuleId> {
 
     const versionId = versionHelpers.encode(versionInfo.version)
 
-    const result = await this.Collection.updateOne(
+    await this.Collection.updateOne(
       { _id: moduleId },
       {
         $set: {

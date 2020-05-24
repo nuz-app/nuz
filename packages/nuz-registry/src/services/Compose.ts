@@ -82,7 +82,7 @@ class Compose extends Service<ComposeId> {
     updatedModules.push(...modules)
     compose.modules = updatedModules as Types.Array<RequiredModule>
 
-    const result = await compose.save()
+    await compose.save()
 
     return { _id: id }
   }
@@ -98,7 +98,7 @@ class Compose extends Service<ComposeId> {
     )
     compose.modules = updatedModules as Types.Array<RequiredModule>
 
-    const result = await compose.save()
+    await compose.save()
 
     return { _id: id }
   }

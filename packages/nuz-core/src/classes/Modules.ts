@@ -19,7 +19,6 @@ import {
 } from '../types'
 
 import checkIsFunction from '../utils/checkIsFunction'
-import checkIsInitialized from '../utils/checkIsInitialized'
 import * as DOMHelpers from '../utils/DOMHelpers'
 import getConfig, { Config } from '../utils/effects/getConfig'
 import fetchConfig from '../utils/fetchConfig'
@@ -127,12 +126,16 @@ class Modules {
   private _linked: Linked
 
   constructor() {
-    if (!checkIsInitialized()) {
-      throw new Error('Modules was not call bootstrap before used')
+    this._config = getConfig()
+    if (!this._config) {
+      throw new Error('No configuration to use found')
     }
 
-    this._config = getConfig()
     this._platform = getRuntimePlatform()
+    if (!this._platform) {
+      throw new Error('Unable to determine the platform to proceed')
+    }
+
     this._globals = new Globals(this._platform)
 
     // Set is development mode
@@ -158,7 +161,9 @@ class Modules {
       this._ssr && !this._dev ? initialCacheInNode() : undefined
 
     if (!isUseSSR && isNode) {
-      throw new Error(`Can't run in Node environment if not enable SSR mode!`)
+      throw new Error(
+        `Can't run in Node environment if not enable server-side rendering`,
+      )
     }
   }
 
@@ -228,6 +233,7 @@ class Modules {
   /**
    * Flush exports module in safe context
    */
+  // @ts-ignore
   private flushContext(context: any, library?: string) {
     const namedExports = pickNamedExports(context, library)
 
@@ -702,6 +708,7 @@ class Modules {
    * Resolve a module by name or id
    */
   async resolveModule<T = unknown>(id: string): Promise<T> {
+    console.log('called resolve module', { id })
     const resolved = await this.findAndLoadModule<T>(id)
 
     return resolved?.module

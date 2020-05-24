@@ -167,46 +167,42 @@ async function standalone({
   )
 
   // Build and watching modules
-  const watcher = await runWatchMode(
-    webpackConfigs,
-    { clearConsole: true },
-    ({ data }) => {
-      const { children = [] } = data || {}
+  await runWatchMode(webpackConfigs, { clearConsole: true }, ({ data }) => {
+    const { children = [] } = data || {}
 
-      const linkedModules = children.reduce((acc, item) => {
-        const name = item.name?.replace(
-          /^(@nuz\/cli\(([\S\s]+)\))/,
-          '$2',
-        ) as string
-        const childModuleInfo = modulesConfig[name]
-        if (!childModuleInfo) {
-          throw Error(`Not found config of ${name} module`)
-        }
+    const linkedModules = children.reduce((acc, item) => {
+      const name = item.name?.replace(
+        /^(@nuz\/cli\(([\S\s]+)\))/,
+        '$2',
+      ) as string
+      const childModuleInfo = modulesConfig[name]
+      if (!childModuleInfo) {
+        throw Error(`Not found config of ${name} module`)
+      }
 
-        const childModuleAssets = pickAssetsFromStats(item)
-        const childModuleUpstreamResolve = {
-          main: childModuleAssets.resolve.main.url,
-          styles: childModuleAssets.resolve.styles.map((style) => style.url),
-        }
+      const childModuleAssets = pickAssetsFromStats(item)
+      const childModuleUpstreamResolve = {
+        main: childModuleAssets.resolve.main.url,
+        styles: childModuleAssets.resolve.styles.map((style) => style.url),
+      }
 
-        return Object.assign(acc, {
-          [name]: {
-            shared: childModuleInfo.config.shared,
-            library: childModuleInfo.webpack.output.library,
-            format: childModuleInfo.webpack.output.libraryTarget,
-            upstream: childModuleUpstreamResolve,
-          },
-        })
-      }, {})
+      return Object.assign(acc, {
+        [name]: {
+          shared: childModuleInfo.config.shared,
+          library: childModuleInfo.webpack.output.library,
+          format: childModuleInfo.webpack.output.libraryTarget,
+          upstream: childModuleUpstreamResolve,
+        },
+      })
+    }, {})
 
-      Object.assign(definedModules, linkedModules)
+    Object.assign(definedModules, linkedModules)
 
-      const changedModulesName = children.map((child) =>
-        compilerName.extract((child as any).name),
-      )
-      emitOnChange(changedModulesName)
-    },
-  )
+    const changedModulesName = children.map((child) =>
+      compilerName.extract((child as any).name),
+    )
+    emitOnChange(changedModulesName)
+  })
 
   onExit(() => {
     server.close()

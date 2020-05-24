@@ -14,17 +14,15 @@ class Worker {
   }
 
   async setup() {
-    this._ready = this._setup()
-
-    return this._ready
+    return (this._ready = this._setup())
   }
 
   async refresh() {
-    await this._refresh()
+    return this._refresh()
   }
 
   async teardown() {
-    await this._teardown()
+    return this._teardown()
   }
 }
 

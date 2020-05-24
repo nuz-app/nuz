@@ -1,7 +1,6 @@
 import Globals from '../classes/Globals'
 
 import {
-  RuntimePlatforms,
   UpstreamConfigAllowed,
   UpstreamResolveConfig,
   UpstreamResolveResource,

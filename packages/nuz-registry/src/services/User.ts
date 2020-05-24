@@ -47,7 +47,7 @@ class User {
       }
     })
 
-    const reuslt = await user.save()
+    await user.save()
 
     return { _id: user._id }
   }

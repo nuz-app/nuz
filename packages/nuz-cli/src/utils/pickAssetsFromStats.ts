@@ -1,4 +1,4 @@
-import { hashFile, integrityHelpers } from '@nuz/utils'
+import { hashFile } from '@nuz/utils'
 import path from 'path'
 import webpack from 'webpack'
 

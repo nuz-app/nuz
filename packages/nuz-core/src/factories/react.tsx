@@ -1,8 +1,8 @@
 import { REACT_DOM_INJECTED } from '@nuz/shared'
 
+import * as bootstrap from '../bootstrap'
 import getElementsInHead from '../getElementsInHead'
 import * as DOMHelpers from '../utils/DOMHelpers'
-import * as waitToReady from '../waitToReady'
 
 export interface ReactAppProps {
   component?: React.ElementType
@@ -57,7 +57,7 @@ export function injectReactDOMFactory(
         container: Element,
         callback?: () => any,
       ) {
-        await waitToReady.wait()
+        await bootstrap.process.ready()
 
         return fn(element, container, callback)
       }

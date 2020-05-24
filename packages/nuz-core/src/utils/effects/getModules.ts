@@ -4,6 +4,8 @@ import Modules from '../../classes/Modules'
 
 import * as selfHelpers from '../selfHelpers'
 
+export { default as Modules } from '../../classes/Modules'
+
 export let refModules = (selfHelpers.get() as any)[MODULES_KEY]
 
 export const initModules = () => {

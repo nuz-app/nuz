@@ -106,7 +106,7 @@ async function publish({
   const request = await Worker.publishModule(name, data, files, options)
   const moduleId = request?.data?._id
 
-  info('Published was successfully!')
+  info(`Published module ${moduleId} was successfully!`)
   success(`Done in ${print.bold(tick())}ms.`)
   return true
 }

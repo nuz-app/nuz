@@ -1,4 +1,4 @@
-import { CollaboratorTypes, UserAccessTokenTypes } from '@nuz/shared'
+import { UserAccessTokenTypes } from '@nuz/shared'
 import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'

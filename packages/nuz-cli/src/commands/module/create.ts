@@ -14,7 +14,7 @@ import * as gitHelpers from '../../utils/gitHelpers'
 import installPackages from '../../utils/installPackages'
 import * as localTemplatesHelpers from '../../utils/localTemplatesHelpers'
 import * as paths from '../../utils/paths'
-import print, { info, log, success } from '../../utils/print'
+import print, { info, log } from '../../utils/print'
 
 import cloneFilesIfNotFound from './utils/cloneFilesIfNotFound'
 import generateTemplate from './utils/generateTemplate'

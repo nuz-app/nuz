@@ -2,7 +2,7 @@ import { compareFilesByHash } from '@nuz/utils'
 import fs from 'fs'
 import path from 'path'
 
-import { worker } from '../bootstrap'
+import * as bootstrap from '../bootstrap'
 
 import { injectReactDOMFactory } from './react'
 
@@ -65,11 +65,12 @@ function nextIntegrate(config: NextFactoryConfig) {
 
     Object.assign(nextServerRender, {
       renderToHTML: async function renderInjected() {
-        await worker.ready()
-        await worker.refresh()
+        await bootstrap.process.ready()
 
         const html = await renderToHTML.apply(this, arguments)
-        await worker.teardown()
+        await bootstrap.process.flush()
+
+        bootstrap.process.refresh()
 
         return html
       },

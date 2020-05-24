@@ -61,13 +61,13 @@ async function loginAsUser({
   const userId = request?.data?._id
   const accessToken = request?.data?.accessToken
   const staticOrigin = request?.data?.static
-  const providedType = request?.data?.providedType
+  // const providedType = request?.data?.providedType
 
   if (!userId || !accessToken) {
     throw new Error(`Response data is missing data`)
   }
 
-  const isNew = await Config.create(username)
+  await Config.create(username)
   await Config.use(username)
 
   const auth = await Config.readAuth()

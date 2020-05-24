@@ -6,9 +6,7 @@ export * from './types'
 
 export { default as load } from './load'
 export { default as resolve } from './resolve'
-export { default as bootstrap } from './bootstrap'
-
-export { wait as checkIsReady } from './waitToReady'
+export { default as bootstrap, process } from './bootstrap'
 
 export {
   default as reactHelpersFactory,

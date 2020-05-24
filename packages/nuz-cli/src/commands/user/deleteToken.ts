@@ -11,7 +11,7 @@ async function deleteToken({ token }: Arguments<{ token: string }>) {
   const auth = await Config.authRequired(UserAccessTokenTypes.fullAccess)
 
   const tick = timer()
-  const request = await Worker.deleteTokenFromUser(auth.id, token)
+  await Worker.deleteTokenFromUser(auth.id, token)
 
   info(
     `Successfully deleted token ${print.dim(token)} from ${print.name(

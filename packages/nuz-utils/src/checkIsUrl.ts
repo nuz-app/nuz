@@ -1,6 +1,7 @@
 function checkIsUrl(url: string) {
   try {
-    const v = new URL(url)
+    // @ts-ignore
+    const value = new URL(url)
     return true
   } catch {
     return false

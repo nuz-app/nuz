@@ -25,7 +25,7 @@ async function logoutFromUser({
   }
 
   const tick = timer()
-  const request = await Worker.logoutFromUser(id, token)
+  await Worker.logoutFromUser(id, token)
   info(`Logged out of ${print.name(username)} account`)
 
   if (isLogoutOther) {

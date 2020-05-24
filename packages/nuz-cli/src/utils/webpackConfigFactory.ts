@@ -158,7 +158,6 @@ const webpackConfigFactory = (
   const resolveModules = ['node_modules']
   const statsFilename = STATS_FILENAME
   const name = compilerName.get(module)
-  const now = Date.now()
 
   const extensions = feature.typescript
     ? [...TS_EXTENSIONS, ...JS_EXTENSIONS, ...JSON_EXTENSIONS]

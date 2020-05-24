@@ -231,10 +231,7 @@ class Worker {
     }
 
     if (isUseStorage) {
-      const uploadResult = await this._storage?.uploadFiles(
-        { id: moduleId, version },
-        files,
-      )
+      await this._storage?.uploadFiles({ id: moduleId, version }, files)
 
       const bindStaticUrl = async (item: Resource) => {
         const url = await this._storage?.createUrl(moduleId, version, item.path)
