@@ -116,6 +116,7 @@ class Modules {
   private readonly _ssr: boolean
   private readonly _resolvedModules: Caches<string, LoadResult<any>>
   private readonly _resolvedDependencies: Caches<string, any>
+  private readonly _modulesOnRegistry: Caches<string, RequiredBaseItem>
   private readonly _pingResources: Caches<
     string,
     { script: TagElement; styles: TagElement[] }
@@ -140,6 +141,7 @@ class Modules {
     // Init maps for resolved modules, shared and ping resources
     this._resolvedDependencies = new Caches()
     this._resolvedModules = new Caches()
+    this._modulesOnRegistry = new Caches()
     this._pingResources = new Caches()
     this._dnsPrefetchs = new Set()
 
@@ -158,6 +160,10 @@ class Modules {
     if (!isUseSSR && isNode) {
       throw new Error(`Can't run in Node environment if not enable SSR mode!`)
     }
+  }
+
+  private moduleCacheId(item: RequiredBaseItem) {
+    return item.id || `${item.name}@${item.version || ''}`
   }
 
   /**
@@ -257,7 +263,7 @@ class Modules {
       return false
     }
 
-    const cacheId = item.name
+    const cacheId = this.moduleCacheId(item)
     if (this._pingResources.has(cacheId)) {
       return true
     }
@@ -551,7 +557,7 @@ class Modules {
     }
 
     let resolvedModule
-    const cacheId = item.name
+    const cacheId = this.moduleCacheId(item)
     // In server-side mode will not use cache resolved modules
     // maybe cache the module resources rather than cache resolved
     if (this._ssr) {
@@ -611,6 +617,10 @@ class Modules {
       return
     }
 
+    if (this._modulesOnRegistry.has(id)) {
+      return this._modulesOnRegistry.get(id)
+    }
+
     const registryUrl = this._config.get('registry') as string
     if (!registryUrl) {
       throw new Error('Not found registry url in config')
@@ -618,15 +628,20 @@ class Modules {
 
     const fetchModuleUrl = getFetchUrls.module(id, registryUrl)
 
-    const config = await fetchConfig<RequiredBaseItem>(
-      fetchModuleUrl,
-      {
-        timeout: 10000,
-      },
-      1,
-    )
+    try {
+      const config = await fetchConfig<RequiredBaseItem>(
+        fetchModuleUrl,
+        {
+          timeout: 10000,
+        },
+        1,
+      )
+      this._modulesOnRegistry.set(id, config)
 
-    return config
+      return config
+    } catch {
+      return
+    }
   }
 
   /**

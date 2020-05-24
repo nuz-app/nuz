@@ -46,9 +46,17 @@ export type UpstreamConfigAllowed =
 
 export type BaseItemConfig = {
   /**
+   * Module id
+   */
+  id?: string
+  /**
    * Module name, it's using to resolve local if module was installed
    */
   name?: string
+  /**
+   * Module version
+   */
+  version?: string
   /**
    * Upstream is resolve info of module
    */

@@ -63,7 +63,9 @@ function pickAndParseModule(
   )
 
   return {
+    id: `${selected.id}@${selected.version}`,
     name: selected.id,
+    version: selected.version,
     ...pickVersionInfo(upstreamInfo as Required<VersionInfo>),
     upstream: upstreamInfo.resolve,
     fallback: fallbackInfo?.resolve,
