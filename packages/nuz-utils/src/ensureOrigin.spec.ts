@@ -1,7 +1,7 @@
-import * as func from './checkIsUrlOk'
+import * as func from './ensureOrigin'
 import ensureOrigin from './ensureOrigin'
 
-describe('checkIsUrlOk', () => {
+describe('ensureOrigin', () => {
   it('Exported as default', () => {
     expect(func.default).toBeDefined()
   })
