@@ -27,6 +27,7 @@ class Linked {
     // Create empty watching list
     this._watching = []
 
+    // Create empty modules list
     this._modules = {}
   }
 

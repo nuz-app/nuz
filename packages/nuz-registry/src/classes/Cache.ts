@@ -1,8 +1,13 @@
 import { ComposeId, ModuleId } from '../types'
 
-export type FactoryFn = (
+export type SetComposeCacheFactoryFn = (
   data: any,
   deps: ModuleId[],
+  timeout?: number,
+) => Promise<void>
+
+export type SetModuleCacheFactoryFn = (
+  data: any,
   timeout?: number,
 ) => Promise<void>
 
@@ -13,9 +18,15 @@ declare class Cache {
 
   lookupCompose(
     composeId: ComposeId,
-  ): Promise<{ data?: any; factory?: FactoryFn }>
+  ): Promise<{ data?: any; factory?: SetComposeCacheFactoryFn }>
 
   deleteCompose(composeId: ComposeId): Promise<any>
+
+  lookupModule(
+    moduleId: ModuleId,
+  ): Promise<{ data?: any; factory?: SetModuleCacheFactoryFn }>
+
+  deleteModule(moduleId: ModuleId): Promise<any>
 
   flushAll(): Promise<void>
 }

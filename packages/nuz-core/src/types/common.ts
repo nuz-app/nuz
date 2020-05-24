@@ -10,7 +10,7 @@ export enum RuntimePlatforms {
   node = 'node',
 }
 
-export interface InstallConfig {
+export interface LoadModuleConfig {
   timeout?: number
   retries?: number
 }
@@ -80,7 +80,7 @@ export type BaseItemConfig = {
   /**
    * Install options
    */
-  options?: InstallConfig
+  options?: LoadModuleConfig
   /**
    * Shared dependencies module used
    */

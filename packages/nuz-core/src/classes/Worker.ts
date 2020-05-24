@@ -1,7 +1,7 @@
 type Fn = (...rest: any) => Promise<any>
 
 class Worker {
-  private readyPromise?: Promise<any>
+  private _ready?: Promise<any>
 
   constructor(
     private readonly _setup: Fn,
@@ -10,13 +10,13 @@ class Worker {
   ) {}
 
   async ready() {
-    return this.readyPromise
+    return this._ready
   }
 
   async setup() {
-    this.readyPromise = this._setup()
+    this._ready = this._setup()
 
-    return this.readyPromise
+    return this._ready
   }
 
   async refresh() {

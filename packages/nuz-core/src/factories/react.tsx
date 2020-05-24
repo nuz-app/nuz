@@ -1,6 +1,6 @@
 import { REACT_DOM_INJECTED } from '@nuz/shared'
 
-import getTagsInHead from '../getTagsInHead'
+import getElementsInHead from '../getElementsInHead'
 import * as DOMHelpers from '../utils/DOMHelpers'
 import * as waitToReady from '../waitToReady'
 
@@ -46,7 +46,7 @@ export function injectReactDOMFactory(
   const renderOriginal = ReactDOM.render.bind(ReactDOM)
   const hydrateOriginal = ReactDOM.hydrate.bind(ReactDOM)
 
-  return () => {
+  return function injectReactDOM() {
     if (ReactDOM[REACT_DOM_INJECTED]) {
       return false
     }
@@ -73,7 +73,7 @@ export function injectReactDOMFactory(
   }
 }
 
-function reactHelpersFactory(deps: Partial<ReactFactoryDependencies> = {}) {
+function reactIntegrate(deps: Partial<ReactFactoryDependencies> = {}) {
   const dependencies = ensureDependendies(deps)
 
   if (!dependencies.react) {
@@ -92,26 +92,24 @@ function reactHelpersFactory(deps: Partial<ReactFactoryDependencies> = {}) {
     children,
     ...rest
   }) => {
-    const head = useMemo(() => {
-      const definedTags = getTagsInHead() || []
+    const head = useMemo(function bindElementsInHead() {
+      const definedElements = getElementsInHead() || []
       const injectHeadIsNotFound = !InjectHead
-      const tags = injectHeadIsNotFound
-        ? definedTags
-        : definedTags.map((item) => {
+      const elements = injectHeadIsNotFound
+        ? definedElements
+        : definedElements.map((item) => {
             const { type: TagComponent, attributes } = item
+            const { type, ref, href, 'data-href': dataHref } = attributes
 
-            const key = [
-              attributes.type,
-              attributes.rel,
-              attributes.href || attributes['data-href'],
-            ].join('-')
+            const key = `${type}:${ref}:${href || dataHref}`
             const props = Object.assign({ key }, item.attributes)
+
             return <TagComponent {...props} />
           })
 
       if (injectHeadIsNotFound) {
         console.warn(
-          'Please provide `injectHead` component to render tags in head!',
+          'Please provide `injectHead` component to render elements in head!',
         )
         console.warn(
           'Suggestion: use `next/head` for Next.js or `react-helmet` for creact-react-app',
@@ -122,7 +120,7 @@ function reactHelpersFactory(deps: Partial<ReactFactoryDependencies> = {}) {
         }
 
         // tslint:disable-next-line: semicolon
-        ;(tags as DOMHelpers.DefinedElement[]).forEach((item) => {
+        ;(elements as DOMHelpers.DefinedElement[]).forEach((item) => {
           const tagElement = DOMHelpers.createElement(item)
           DOMHelpers.appendToHead(tagElement)
         })
@@ -131,7 +129,7 @@ function reactHelpersFactory(deps: Partial<ReactFactoryDependencies> = {}) {
       }
 
       // @ts-ignore
-      return <InjectHead>{tags}</InjectHead>
+      return <InjectHead>{elements}</InjectHead>
     }, [])
 
     return (
@@ -147,4 +145,4 @@ function reactHelpersFactory(deps: Partial<ReactFactoryDependencies> = {}) {
   return { App }
 }
 
-export default reactHelpersFactory
+export default reactIntegrate

@@ -1,5 +1,5 @@
 import { NUZ_REGISTRY_URL, SHARED_CONFIG_KEY } from '@nuz/shared'
-import { checkIsObject, ensureOrigin, getConfigUrl } from '@nuz/utils'
+import { checkIsObject, ensureOrigin, getFetchUrls } from '@nuz/utils'
 
 import { BootstrapConfig, RuntimePlatforms } from './types'
 
@@ -14,23 +14,28 @@ import uniq from './utils/uniq'
 
 import * as waitToReady from './waitToReady'
 
-const mergeConfig = (
+function mergeConfig(
   localConfig: BootstrapConfig,
   { modules, preload }: BootstrapConfig = {},
-): BootstrapConfig =>
-  Object.assign({}, localConfig, {
+): BootstrapConfig {
+  return {
+    ...localConfig,
     preload: uniq(preload, localConfig.preload),
-    modules: Object.assign({}, modules, localConfig.modules),
-  })
-
-const configFactory = async (config: BootstrapConfig) => {
-  if (!config) {
-    throw new Error(`Config bootstrap is required`)
+    modules: { ...modules, ...localConfig.modules },
   }
+}
 
-  const registryUrl = ensureOrigin(
-    config?.registry || NUZ_REGISTRY_URL,
-  ) as string
+function ensureConfig(config: BootstrapConfig): BootstrapConfig {
+  return {
+    ...config,
+    registry: config.registry || NUZ_REGISTRY_URL,
+    ssr: typeof config.ssr === 'boolean' ? config.ssr : false,
+    global: typeof config.global === 'boolean' ? config.global : true,
+  }
+}
+
+async function configFactory(config: BootstrapConfig) {
+  const registryUrl = ensureOrigin(config.registry as string) as string
 
   const isNode = getRuntimePlatform() === RuntimePlatforms.node
   const composeIsDefined = !!config.compose
@@ -42,10 +47,13 @@ const configFactory = async (config: BootstrapConfig) => {
     : (window[SHARED_CONFIG_KEY] as BootstrapConfig)
 
   if (composeIsDefined && !configOfCompose) {
-    const configUrl = getConfigUrl(config.compose as string, registryUrl)
+    const fetchComposeUrl = getFetchUrls.compose(
+      config.compose as string,
+      registryUrl,
+    )
 
     configOfCompose = await fetchConfig<BootstrapConfig>(
-      configUrl,
+      fetchComposeUrl,
       {
         timeout: 10000,
       },
@@ -64,13 +72,20 @@ const configFactory = async (config: BootstrapConfig) => {
 
 export let worker
 
-const bootstrap = async (config: BootstrapConfig) => {
+async function bootstrap(_config: BootstrapConfig) {
+  if (!_config) {
+    throw new Error(`Config bootstrap is required`)
+  }
+
+  const config = ensureConfig(_config)
+  let timeoutId
+
   worker = new Worker(
     async () => {
       const receivedConfig = await configFactory(config)
 
       // Set vendors and modules to config, using in modules manager
-      const _config = initConfig(receivedConfig)
+      const configWorker = initConfig(receivedConfig)
       markIsInitialized()
 
       // Init modules manager to using for resolve and more
@@ -82,7 +97,7 @@ const bootstrap = async (config: BootstrapConfig) => {
 
       // Lock config, not allow changing any config
       // Note: change config after initialized is dangerous!
-      _config.lock()
+      configWorker.lock()
 
       // Fire a callback if everything's ok
       waitToReady.ok()
@@ -93,12 +108,27 @@ const bootstrap = async (config: BootstrapConfig) => {
       //
     },
     async () => {
-      const receivedConfig = await configFactory(config)
+      async function reloadConfig() {
+        const receivedConfig = await configFactory(config)
 
-      const _config = getConfig()
-      _config.unlock()
-      _config.update(receivedConfig)
-      _config.lock()
+        const configWorker = getConfig()
+        configWorker.unlock()
+        configWorker.update(receivedConfig)
+        configWorker.lock()
+      }
+
+      if (timeoutId) {
+        return false
+      }
+
+      timeoutId = setTimeout(async () => {
+        try {
+          await reloadConfig()
+          // tslint:disable-next-line: no-empty
+        } catch {}
+
+        timeoutId = undefined
+      }, 5000)
     },
   )
 

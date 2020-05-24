@@ -7,7 +7,6 @@ export * from './types'
 export { default as load } from './load'
 export { default as resolve } from './resolve'
 export { default as bootstrap } from './bootstrap'
-export { default as getTagsInHead } from './getTagsInHead'
 
 export { wait as checkIsReady } from './waitToReady'
 

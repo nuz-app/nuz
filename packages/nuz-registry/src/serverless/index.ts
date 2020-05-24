@@ -38,7 +38,8 @@ import * as publishModule from './publishModule'
 import * as removeCollaboratorFromModule from './removeCollaboratorFromModule'
 import * as updateCollaboratorOfModule from './updateCollaboratorOfModule'
 
-import * as fetch from './fetch'
+import * as fetchCompose from './fetchCompose'
+import * as fetchModule from './fetchModule'
 
 export default [
   root,
@@ -79,5 +80,6 @@ export default [
   removeCollaboratorFromModule,
   updateCollaboratorOfModule,
 
-  fetch,
+  fetchCompose,
+  fetchModule,
 ]

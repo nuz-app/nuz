@@ -47,6 +47,8 @@ export type VersionInfo = {
   alias?: { [key: string]: string }
   fallback?: string
   deprecated?: string
+  shared?: string[],
+  externals?: string[]
 }
 
 export type RequiredModule = { id: string; version: string }

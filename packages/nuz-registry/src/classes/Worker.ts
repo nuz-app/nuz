@@ -7,6 +7,7 @@ import {
 } from '@nuz/utils'
 import { Connection } from 'mongoose'
 
+import { LASTEST_TAG } from '../lib/const'
 import {
   AddCollaboratorData,
   CollaboratorTypes,
@@ -41,37 +42,16 @@ import checkIsNewCompose from '../utils/checkIsNewCompose'
 import checkIsNewScope from '../utils/checkIsNewScope'
 import createMongoConnection from '../utils/createMongoConnection'
 import parseModuleId from '../utils/parseModuleId'
+import pickAndParseModule from '../utils/pickAndParseModule'
 import validateAndTransformFiles, {
   TransformFile,
 } from '../utils/validateAndTransformFiles'
 
-import Cache, { FactoryFn } from './Cache'
+import Cache, {
+  SetComposeCacheFactoryFn,
+  SetModuleCacheFactoryFn,
+} from './Cache'
 import Storage from './Storage'
-
-const pickVersionIfExisted = (tags, versions, requiredVersion) => {
-  const useTag = tags.get(requiredVersion)
-  const useVersion =
-    useTag || versionHelpers.getMaxSatisfying(versions, requiredVersion)
-  return useTag || useVersion
-}
-
-const pickVersionInfo = ({
-  exportsOnly,
-  createdAt,
-  format,
-  library,
-  publisher,
-  shared,
-  externals,
-}) => ({
-  exportsOnly,
-  createdAt,
-  format,
-  library,
-  publisher,
-  shared,
-  externals,
-})
 
 class Worker {
   private readonly _connection: Connection
@@ -1064,10 +1044,11 @@ class Worker {
   }
 
   /**
-   * Fetch
+   * Fetch compose
    */
-  async fetch(composeId: ComposeId) {
-    let factoryCache: FactoryFn | undefined
+  async fetchCompose(composeId: ComposeId) {
+    let factoryCache: SetComposeCacheFactoryFn | undefined
+
     if (this._cache) {
       const { data: cached, factory } = await this._cache.lookupCompose(
         composeId,
@@ -1075,6 +1056,7 @@ class Worker {
       if (cached) {
         return cached
       }
+
       factoryCache = factory
     }
 
@@ -1097,59 +1079,14 @@ class Worker {
     const parsedModules = {}
 
     for (const item of compose.modules) {
-      const requiredModule = modules.find((sub) => sub._id === item.id)
-      if (requiredModule) {
-        const allVersions = Array.from<string>(
-          requiredModule.versions.keys(),
-        ).map((sub) => versionHelpers.decode(sub))
-
-        const useVersion = pickVersionIfExisted(
-          requiredModule.tags,
-          allVersions,
-          item.version,
-        )
-        if (useVersion) {
-          const upstreamInfo = requiredModule.versions.get(
-            versionHelpers.encode(useVersion),
-          )
-          const { fallback } = upstreamInfo
-
-          const useFallback =
-            fallback &&
-            pickVersionIfExisted(requiredModule.tags, allVersions, fallback)
-          const fallbackInfo = requiredModule.versions.get(
-            versionHelpers.encode(useFallback),
-          )
-
-          if (fallback && !fallbackInfo) {
-            warnings.push({
-              id: item.id,
-              version: item.version,
-              code: 'MODULE_FALLBACK_VERSION_NOT_FOUND',
-              message: '',
-            })
-          }
-
-          parsedModules[item.id] = {
-            name: item.id,
-            ...pickVersionInfo(upstreamInfo),
-            upstream: upstreamInfo.resolve,
-            fallback: fallbackInfo?.resolve,
-          }
-        } else {
-          warnings.push({
-            id: item.id,
-            version: item.version,
-            code: 'MODULE_UPSTREAM_VERSION_NOT_FOUND',
-            message: '',
-          })
-        }
-      } else {
+      try {
+        parsedModules[item.id] = pickAndParseModule(item, modules)
+      } catch (error) {
         warnings.push({
           id: item.id,
           version: item.version,
-          code: 'REQUIRED_MODULE_NOT_FOUND',
-          message: '',
+          code: 'MODULE_PARSE_ERROR',
+          message: error.message,
         })
       }
     }
@@ -1157,6 +1094,47 @@ class Worker {
     const data = { modules: parsedModules, warnings }
     if (factoryCache) {
       await factoryCache(data, moduleIds)
+    }
+
+    return data
+  }
+
+  /**
+   * Fetch module
+   */
+  async fetchModule(moduleId: ModuleId, version: string) {
+    if (!validator.moduleId(moduleId)) {
+      throw new Error('Module id is invalid')
+    }
+
+    if (!versionHelpers.checkIsValid(version) && version !== LASTEST_TAG) {
+      throw new Error('Version module is invalid')
+    }
+
+    const cacheId = `${moduleId}@${version}`
+    let factoryCache: SetModuleCacheFactoryFn | undefined
+
+    if (this._cache) {
+      const { data: cached, factory } = await this._cache.lookupModule(cacheId)
+      if (cached) {
+        return cached
+      }
+
+      factoryCache = factory
+    }
+
+    const module = await this.getModule(moduleId, {
+      name: 1,
+      tags: 1,
+      versions: 1,
+    })
+    if (!module) {
+      throw new Error(`Module ${moduleId} is not found`)
+    }
+
+    const data = pickAndParseModule({ id: moduleId, version }, [module])
+    if (factoryCache) {
+      await factoryCache(data)
     }
 
     return data

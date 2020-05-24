@@ -71,6 +71,7 @@ class Script {
     })
 
     runScriptInContext(code, context)
+
     return context
   }
 }

@@ -1,24 +1,43 @@
 import { ComposeId, ModuleId } from '../types'
 
-import Cache, { FactoryFn } from './Cache'
+import Cache, {
+  SetComposeCacheFactoryFn,
+  SetModuleCacheFactoryFn,
+} from './Cache'
 
 const CONFIG = {
   COMPOSITION_TIMEOUT: 12 * 60 * 60 * 1000,
+  MODULE_TIMEOUT: 6 * 60 * 60 * 1000,
 }
+
+type Timer = { [id: string]: NodeJS.Timeout }
 
 class LocalCache implements Cache {
   private readonly data: {
     refs: Map<string, Set<string>>
     composes: Map<string, any>
+    modules: Map<string, any>
+  }
+
+  private readonly timers: {
+    composes: Timer
+    modules: Timer
   }
 
   constructor() {
     const composes = new Map<string, any>()
+    const modules = new Map<string, any>()
     const refs = new Map<string, Set<string>>()
 
     this.data = {
       composes,
+      modules,
       refs,
+    }
+
+    this.timers = {
+      composes: {},
+      modules: {},
     }
   }
 
@@ -31,6 +50,7 @@ class LocalCache implements Cache {
       this.deleteCompose(composeId)
     }
 
+    this.deleteModule(moduleId)
     this.deleteModuleRefs(moduleId)
   }
 
@@ -41,7 +61,7 @@ class LocalCache implements Cache {
     }
 
     // Factory auto cache handler
-    const factory: FactoryFn = async (
+    const factory: SetComposeCacheFactoryFn = async (
       data: any,
       deps: ModuleId[],
       timeout: number = CONFIG.COMPOSITION_TIMEOUT,
@@ -49,14 +69,19 @@ class LocalCache implements Cache {
       this.setCompose(composeId, data)
 
       // Actively delete cache when it expires
-      setTimeout(() => {
-        this.deleteCompose(composeId)
+      this.setTimeout(
+        this.timers.composes,
+        composeId,
+        () => {
+          this.deleteCompose(composeId)
 
-        // Remove refs to dependencies
-        for (const moduleId of deps) {
-          this.removeModuleRefs(moduleId, [composeId])
-        }
-      }, timeout)
+          // Remove refs to dependencies
+          for (const moduleId of deps) {
+            this.removeModuleRefs(moduleId, [composeId])
+          }
+        },
+        timeout,
+      )
 
       // Add refs to dependencies
       for (const moduleId of deps) {
@@ -67,8 +92,79 @@ class LocalCache implements Cache {
     return { data: undefined, factory }
   }
 
+  async lookupModule(moduleId: ModuleId) {
+    const moduleData = await this.getModule(moduleId)
+    if (moduleData) {
+      return { data: moduleData, factory: undefined }
+    }
+
+    // Factory auto cache handler
+    const factory: SetModuleCacheFactoryFn = async (
+      data: any,
+      timeout: number = CONFIG.MODULE_TIMEOUT,
+    ) => {
+      this.setModule(moduleId, data)
+
+      // Actively delete cache when it expires
+      this.setTimeout(
+        this.timers.modules,
+        moduleId,
+        () => {
+          this.deleteModule(moduleId)
+        },
+        timeout,
+      )
+    }
+
+    return { data: undefined, factory }
+  }
+
   async flushAll() {
-    await Promise.all([this.clearCompose(), this.clearModulesRefs()])
+    await Promise.all([
+      this.clearCompose(),
+      this.clearModule(),
+      this.clearModulesRefs(),
+    ])
+  }
+
+  private setTimeout(
+    timer: Timer,
+    id: ComposeId | ModuleId,
+    fn: () => void,
+    timeout: number,
+  ) {
+    this.clearTimeout(timer, id)
+
+    timer[id] = setTimeout(fn, timeout)
+  }
+
+  private clearTimeout(timer: Timer, id: ComposeId | ModuleId) {
+    if (timer[id]) {
+      clearTimeout(timer[id])
+    }
+  }
+
+  private async setModule(moduleId: ModuleId, data: any) {
+    this.data.modules.set(moduleId, data)
+  }
+
+  private async getModule(moduleId: ModuleId) {
+    return this.data.modules.get(moduleId)
+  }
+
+  async deleteModule(moduleId: ModuleId) {
+    this.clearTimeout(this.timers.modules, moduleId)
+
+    return this.data.modules.delete(moduleId)
+  }
+
+  private async clearModule() {
+    const moduleIds = Array.from(this.data.modules.keys())
+    for (const id of moduleIds) {
+      this.clearTimeout(this.timers.modules, id)
+    }
+
+    return this.data.modules.clear()
   }
 
   private async setCompose(composeId: ComposeId, data: any) {
@@ -80,10 +176,17 @@ class LocalCache implements Cache {
   }
 
   async deleteCompose(composeId: ComposeId) {
+    this.clearTimeout(this.timers.composes, composeId)
+
     return this.data.composes.delete(composeId)
   }
 
   private async clearCompose() {
+    const composeIds = Array.from(this.data.composes.keys())
+    for (const id of composeIds) {
+      this.clearTimeout(this.timers.composes, id)
+    }
+
     return this.data.composes.clear()
   }
 

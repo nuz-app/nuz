@@ -3,16 +3,26 @@ import {
   checkIsObject,
   deferedPromise,
   DeferedPromise,
+  ensureOrigin,
+  getFetchUrls,
   jsonHelpers,
 } from '@nuz/utils'
 import LRUCache from 'lru-cache'
 
-import { BaseItemConfig, InstallConfig, RuntimePlatforms } from '../types'
+import {
+  BaseItemConfig,
+  BootstrapConfig,
+  LoadModuleConfig,
+  ModulesConfig,
+  RuntimePlatforms,
+  VendorsConfig,
+} from '../types'
 
 import checkIsFunction from '../utils/checkIsFunction'
 import checkIsInitialized from '../utils/checkIsInitialized'
 import * as DOMHelpers from '../utils/DOMHelpers'
 import getConfig, { Config } from '../utils/effects/getConfig'
+import fetchConfig from '../utils/fetchConfig'
 import getRuntimePlatform from '../utils/getRuntimePlatform'
 import getScript from '../utils/getScript'
 import interopRequireDefault from '../utils/interopRequireDefault'
@@ -32,31 +42,26 @@ export type RequiredBaseItem = BaseItemConfig &
     >
   >
 
-const getUrlOrigin = (url: string) => {
-  try {
-    return new URL(url).origin
-  } catch {
-    return null
-  }
-}
-
-const initialCacheInNode = (): LRUCache<any, any> =>
-  new LRUCache({
+function initialCacheInNode(): LRUCache<any, any> {
+  return new LRUCache({
     max: 50,
     maxAge: 1000 * 60 * 60,
   })
+}
 
-const ensureInstallConfig = ({
+function ensureLoadModuleConfig({
   timeout,
   retries,
   ...rest
-}: InstallConfig = {}) => ({
-  ...rest,
-  timeout: timeout || 60000,
-  retries: retries || 1,
-})
+}: LoadModuleConfig = {}) {
+  return {
+    ...rest,
+    timeout: timeout || 60000,
+    retries: retries || 1,
+  }
+}
 
-const pickNamedExports = (context, library?: string): string => {
+function pickNamedExports(context, library?: string): string {
   if (library !== '[name]' && context[library as string]) {
     return library as string
   } else if (context.default) {
@@ -70,10 +75,11 @@ const pickNamedExports = (context, library?: string): string => {
   return lastKey
 }
 
-const pickModuleFromContext = (context, library?: string) =>
-  context[pickNamedExports(context, library)]
+function pickModuleFromContext(context, library?: string) {
+  return context[pickNamedExports(context, library)]
+}
 
-const pickIfSet = (upstream: any, config: RequiredBaseItem) => {
+function pickIfSet(upstream: any, config: RequiredBaseItem) {
   const isObject = checkIsObject(upstream)
   if (!isObject) {
     return config
@@ -102,7 +108,7 @@ export interface LoadResult<M = unknown> {
 }
 
 class Modules {
-  private readonly _readyPromise: DeferedPromise<boolean>
+  private readonly _ready: DeferedPromise<boolean>
   private readonly _config: Config
   private readonly _platform: RuntimePlatforms
   private readonly _globals: Globals
@@ -129,7 +135,7 @@ class Modules {
     this._globals = new Globals(this._platform)
 
     // Set is development mode
-    this._dev = this._config.isDev()
+    this._dev = this._config.get<boolean>('dev')
 
     // Init maps for resolved modules, shared and ping resources
     this._resolvedDependencies = new Caches()
@@ -138,11 +144,11 @@ class Modules {
     this._dnsPrefetchs = new Set()
 
     // Create defered promise to checking ready
-    this._readyPromise = deferedPromise<boolean>()
+    this._ready = deferedPromise<boolean>()
 
     // Check SSR mode is valid
     const isNode = this._platform === RuntimePlatforms.node
-    const isUseSSR = this._config.isSSR()
+    const isUseSSR = this._config.get<boolean>('ssr')
     this._ssr = isUseSSR && isNode
 
     // Create resolved resources cache
@@ -154,9 +160,14 @@ class Modules {
     }
   }
 
+  /**
+   * Create linked workspaces connect
+   */
   private async linkModules() {
     // Create linked instance with bootstrap config
-    const config = this._config.getLinked()
+    const config = this._config.get<NonNullable<BootstrapConfig['linked']>>(
+      'linked',
+    )
     this._linked = new Linked(config)
 
     if (!wsWarningIsShowed && config.port) {
@@ -172,8 +183,14 @@ class Modules {
     return true
   }
 
+  /**
+   * Get all modules config
+   */
   private getAllModules() {
-    const definedModules = Object.assign({}, this._config.getModules())
+    const definedModules = Object.assign(
+      {},
+      this._config.get<ModulesConfig>('modules'),
+    )
 
     // In development mode, extends modules config with linked modules
     if (this._dev) {
@@ -184,20 +201,25 @@ class Modules {
     return definedModules
   }
 
-  private getKey(item: RequiredBaseItem): string {
-    return (item && item.name) as string
-  }
-
+  /**
+   * Check is can use local module
+   */
   private canUseLocal(item: RequiredBaseItem) {
     const { name, local } = item
 
     return !!(local || requireHelpers.local(name, this._globals))
   }
 
+  /**
+   * Create a safe context
+   */
   private createContext() {
     return Object.create(this._globals.getContext())
   }
 
+  /**
+   * Flush exports module in safe context
+   */
   private flushContext(context: any, library?: string) {
     const namedExports = pickNamedExports(context, library)
 
@@ -206,8 +228,11 @@ class Modules {
     this._globals.delete(namedExports)
   }
 
+  /**
+   * Bind vendors dependencies to safe context
+   */
   private bindVendors() {
-    const vendors = this._config.getVendors()
+    const vendors = this._config.get<VendorsConfig>('vendors')
 
     const keys = Object.keys(vendors)
     for (const key of keys) {
@@ -221,6 +246,9 @@ class Modules {
     }
   }
 
+  /**
+   * Ping to make preconnec for resources of the modules
+   */
   private ping(item: RequiredBaseItem, options: { styles: boolean }) {
     const { styles: isPingStyles } = options || {}
 
@@ -261,37 +289,50 @@ class Modules {
     return true
   }
 
-  private async loadDependency(name: string) {
-    if (this._resolvedDependencies.has(name)) {
-      return this._resolvedDependencies.get(name)
+  /**
+   * Load shared dependency by name or id
+   */
+  private async loadSharedDependency(id: string) {
+    if (this._resolvedDependencies.has(id)) {
+      return this._resolvedDependencies.get(id)
     }
 
-    const sharedDependencies = this._config.getShared()
-    const dependencyFactory = sharedDependencies[name]
+    const sharedDependencies = this._config.get<
+      NonNullable<BootstrapConfig['shared']>
+    >('shared')
+    const dependencyFactory = sharedDependencies[id]
     if (!dependencyFactory) {
-      throw new Error(`Can not found shared dependency by name ${name}`)
+      throw new Error(`Can not found shared dependency by name ${id}`)
     }
 
     if (!checkIsFunction(dependencyFactory)) {
-      throw new Error(`Dependency factory of ${name} is invalid`)
+      throw new Error(`Dependency factory of ${id} is invalid`)
     }
 
     const resolvedDependency = await Promise.resolve(dependencyFactory())
-
     const moduleExports = moduleHelpers.define(resolvedDependency, {
       module: true,
       shared: true,
     })
-    this._globals.setDependency(name, moduleExports)
 
+    this._globals.setDependency(name, moduleExports)
     this._resolvedDependencies.set(name, moduleExports)
+
     return resolvedDependency
   }
 
-  private async loadDependencies(shared: string[]) {
-    return shared.map((item) => this.loadDependency(item))
+  /**
+   * Load shared dependencies for the module
+   */
+  private async loadSharedDependencies(shared: string[]) {
+    return Promise.all(
+      (shared || []).map((item) => this.loadSharedDependency(item)),
+    )
   }
 
+  /**
+   * Run script and pick module exports
+   */
   private runScript({
     code,
     format,
@@ -342,13 +383,16 @@ class Modules {
     return moduleExports
   }
 
+  /**
+   * Resolve the module on upstream
+   */
   private async resolveOnUpstream(
     item: RequiredBaseItem,
-    options?: InstallConfig,
+    options?: LoadModuleConfig,
   ) {
     const { upstream } = item
     const { library, format, alias, exportsOnly } = pickIfSet(upstream, item)
-    const { timeout, retries } = ensureInstallConfig(options)
+    const { timeout, retries } = ensureLoadModuleConfig(options)
 
     const { main, styles } = requireHelpers.parse(upstream) || {}
 
@@ -387,9 +431,12 @@ class Modules {
     }
   }
 
+  /**
+   * Resolve the module in linked workspaces
+   */
   private async resolveInLinked(
     item: RequiredBaseItem,
-    options?: InstallConfig,
+    options?: LoadModuleConfig,
   ) {
     if (!this._linked.exists(item.name)) {
       return null
@@ -409,11 +456,14 @@ class Modules {
     return resolved
   }
 
+  /**
+   * Resolve the module in local
+   */
   private async resolveInLocal(
     item: Required<
       Pick<BaseItemConfig, 'name' | 'local' | 'alias' | 'exportsOnly'>
     >,
-    options?: InstallConfig,
+    options?: LoadModuleConfig,
   ) {
     const { name, local, alias, exportsOnly } = item
 
@@ -441,8 +491,11 @@ class Modules {
     }
   }
 
-  private async resolve(item: RequiredBaseItem, options?: InstallConfig) {
-    await this.loadDependencies((item as any).shared)
+  /**
+   * Resolve the module by config
+   */
+  private async resolve(item: RequiredBaseItem, options?: LoadModuleConfig) {
+    await this.loadSharedDependencies((item as any).shared)
 
     // In development mode, allowed to resolve in local and linked
     if (this._dev) {
@@ -486,27 +539,40 @@ class Modules {
     }
   }
 
-  private async load<M = unknown>(
+  /**
+   * Load a module by config
+   */
+  private async loadModule<M = unknown>(
     item: RequiredBaseItem,
-    options?: InstallConfig,
+    options?: LoadModuleConfig,
   ): Promise<LoadResult<M>> {
     if (!item.name) {
       throw new Error('Not found name in item config')
     }
 
-    const isPreventCache = !this._ssr
+    let resolvedModule
     const cacheId = item.name
-    if (isPreventCache && this._resolvedModules.has(cacheId)) {
+    // In server-side mode will not use cache resolved modules
+    // maybe cache the module resources rather than cache resolved
+    if (this._ssr) {
+      resolvedModule = await this.resolve(item, options)
+
+      return resolvedModule
+    }
+
+    if (this._resolvedModules.has(cacheId)) {
       return this._resolvedModules.get(cacheId) as any
     }
 
-    const resolvedModule = await this.resolve(item, options)
+    resolvedModule = await this.resolve(item, options)
     this._resolvedModules.set(cacheId, resolvedModule)
 
     return resolvedModule
   }
 
-  // Note: fn only call once times in prepare
+  /**
+   * Optimize the connection for modules and resources
+   */
   private async optimizeConnection() {
     const modules = this.getAllModules()
     const modulesKeys = Object.keys(modules)
@@ -516,23 +582,56 @@ class Modules {
         requireHelpers.parse(modules[key]?.upstream as any) || {}
 
       return acc.concat(
-        getUrlOrigin(main.url) as string,
+        ensureOrigin(main.url) as string,
         ...(styles || []).map(
-          (style: any) => getUrlOrigin(style.url) as string,
+          (style: any) => ensureOrigin(style.url) as string,
         ),
       )
     }, [] as string[])
 
     const deduplicated = Array.from(new Set(urls))
-    const isPreconnect = deduplicated.length <= PRECONNECT_LIMIT_DOMAIN
-    const dnsPrefetchs = deduplicated.map((item) =>
-      DOMHelpers.dnsPrefetch(item, isPreconnect),
-    )
-    dnsPrefetchs.forEach((item) => this._dnsPrefetchs.add(item))
+    const isPreconnect = deduplicated.length < PRECONNECT_LIMIT_DOMAIN
+
+    const dnsPrefetchs = [] as TagElement[]
+    for (const item of deduplicated) {
+      const dnsPrefetch = DOMHelpers.dnsPrefetch(item, isPreconnect)
+      this._dnsPrefetchs.add(dnsPrefetch)
+      dnsPrefetchs.push(dnsPrefetch)
+    }
 
     return dnsPrefetchs
   }
 
+  /**
+   * Find the module on registry
+   */
+  private async findModuleOnRegistry(id: string) {
+    const isUseGlobal = this._config.get('global')
+    if (!isUseGlobal) {
+      return
+    }
+
+    const registryUrl = this._config.get('registry') as string
+    if (!registryUrl) {
+      throw new Error('Not found registry url in config')
+    }
+
+    const fetchModuleUrl = getFetchUrls.module(id, registryUrl)
+
+    const config = await fetchConfig<RequiredBaseItem>(
+      fetchModuleUrl,
+      {
+        timeout: 10000,
+      },
+      1,
+    )
+
+    return config
+  }
+
+  /**
+   * Call to prepare everything before using the modules
+   */
   async prepare() {
     this.bindVendors()
 
@@ -550,16 +649,24 @@ class Modules {
     ])
 
     // Fired event to inform for other know modules is ready
-    this._readyPromise.resolve(true)
+    this._ready.resolve(true)
   }
 
+  /**
+   * Ready state of the modules
+   */
   async ready() {
-    await this._readyPromise.promise
+    await this._ready.promise
   }
 
+  /**
+   * Handle preload modules configured in bootstrap
+   */
   async preload() {
     const modules = this.getAllModules()
-    const preload = this._config.getPreload()
+    const preload = this._config.get<NonNullable<BootstrapConfig['preload']>>(
+      'preload',
+    )
 
     const pings: boolean[] = []
     for (const name of preload) {
@@ -572,27 +679,39 @@ class Modules {
     return pings
   }
 
-  async requireByName<T = unknown>(name: string): Promise<T> {
-    const resolved = await this.loadByName<T>(name)
-    return resolved.module
+  /**
+   * Resolve a module by name or id
+   */
+  async resolveModule<T = unknown>(id: string): Promise<T> {
+    const resolved = await this.findAndLoadModule<T>(id)
+
+    return resolved?.module
   }
 
-  async loadByName<M = unknown>(name: string): Promise<LoadResult<M>> {
+  /**
+   * Find and load the module by name or id
+   */
+  async findAndLoadModule<M = unknown>(id: string): Promise<LoadResult<M>> {
     await this.ready()
 
     const modules = this.getAllModules()
-
-    const item = modules[name] as RequiredBaseItem
+    let item = modules[id] as RequiredBaseItem
     if (!item) {
-      throw new Error(`Cannot load module by name: ${name}.`)
+      item = (await this.findModuleOnRegistry(id)) as RequiredBaseItem
     }
 
-    const resolved = await this.load<M>(item)
+    if (!item) {
+      throw new Error(`Can't resolve ${id} module`)
+    }
+
+    const resolved = await this.loadModule<M>(item)
     return resolved
   }
 
-  // Ensure modules is ready before use!
-  getTagsInHead(): TagElement[] {
+  /**
+   * Get all elements need to append in `<head />`
+   */
+  getElementsInHead(): TagElement[] {
     const modules = this.getAllModules()
     const resolvedModule = this._resolvedModules.entries()
     if (this._ssr) {

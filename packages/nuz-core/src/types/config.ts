@@ -58,6 +58,10 @@ export interface BootstrapConfig {
    * Warnings
    */
   warnings?: WarningsConfig[]
+  /**
+   * Enable global mode
+   */
+  global?: boolean
 }
 
 export interface WarningsConfig {

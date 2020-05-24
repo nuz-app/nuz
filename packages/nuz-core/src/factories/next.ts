@@ -16,7 +16,7 @@ const LOADABLE_UPDATED_PATH = path.join(
   '../../bundled/next/loadable.js',
 )
 
-const nextHelpersFactory = (config: NextFactoryConfig) => {
+function nextIntegrate(config: NextFactoryConfig) {
   const { require, autoInject = true } = config || {}
 
   if (!require) {
@@ -31,8 +31,8 @@ const nextHelpersFactory = (config: NextFactoryConfig) => {
     fs.copyFileSync(LOADABLE_UPDATED_PATH, loadableInApp)
   }
 
-  const withNuz = (nextConfig: any = {}) =>
-    Object.assign({}, nextConfig, {
+  function withNuz(nextConfig: any = {}) {
+    return Object.assign({}, nextConfig, {
       webpack: (webpackConfig: any, { isServer, ...rest }: any) => {
         const webpackCustom = nextConfig.webpack
         const updatedConfig = !webpackCustom
@@ -43,6 +43,7 @@ const nextHelpersFactory = (config: NextFactoryConfig) => {
           if (!updatedConfig.node) {
             updatedConfig.node = {}
           }
+
           const useNodeBuiltins = ['child_process', 'fs', 'net']
           useNodeBuiltins.forEach((builtins) => {
             updatedConfig.node[builtins] = !updatedConfig.node[builtins]
@@ -54,20 +55,21 @@ const nextHelpersFactory = (config: NextFactoryConfig) => {
         return updatedConfig
       },
     })
+  }
 
-  const injectNext = () => {
+  function injectNext() {
     injectReactDOMFactory(require('react-dom'))()
 
     const nextServerRender = require('next/dist/next-server/server/render')
     const renderToHTML = nextServerRender.renderToHTML.bind(nextServerRender)
 
     Object.assign(nextServerRender, {
-      renderToHTML: async function renderInjected(...rest: any[]) {
+      renderToHTML: async function renderInjected() {
         await worker.ready()
         await worker.refresh()
 
-        const html = await renderToHTML(...rest)
-        worker.teardown()
+        const html = await renderToHTML.apply(this, arguments)
+        await worker.teardown()
 
         return html
       },
@@ -81,4 +83,4 @@ const nextHelpersFactory = (config: NextFactoryConfig) => {
   return { withNuz, injectNext }
 }
 
-export default nextHelpersFactory
+export default nextIntegrate

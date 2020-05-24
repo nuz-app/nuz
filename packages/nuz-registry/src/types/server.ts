@@ -11,14 +11,7 @@ export interface MongoConfig {
   url: string
 }
 
-export interface FetchRouteOptions {
-  cacheTime: number
-  prepareTime: number
-}
-
-export interface ServerlessOptions {
-  fetch?: Partial<FetchRouteOptions>
-}
+export interface ServerlessOptions {}
 
 export interface HttpsConfig {
   key: Buffer | string

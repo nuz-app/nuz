@@ -40,10 +40,20 @@ const setDefaultIfUnset = <T extends BaseItemConfig>(
 
 export type ConfigInitial = Pick<
   BootstrapConfig,
-  'ssr' | 'shared' | 'preload' | 'dev' | 'vendors' | 'modules' | 'linked'
+  | 'ssr'
+  | 'shared'
+  | 'preload'
+  | 'dev'
+  | 'vendors'
+  | 'modules'
+  | 'linked'
+  | 'registry'
+  | 'global'
 >
 
 class Config {
+  private _registry: string
+  private _global: boolean
   private _vendors: VendorsConfig
   private _modules: ModulesConfig
   private _shared: SharedConfig
@@ -54,6 +64,8 @@ class Config {
   private _ssr: boolean
 
   constructor({
+    registry,
+    global,
     dev,
     ssr,
     preload,
@@ -63,18 +75,19 @@ class Config {
     linked,
   }: ConfigInitial) {
     this._dev = typeof dev === 'boolean' ? dev : !checkIsProductionMode()
-
+    this._global = global as boolean
+    this._registry = registry as string
     this._vendors = {}
     this._modules = {}
     this._shared = {}
     this._linked = linked
-    this._ssr = typeof ssr === 'boolean' ? ssr : false
+    this._ssr = ssr as boolean
     this._preload = preload || []
     this._locked = false
 
-    this.setVendors(vendors || {})
-    this.setModules(modules || {})
-    this.setShared(shared || {})
+    this.assignVendors(vendors || {})
+    this.assignModules(modules || {})
+    this.assignShared(shared || {})
   }
 
   raw(): ConfigInitial {
@@ -90,18 +103,16 @@ class Config {
     modules,
     shared,
   }: Pick<ConfigInitial, 'preload' | 'vendors' | 'modules' | 'shared'>) {
-    if (this._locked) {
-      throw new Error('Can not set shared because config was locked!')
-    }
+    this.ensureUnlock('any')
 
     this._vendors = {}
     this._modules = {}
     this._shared = {}
     this._preload = preload || []
 
-    this.setVendors(vendors || {})
-    this.setModules(modules || {})
-    this.setShared(shared || {})
+    this.assignVendors(vendors || {})
+    this.assignModules(modules || {})
+    this.assignShared(shared || {})
   }
 
   lock() {
@@ -112,54 +123,30 @@ class Config {
     return (this._locked = false)
   }
 
-  isDev() {
-    return this._dev
+  get<T = unknown>(field: string): T {
+    return this[`_${field}`] as T
   }
 
-  isSSR() {
-    return this._ssr
-  }
-
-  getLinked() {
-    return this._linked || {}
-  }
-
-  getPreload() {
-    return this._preload || []
-  }
-
-  getShared() {
-    return this._shared || {}
-  }
-
-  setShared(shared: SharedConfig): SharedConfig {
+  ensureUnlock(field: string) {
     if (this._locked) {
-      throw new Error('Can not set shared because config was locked!')
+      throw new Error(`Can't assign or set ${field} because config was locked`)
     }
+  }
+
+  assignShared(shared: SharedConfig): SharedConfig {
+    this.ensureUnlock('shared')
 
     return Object.assign(this._shared, shared)
   }
 
-  getVendors() {
-    return this._vendors
-  }
-
-  setVendors(vendors: VendorsConfig): VendorsConfig {
-    if (this._locked) {
-      throw new Error('Can not set vendors because config was locked!')
-    }
+  assignVendors(vendors: VendorsConfig): VendorsConfig {
+    this.ensureUnlock('vendors')
 
     return Object.assign(this._vendors, vendors)
   }
 
-  getModules() {
-    return this._modules
-  }
-
-  setModules(modules: ModulesConfig): ModulesConfig {
-    if (this._locked) {
-      throw new Error('Can not set modules because config was locked!')
-    }
+  assignModules(modules: ModulesConfig): ModulesConfig {
+    this.ensureUnlock('modules')
 
     const transformed = this.defineModules(modules)
     return Object.assign(this._modules, transformed)
