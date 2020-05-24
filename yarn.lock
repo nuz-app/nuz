@@ -842,7 +842,7 @@
     "@babel/plugin-transform-react-jsx-self" "^7.9.0"
     "@babel/plugin-transform-react-jsx-source" "^7.9.0"
 
-"@babel/runtime@^7.3.4", "@babel/runtime@^7.8.4":
+"@babel/runtime@^7.8.4":
   version "7.9.6"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.9.6.tgz#a9102eb5cadedf3f31d08a9ecf294af7827ea29f"
   integrity sha512-64AF1xY3OAkFHqOb9s4jpgk1Mm5vDZ4L3acHvAml+53nO1XbXLuDodsVpO4OIUsmemlUHMxNdYMNJmsvOwLrvQ==
@@ -13436,13 +13436,6 @@ umask@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/umask/-/umask-1.1.0.tgz#f29cebf01df517912bb58ff9c4e50fde8e33320d"
   integrity sha1-8pzr8B31F5ErtY/5xOUP3o4zMg0=
-
-umitt@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/umitt/-/umitt-0.1.2.tgz#b76e6ac95bbc7148414f0fa8e3004dfd29f66576"
-  integrity sha512-41tEH/Mfp77LfwXAE4hJdquWpUQobyJh1KYTxVGoVNW/fxkuSqZo8l3V6jAZEeYOe4mSWc4GaRR9pMFVteNeyQ==
-  dependencies:
-    "@babel/runtime" "^7.3.4"
 
 unbzip2-stream@^1.0.9:
   version "1.4.2"
