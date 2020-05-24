@@ -70,6 +70,8 @@ async function configFactory(config: BootstrapConfig) {
   return mergeConfig(config, configOfCompose)
 }
 
+const RELOAD_CONFIG_TIMEOUT = 5000
+
 export let worker
 
 async function bootstrap(_config: BootstrapConfig) {
@@ -104,31 +106,27 @@ async function bootstrap(_config: BootstrapConfig) {
 
       return true
     },
+    // tslint:disable-next-line: no-empty
+    async () => {},
     async () => {
-      //
-    },
-    async () => {
-      async function reloadConfig() {
+      if (timeoutId) {
+        return false
+      }
+
+      timeoutId = setTimeout(
+        () => (timeoutId = undefined),
+        RELOAD_CONFIG_TIMEOUT,
+      )
+
+      try {
         const receivedConfig = await configFactory(config)
 
         const configWorker = getConfig()
         configWorker.unlock()
         configWorker.update(receivedConfig)
         configWorker.lock()
-      }
-
-      if (timeoutId) {
-        return false
-      }
-
-      timeoutId = setTimeout(async () => {
-        try {
-          await reloadConfig()
-          // tslint:disable-next-line: no-empty
-        } catch {}
-
-        timeoutId = undefined
-      }, 5000)
+        // tslint:disable-next-line: no-empty
+      } catch {}
     },
   )
 

@@ -163,7 +163,9 @@ class Modules {
   }
 
   private moduleCacheId(item: RequiredBaseItem) {
-    return item.id || `${item.name}@${item.version || ''}`
+    const { id, version, name } = item
+
+    return id || `${name}${version ? `@${version}` : ''}`
   }
 
   /**
@@ -673,16 +675,24 @@ class Modules {
    */
   async preload() {
     const modules = this.getAllModules()
+    const valuesOf = Object.values(modules)
+
     const preload = this._config.get<NonNullable<BootstrapConfig['preload']>>(
       'preload',
     )
 
     const pings: boolean[] = []
-    for (const name of preload) {
-      const item = modules[name] as RequiredBaseItem
-      if (item) {
-        pings.push(this.ping(item, { styles: true }))
+    for (const id of preload) {
+      let item = modules[id] as RequiredBaseItem
+      if (!item) {
+        item = valuesOf.find((m) => m.id === id) as RequiredBaseItem
       }
+
+      if (!item) {
+        continue
+      }
+
+      pings.push(this.ping(item, { styles: true }))
     }
 
     return pings
@@ -729,6 +739,10 @@ class Modules {
         let item = modules[id]
         if (!item) {
           item = valuesOf.find((m) => m.id === id) as BaseItemConfig
+        }
+
+        if (!item) {
+          continue
         }
 
         this.ping(item as RequiredBaseItem, {
