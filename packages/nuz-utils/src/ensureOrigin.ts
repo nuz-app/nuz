@@ -1,9 +1,9 @@
-const ensureOriginSlash = (value: string): string | undefined => {
+const ensureOrigin = (value: string): string | undefined => {
   try {
     const url = new URL(value)
     return url.origin
     // tslint:disable-next-line: no-empty
-  } catch {}
+  } catch { }
 }
 
-export default ensureOriginSlash
+export default ensureOrigin
