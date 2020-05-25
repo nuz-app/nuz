@@ -16,6 +16,8 @@ const LOADABLE_UPDATED_PATH = path.join(
   '../../bundled/next/loadable.js',
 )
 
+const LOADABLE_REQUIRE_PATH = 'next/dist/next-server/lib/loadable'
+
 function nextIntegrate(config: NextFactoryConfig) {
   const { require, autoInject = true } = config || {}
 
@@ -23,12 +25,12 @@ function nextIntegrate(config: NextFactoryConfig) {
     throw new Error('`require` is required in config, please provide to use')
   }
 
-  const loadableInApp = require.resolve('next/dist/next-server/lib/loadable')
+  const loadablePath = require.resolve(LOADABLE_REQUIRE_PATH)
 
   // Replace loadable file of Next.js
-  const fileIsDiff = !compareFilesByHash(LOADABLE_UPDATED_PATH, loadableInApp)
+  const fileIsDiff = !compareFilesByHash(LOADABLE_UPDATED_PATH, loadablePath)
   if (fileIsDiff) {
-    fs.copyFileSync(LOADABLE_UPDATED_PATH, loadableInApp)
+    fs.copyFileSync(LOADABLE_UPDATED_PATH, loadablePath)
   }
 
   function withNuz(nextConfig: any = {}) {
@@ -62,15 +64,14 @@ function nextIntegrate(config: NextFactoryConfig) {
 
     const nextServerRender = require('next/dist/next-server/server/render')
     const renderToHTML = nextServerRender.renderToHTML.bind(nextServerRender)
-
     Object.assign(nextServerRender, {
-      renderToHTML: async function renderInjected() {
+      renderToHTML: async function injectedRenderToHTML() {
         await bootstrap.process.ready()
-
         const html = await renderToHTML.apply(this, arguments)
         await bootstrap.process.flush()
 
         bootstrap.process.refresh()
+        console.log('called before send html to client')
 
         return html
       },
