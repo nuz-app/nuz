@@ -155,7 +155,7 @@ const webpackConfigFactory = (
   const loadTimeout = 120000
   const globalObject = `(typeof self !== 'undefined' ? self : this)`
   const mainFields = ['browser', 'module', 'main']
-  const resolveModules = ['node_modules']
+  const requireModules = ['node_modules']
   const statsFilename = STATS_FILENAME
   const name = compilerName.get(module)
 
@@ -205,7 +205,7 @@ const webpackConfigFactory = (
       extensions,
       mainFields,
       alias,
-      modules: resolveModules,
+      modules: requireModules,
     },
     externals: [externals],
     module: {

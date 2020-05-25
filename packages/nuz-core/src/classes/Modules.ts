@@ -707,7 +707,7 @@ class Modules {
   /**
    * Resolve a module by name or id
    */
-  async resolveModule<T = unknown>(id: string): Promise<T> {
+  async requireModule<T = unknown>(id: string): Promise<T> {
     console.log('called resolve module', { id })
     const resolved = await this.findAndLoadModule<T>(id)
 

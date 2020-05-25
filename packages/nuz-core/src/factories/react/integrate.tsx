@@ -1,8 +1,8 @@
-import { REACT_DOM_INJECTED } from '@nuz/shared'
+import getElementsInHead from '../../getElementsInHead'
+import * as DOMHelpers from '../../utils/DOMHelpers'
 
-import * as bootstrap from '../bootstrap'
-import getElementsInHead from '../getElementsInHead'
-import * as DOMHelpers from '../utils/DOMHelpers'
+import ensureDependendies from './ensureDependencies'
+import inject from './inject'
 
 export interface ReactAppProps {
   component?: React.ElementType
@@ -14,66 +14,7 @@ export interface ReactFactoryDependencies {
   'react-dom': any
 }
 
-function ensureDependendies(deps: Partial<ReactFactoryDependencies>) {
-  const dependencies = {} as ReactFactoryDependencies
-
-  dependencies.react = deps.react
-  if (!dependencies.react) {
-    try {
-      dependencies.react = require('react')
-      // tslint:disable-next-line: no-empty
-    } catch {}
-  }
-
-  dependencies['react-dom'] = deps['react-dom']
-  if (!dependencies['react-dom']) {
-    try {
-      dependencies['react-dom'] = require('react-dom')
-      // tslint:disable-next-line: no-empty
-    } catch {}
-  }
-
-  return dependencies
-}
-
-export function injectReactDOMFactory(
-  ReactDOM: ReactFactoryDependencies['react-dom'],
-): () => void {
-  if (!ReactDOM) {
-    throw new Error('No `react-dom` dependency found, please provide to use')
-  }
-
-  const renderOriginal = ReactDOM.render.bind(ReactDOM)
-  const hydrateOriginal = ReactDOM.hydrate.bind(ReactDOM)
-
-  return function injectReactDOM() {
-    if (ReactDOM[REACT_DOM_INJECTED]) {
-      return false
-    }
-
-    const renderFactory = (fn: any) =>
-      async function renderInjected(
-        element: JSX.Element,
-        container: Element,
-        callback?: () => any,
-      ) {
-        await bootstrap.process.ready()
-
-        return fn(element, container, callback)
-      }
-
-    Object.assign(ReactDOM, {
-      render: renderFactory(renderOriginal),
-      hydrate: renderFactory(hydrateOriginal),
-    })
-
-    Object.defineProperty(ReactDOM, REACT_DOM_INJECTED, { value: true })
-
-    return true
-  }
-}
-
-function reactIntegrate(deps: Partial<ReactFactoryDependencies> = {}) {
+function integrate(deps: Partial<ReactFactoryDependencies> = {}) {
   const dependencies = ensureDependendies(deps)
 
   if (!dependencies.react) {
@@ -140,9 +81,9 @@ function reactIntegrate(deps: Partial<ReactFactoryDependencies> = {}) {
     )
   }
 
-  injectReactDOMFactory(ReactDOM)()
+  inject(React, ReactDOM)
 
   return { App }
 }
 
-export default reactIntegrate
+export default integrate

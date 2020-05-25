@@ -4,7 +4,7 @@ import path from 'path'
 
 import * as bootstrap from '../bootstrap'
 
-import { injectReactDOMFactory } from './react'
+import { inject } from './react'
 
 export interface NextFactoryConfig {
   require: NodeRequire
@@ -60,7 +60,7 @@ function nextIntegrate(config: NextFactoryConfig) {
   }
 
   function injectNext() {
-    injectReactDOMFactory(require('react-dom'))()
+    inject(require('react'), require('react-dom'))
 
     const nextServerRender = require('next/dist/next-server/server/render')
     const renderToHTML = nextServerRender.renderToHTML.bind(nextServerRender)
