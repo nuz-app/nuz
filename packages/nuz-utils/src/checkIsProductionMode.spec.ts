@@ -10,7 +10,6 @@ describe('checkIsProductionMode', () => {
   })
 
   it('Should return a boolean value', () => {
-    expect(typeof func.default()).toBe("boolean")
+    expect(typeof func.default()).toBe('boolean')
   })
 })
-

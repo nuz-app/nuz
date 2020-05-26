@@ -12,10 +12,9 @@ describe('ensureOrigin', () => {
 
   it('Should return undefined', () => {
     expect(ensureOrigin('')).toBe(undefined)
-
   })
 
   it('Should return a string', async () => {
-    expect(ensureOrigin('http://nuz.app')).toBe("http://nuz.app")
+    expect(ensureOrigin('http://nuz.app')).toBe('http://nuz.app')
   })
 })

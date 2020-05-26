@@ -1,5 +1,5 @@
 import * as func from './generateSelfCertificate'
-import generateSelfCertificate from './generateSelfCertificate';
+import generateSelfCertificate from './generateSelfCertificate'
 
 describe('generateSelfCertificate', () => {
   it('Exported as default', () => {
@@ -14,7 +14,7 @@ describe('generateSelfCertificate', () => {
       cert: expect.any(String),
       fingerprint: expect.any(String),
       private: expect.any(String),
-      public: expect.any(String)
+      public: expect.any(String),
     })
   })
 })

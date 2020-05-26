@@ -12,10 +12,9 @@ describe('ensureOriginSlash', () => {
 
   it('Should return undefined', () => {
     expect(ensureOriginSlash('')).toBe(undefined)
-
   })
 
   it('Should return a string', async () => {
-    expect(ensureOriginSlash('http://nuz.app')).toBe("http://nuz.app/")
+    expect(ensureOriginSlash('http://nuz.app')).toBe('http://nuz.app/')
   })
 })

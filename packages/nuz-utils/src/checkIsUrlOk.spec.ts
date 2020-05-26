@@ -11,8 +11,7 @@ describe('checkIsUrlOk', () => {
   })
 
   it('Should return a boolean value', async () => {
-    const result = await checkIsUrlOk('fb.com');
-    expect(typeof result).toBe("boolean")
+    const result = await checkIsUrlOk('fb.com')
+    expect(typeof result).toBe('boolean')
   })
 })
-

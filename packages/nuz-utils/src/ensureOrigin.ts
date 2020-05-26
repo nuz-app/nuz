@@ -3,7 +3,7 @@ const ensureOrigin = (value: string): string | undefined => {
     const url = new URL(value)
     return url.origin
     // tslint:disable-next-line: no-empty
-  } catch { }
+  } catch {}
 }
 
 export default ensureOrigin

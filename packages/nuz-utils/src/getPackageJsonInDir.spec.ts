@@ -7,7 +7,7 @@ describe('getPackageJsonInDir', () => {
 
   describe('Is null', () => {
     it('With have no params', () => {
-      // @ts-ignore      
+      // @ts-ignore
       expect(getPackageJsonInDir()).toBe(null)
     })
 
@@ -17,17 +17,17 @@ describe('getPackageJsonInDir', () => {
     })
 
     it('With a null value', () => {
-      // @ts-ignore      
+      // @ts-ignore
       expect(getPackageJsonInDir(null)).toBe(null)
     })
 
     it('With a number', () => {
-      // @ts-ignore            
+      // @ts-ignore
       expect(getPackageJsonInDir(1234)).toBe(null)
     })
 
     it('With an any wrong string', () => {
-      expect(getPackageJsonInDir("nuz")).toBe(null)
+      expect(getPackageJsonInDir('nuz')).toBe(null)
     })
   })
 
@@ -38,4 +38,3 @@ describe('getPackageJsonInDir', () => {
     })
   })
 })
-
