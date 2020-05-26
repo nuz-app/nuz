@@ -10,6 +10,11 @@ describe('generateSelfCertificate', () => {
     const attributes = { name: 'awesomeNuz', value: 'nuz.app' }
 
     const result = generateSelfCertificate(attributes)
-    expect(generateSelfCertificate(attributes)).toMatchSnapshot()
+    expect(generateSelfCertificate(attributes)).toMatchSnapshot({
+      cert: expect.any(String),
+      fingerprint: expect.any(String),
+      private: expect.any(String),
+      public: expect.any(String)
+    })
   })
 })
