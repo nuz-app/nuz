@@ -14,7 +14,6 @@ module.exports = {
     algolia: {
       apiKey: process.env.ALGOLIA_API_KEY,
       indexName: process.env.ALGOLIA_INDEX_NAME,
-      appId: process.env.ALGOLIA_APP_ID, // Optional, if you run the DocSearch crawler on your own
     },
     navbar: {
       title: 'Nuz',
