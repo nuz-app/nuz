@@ -14,7 +14,7 @@ on:
 
 jobs:
   lint:
-    name: Lint - ${{ matrix.os }} - Node v${{ matrix.node-version }}
+    name: Lint & Build - ${{ matrix.os }} - Node v${{ matrix.node-version }}
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -42,7 +42,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Lint
+      - name: Try to run lint
         run: yarn run lint
 
       - name: Check commit message
@@ -81,7 +81,10 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Try to build with Typescript
+      - name: Run build packages
+        run: yarn run build
+
+      - name: Checking types by Typescript
         run: yarn run test:types
 
       - name: Run unit tests
