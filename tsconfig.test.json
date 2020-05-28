@@ -1,23 +1,21 @@
 {
-  "compilerOptions": {
-    "noEmit": true
-  },
+  "compilerOptions": {},
   "files": [],
   "references": [
     {
-      "path": "./packages/nuz-shared"
+      "path": "./packages/nuz-shared/tsconfig.test.json"
     },
     {
-      "path": "./packages/nuz-utils"
+      "path": "./packages/nuz-utils/tsconfig.test.json"
     },
     {
-      "path": "./packages/nuz-cli"
+      "path": "./packages/nuz-cli/tsconfig.test.json"
     },
     {
-      "path": "./packages/nuz-core"
+      "path": "./packages/nuz-core/tsconfig.test.json"
     },
     {
-      "path": "./packages/nuz-registry"
+      "path": "./packages/nuz-registry/tsconfig.test.json"
     }
   ]
 }
