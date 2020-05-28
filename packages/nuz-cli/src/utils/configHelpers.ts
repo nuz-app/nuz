@@ -3,8 +3,8 @@ import glob from 'glob'
 
 import { ModuleConfig } from '../types/common'
 
+import * as paths from '../paths'
 import * as fs from '../utils/fs'
-import * as paths from '../utils/paths'
 
 export const get = (dir: string): string => {
   const matches = glob.sync(paths.configFileInDir(dir))

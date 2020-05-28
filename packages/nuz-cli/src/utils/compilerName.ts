@@ -1,4 +1,4 @@
-import * as paths from './paths'
+import * as paths from '../paths'
 
 export const get = (module: string) => {
   const packageJsonTool = paths.getPackageJsonTool() || {}

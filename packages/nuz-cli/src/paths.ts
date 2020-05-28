@@ -2,7 +2,7 @@ import findCacheDir from 'find-cache-dir'
 import fs from 'fs'
 import path from 'path'
 
-export const tool = path.join(__dirname, '..')
+export const tool = fs.realpathSync(path.join(__dirname, '..'))
 export const cwd = fs.realpathSync(process.cwd())
 
 export const app = cwd

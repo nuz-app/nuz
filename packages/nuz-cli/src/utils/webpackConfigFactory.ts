@@ -26,9 +26,9 @@ import {
   TS_EXTENSIONS,
 } from '../lib/const'
 
+import * as paths from '../paths'
 import checkIsPackageInstalled from './checkIsPackageInstalled'
 import * as compilerName from './compilerName'
-import * as paths from './paths'
 
 import styleLoadersFactory from './webpack/factories/styleLoaders'
 import setExternals from './webpack/helpers/setExternals'

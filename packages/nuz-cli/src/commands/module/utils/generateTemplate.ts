@@ -1,9 +1,9 @@
 import glob from 'glob'
 import path from 'path'
 
+import * as paths from '../../../paths'
 import createQuestions from '../../../utils/createQuestions'
 import * as fs from '../../../utils/fs'
-import * as paths from '../../../utils/paths'
 import print from '../../../utils/print'
 
 const CONFIG_FILE = `

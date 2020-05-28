@@ -1,7 +1,7 @@
 import checkForUpdate, { Result } from 'update-check'
 
+import * as paths from '../paths'
 import checkIsYarnInstalled from './checkIsYarnInstalled'
-import * as paths from './paths'
 import print, { error, log } from './print'
 
 async function checkUpdatePackage() {

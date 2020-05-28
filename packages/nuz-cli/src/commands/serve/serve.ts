@@ -1,11 +1,11 @@
 import path from 'path'
 import { Arguments } from 'yargs'
 
+import * as paths from '../../paths'
 import clearConsole from '../../utils/clearConsole'
 import * as configHelpers from '../../utils/configHelpers'
 import exitIfModuleInsufficient from '../../utils/exitIfModuleInsufficient'
 import * as fs from '../../utils/fs'
-import * as paths from '../../utils/paths'
 import { info, pretty } from '../../utils/print'
 import { onExit } from '../../utils/process'
 import serveServer from '../../utils/serve'

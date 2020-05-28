@@ -3,9 +3,9 @@ import webpack from 'webpack'
 
 import { FeatureConfig, NamesConfig } from '../../../types'
 
+import * as paths from '../../../paths'
 import checkIsPackageInstalled from '../../checkIsPackageInstalled'
 import getBrowserslist from '../../getBrowserslist'
-import * as paths from '../../paths'
 
 export interface StyleLoadersOptions {
   dir: string
