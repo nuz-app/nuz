@@ -12,14 +12,17 @@
     "access": "public"
   },
   "bin": {
-    "nuz": "dist/cli.js"
+    "nuz": "bin/cli.js"
   },
   "files": [
     "dist",
     "templates",
-    "types"
+    "types",
+    "cli.js"
   ],
+  "source": "src/index.ts",
   "main": "dist/index.js",
+  "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "lint": "tslint --config ../../tslint.json '**/*.ts{,x}' --exclude '**/+(dist|node_modules|coverage)/**'",
@@ -27,8 +30,8 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "clean": "rimraf dist coverage tsconfig.tsbuildinfo",
-    "dev": "tsc -p tsconfig.json -w",
-    "build": "tsc -p tsconfig.json"
+    "dev": "rollup -c -w",
+    "build": "rollup -c"
   },
   "dependencies": {
     "@babel/cli": "^7.8.4",

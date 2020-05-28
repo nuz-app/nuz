@@ -5,6 +5,11 @@ import LRUCache from 'lru-cache'
 import appendQueryToUrl, { AppendConfig } from './appendQueryToUrl'
 import getScript from './getScript'
 
+export enum Priorities {
+  auto = 'auto',
+  high = 'high',
+}
+
 export interface PreloadConfig {
   [attr: string]: any
   integrity: string | undefined
@@ -65,7 +70,7 @@ export const preloadStyle = (
   const defined = defineElement(
     'link',
     Object.assign(
-      { href: updatedHref, as: 'style' },
+      { priority: Priorities.auto, href: updatedHref, as: 'style' },
       defaultConfigForPreload,
       rest,
     ),
@@ -82,7 +87,7 @@ export const preloadScript = (
   const defined = defineElement(
     'link',
     Object.assign(
-      { href: updatedHref, as: 'fetch' },
+      { priority: Priorities.auto, href: updatedHref, as: 'fetch' },
       defaultConfigForPreload,
       rest,
     ),
@@ -93,6 +98,7 @@ export const preloadScript = (
 
 export const dnsPrefetch = (href: string, isPreconnect: boolean = false) => {
   const defined = defineElement('link', {
+    priority: Priorities.auto,
     rel: isPreconnect ? 'preconnect' : 'dns-prefetch',
     href,
   })
@@ -124,6 +130,7 @@ export const loadStyle = async (href: string, config?: StyleConfig) => {
     'style',
     Object.assign(
       {
+        priority: Priorities.auto,
         type: 'text/css',
         'data-href': href,
         dangerouslySetInnerHTML: {
@@ -142,6 +149,7 @@ export const loadStyle = async (href: string, config?: StyleConfig) => {
 
 export const sharedConfig = (config: any) => {
   const defined = defineElement('script', {
+    priority: Priorities.high,
     type: 'text/javascript',
     dangerouslySetInnerHTML: {
       __html: `window['${SHARED_CONFIG_KEY}'] = ${jsonHelpers.stringify(

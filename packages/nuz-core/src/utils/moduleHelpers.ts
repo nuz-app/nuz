@@ -8,24 +8,28 @@ export interface ExportedConfig {
   vendor?: boolean
   linked?: boolean
   shared?: boolean
+  id?: string
 }
 
 const definedKeys = {
   module: '__esModule',
-  linked: '__isLinked',
-  local: '__isLocal',
-  vendor: '__isVendor',
-  upstream: '__isUpstream',
-  fallback: '__isFallback',
-  shared: '__isShared',
+  linked: '__linked',
+  local: '__local',
+  vendor: '__vendor',
+  upstream: '__upstream',
+  fallback: '__fallback',
+  shared: '__shared',
 } as { [name: string]: any }
 
 export const define = (module: any, config: ExportedConfig) => {
   // tslint:disable-next-line: forin
   for (const key in config) {
     const defined = definedKeys[key]
-    if ((config as any)[key] && defined) {
+    const value = (config as any)[key]
+    if (value && defined) {
       Object.defineProperty(module, defined, { value: true })
+    } else if (value) {
+      Object.defineProperty(module, `__${key}`, { value })
     }
   }
 

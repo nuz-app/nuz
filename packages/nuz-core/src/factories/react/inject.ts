@@ -2,7 +2,10 @@ import { REACT_DOM_INJECTED } from '@nuz/shared'
 
 import * as bootstrap from '../../bootstrap'
 
-function inject(React: any, ReactDOM: any): void {
+import Loadable from './Loadable'
+
+function inject(deps): void {
+  const ReactDOM = deps['react-dom']
   if (!ReactDOM) {
     throw new Error('No `react-dom` dependency found, please provide to use')
   }
@@ -20,7 +23,7 @@ function inject(React: any, ReactDOM: any): void {
       container: Element,
       callback?: () => any,
     ) {
-      await bootstrap.process.ready()
+      await Promise.all([bootstrap.process.ready(), Loadable.readyAll()])
 
       return fn(element, container, callback)
     }

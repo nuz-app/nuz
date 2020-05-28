@@ -5,6 +5,7 @@ import {
   DeferedPromise,
   ensureOrigin,
   getFetchUrls,
+  interopRequireDefault,
   jsonHelpers,
 } from '@nuz/utils'
 import LRUCache from 'lru-cache'
@@ -24,7 +25,6 @@ import getConfig, { Config } from '../utils/effects/getConfig'
 import fetchConfig from '../utils/fetchConfig'
 import getRuntimePlatform from '../utils/getRuntimePlatform'
 import getScript from '../utils/getScript'
-import interopRequireDefault from '../utils/interopRequireDefault'
 import * as moduleHelpers from '../utils/moduleHelpers'
 import * as requireHelpers from '../utils/requireHelpers'
 
@@ -114,6 +114,7 @@ class Modules {
   private readonly _dev: boolean
   private readonly _ssr: boolean
   private readonly _resolvedModules: Caches<string, LoadResult<any>>
+  private readonly _resolvedInSession: Set<string>
   private readonly _resolvedDependencies: Caches<string, any>
   private readonly _modulesOnRegistry: Caches<string, RequiredBaseItem>
   private readonly _pingResources: Caches<
@@ -147,6 +148,7 @@ class Modules {
     this._modulesOnRegistry = new Caches()
     this._pingResources = new Caches()
     this._dnsPrefetchs = new Set()
+    this._resolvedInSession = new Set()
 
     // Create defered promise to checking ready
     this._ready = deferedPromise<boolean>()
@@ -167,7 +169,7 @@ class Modules {
     }
   }
 
-  private moduleCacheId(item: RequiredBaseItem) {
+  private moduleId(item: RequiredBaseItem) {
     const { id, version, name } = item
 
     return id || `${name}${version ? `@${version}` : ''}`
@@ -271,7 +273,7 @@ class Modules {
       return false
     }
 
-    const cacheId = this.moduleCacheId(item)
+    const cacheId = this.moduleId(item)
     if (this._pingResources.has(cacheId)) {
       return true
     }
@@ -348,6 +350,7 @@ class Modules {
    * Run script and pick module exports
    */
   private runScript({
+    id,
     code,
     format,
     library,
@@ -385,6 +388,7 @@ class Modules {
     moduleExports = moduleHelpers.define(moduleExports, {
       module: true,
       upstream: true,
+      id,
     })
 
     if (!checkIsFunction(moduleExports.default)) {
@@ -410,6 +414,8 @@ class Modules {
 
     const { main, styles } = requireHelpers.parse(upstream) || {}
 
+    const moduleId = this.moduleId(item)
+
     const moduleScript = await getScript(
       main.url,
       {
@@ -422,6 +428,7 @@ class Modules {
     )
 
     const moduleExports = this.runScript({
+      id: moduleId,
       code: moduleScript,
       format,
       library,
@@ -565,7 +572,7 @@ class Modules {
     }
 
     let resolvedModule
-    const cacheId = this.moduleCacheId(item)
+    const cacheId = this.moduleId(item)
     // In server-side mode will not use cache resolved modules
     // maybe cache the module resources rather than cache resolved
     if (!this._ssr && this._resolvedModules.has(cacheId)) {
@@ -649,7 +656,7 @@ class Modules {
   /**
    * Call to prepare everything before using the modules
    */
-  async prepare() {
+  public async prepare() {
     this.bindVendors()
 
     if (this._dev) {
@@ -672,14 +679,14 @@ class Modules {
   /**
    * Ready state of the modules
    */
-  async ready() {
+  public async ready() {
     await this._ready.promise
   }
 
   /**
    * Handle preload modules configured in bootstrap
    */
-  async preload() {
+  public async preload() {
     const modules = this.getAllModules()
     const valuesOf = Object.values(modules)
 
@@ -707,8 +714,7 @@ class Modules {
   /**
    * Resolve a module by name or id
    */
-  async requireModule<T = unknown>(id: string): Promise<T> {
-    console.log('called resolve module', { id })
+  public async requireModule<T = unknown>(id: string): Promise<T> {
     const resolved = await this.findAndLoadModule<T>(id)
 
     return resolved?.module
@@ -717,7 +723,9 @@ class Modules {
   /**
    * Find and load the module by name or id
    */
-  async findAndLoadModule<M = unknown>(id: string): Promise<LoadResult<M>> {
+  public async findAndLoadModule<M = unknown>(
+    id: string,
+  ): Promise<LoadResult<M>> {
     await this.ready()
 
     const modules = this.getAllModules()
@@ -737,12 +745,13 @@ class Modules {
   /**
    * Get all elements need to append in `<head />`
    */
-  getElementsInHead(): TagElement[] {
+  public getElementsInHead(resolvedIds: string[] = []): TagElement[] {
     const modules = this.getAllModules()
-    const resolvedModules = this._resolvedModules.entries()
+    const resolvedInSession = resolvedIds || []
+
     if (this._ssr) {
       const valuesOf = Object.values(modules)
-      for (const [id] of resolvedModules) {
+      for (const id of resolvedInSession) {
         let item = modules[id]
         if (!item) {
           item = valuesOf.find((m) => m.id === id) as BaseItemConfig
@@ -771,12 +780,27 @@ class Modules {
     }
 
     if (this._ssr) {
-      for (const [_, item] of resolvedModules) {
+      for (const id of resolvedInSession) {
+        const item = this._resolvedModules.get(id)
+        if (!item) {
+          continue
+        }
+
         tags.push(...(item.styles || []))
       }
     }
 
     return tags
+  }
+
+  public pushToSession(ids: string[]) {
+    for (const id of ids) {
+      this._resolvedInSession.add(id)
+    }
+  }
+
+  public clearAllSession() {
+    this._resolvedInSession.clear()
   }
 }
 

@@ -1,1 +1,1 @@
-export const VERSION = process.env.VERSION
+export const VERSION = __VERSION__

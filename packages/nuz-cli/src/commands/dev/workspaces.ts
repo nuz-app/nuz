@@ -8,7 +8,7 @@ import { Arguments } from 'yargs'
 
 import { ModuleConfig } from '../../types'
 
-import clearConsole from '../../utils/clearConsole'
+// import clearConsole from '../../utils/clearConsole'
 import * as compilerName from '../../utils/compilerName'
 import * as configHelpers from '../../utils/configHelpers'
 import exitIfModuleInsufficient from '../../utils/exitIfModuleInsufficient'
@@ -47,7 +47,7 @@ async function standalone({
   const publicPath = linkedUrl.href
   const bundlesDir = paths.configInDir(dir, 'modules')
 
-  clearConsole()
+  // clearConsole()
   info('Clean up distributable workspaces folder')
   await fs.emptyDir(bundlesDir)
 

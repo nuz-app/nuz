@@ -12,7 +12,9 @@ export {
   integrate as reactHelpersFactory,
   integrate as reactIntegrate,
   ReactFactoryDependencies,
+  Loadable,
 } from './factories/react'
+
 export {
   default as nextHelpersFactory,
   default as nextIntegrate,

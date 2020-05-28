@@ -109,7 +109,7 @@ const defaultNamesFactory = (dev: boolean): NamesConfig => ({
     dev ? 'styles/[name].chunk.css' : 'styles/[name].[contenthash:8].chunk.css',
 })
 
-const webpackConfigFactory = (
+function webpackConfigFactory(
   {
     dev,
     dir,
@@ -119,7 +119,7 @@ const webpackConfigFactory = (
     config: moduleConfig,
   }: FactoryConfig,
   feature: Partial<FeatureConfig> = {},
-) => {
+) {
   const {
     isolated,
     library,

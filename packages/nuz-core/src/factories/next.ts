@@ -4,7 +4,7 @@ import path from 'path'
 
 import * as bootstrap from '../bootstrap'
 
-import { inject } from './react'
+import { extractorHelpers, inject, Loadable } from './react'
 
 export interface NextFactoryConfig {
   require: NodeRequire
@@ -13,7 +13,7 @@ export interface NextFactoryConfig {
 
 const LOADABLE_UPDATED_PATH = path.join(
   __dirname,
-  '../../bundled/next/loadable.js',
+  '../bundled/next/loadable.js',
 )
 
 const LOADABLE_REQUIRE_PATH = 'next/dist/next-server/lib/loadable'
@@ -35,7 +35,7 @@ function nextIntegrate(config: NextFactoryConfig) {
 
   function withNuz(nextConfig: any = {}) {
     return Object.assign({}, nextConfig, {
-      webpack: (webpackConfig: any, { isServer, ...rest }: any) => {
+      webpack: (webpackConfig, { isServer, ...rest }) => {
         const webpackCustom = nextConfig.webpack
         const updatedConfig = !webpackCustom
           ? webpackConfig
@@ -60,22 +60,50 @@ function nextIntegrate(config: NextFactoryConfig) {
   }
 
   function injectNext() {
-    inject(require('react'), require('react-dom'))
+    inject({
+      react: require('react'),
+      'react-dom': require('react-dom'),
+    })
+
+    bootstrap.extractor.prepare({
+      parser: extractorHelpers.parser,
+      renderer: extractorHelpers.renderer,
+    })
 
     const nextServerRender = require('next/dist/next-server/server/render')
     const renderToHTML = nextServerRender.renderToHTML.bind(nextServerRender)
     Object.assign(nextServerRender, {
       renderToHTML: async function injectedRenderToHTML() {
-        await bootstrap.process.ready()
+        await Promise.all([
+          bootstrap.process.ready(),
+          bootstrap.extractor.setup(),
+          Loadable.preloadAll(),
+        ])
+
         const html = await renderToHTML.apply(this, arguments)
-        await bootstrap.process.flush()
+        const result = bootstrap.extractor.appendTagsToHTML(html)
 
-        bootstrap.process.refresh()
-        console.log('called before send html to client')
+        await Promise.all([
+          bootstrap.process.closeSession(),
+          bootstrap.extractor.teardown(),
+          bootstrap.process.checkUpdate(() => Loadable.flushAll()),
+        ])
 
-        return html
+        return result
       },
     })
+
+    // const NextLoadable = require(LOADABLE_REQUIRE_PATH)
+    // const preloadAll = NextLoadable.default.preloadAll
+    // Object.assign(NextLoadable.default, {
+    //   preloadAll: async function injectedPreloadAll() {
+    //     const [result] = await Promise.all([
+    //       await preloadAll.apply(this, arguments),
+    //       await Loadable.preloadAll(),
+    //     ])
+    //     return result
+    //   },
+    // })
   }
 
   if (autoInject) {

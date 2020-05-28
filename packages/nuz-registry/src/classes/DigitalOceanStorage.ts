@@ -4,6 +4,7 @@ import fs from 'fs'
 import throat from 'throat'
 import util from 'util'
 
+// @ts-ignore
 import aws = require('aws-sdk')
 
 import { ModuleId } from '../types'

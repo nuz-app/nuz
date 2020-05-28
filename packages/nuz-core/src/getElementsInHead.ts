@@ -1,7 +1,7 @@
 import getModules from './utils/effects/getModules'
 
-function getElementsInHead() {
-  return getModules().getElementsInHead()
+function getElementsInHead(resolvedIds?: string[]) {
+  return getModules().getElementsInHead(resolvedIds)
 }
 
 export default getElementsInHead

@@ -1,6 +1,7 @@
 import { NUZ_REGISTRY_URL, SHARED_CONFIG_KEY } from '@nuz/shared'
 import {
   checkIsObject,
+  checkIsProductionMode,
   deferedPromise,
   DeferedPromise,
   ensureOrigin,
@@ -17,7 +18,7 @@ import uniq from '../utils/uniq'
 
 const FETCH_CONFIG_TIMEOUT = 10000
 const FETCH_CONFIG_RETRIES = 1
-const REFERSH_CONFIG_TIMEOUT = 5000
+const CHECK_UPDATE_TIMEOUT = checkIsProductionMode() ? 30000 : 5000
 
 function mergeConfig(
   localConfig: BootstrapConfig,
@@ -75,29 +76,37 @@ async function transformConfig(config: BootstrapConfig) {
   return mergeConfig(config, configOfCompose)
 }
 
-type Fn = () => void
-
 class Processs {
   private readonly _ready: DeferedPromise<boolean>
-  private readonly _queues: Fn[]
   private readonly _timers: {
-    refresh?: NodeJS.Timeout
+    checkUpdate?: NodeJS.Timeout
   }
 
+  private _session?: any
   private _config?: Config
   private _modules?: Modules
   private _configAsRaw?: BootstrapConfig
 
   constructor() {
     this._ready = deferedPromise<boolean>()
-    this._queues = []
     this._timers = {
-      refresh: undefined,
+      checkUpdate: undefined,
     }
   }
 
-  private next(fn: () => void) {
-    this._queues.push(fn)
+  private async update() {
+    try {
+      const config = await transformConfig(this._configAsRaw as BootstrapConfig)
+
+      if (!this._config) {
+        throw new Error('The process did not run in sequence')
+      }
+
+      this._config.unlock()
+      this._config.update(config)
+      this._config.lock()
+      // tslint:disable-next-line: no-empty
+    } catch {}
   }
 
   public async ready(): Promise<boolean> {
@@ -126,41 +135,36 @@ class Processs {
     this._ready.resolve(true)
   }
 
-  public async flush() {
-    while (this._queues.length > 0) {
-      const fn = this._queues.pop() as Fn
-      fn()
-    }
-  }
-
-  public async refresh() {
+  public async checkUpdate(cleanUp?: () => any) {
     if (!this._configAsRaw) {
       throw new Error('The process did not run in sequence')
     }
 
-    if (this._timers.refresh) {
+    if (this._timers.checkUpdate) {
       return
     }
 
-    this._timers.refresh = setTimeout(
-      () => (this._timers.refresh = undefined),
-      REFERSH_CONFIG_TIMEOUT,
+    this._timers.checkUpdate = setTimeout(
+      () => (this._timers.checkUpdate = undefined),
+      CHECK_UPDATE_TIMEOUT,
     )
 
-    try {
-      const config = await transformConfig(this._configAsRaw as BootstrapConfig)
+    await this.update()
+    if (typeof cleanUp === 'function') {
+      cleanUp()
+    }
+  }
 
-      this.next(() => {
-        if (!this._config) {
-          throw new Error('The process did not run in sequence')
-        }
+  public createSession() {
+    this._session = new Set()
+  }
 
-        this._config.unlock()
-        this._config.update(config)
-        this._config.lock()
-      })
-      // tslint:disable-next-line: no-empty
-    } catch {}
+  public getSession() {
+    return this._session
+  }
+
+  public closeSession() {
+    this._session = undefined
   }
 }
 

@@ -2,29 +2,42 @@ import findCacheDir from 'find-cache-dir'
 import fs from 'fs'
 import path from 'path'
 
-import getPackageJsonTool from './getPackageJsonTool'
-
-export const tool = fs.realpathSync(path.join(__dirname, '../../'))
-
+export const tool = path.join(__dirname, '..')
 export const cwd = fs.realpathSync(process.cwd())
+
 export const app = cwd
 
-export const configInDir = (dir: string, ...rest: string[]) =>
-  path.join(dir, '.nuz', ...rest)
-export const newAppInDir = (dir: string, name: string) => [dir, name].join('/')
-export const configFileInDir = (dir: string, ext: string = '*') =>
-  [dir, `nuz.config.${ext}`].join('/')
-export const packageJsonInDir = (dir: string) => [dir, `package.json`].join('/')
+export function getPackageJsonTool() {
+  return require(packageJsonInDir(tool))
+}
+
+export function configInDir(dir: string, ...rest: string[]) {
+  return path.join(dir, '.nuz', ...rest)
+}
+
+export function newAppInDir(dir: string, name: string) {
+  return `${dir}/${name}`
+}
+
+export function configFileInDir(dir: string, ext: string = '*') {
+  return `${dir}/nuz.config.${ext}`
+}
+
+export function packageJsonInDir(dir: string) {
+  return `${dir}/package.json`
+}
 
 export const cacheInApp = findCacheDir({
   name: getPackageJsonTool().name,
   thunk: true,
 })
-export const resolveInApp = (name: string, dir?: string) =>
-  require.resolve(name, {
+
+export function resolveInApp(name: string, dir?: string) {
+  return require.resolve(name, {
     paths: [
       dir && dir !== app && path.join(dir, 'node_modules'),
       path.join(app, 'node_modules'),
       path.join(tool, 'node_modules'),
     ].filter(Boolean) as string[],
   })
+}

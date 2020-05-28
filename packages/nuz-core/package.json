@@ -15,7 +15,9 @@
     "dist",
     "bundled"
   ],
+  "source": "src/index.ts",
   "main": "dist/index.js",
+  "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "lint": "tslint --config ../../tslint.json '**/*.ts{,x}' --exclude '**/+(dist|node_modules|coverage)/**'",
@@ -23,8 +25,8 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "clean": "rimraf dist coverage tsconfig.tsbuildinfo",
-    "dev": "tsc -p tsconfig.json -w",
-    "build": "tsc -p tsconfig.json"
+    "dev": "rollup -c -w",
+    "build": "rollup -c"
   },
   "dependencies": {
     "@nuz/shared": "^1.0.0-beta.30",
@@ -34,16 +36,23 @@
     "lru-cache": "^5.1.1",
     "socket.io-client": "^2.3.0",
     "tslib": "^1.11.1",
+    "use-subscription": "^1.4.1",
     "yargs": "^15.1.0"
   },
   "devDependencies": {
     "@types/lru-cache": "^5.1.0",
     "@types/react": "^16.9.25",
     "@types/react-dom": "^16.9.5",
-    "@types/socket.io-client": "^1.4.32"
+    "@types/socket.io-client": "^1.4.32",
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
   },
   "peerDependencies": {
     "react": "*",
     "react-dom": "*"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.1",
+    "utf-8-validate": "^5.0.2"
   }
 }

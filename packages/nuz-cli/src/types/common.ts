@@ -1,5 +1,8 @@
+// @ts-ignore
 import compression = require('compression')
+// @ts-ignore
 import cors = require('cors')
+// @ts-ignore
 import webpack = require('webpack')
 import * as yargs from 'yargs'
 
