@@ -1,8 +1,8 @@
 import React from 'react'
 import { useSubscription } from 'use-subscription'
 
-import * as bootstrap from '../../bootstrap'
 import requireModule from '../../require'
+import * as shared from '../../shared'
 
 export interface LoadableOptions {
   loading: React.ElementType<any>
@@ -223,7 +223,7 @@ function createLoadableComponent(id: string, opts: LoadableOptions) {
   }
 
   const LoadableComponent = (props, ref) => {
-    bootstrap.extractor.push(id)
+    shared.extractor.push(id)
 
     const state = useSubscription(subscription)
 

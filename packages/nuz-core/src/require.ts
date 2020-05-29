@@ -1,10 +1,10 @@
 import { moduleIdHelpers } from '@nuz/utils'
 
-import * as bootstrap from './bootstrap'
+import * as shared from './shared'
 import getModules from './utils/effects/getModules'
 
 export default async function <T = any>(idOrName: string): Promise<T> {
-  await bootstrap.process.ready()
+  await shared.process.ready()
 
   const id = moduleIdHelpers.use(idOrName)
 

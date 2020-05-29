@@ -1,21 +1,31 @@
-import React from 'react'
+// @ts-ignore
+import React = require('react')
 
-import ensureDependendies from './ensureDependencies'
 import inject from './inject'
 
-export interface ReactAppProps extends React.PropsWithChildren<any> {
-  component?: React.ElementType
-  injectHead?: React.ElementType
-}
+function integrate(deps = {} as any) {
+  const dependencies = {
+    react: deps.react,
+    'react-dom': deps['react-dom'],
+  } as any
 
-export interface ReactFactoryDependencies {
-  react: any
-  'react-dom': any
-}
+  if (!dependencies.react) {
+    try {
+      dependencies.react = require('react')
+      // tslint:disable-next-line: no-empty
+    } catch {}
+  }
 
-function integrate(deps: Partial<ReactFactoryDependencies> = {}) {
-  const dependencies = ensureDependendies(deps)
+  if (!dependencies['react-dom']) {
+    try {
+      dependencies['react-dom'] = require('react-dom')
+      // tslint:disable-next-line: no-empty
+    } catch {}
+  }
+
   inject(dependencies)
+
+  return dependencies
 }
 
 export default integrate

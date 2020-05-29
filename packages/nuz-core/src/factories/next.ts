@@ -1,4 +1,4 @@
-import * as bootstrap from '../bootstrap'
+import * as shared from '../shared'
 
 import { extractorHelpers, inject, Loadable } from './react'
 
@@ -46,7 +46,7 @@ function nextIntegrate(config: NextFactoryConfig) {
       'react-dom': require('react-dom'),
     })
 
-    bootstrap.extractor.prepare({
+    shared.extractor.prepare({
       parser: extractorHelpers.parser,
       renderer: extractorHelpers.renderer,
     })
@@ -56,18 +56,18 @@ function nextIntegrate(config: NextFactoryConfig) {
     Object.assign(nextServerRender, {
       renderToHTML: async function injectedRenderToHTML() {
         await Promise.all([
-          bootstrap.process.ready(),
-          bootstrap.extractor.setup(),
+          shared.process.ready(),
+          shared.extractor.setup(),
           Loadable.preloadAll(),
         ])
 
         const html = await renderToHTML.apply(this, arguments)
-        const result = bootstrap.extractor.appendTagsToHTML(html)
+        const result = shared.extractor.appendTagsToHTML(html)
 
         await Promise.all([
-          bootstrap.process.closeSession(),
-          bootstrap.extractor.teardown(),
-          bootstrap.process.checkUpdate(() => Loadable.flushAll()),
+          shared.process.closeSession(),
+          shared.extractor.teardown(),
+          shared.process.checkUpdate(() => Loadable.flushAll()),
         ])
 
         return result
