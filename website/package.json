@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@docusaurus/core": "^2.0.0-alpha.56",
+    "@docusaurus/plugin-ideal-image": "^2.0.0-alpha.56",
     "@docusaurus/preset-classic": "^2.0.0-alpha.56",
     "classnames": "^2.2.6",
     "react": "^16.13.1",

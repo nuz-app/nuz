@@ -11,7 +11,7 @@ module.exports = {
   organizationName: 'nuz-app', // Usually your GitHub org/user name.
   projectName: 'nuz', // Usually your repo name.
   themeConfig: {
-    googleAnalytics: {
+    gtag: {
       trackingID: process.env.GA_DOCUMENT_ID,
     },
     algolia: {
@@ -107,5 +107,15 @@ module.exports = {
       },
     ],
   ],
-  plugins: ['@docusaurus/plugin-google-analytics'],
+  plugins: [
+    [
+      '@docusaurus/plugin-ideal-image',
+      {
+        quality: 85,
+        max: 1030, // max resized image's size.
+        min: 640, // min resized image's size. if original is lower, use that size.
+        steps: 2, // the max number of images generated between min and max (inclusive)
+      },
+    ],
+  ],
 };
