@@ -1,3 +1,4 @@
+import { moduleIdHelpers } from '@nuz/utils'
 import { Express } from 'express'
 
 import { LASTEST_TAG } from '../lib/const'
@@ -17,8 +18,13 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
       let { id, module, version } = request.query
 
       if (id) {
-        // tslint:disable-next-line: semicolon
-        ;[module, version] = ((id as string) || '').split('@')
+        const parsed = moduleIdHelpers.parser(id as string)
+        module = parsed.module
+        if (!version || parsed.version === '*') {
+          version = undefined
+        } else {
+          version = parsed.version
+        }
       }
 
       if (id && !version) {
