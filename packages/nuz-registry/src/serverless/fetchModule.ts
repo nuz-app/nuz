@@ -20,7 +20,7 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
       if (id) {
         const parsed = moduleIdHelpers.parser(id as string)
         module = parsed.module
-        if (!version || parsed.version === '*') {
+        if (!parsed.version || parsed.version === '*') {
           version = undefined
         } else {
           version = parsed.version
