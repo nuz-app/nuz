@@ -14,7 +14,7 @@ on:
 
 jobs:
   lint:
-    name: Lint & Build - ${{ matrix.os }} - Node v${{ matrix.node-version }}
+    name: Lint - ${{ matrix.os }} - Node v${{ matrix.node-version }}
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -55,6 +55,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: [10.x, 12.x]
+      fail-fast: true
 
     runs-on: ${{ matrix.os }}
 
@@ -90,23 +91,48 @@ jobs:
       - name: Run unit tests
         run: yarn run test:unit -- --ci
 
-  Deploy:
-    if: github.ref == 'refs/heads/next'
-    needs: 
-      - test
-      - lint
+  build:
+    name: Build - ${{ matrix.os }} - Node v${{ matrix.node-version }}
 
-    name: Deploy - ${{ matrix.os }} - Node v${{ matrix.node-version }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [10.x, 12.x]
+      fail-fast: true
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Use latest Yarn on ubuntu/macos
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
+        run: sudo npm i -g yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build all packages
+        run: yarn run build
+
+  website:
+    name: Website - ${{ matrix.os }} - Node v${{ matrix.node-version }}
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      website-directory: ./website
-      website-build: ./website/build
+      WEBSITE_DIRECTORY: ./website
+      WEBSITE_BUILD_DIRECTORY: ./website/build
 
     strategy:
       matrix:
         os: [ubuntu-latest]
         node-version: [12.x]
+      fail-fast: true
 
     runs-on: ${{ matrix.os }}
 
@@ -124,11 +150,11 @@ jobs:
         run: sudo npm i -g yarn
 
       - name: Install dependencies in website directory
-        working-directory: ${{ env.website-directory }}
+        working-directory: ${{ env.WEBSITE_DIRECTORY }}
         run: yarn install
 
       - name: Build document website
-        working-directory: ${{ env.website-directory }}
+        working-directory: ${{ env.WEBSITE_DIRECTORY }}
         env:
           ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_API_KEY }}
           ALGOLIA_INDEX_NAME: ${{ secrets.ALGOLIA_INDEX_NAME }}
@@ -136,11 +162,12 @@ jobs:
         run: yarn run build
 
       - name: Deploy document website
+        if: github.ref == 'refs/heads/next'
         uses: peaceiris/actions-gh-pages@v3
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           publish_branch: gh-pages
-          publish_dir: ${{ env.website-build }}
+          publish_dir: ${{ env.WEBSITE_BUILD_DIRECTORY }}
           commit_message: 'chore: deploy document website ${{ github.event.head_commit.id }}'
           cname: docs.nuz.app
         
