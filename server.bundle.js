@@ -82,7 +82,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 413);
+/******/ 	return __webpack_require__(__webpack_require__.s = 414);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -397,7 +397,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 "use strict";
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(75);
+/* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(76);
 /**
  * Copyright (c) 2017-present, Facebook, Inc.
  *
@@ -414,7 +414,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(37);
 /* harmony import */ var _isInternalUrl__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(25);
-/* harmony import */ var _ExecutionEnvironment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(24);
+/* harmony import */ var _ExecutionEnvironment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(20);
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
@@ -553,7 +553,7 @@ __webpack_require__.d(__webpack_exports__, "i", function() { return /* binding *
 // UNUSED EXPORTS: MemoryRouter, Prompt, Redirect, __HistoryContext, generatePath, useParams, useRouteMatch
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js
-var inheritsLoose = __webpack_require__(20);
+var inheritsLoose = __webpack_require__(21);
 
 // EXTERNAL MODULE: ./node_modules/react/index.js
 var react = __webpack_require__(0);
@@ -564,7 +564,7 @@ var prop_types = __webpack_require__(6);
 var prop_types_default = /*#__PURE__*/__webpack_require__.n(prop_types);
 
 // EXTERNAL MODULE: ./node_modules/history/esm/history.js + 2 modules
-var esm_history = __webpack_require__(23);
+var esm_history = __webpack_require__(24);
 
 // CONCATENATED MODULE: ./node_modules/mini-create-react-context/dist/esm/index.js
 
@@ -743,7 +743,7 @@ var index = react_default.a.createContext || createReactContext;
 /* harmony default export */ var esm = (index);
 
 // EXTERNAL MODULE: ./node_modules/tiny-invariant/dist/tiny-invariant.esm.js
-var tiny_invariant_esm = __webpack_require__(21);
+var tiny_invariant_esm = __webpack_require__(22);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
 var esm_extends = __webpack_require__(2);
@@ -1904,7 +1904,7 @@ var react = __webpack_require__(0);
 var react_default = /*#__PURE__*/__webpack_require__.n(react);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/core/lib/client/exports/Head.js
-var Head = __webpack_require__(74);
+var Head = __webpack_require__(75);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/core/lib/client/exports/isInternalUrl.js
 var isInternalUrl = __webpack_require__(25);
@@ -1923,7 +1923,7 @@ var useBaseUrl = __webpack_require__(13);
  * LICENSE file in the root directory of this source tree.
  */const themes={light:'',dark:'dark'};const useTheme=()=>{const{siteConfig:{themeConfig:{disableDarkMode}}={}}=Object(useDocusaurusContext["a" /* default */])();const[theme,setTheme]=Object(react["useState"])(typeof document!=='undefined'?document.documentElement.getAttribute('data-theme'):themes.light);const setThemeSyncWithLocalStorage=Object(react["useCallback"])(newTheme=>{try{localStorage.setItem('theme',newTheme);}catch(err){console.error(err);}},[setTheme]);const setLightTheme=Object(react["useCallback"])(()=>{setTheme(themes.light);setThemeSyncWithLocalStorage(themes.light);},[]);const setDarkTheme=Object(react["useCallback"])(()=>{setTheme(themes.dark);setThemeSyncWithLocalStorage(themes.dark);},[]);Object(react["useEffect"])(()=>{document.documentElement.setAttribute('data-theme',theme);},[theme]);Object(react["useEffect"])(()=>{if(disableDarkMode){return;}try{const localStorageTheme=localStorage.getItem('theme');if(localStorageTheme!==null){setTheme(localStorageTheme);}}catch(err){console.error(err);}},[setTheme]);Object(react["useEffect"])(()=>{if(disableDarkMode){return;}window.matchMedia('(prefers-color-scheme: dark)').addListener(({matches})=>{setTheme(matches?themes.dark:themes.light);});},[]);return{isDarkTheme:theme===themes.dark,setLightTheme,setDarkTheme};};/* harmony default export */ var hooks_useTheme = (useTheme);
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/ThemeContext.js
-var ThemeContext = __webpack_require__(76);
+var ThemeContext = __webpack_require__(77);
 
 // CONCATENATED MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/ThemeProvider/index.js
 /**
@@ -1954,7 +1954,7 @@ var ThemeContext = __webpack_require__(76);
  * LICENSE file in the root directory of this source tree.
  */function TabGroupChoiceProvider(props){const{tabGroupChoices,setTabGroupChoices}=hooks_useTabGroupChoice();return/*#__PURE__*/react_default.a.createElement(theme_TabGroupChoiceContext.Provider,{value:{tabGroupChoices,setTabGroupChoices}},props.children);}/* harmony default export */ var theme_TabGroupChoiceProvider = (TabGroupChoiceProvider);
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/AnnouncementBarContext.js
-var AnnouncementBarContext = __webpack_require__(77);
+var AnnouncementBarContext = __webpack_require__(78);
 
 // CONCATENATED MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/hooks/useAnnouncementBar.js
 /**
@@ -1971,7 +1971,7 @@ var AnnouncementBarContext = __webpack_require__(77);
  * LICENSE file in the root directory of this source tree.
  */function AnnouncementBarProvider(props){const{isAnnouncementBarClosed,closeAnnouncementBar}=hooks_useAnnouncementBar();return/*#__PURE__*/react_default.a.createElement(AnnouncementBarContext["a" /* default */].Provider,{value:{isAnnouncementBarClosed,closeAnnouncementBar}},props.children);}/* harmony default export */ var theme_AnnouncementBarProvider = (AnnouncementBarProvider);
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/hooks/useAnnouncementBarContext.js
-var useAnnouncementBarContext = __webpack_require__(78);
+var useAnnouncementBarContext = __webpack_require__(79);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/AnnouncementBar/styles.module.css
 var styles_module = __webpack_require__(87);
@@ -2001,10 +2001,10 @@ var interopRequireWildcard = __webpack_require__(7);
 var router = __webpack_require__(30);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-search-algolia/src/theme/hooks/useSearchQuery.js
-var useSearchQuery = __webpack_require__(79);
+var useSearchQuery = __webpack_require__(80);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-search-algolia/src/theme/SearchBar/styles.module.css
-var SearchBar_styles_module = __webpack_require__(50);
+var SearchBar_styles_module = __webpack_require__(51);
 var SearchBar_styles_module_default = /*#__PURE__*/__webpack_require__.n(SearchBar_styles_module);
 
 // CONCATENATED MODULE: ./node_modules/@docusaurus/theme-search-algolia/src/theme/SearchBar/index.js
@@ -2026,7 +2026,7 @@ var component = __webpack_require__(208);
 var component_default = /*#__PURE__*/__webpack_require__.n(component);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/Toggle/styles.module.css
-var Toggle_styles_module = __webpack_require__(57);
+var Toggle_styles_module = __webpack_require__(58);
 var Toggle_styles_module_default = /*#__PURE__*/__webpack_require__.n(Toggle_styles_module);
 
 // CONCATENATED MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/Toggle/index.js
@@ -2047,7 +2047,7 @@ var useThemeContext = __webpack_require__(48);
  * LICENSE file in the root directory of this source tree.
  */function useLocationHash(initialHash){const[hash,setHash]=Object(react["useState"])(initialHash);Object(react["useEffect"])(()=>{const handleHashChange=()=>setHash(window.location.hash);window.addEventListener('hashchange',handleHashChange);return()=>window.removeEventListener('hashchange',handleHashChange);},[]);return[hash,setHash];}/* harmony default export */ var hooks_useLocationHash = (useLocationHash);
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/hooks/useScrollPosition.js
-var useScrollPosition = __webpack_require__(80);
+var useScrollPosition = __webpack_require__(81);
 
 // CONCATENATED MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/hooks/useHideableNavbar.js
 /**
@@ -2057,13 +2057,13 @@ var useScrollPosition = __webpack_require__(80);
  * LICENSE file in the root directory of this source tree.
  */const useHideableNavbar=hideOnScroll=>{const[isNavbarVisible,setIsNavbarVisible]=Object(react["useState"])(true);const[isFocusedAnchor,setIsFocusedAnchor]=Object(react["useState"])(false);const[lastScrollTop,setLastScrollTop]=Object(react["useState"])(0);const[navbarHeight,setNavbarHeight]=Object(react["useState"])(0);const navbarRef=Object(react["useCallback"])(node=>{if(node!==null){setNavbarHeight(node.getBoundingClientRect().height);}},[]);const location=Object(router["c" /* useLocation */])();const[hash,setHash]=hooks_useLocationHash(location.hash);Object(useScrollPosition["a" /* default */])(({scrollY:scrollTop})=>{if(!hideOnScroll){return;}if(scrollTop===0){setIsNavbarVisible(true);}if(scrollTop<navbarHeight){return;}if(isFocusedAnchor){setIsFocusedAnchor(false);setIsNavbarVisible(false);setLastScrollTop(scrollTop);return;}const documentHeight=document.documentElement.scrollHeight-navbarHeight;const windowHeight=window.innerHeight;if(lastScrollTop&&scrollTop>=lastScrollTop){setIsNavbarVisible(false);}else if(scrollTop+windowHeight<documentHeight){setIsNavbarVisible(true);}setLastScrollTop(scrollTop);},[lastScrollTop,navbarHeight]);Object(react["useEffect"])(()=>{if(!hideOnScroll){return;}setIsNavbarVisible(true);setHash(location.hash);},[location]);Object(react["useEffect"])(()=>{if(!hideOnScroll){return;}if(!hash){return;}setIsFocusedAnchor(true);},[hash]);return{navbarRef,isNavbarVisible};};/* harmony default export */ var hooks_useHideableNavbar = (useHideableNavbar);
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/hooks/useLockBodyScroll.js
-var useLockBodyScroll = __webpack_require__(81);
+var useLockBodyScroll = __webpack_require__(82);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/hooks/useLogo.js
-var useLogo = __webpack_require__(82);
+var useLogo = __webpack_require__(83);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/Navbar/styles.module.css
-var Navbar_styles_module = __webpack_require__(58);
+var Navbar_styles_module = __webpack_require__(59);
 var Navbar_styles_module_default = /*#__PURE__*/__webpack_require__.n(Navbar_styles_module);
 
 // CONCATENATED MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/Navbar/index.js
@@ -2200,6 +2200,19 @@ module.exports = Array.isArray || function (arr) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */const canUseDOM=!!(typeof window!=='undefined'&&window.document&&window.document.createElement);const ExecutionEnvironment={canUseDOM,canUseEventListeners:// @ts-ignore
+canUseDOM&&!!(window.addEventListener||window.attachEvent),canUseIntersectionObserver:canUseDOM&&'IntersectionObserver'in window,canUseViewport:canUseDOM&&!!window.screen};/* harmony default export */ __webpack_exports__["a"] = (ExecutionEnvironment);
+
+/***/ }),
+/* 21 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _inheritsLoose; });
 function _inheritsLoose(subClass, superClass) {
   subClass.prototype = Object.create(superClass.prototype);
@@ -2208,7 +2221,7 @@ function _inheritsLoose(subClass, superClass) {
 }
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2228,7 +2241,7 @@ function invariant(condition, message) {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2249,7 +2262,7 @@ module.exports = {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2383,7 +2396,7 @@ function valueEqual(a, b) {
 /* harmony default export */ var value_equal = (valueEqual);
 
 // EXTERNAL MODULE: ./node_modules/tiny-invariant/dist/tiny-invariant.esm.js
-var tiny_invariant_esm = __webpack_require__(21);
+var tiny_invariant_esm = __webpack_require__(22);
 
 // CONCATENATED MODULE: ./node_modules/history/esm/history.js
 
@@ -3306,19 +3319,6 @@ function createMemoryHistory(props) {
 
 
 
-
-/***/ }),
-/* 24 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */const canUseDOM=!!(typeof window!=='undefined'&&window.document&&window.document.createElement);const ExecutionEnvironment={canUseDOM,canUseEventListeners:// @ts-ignore
-canUseDOM&&!!(window.addEventListener||window.attachEvent),canUseIntersectionObserver:canUseDOM&&'IntersectionObserver'in window,canUseViewport:canUseDOM&&!!window.screen};/* harmony default export */ __webpack_exports__["a"] = (ExecutionEnvironment);
 
 /***/ }),
 /* 25 */
@@ -4885,15 +4885,15 @@ module.exports = {
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "e", function() { return react_router__WEBPACK_IMPORTED_MODULE_0__["h"]; });
 
-/* harmony import */ var _babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(20);
+/* harmony import */ var _babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(21);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(0);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var history__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(23);
+/* harmony import */ var history__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(24);
 /* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6);
 /* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(2);
 /* harmony import */ var _babel_runtime_helpers_esm_objectWithoutPropertiesLoose__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(38);
-/* harmony import */ var tiny_invariant__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(21);
+/* harmony import */ var tiny_invariant__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(22);
 
 
 
@@ -8690,7 +8690,7 @@ Prism.languages.yml = Prism.languages.yaml;
 "use strict";
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _theme_ThemeContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(76);
+/* harmony import */ var _theme_ThemeContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(77);
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
@@ -8721,6 +8721,13 @@ Prism.languages.yml = Prism.languages.yaml;
 
 /***/ }),
 /* 50 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony default export */ __webpack_exports__["a"] = ({"plugins":[],"themes":[],"customFields":{},"themeConfig":{"gtag":{"trackingID":"G-FS5RCSYZ0J"},"algolia":{"apiKey":"f57122f78f57ee5b95694b020db8c0af","indexName":"nuz"},"navbar":{"title":"Nuz","logo":{"alt":"Nuz Logo","src":"images/logo.png"},"links":[{"to":"docs/doc1","activeBasePath":"docs","label":"Docs","position":"left"},{"to":"blog","label":"Blog","position":"left"},{"href":"https://github.com/nuz-app/nuz","label":"GitHub","position":"right"}]},"footer":{"style":"dark","links":[{"title":"Docs","items":[{"label":"Introduction","to":"docs/introduction"},{"label":"Second Doc","to":"docs/doc2"}]},{"title":"Community","items":[{"label":"Stack Overflow","href":"https://stackoverflow.com/questions/tagged/nuz"},{"label":"Spectrum Chat","href":"https://spectrum.chat/nuz"}]},{"title":"More","items":[{"label":"Blog","to":"blog"},{"label":"GitHub","href":"https://github.com/nuz-app/nuz"}]}],"copyright":"Copyright © 2020 Nuz Project, Inc. Built with Docusaurus ❤️."}},"title":"Nuz","tagline":"Nuz is an ecosystem to manage runtime packages for web platform","url":"https://docs.nuz.app","baseUrl":"/","favicon":"images/favicon.ico","organizationName":"nuz-app","projectName":"nuz","presets":[["@docusaurus/preset-classic",{"docs":{"sidebarPath":"/home/runner/work/nuz/nuz/website/sidebars.js","editUrl":"https://github.com/nuz-app/nuz/edit/develop/website/"},"blog":{"showReadingTime":true,"editUrl":"https://github.com/nuz-app/nuz/edit/develop/website/blog/"},"theme":{"customCss":"/home/runner/work/nuz/nuz/website/src/css/custom.css"}}]]});
+
+/***/ }),
+/* 51 */
 /***/ (function(module, exports) {
 
 // Exports
@@ -8734,7 +8741,7 @@ module.exports = {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Hack = __webpack_require__(93);
@@ -8809,7 +8816,7 @@ module.exports = restoreFromOptimizing;
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -9303,7 +9310,7 @@ exports.computeSourceURL = computeSourceURL;
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports) {
 
 var REMOTE_RESOURCE_PATTERN = /^(\w+:\/\/|\/\/)/;
@@ -9316,7 +9323,7 @@ module.exports = isRemoteResource;
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9409,13 +9416,13 @@ module.exports = {
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports) {
 
 module.exports = require("events");
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9754,7 +9761,7 @@ Loadable.preloadReady = function () {
 module.exports = Loadable;
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports) {
 
 // Exports
@@ -9766,7 +9773,7 @@ module.exports = {
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports) {
 
 // Exports
@@ -9779,7 +9786,7 @@ module.exports = {
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var systemLineBreak = __webpack_require__(123).EOL;
@@ -10001,7 +10008,7 @@ module.exports = {
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports) {
 
 function formatPosition(metadata) {
@@ -10018,7 +10025,7 @@ module.exports = formatPosition;
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Marker = __webpack_require__(16);
@@ -10283,7 +10290,7 @@ module.exports = isMergeable;
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var mergeIntoShorthands = __webpack_require__(240);
@@ -10294,7 +10301,7 @@ var restoreWithComponents = __webpack_require__(97);
 
 var wrapForOptimizing = __webpack_require__(41).all;
 var removeUnused = __webpack_require__(124);
-var restoreFromOptimizing = __webpack_require__(51);
+var restoreFromOptimizing = __webpack_require__(52);
 
 var OptimizationLevel = __webpack_require__(32).OptimizationLevel;
 
@@ -10329,7 +10336,7 @@ module.exports = optimizeProperties;
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var wrapSingle = __webpack_require__(41).single;
@@ -10368,7 +10375,7 @@ module.exports = {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // TODO: it'd be great to merge it with the other canReorder functionality
@@ -10467,13 +10474,13 @@ module.exports = {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports) {
 
 module.exports = require("http");
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports) {
 
 var NO_PROTOCOL_RESOURCE_PATTERN = /^\/\//;
@@ -10486,7 +10493,7 @@ module.exports = hasProtocol;
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10665,7 +10672,7 @@ module.exports = {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10681,7 +10688,7 @@ module.exports = {
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -10697,7 +10704,7 @@ if (typeof process !== 'undefined' && process.type === 'renderer') {
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10718,7 +10725,7 @@ module.exports = function find(array, comparator) {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10815,7 +10822,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10827,7 +10834,7 @@ var react = __webpack_require__(0);
 var react_default = /*#__PURE__*/__webpack_require__.n(react);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/core/lib/client/exports/Head.js
-var Head = __webpack_require__(74);
+var Head = __webpack_require__(75);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/core/lib/client/exports/isInternalUrl.js
 var isInternalUrl = __webpack_require__(25);
@@ -10872,7 +10879,7 @@ var styles_module_default = /*#__PURE__*/__webpack_require__.n(styles_module);
  */const LINK_CLASS_NAME='table-of-contents__link';const ACTIVE_LINK_CLASS_NAME='table-of-contents__link--active';const TOP_OFFSET=100;function DocTOC({headings}){hooks_useTOCHighlight(LINK_CLASS_NAME,ACTIVE_LINK_CLASS_NAME,TOP_OFFSET);return/*#__PURE__*/react_default.a.createElement("div",{className:"col col--3"},/*#__PURE__*/react_default.a.createElement("div",{className:styles_module_default.a.tableOfContents},/*#__PURE__*/react_default.a.createElement(Headings,{headings:headings})));}/* eslint-disable jsx-a11y/control-has-associated-label */function Headings({headings,isChild}){if(!headings.length){return null;}return/*#__PURE__*/react_default.a.createElement("ul",{className:isChild?'':'table-of-contents table-of-contents__left-border'},headings.map(heading=>/*#__PURE__*/react_default.a.createElement("li",{key:heading.id},/*#__PURE__*/react_default.a.createElement("a",{href:`#${heading.id}`,className:LINK_CLASS_NAME,dangerouslySetInnerHTML:{__html:heading.value}}),/*#__PURE__*/react_default.a.createElement(Headings,{isChild:true,headings:heading.children}))));}function DocItem(props){const{siteConfig={}}=Object(useDocusaurusContext["a" /* default */])();const{url:siteUrl,title:siteTitle}=siteConfig;const{content:DocContent}=props;const{metadata}=DocContent;const{description,title,permalink,editUrl,lastUpdatedAt,lastUpdatedBy,version}=metadata;const{frontMatter:{image:metaImage,keywords,hide_title:hideTitle,hide_table_of_contents:hideTableOfContents}}=DocContent;const metaTitle=title?`${title} | ${siteTitle}`:siteTitle;let metaImageUrl=siteUrl+Object(useBaseUrl["a" /* default */])(metaImage);if(!Object(isInternalUrl["a" /* default */])(metaImage)){metaImageUrl=metaImage;}return/*#__PURE__*/react_default.a.createElement(react_default.a.Fragment,null,/*#__PURE__*/react_default.a.createElement(Head["a" /* default */],null,/*#__PURE__*/react_default.a.createElement("title",null,metaTitle),/*#__PURE__*/react_default.a.createElement("meta",{property:"og:title",content:metaTitle}),description&&/*#__PURE__*/react_default.a.createElement("meta",{name:"description",content:description}),description&&/*#__PURE__*/react_default.a.createElement("meta",{property:"og:description",content:description}),keywords&&keywords.length&&/*#__PURE__*/react_default.a.createElement("meta",{name:"keywords",content:keywords.join(',')}),metaImage&&/*#__PURE__*/react_default.a.createElement("meta",{property:"og:image",content:metaImageUrl}),metaImage&&/*#__PURE__*/react_default.a.createElement("meta",{property:"twitter:image",content:metaImageUrl}),metaImage&&/*#__PURE__*/react_default.a.createElement("meta",{name:"twitter:image:alt",content:`Image for ${title}`}),permalink&&/*#__PURE__*/react_default.a.createElement("meta",{property:"og:url",content:siteUrl+permalink}),permalink&&/*#__PURE__*/react_default.a.createElement("link",{rel:"canonical",href:siteUrl+permalink})),/*#__PURE__*/react_default.a.createElement("div",{className:classnames_default()('container padding-vert--lg',styles_module_default.a.docItemWrapper)},/*#__PURE__*/react_default.a.createElement("div",{className:"row"},/*#__PURE__*/react_default.a.createElement("div",{className:classnames_default()('col',{[styles_module_default.a.docItemCol]:!hideTableOfContents})},/*#__PURE__*/react_default.a.createElement("div",{className:styles_module_default.a.docItemContainer},/*#__PURE__*/react_default.a.createElement("article",null,version&&/*#__PURE__*/react_default.a.createElement("div",null,/*#__PURE__*/react_default.a.createElement("span",{className:"badge badge--secondary"},"Version: ",version)),!hideTitle&&/*#__PURE__*/react_default.a.createElement("header",null,/*#__PURE__*/react_default.a.createElement("h1",{className:styles_module_default.a.docTitle},title)),/*#__PURE__*/react_default.a.createElement("div",{className:"markdown"},/*#__PURE__*/react_default.a.createElement(DocContent,null))),(editUrl||lastUpdatedAt||lastUpdatedBy)&&/*#__PURE__*/react_default.a.createElement("div",{className:"margin-vert--xl"},/*#__PURE__*/react_default.a.createElement("div",{className:"row"},/*#__PURE__*/react_default.a.createElement("div",{className:"col"},editUrl&&/*#__PURE__*/react_default.a.createElement("a",{href:editUrl,target:"_blank",rel:"noreferrer noopener"},/*#__PURE__*/react_default.a.createElement("svg",{fill:"currentColor",height:"1.2em",width:"1.2em",preserveAspectRatio:"xMidYMid meet",viewBox:"0 0 40 40",style:{marginRight:'0.3em',verticalAlign:'sub'}},/*#__PURE__*/react_default.a.createElement("g",null,/*#__PURE__*/react_default.a.createElement("path",{d:"m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"}))),"Edit this page")),(lastUpdatedAt||lastUpdatedBy)&&/*#__PURE__*/react_default.a.createElement("div",{className:"col text--right"},/*#__PURE__*/react_default.a.createElement("em",null,/*#__PURE__*/react_default.a.createElement("small",null,"Last updated",' ',lastUpdatedAt&&/*#__PURE__*/react_default.a.createElement(react_default.a.Fragment,null,"on",' ',/*#__PURE__*/react_default.a.createElement("time",{dateTime:new Date(lastUpdatedAt*1000).toISOString(),className:styles_module_default.a.docLastUpdatedAt},new Date(lastUpdatedAt*1000).toLocaleDateString()),lastUpdatedBy&&' '),lastUpdatedBy&&/*#__PURE__*/react_default.a.createElement(react_default.a.Fragment,null,"by ",/*#__PURE__*/react_default.a.createElement("strong",null,lastUpdatedBy)), false&&/*#__PURE__*/false))))),/*#__PURE__*/react_default.a.createElement("div",{className:"margin-vert--lg"},/*#__PURE__*/react_default.a.createElement(theme_DocPaginator,{metadata:metadata})))),!hideTableOfContents&&DocContent.rightToc&&/*#__PURE__*/react_default.a.createElement(DocTOC,{headings:DocContent.rightToc}))));}/* harmony default export */ var theme_DocItem = __webpack_exports__["default"] = (DocItem);
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10885,7 +10892,7 @@ var styles_module_default = /*#__PURE__*/__webpack_require__.n(styles_module);
 /* harmony import */ var react_fast_compare__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_fast_compare__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(0);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var object_assign__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(71);
+/* harmony import */ var object_assign__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(72);
 /* harmony import */ var object_assign__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(object_assign__WEBPACK_IMPORTED_MODULE_4__);
 
 
@@ -11788,33 +11795,19 @@ HelmetExport.renderStatic = HelmetExport.rewind;
 
 
 /***/ }),
-/* 74 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react_helmet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(73);
-/**
- * Copyright (c) 2017-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */function Head(props){return/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_helmet__WEBPACK_IMPORTED_MODULE_1__[/* Helmet */ "a"],props);}/* harmony default export */ __webpack_exports__["a"] = (Head);
-
-/***/ }),
 /* 75 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_helmet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(74);
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) 2017-present, Facebook, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- *//* harmony default export */ __webpack_exports__["a"] = (react__WEBPACK_IMPORTED_MODULE_0___default.a.createContext({}));
+ */function Head(props){return/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_helmet__WEBPACK_IMPORTED_MODULE_1__[/* Helmet */ "a"],props);}/* harmony default export */ __webpack_exports__["a"] = (Head);
 
 /***/ }),
 /* 76 */
@@ -11828,7 +11821,7 @@ HelmetExport.renderStatic = HelmetExport.rewind;
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- */const ThemeContext=react__WEBPACK_IMPORTED_MODULE_0___default.a.createContext({isDarkTheme:false,setLightTheme:()=>{},setDarkTheme:()=>{}});/* harmony default export */ __webpack_exports__["a"] = (ThemeContext);
+ *//* harmony default export */ __webpack_exports__["a"] = (react__WEBPACK_IMPORTED_MODULE_0___default.a.createContext({}));
 
 /***/ }),
 /* 77 */
@@ -11842,7 +11835,7 @@ HelmetExport.renderStatic = HelmetExport.rewind;
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- */const AnnouncementBarContext=Object(react__WEBPACK_IMPORTED_MODULE_0__["createContext"])({isAnnouncementBarClosed:false,closeAnnouncementBar:()=>{}});/* harmony default export */ __webpack_exports__["a"] = (AnnouncementBarContext);
+ */const ThemeContext=react__WEBPACK_IMPORTED_MODULE_0___default.a.createContext({isDarkTheme:false,setLightTheme:()=>{},setDarkTheme:()=>{}});/* harmony default export */ __webpack_exports__["a"] = (ThemeContext);
 
 /***/ }),
 /* 78 */
@@ -11851,7 +11844,21 @@ HelmetExport.renderStatic = HelmetExport.rewind;
 "use strict";
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _theme_AnnouncementBarContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(77);
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */const AnnouncementBarContext=Object(react__WEBPACK_IMPORTED_MODULE_0__["createContext"])({isAnnouncementBarClosed:false,closeAnnouncementBar:()=>{}});/* harmony default export */ __webpack_exports__["a"] = (AnnouncementBarContext);
+
+/***/ }),
+/* 79 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _theme_AnnouncementBarContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(78);
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
@@ -11860,12 +11867,12 @@ HelmetExport.renderStatic = HelmetExport.rewind;
  */function useAnnouncementBarContext(){return Object(react__WEBPACK_IMPORTED_MODULE_0__["useContext"])(_theme_AnnouncementBarContext__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"]);}/* harmony default export */ __webpack_exports__["a"] = (useAnnouncementBarContext);
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var _docusaurus_router__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(30);
-/* harmony import */ var _docusaurus_ExecutionEnvironment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(24);
+/* harmony import */ var _docusaurus_ExecutionEnvironment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(20);
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
@@ -11874,13 +11881,13 @@ HelmetExport.renderStatic = HelmetExport.rewind;
  */const SEARCH_PARAM_QUERY='q';function useSearchQuery(){const history=Object(_docusaurus_router__WEBPACK_IMPORTED_MODULE_0__[/* useHistory */ "b"])();const location=Object(_docusaurus_router__WEBPACK_IMPORTED_MODULE_0__[/* useLocation */ "c"])();return{searchValue:_docusaurus_ExecutionEnvironment__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"].canUseDOM&&new URLSearchParams(location.search).get(SEARCH_PARAM_QUERY)||'',updateSearchPath:searchValue=>{const searchParams=new URLSearchParams(location.search);if(searchValue){searchParams.set(SEARCH_PARAM_QUERY,searchValue);}else{searchParams.delete(SEARCH_PARAM_QUERY);}history.replace({search:searchParams.toString()});},navigateToSearchPage:searchValue=>{history.push(`/search?q=${searchValue}`);}};}/* harmony default export */ __webpack_exports__["a"] = (useSearchQuery);
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _docusaurus_ExecutionEnvironment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(24);
+/* harmony import */ var _docusaurus_ExecutionEnvironment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(20);
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
@@ -11889,7 +11896,7 @@ HelmetExport.renderStatic = HelmetExport.rewind;
  */const getScrollPosition=()=>({scrollX:_docusaurus_ExecutionEnvironment__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"].canUseDOM?window.pageXOffset:0,scrollY:_docusaurus_ExecutionEnvironment__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"].canUseDOM?window.pageYOffset:0});const useScrollPosition=(effect,deps=[])=>{const[scrollPosition,setScrollPosition]=Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(getScrollPosition());const handleScroll=()=>{const currentScrollPosition=getScrollPosition();setScrollPosition(currentScrollPosition);if(effect){effect(currentScrollPosition);}};Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(()=>{window.addEventListener('scroll',handleScroll);return()=>window.removeEventListener('scroll',handleScroll,{passive:true});},deps);return scrollPosition;};/* harmony default export */ __webpack_exports__["a"] = (useScrollPosition);
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11903,7 +11910,7 @@ HelmetExport.renderStatic = HelmetExport.rewind;
  */function useLockBodyScroll(lock=true){Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(()=>{document.body.style.overflow=lock?'hidden':'visible';return()=>{document.body.style.overflow='visible';};},[lock]);}/* harmony default export */ __webpack_exports__["a"] = (useLockBodyScroll);
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11919,11 +11926,11 @@ HelmetExport.renderStatic = HelmetExport.rewind;
  */const useLogo=()=>{const{siteConfig:{themeConfig:{navbar:{logo={}}={}}}={}}=Object(_docusaurus_useDocusaurusContext__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])();const{isDarkTheme}=Object(_theme_hooks_useThemeContext__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"])();const logoLink=Object(_docusaurus_useBaseUrl__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"])(logo.href||'/');let logoLinkProps={};if(logo.target){logoLinkProps={target:logo.target};}else if(!Object(_docusaurus_isInternalUrl__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"])(logoLink)){logoLinkProps={rel:'noopener noreferrer',target:'_blank'};}const logoSrc=logo.srcDark&&isDarkTheme?logo.srcDark:logo.src;const logoImageUrl=Object(_docusaurus_useBaseUrl__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"])(logoSrc);return{logoLink,logoLinkProps,logoImageUrl,logoAlt:logo.alt};};/* harmony default export */ __webpack_exports__["a"] = (useLogo);
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var react_router_config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(84);
+/* harmony import */ var react_router_config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(85);
 /**
  * Copyright (c) 2017-present, Facebook, Inc.
  *
@@ -11932,7 +11939,7 @@ HelmetExport.renderStatic = HelmetExport.rewind;
  *//* harmony default export */ __webpack_exports__["a"] = (react_router_config__WEBPACK_IMPORTED_MODULE_0__[/* renderRoutes */ "b"]);
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12002,13 +12009,6 @@ function renderRoutes(routes, extraProps, switchProps) {
 
 //# sourceMappingURL=react-router-config.js.map
 
-
-/***/ }),
-/* 85 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony default export */ __webpack_exports__["a"] = ({"plugins":[],"themes":[],"customFields":{},"themeConfig":{"algolia":{"apiKey":"f57122f78f57ee5b95694b020db8c0af","indexName":"nuz"},"navbar":{"title":"Nuz","logo":{"alt":"Nuz Logo","src":"images/logo.png"},"links":[{"to":"docs/doc1","activeBasePath":"docs","label":"Docs","position":"left"},{"to":"blog","label":"Blog","position":"left"},{"href":"https://github.com/nuz-app/nuz","label":"GitHub","position":"right"}]},"footer":{"style":"dark","links":[{"title":"Docs","items":[{"label":"Introduction","to":"docs/introduction"},{"label":"Second Doc","to":"docs/doc2"}]},{"title":"Community","items":[{"label":"Stack Overflow","href":"https://stackoverflow.com/questions/tagged/nuz"},{"label":"Spectrum Chat","href":"https://spectrum.chat/nuz"}]},{"title":"More","items":[{"label":"Blog","to":"blog"},{"label":"GitHub","href":"https://github.com/nuz-app/nuz"}]}],"copyright":"Copyright © 2020 Nuz Project, Inc. Built with Docusaurus ❤️."}},"title":"Nuz","tagline":"Nuz is an ecosystem to manage runtime packages for web platform","url":"https://docs.nuz.app","baseUrl":"/","favicon":"images/favicon.ico","organizationName":"nuz-app","projectName":"nuz","presets":[["@docusaurus/preset-classic",{"docs":{"sidebarPath":"/home/runner/work/nuz/nuz/website/sidebars.js","editUrl":"https://github.com/nuz-app/nuz/edit/develop/website/"},"blog":{"showReadingTime":true,"editUrl":"https://github.com/nuz-app/nuz/edit/develop/website/blog/"},"theme":{"customCss":"/home/runner/work/nuz/nuz/website/src/css/custom.css"}}]]});
 
 /***/ }),
 /* 86 */
@@ -13135,9 +13135,9 @@ module.exports = sortSelectors;
 /* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Spaces = __webpack_require__(59).Spaces;
+var Spaces = __webpack_require__(60).Spaces;
 var Marker = __webpack_require__(16);
-var formatPosition = __webpack_require__(60);
+var formatPosition = __webpack_require__(61);
 
 var CASE_ATTRIBUTE_PATTERN = /[\s"'][iI]\s*\]/;
 var CASE_RESTORE_PATTERN = /([\d\w])([iI])\]/g;
@@ -13426,8 +13426,8 @@ module.exports = split;
 
 var emptyCharacter = '';
 
-var Breaks = __webpack_require__(59).Breaks;
-var Spaces = __webpack_require__(59).Spaces;
+var Breaks = __webpack_require__(60).Breaks;
+var Spaces = __webpack_require__(60).Spaces;
 
 var Marker = __webpack_require__(16);
 var Token = __webpack_require__(10);
@@ -13840,8 +13840,8 @@ exports.SourceNode = __webpack_require__(279).SourceNode;
 var path = __webpack_require__(8);
 var url = __webpack_require__(27);
 
-var isRemoteResource = __webpack_require__(53);
-var hasProtocol = __webpack_require__(66);
+var isRemoteResource = __webpack_require__(54);
+var hasProtocol = __webpack_require__(67);
 
 var HTTP_PROTOCOL = 'http:';
 
@@ -14481,7 +14481,7 @@ module.exports = objectHasKeys;
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./": 408
+	"./": 409
 };
 
 
@@ -15353,7 +15353,7 @@ module.exports = cloneArray;
  */
 
 var base64VLQ = __webpack_require__(133);
-var util = __webpack_require__(52);
+var util = __webpack_require__(53);
 var ArraySet = __webpack_require__(134).ArraySet;
 var MappingList = __webpack_require__(275).MappingList;
 
@@ -15929,7 +15929,7 @@ exports.decode = function base64VLQ_decode(aStr, aIndex, aOutParam) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(52);
+var util = __webpack_require__(53);
 var has = Object.prototype.hasOwnProperty;
 var hasNativeMap = typeof Map !== "undefined";
 
@@ -18311,7 +18311,7 @@ function coerce (version, options) {
 
 module.exports = buildSearchMethod;
 
-var errors = __webpack_require__(54);
+var errors = __webpack_require__(55);
 
 /**
  * Creates a search method to be used in clients
@@ -20709,11 +20709,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var algoliasearch_helper__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(algoliasearch_helper__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _docusaurus_ExecutionEnvironment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(24);
+/* harmony import */ var _docusaurus_ExecutionEnvironment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(20);
 /* harmony import */ var _docusaurus_useDocusaurusContext__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(4);
 /* harmony import */ var _theme_hooks_useVersioning__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(214);
 /* harmony import */ var _theme_hooks_useVersioning__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_theme_hooks_useVersioning__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _theme_hooks_useSearchQuery__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(79);
+/* harmony import */ var _theme_hooks_useSearchQuery__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(80);
 /* harmony import */ var _docusaurus_Link__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(5);
 /* harmony import */ var _theme_Layout__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(15);
 /* harmony import */ var _styles_module_css__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(17);
@@ -20735,7 +20735,7 @@ __webpack_require__.r(__webpack_exports__);
 var merge = __webpack_require__(111);
 var defaultsPure = __webpack_require__(112);
 var intersection = __webpack_require__(398);
-var find = __webpack_require__(70);
+var find = __webpack_require__(71);
 var valToNumber = __webpack_require__(399);
 var omit = __webpack_require__(189);
 var objectHasKeys = __webpack_require__(113);
@@ -22266,7 +22266,7 @@ var merge = __webpack_require__(111);
 var defaultsPure = __webpack_require__(112);
 var orderBy = __webpack_require__(191);
 var compact = __webpack_require__(401);
-var find = __webpack_require__(70);
+var find = __webpack_require__(71);
 var findIndex = __webpack_require__(402);
 var formatSort = __webpack_require__(192);
 
@@ -23242,7 +23242,7 @@ module.exports = orderBy;
 "use strict";
 
 
-var find = __webpack_require__(70);
+var find = __webpack_require__(71);
 
 /**
  * Transform sort format from user friendly notation to lodash format
@@ -23342,13 +23342,13 @@ var esm = __webpack_require__(1);
 var useDocusaurusContext = __webpack_require__(4);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/core/lib/client/exports/renderRoutes.js
-var renderRoutes = __webpack_require__(83);
+var renderRoutes = __webpack_require__(84);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/Layout/index.js + 14 modules
 var Layout = __webpack_require__(15);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/DocItem/index.js + 2 modules
-var DocItem = __webpack_require__(72);
+var DocItem = __webpack_require__(73);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
 var esm_extends = __webpack_require__(2);
@@ -23358,16 +23358,16 @@ var classnames = __webpack_require__(3);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/hooks/useAnnouncementBarContext.js
-var useAnnouncementBarContext = __webpack_require__(78);
+var useAnnouncementBarContext = __webpack_require__(79);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/hooks/useLockBodyScroll.js
-var useLockBodyScroll = __webpack_require__(81);
+var useLockBodyScroll = __webpack_require__(82);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/hooks/useLogo.js
-var useLogo = __webpack_require__(82);
+var useLogo = __webpack_require__(83);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/theme-classic/src/theme/hooks/useScrollPosition.js
-var useScrollPosition = __webpack_require__(80);
+var useScrollPosition = __webpack_require__(81);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/core/lib/client/exports/Link.js
 var Link = __webpack_require__(5);
@@ -25129,12 +25129,12 @@ module.exports = Object.assign(
   __webpack_require__(319),
   __webpack_require__(321),
   __webpack_require__(327),
-  __webpack_require__(22),
+  __webpack_require__(23),
   __webpack_require__(331),
   __webpack_require__(333),
   __webpack_require__(335),
   __webpack_require__(28),
-  __webpack_require__(68)
+  __webpack_require__(69)
 )
 
 // Export fs.promises as a getter property so that we don't trigger
@@ -26679,7 +26679,7 @@ module.exports = JSON.parse("{\"name\":\"@docusaurus/core\",\"description\":\"Ea
  * LICENSE file in the root directory of this source tree.
  */
 
-var l=__webpack_require__(71),n="function"===typeof Symbol&&Symbol.for,p=n?Symbol.for("react.element"):60103,q=n?Symbol.for("react.portal"):60106,r=n?Symbol.for("react.fragment"):60107,t=n?Symbol.for("react.strict_mode"):60108,u=n?Symbol.for("react.profiler"):60114,v=n?Symbol.for("react.provider"):60109,w=n?Symbol.for("react.context"):60110,x=n?Symbol.for("react.forward_ref"):60112,y=n?Symbol.for("react.suspense"):60113,z=n?Symbol.for("react.memo"):60115,A=n?Symbol.for("react.lazy"):
+var l=__webpack_require__(72),n="function"===typeof Symbol&&Symbol.for,p=n?Symbol.for("react.element"):60103,q=n?Symbol.for("react.portal"):60106,r=n?Symbol.for("react.fragment"):60107,t=n?Symbol.for("react.strict_mode"):60108,u=n?Symbol.for("react.profiler"):60114,v=n?Symbol.for("react.provider"):60109,w=n?Symbol.for("react.context"):60110,x=n?Symbol.for("react.forward_ref"):60112,y=n?Symbol.for("react.suspense"):60113,z=n?Symbol.for("react.memo"):60115,A=n?Symbol.for("react.lazy"):
 60116,B="function"===typeof Symbol&&Symbol.iterator;function C(a){for(var b="https://reactjs.org/docs/error-decoder.html?invariant="+a,c=1;c<arguments.length;c++)b+="&args[]="+encodeURIComponent(arguments[c]);return"Minified React error #"+a+"; visit "+b+" for the full message or use the non-minified dev environment for full errors and additional helpful warnings."}
 var D={isMounted:function(){return!1},enqueueForceUpdate:function(){},enqueueReplaceState:function(){},enqueueSetState:function(){}},E={};function F(a,b,c){this.props=a;this.context=b;this.refs=E;this.updater=c||D}F.prototype.isReactComponent={};F.prototype.setState=function(a,b){if("object"!==typeof a&&"function"!==typeof a&&null!=a)throw Error(C(85));this.updater.enqueueSetState(this,a,b,"setState")};F.prototype.forceUpdate=function(a){this.updater.enqueueForceUpdate(this,a,"forceUpdate")};
 function G(){}G.prototype=F.prototype;function H(a,b,c){this.props=a;this.context=b;this.refs=E;this.updater=c||D}var I=H.prototype=new G;I.constructor=H;l(I,F.prototype);I.isPureReactComponent=!0;var J={current:null},K=Object.prototype.hasOwnProperty,L={key:!0,ref:!0,__self:!0,__source:!0};
@@ -26723,7 +26723,7 @@ if (true) {
  * LICENSE file in the root directory of this source tree.
  */
 
-var k=__webpack_require__(71),m=__webpack_require__(0),aa=__webpack_require__(120);function r(a){for(var b="https://reactjs.org/docs/error-decoder.html?invariant="+a,c=1;c<arguments.length;c++)b+="&args[]="+encodeURIComponent(arguments[c]);return"Minified React error #"+a+"; visit "+b+" for the full message or use the non-minified dev environment for full errors and additional helpful warnings."}
+var k=__webpack_require__(72),m=__webpack_require__(0),aa=__webpack_require__(120);function r(a){for(var b="https://reactjs.org/docs/error-decoder.html?invariant="+a,c=1;c<arguments.length;c++)b+="&args[]="+encodeURIComponent(arguments[c]);return"Minified React error #"+a+"; visit "+b+" for the full message or use the non-minified dev environment for full errors and additional helpful warnings."}
 var u="function"===typeof Symbol&&Symbol.for,ba=u?Symbol.for("react.portal"):60106,v=u?Symbol.for("react.fragment"):60107,ca=u?Symbol.for("react.strict_mode"):60108,da=u?Symbol.for("react.profiler"):60114,w=u?Symbol.for("react.provider"):60109,ea=u?Symbol.for("react.context"):60110,fa=u?Symbol.for("react.concurrent_mode"):60111,ha=u?Symbol.for("react.forward_ref"):60112,B=u?Symbol.for("react.suspense"):60113,ia=u?Symbol.for("react.suspense_list"):60120,ja=u?Symbol.for("react.memo"):60115,ka=u?Symbol.for("react.lazy"):
 60116,la=u?Symbol.for("react.block"):60121,ma=u?Symbol.for("react.fundamental"):60117,na=u?Symbol.for("react.scope"):60119;function oa(a){if(-1===a._status){a._status=0;var b=a._ctor;b=b();a._result=b;b.then(function(c){0===a._status&&(c=c.default,a._status=1,a._result=c)},function(c){0===a._status&&(a._status=2,a._result=c)})}}
 function C(a){if(null==a)return null;if("function"===typeof a)return a.displayName||a.name||null;if("string"===typeof a)return a;switch(a){case v:return"Fragment";case ba:return"Portal";case da:return"Profiler";case ca:return"StrictMode";case B:return"Suspense";case ia:return"SuspenseList"}if("object"===typeof a)switch(a.$$typeof){case ea:return"Context.Consumer";case w:return"Context.Provider";case ha:var b=a.render;b=b.displayName||b.name||"";return a.displayName||(""!==b?"ForwardRef("+b+")":"ForwardRef");
@@ -27324,7 +27324,7 @@ var validator = __webpack_require__(262);
 
 var compatibilityFrom = __webpack_require__(263);
 var fetchFrom = __webpack_require__(264);
-var formatFrom = __webpack_require__(59).formatFrom;
+var formatFrom = __webpack_require__(60).formatFrom;
 var inlineFrom = __webpack_require__(268);
 var inlineRequestFrom = __webpack_require__(269);
 var inlineTimeoutFrom = __webpack_require__(270);
@@ -27510,7 +27510,7 @@ var tidyAtRule = __webpack_require__(237);
 
 var Hack = __webpack_require__(93);
 var removeUnused = __webpack_require__(124);
-var restoreFromOptimizing = __webpack_require__(51);
+var restoreFromOptimizing = __webpack_require__(52);
 var wrapForOptimizing = __webpack_require__(41).all;
 
 var OptimizationLevel = __webpack_require__(32).OptimizationLevel;
@@ -27518,7 +27518,7 @@ var OptimizationLevel = __webpack_require__(32).OptimizationLevel;
 var Token = __webpack_require__(10);
 var Marker = __webpack_require__(16);
 
-var formatPosition = __webpack_require__(60);
+var formatPosition = __webpack_require__(61);
 var split = __webpack_require__(94);
 
 var serializeRules = __webpack_require__(11).rules;
@@ -28567,7 +28567,7 @@ var removeDuplicates = __webpack_require__(258);
 var removeUnusedAtRules = __webpack_require__(259);
 var restructure = __webpack_require__(260);
 
-var optimizeProperties = __webpack_require__(62);
+var optimizeProperties = __webpack_require__(63);
 
 var OptimizationLevel = __webpack_require__(32).OptimizationLevel;
 
@@ -28696,9 +28696,9 @@ module.exports = level2Optimize;
 /* 239 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isMergeable = __webpack_require__(61);
+var isMergeable = __webpack_require__(62);
 
-var optimizeProperties = __webpack_require__(62);
+var optimizeProperties = __webpack_require__(63);
 
 var sortSelectors = __webpack_require__(91);
 var tidyRules = __webpack_require__(92);
@@ -28757,10 +28757,10 @@ var hasInherit = __webpack_require__(127);
 var populateComponents = __webpack_require__(96);
 
 var compactable = __webpack_require__(35);
-var deepClone = __webpack_require__(63).deep;
+var deepClone = __webpack_require__(64).deep;
 var restoreWithComponents = __webpack_require__(97);
 
-var restoreFromOptimizing = __webpack_require__(51);
+var restoreFromOptimizing = __webpack_require__(52);
 var wrapSingle = __webpack_require__(41).single;
 
 var serializeBody = __webpack_require__(11).body;
@@ -29210,7 +29210,7 @@ var wrapSingle = __webpack_require__(41).single;
 var Token = __webpack_require__(10);
 var Marker = __webpack_require__(16);
 
-var formatPosition = __webpack_require__(60);
+var formatPosition = __webpack_require__(61);
 
 function _anyIsInherit(values) {
   var i, l;
@@ -30163,7 +30163,7 @@ module.exports = understandable;
 /* 244 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var shallowClone = __webpack_require__(63).shallow;
+var shallowClone = __webpack_require__(64).shallow;
 
 var Token = __webpack_require__(10);
 var Marker = __webpack_require__(16);
@@ -30481,11 +30481,11 @@ var overridesNonComponentShorthand = __webpack_require__(249);
 var sameVendorPrefixesIn = __webpack_require__(129).same;
 
 var compactable = __webpack_require__(35);
-var deepClone = __webpack_require__(63).deep;
+var deepClone = __webpack_require__(64).deep;
 var restoreWithComponents = __webpack_require__(97);
-var shallowClone = __webpack_require__(63).shallow;
+var shallowClone = __webpack_require__(64).shallow;
 
-var restoreFromOptimizing = __webpack_require__(51);
+var restoreFromOptimizing = __webpack_require__(52);
 
 var Token = __webpack_require__(10);
 var Marker = __webpack_require__(16);
@@ -31068,8 +31068,8 @@ module.exports = overridesNonComponentShorthand;
 /* 250 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var canReorder = __webpack_require__(64).canReorder;
-var canReorderSingle = __webpack_require__(64).canReorderSingle;
+var canReorder = __webpack_require__(65).canReorder;
+var canReorderSingle = __webpack_require__(65).canReorderSingle;
 var extractProperties = __webpack_require__(98);
 var rulesOverlap = __webpack_require__(130);
 
@@ -31300,7 +31300,7 @@ module.exports = specificity;
 /* 253 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isMergeable = __webpack_require__(61);
+var isMergeable = __webpack_require__(62);
 
 var sortSelectors = __webpack_require__(91);
 var tidyRules = __webpack_require__(92);
@@ -31386,10 +31386,10 @@ module.exports = mergeNonAdjacentByBody;
 /* 254 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var canReorder = __webpack_require__(64).canReorder;
+var canReorder = __webpack_require__(65).canReorder;
 var extractProperties = __webpack_require__(98);
 
-var optimizeProperties = __webpack_require__(62);
+var optimizeProperties = __webpack_require__(63);
 
 var serializeRules = __webpack_require__(11).rules;
 
@@ -31470,9 +31470,9 @@ module.exports = mergeNonAdjacentBySelector;
 /* 255 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isMergeable = __webpack_require__(61);
+var isMergeable = __webpack_require__(62);
 
-var optimizeProperties = __webpack_require__(62);
+var optimizeProperties = __webpack_require__(63);
 
 var cloneArray = __webpack_require__(131);
 
@@ -31780,7 +31780,7 @@ module.exports = removeDuplicates;
 var populateComponents = __webpack_require__(96);
 
 var wrapForOptimizing = __webpack_require__(41).single;
-var restoreFromOptimizing = __webpack_require__(51);
+var restoreFromOptimizing = __webpack_require__(52);
 
 var Token = __webpack_require__(10);
 
@@ -32032,9 +32032,9 @@ module.exports = removeUnusedAtRules;
 /* 260 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var canReorderSingle = __webpack_require__(64).canReorderSingle;
+var canReorderSingle = __webpack_require__(65).canReorderSingle;
 var extractProperties = __webpack_require__(98);
-var isMergeable = __webpack_require__(61);
+var isMergeable = __webpack_require__(62);
 var tidyRuleDuplicates = __webpack_require__(261);
 
 var Token = __webpack_require__(10);
@@ -33191,7 +33191,7 @@ module.exports = fetchFrom;
 /* 265 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var http = __webpack_require__(65);
+var http = __webpack_require__(66);
 var https = __webpack_require__(42);
 var url = __webpack_require__(27);
 
@@ -33527,7 +33527,7 @@ exports.decode = function (charCode) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(52);
+var util = __webpack_require__(53);
 
 /**
  * Determine whether mappingB is after mappingA with respect to generated
@@ -33612,7 +33612,7 @@ exports.MappingList = MappingList;
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(52);
+var util = __webpack_require__(53);
 var binarySearch = __webpack_require__(277);
 var ArraySet = __webpack_require__(134).ArraySet;
 var base64VLQ = __webpack_require__(133);
@@ -35001,7 +35001,7 @@ exports.quickSort = function (ary, comparator) {
  */
 
 var SourceMapGenerator = __webpack_require__(132).SourceMapGenerator;
-var util = __webpack_require__(52);
+var util = __webpack_require__(53);
 
 // Matches a Windows-style `\r\n` newline or a `\n` newline used by all other
 // operating systems these days (capturing the result).
@@ -35428,9 +35428,9 @@ var restoreImport = __webpack_require__(138);
 var tokenize = __webpack_require__(288);
 var Token = __webpack_require__(10);
 var Marker = __webpack_require__(16);
-var hasProtocol = __webpack_require__(66);
+var hasProtocol = __webpack_require__(67);
 var isImport = __webpack_require__(139);
-var isRemoteResource = __webpack_require__(53);
+var isRemoteResource = __webpack_require__(54);
 
 var UNKNOWN_URI = 'uri:unknown';
 
@@ -35768,9 +35768,9 @@ var rebaseLocalMap = __webpack_require__(135);
 var rebaseRemoteMap = __webpack_require__(136);
 
 var Token = __webpack_require__(10);
-var hasProtocol = __webpack_require__(66);
+var hasProtocol = __webpack_require__(67);
 var isDataUriResource = __webpack_require__(283);
-var isRemoteResource = __webpack_require__(53);
+var isRemoteResource = __webpack_require__(54);
 
 var MAP_MARKER_PATTERN = /^\/\*# sourceMappingURL=(\S+) \*\/$/;
 
@@ -36041,8 +36041,8 @@ var path = __webpack_require__(8);
 
 var isAllowedResource = __webpack_require__(100);
 
-var hasProtocol = __webpack_require__(66);
-var isRemoteResource = __webpack_require__(53);
+var hasProtocol = __webpack_require__(67);
+var isRemoteResource = __webpack_require__(54);
 
 function loadOriginalSources(context, callback) {
   var loadContext = {
@@ -36416,7 +36416,7 @@ module.exports = rewriteUrl;
 var Marker = __webpack_require__(16);
 var Token = __webpack_require__(10);
 
-var formatPosition = __webpack_require__(60);
+var formatPosition = __webpack_require__(61);
 
 var Level = {
   BLOCK: 'block',
@@ -37049,7 +37049,7 @@ module.exports = serializeStyles;
 var SourceMapGenerator = __webpack_require__(99).SourceMapGenerator;
 var all = __webpack_require__(95).all;
 
-var isRemoteResource = __webpack_require__(53);
+var isRemoteResource = __webpack_require__(54);
 
 var isWindows = process.platform == 'win32';
 
@@ -39802,9 +39802,9 @@ function clone (obj) {
 
 const fs = __webpack_require__(12)
 const path = __webpack_require__(8)
-const mkdirpSync = __webpack_require__(22).mkdirsSync
+const mkdirpSync = __webpack_require__(23).mkdirsSync
 const utimesSync = __webpack_require__(145).utimesMillisSync
-const stat = __webpack_require__(67)
+const stat = __webpack_require__(68)
 
 function copySync (src, dest, opts) {
   if (typeof opts === 'function') {
@@ -40123,10 +40123,10 @@ module.exports = function (size) {
 
 const fs = __webpack_require__(12)
 const path = __webpack_require__(8)
-const mkdirp = __webpack_require__(22).mkdirs
+const mkdirp = __webpack_require__(23).mkdirs
 const pathExists = __webpack_require__(28).pathExists
 const utimes = __webpack_require__(145).utimesMillis
-const stat = __webpack_require__(67)
+const stat = __webpack_require__(68)
 
 function copy (src, dest, opts, cb) {
   if (typeof opts === 'function' && !cb) {
@@ -40343,8 +40343,8 @@ module.exports = copy
 const u = __webpack_require__(18).fromCallback
 const fs = __webpack_require__(12)
 const path = __webpack_require__(8)
-const mkdir = __webpack_require__(22)
-const remove = __webpack_require__(68)
+const mkdir = __webpack_require__(23)
+const remove = __webpack_require__(69)
 
 const emptyDir = u(function emptyDir (dir, callback) {
   callback = callback || function () {}
@@ -40749,7 +40749,7 @@ module.exports = {
 const u = __webpack_require__(18).fromCallback
 const path = __webpack_require__(8)
 const fs = __webpack_require__(12)
-const mkdir = __webpack_require__(22)
+const mkdir = __webpack_require__(23)
 const pathExists = __webpack_require__(28).pathExists
 
 function createFile (file, callback) {
@@ -40805,7 +40805,7 @@ module.exports = {
 const u = __webpack_require__(18).fromCallback
 const path = __webpack_require__(8)
 const fs = __webpack_require__(12)
-const mkdir = __webpack_require__(22)
+const mkdir = __webpack_require__(23)
 const pathExists = __webpack_require__(28).pathExists
 
 function createLink (srcpath, dstpath, callback) {
@@ -40873,7 +40873,7 @@ module.exports = {
 const u = __webpack_require__(18).fromCallback
 const path = __webpack_require__(8)
 const fs = __webpack_require__(12)
-const _mkdirs = __webpack_require__(22)
+const _mkdirs = __webpack_require__(23)
 const mkdirs = _mkdirs.mkdirs
 const mkdirsSync = _mkdirs.mkdirsSync
 
@@ -41248,7 +41248,7 @@ module.exports = jsonfile
 
 
 const path = __webpack_require__(8)
-const mkdir = __webpack_require__(22)
+const mkdir = __webpack_require__(23)
 const pathExists = __webpack_require__(28).pathExists
 const jsonFile = __webpack_require__(104)
 
@@ -41283,7 +41283,7 @@ module.exports = outputJson
 
 const fs = __webpack_require__(12)
 const path = __webpack_require__(8)
-const mkdir = __webpack_require__(22)
+const mkdir = __webpack_require__(23)
 const jsonFile = __webpack_require__(104)
 
 function outputJsonSync (file, data, options) {
@@ -41321,9 +41321,9 @@ module.exports = {
 const fs = __webpack_require__(12)
 const path = __webpack_require__(8)
 const copySync = __webpack_require__(143).copySync
-const removeSync = __webpack_require__(68).removeSync
-const mkdirpSync = __webpack_require__(22).mkdirpSync
-const stat = __webpack_require__(67)
+const removeSync = __webpack_require__(69).removeSync
+const mkdirpSync = __webpack_require__(23).mkdirpSync
+const stat = __webpack_require__(68)
 
 function moveSync (src, dest, opts) {
   opts = opts || {}
@@ -41388,10 +41388,10 @@ module.exports = {
 const fs = __webpack_require__(12)
 const path = __webpack_require__(8)
 const copy = __webpack_require__(146).copy
-const remove = __webpack_require__(68).remove
-const mkdirp = __webpack_require__(22).mkdirp
+const remove = __webpack_require__(69).remove
+const mkdirp = __webpack_require__(23).mkdirp
 const pathExists = __webpack_require__(28).pathExists
-const stat = __webpack_require__(67)
+const stat = __webpack_require__(68)
 
 function move (src, dest, opts, cb) {
   if (typeof opts === 'function') {
@@ -41460,7 +41460,7 @@ module.exports = move
 const u = __webpack_require__(18).fromCallback
 const fs = __webpack_require__(12)
 const path = __webpack_require__(8)
-const mkdir = __webpack_require__(22)
+const mkdir = __webpack_require__(23)
 const pathExists = __webpack_require__(28).pathExists
 
 function outputFile (file, data, encoding, callback) {
@@ -42804,7 +42804,7 @@ var Hogan = {};
 // This is the Node.JS entry point
 module.exports = algoliasearch;
 
-var debug = __webpack_require__(69)('algoliasearch:nodejs');
+var debug = __webpack_require__(70)('algoliasearch:nodejs');
 var crypto = __webpack_require__(122);
 var zlib = __webpack_require__(350);
 
@@ -42816,7 +42816,7 @@ var isNode010 = semver.satisfies(process.version, '=0.10');
 var places = __webpack_require__(353);
 
 var AlgoliaSearchServer = __webpack_require__(357);
-var errors = __webpack_require__(54);
+var errors = __webpack_require__(55);
 
 // does not work on node <= 0.8
 if (isNotSupported) {
@@ -42887,7 +42887,7 @@ function AlgoliaSearchNodeJS(applicationID, apiKey, opts) {
 inherits(AlgoliaSearchNodeJS, AlgoliaSearchServer);
 
 AlgoliaSearchNodeJS.prototype._request = function request(rawUrl, opts) {
-  var http = __webpack_require__(65);
+  var http = __webpack_require__(66);
   var https = __webpack_require__(42);
   var url = __webpack_require__(27);
 
@@ -45309,7 +45309,7 @@ var deprecate = __webpack_require__(106);
 var deprecatedMessage = __webpack_require__(107);
 var AlgoliaSearchCore = __webpack_require__(362);
 var inherits = __webpack_require__(44);
-var errors = __webpack_require__(54);
+var errors = __webpack_require__(55);
 
 function AlgoliaSearch() {
   AlgoliaSearchCore.apply(this, arguments);
@@ -46080,7 +46080,7 @@ var IndexCore = __webpack_require__(153);
 var deprecate = __webpack_require__(106);
 var deprecatedMessage = __webpack_require__(107);
 var exitPromise = __webpack_require__(158);
-var errors = __webpack_require__(54);
+var errors = __webpack_require__(55);
 
 var deprecateForwardToSlaves = deprecate(
   function() {},
@@ -47552,7 +47552,7 @@ module.exports = keysShim;
 module.exports = IndexBrowser;
 
 var inherits = __webpack_require__(44);
-var EventEmitter = __webpack_require__(55).EventEmitter;
+var EventEmitter = __webpack_require__(56).EventEmitter;
 
 function IndexBrowser() {
 }
@@ -47592,7 +47592,7 @@ IndexBrowser.prototype._clean = function() {
 
 module.exports = AlgoliaSearchCore;
 
-var errors = __webpack_require__(54);
+var errors = __webpack_require__(55);
 var exitPromise = __webpack_require__(158);
 var IndexCore = __webpack_require__(153);
 var store = __webpack_require__(363);
@@ -47630,7 +47630,7 @@ var RESET_APP_DATA_TIMER =
  *           If you provide them, you will less benefit from our HA implementation
  */
 function AlgoliaSearchCore(applicationID, apiKey, opts) {
-  var debug = __webpack_require__(69)('algoliasearch');
+  var debug = __webpack_require__(70)('algoliasearch');
 
   var clone = __webpack_require__(33);
   var isArray = __webpack_require__(19);
@@ -47776,7 +47776,7 @@ AlgoliaSearchCore.prototype.addAlgoliaAgent = function(algoliaAgent) {
 AlgoliaSearchCore.prototype._jsonRequest = function(initialOpts) {
   this._checkAppIdData();
 
-  var requestDebug = __webpack_require__(69)('algoliasearch:' + initialOpts.url);
+  var requestDebug = __webpack_require__(70)('algoliasearch:' + initialOpts.url);
 
 
   var body;
@@ -48564,7 +48564,7 @@ function removeCredentials(headers) {
 /* 363 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var debug = __webpack_require__(69)('algoliasearch:src/hostIndexState.js');
+var debug = __webpack_require__(70)('algoliasearch:src/hostIndexState.js');
 var localStorageNamespace = 'algoliasearch-client-js';
 
 var store;
@@ -48832,7 +48832,7 @@ function getParsedProxy() {
 }
 
 function getKeepaliveAgent(protocol) {
-  var http = __webpack_require__(65);
+  var http = __webpack_require__(66);
   var https = __webpack_require__(42);
 
   var HttpsAgent = __webpack_require__(159).HttpsAgent;
@@ -48934,7 +48934,7 @@ function getProxyingAgent(protocol, parsedProxy) {
 
 var net = __webpack_require__(105);
 var util = __webpack_require__(43);
-var EventEmitter = __webpack_require__(55).EventEmitter;
+var EventEmitter = __webpack_require__(56).EventEmitter;
 var debug = __webpack_require__(108).debug;
 
 // New Agent code.
@@ -49354,9 +49354,9 @@ module.exports = HttpsAgent;
 
 var net = __webpack_require__(105)
   , tls = __webpack_require__(371)
-  , http = __webpack_require__(65)
+  , http = __webpack_require__(66)
   , https = __webpack_require__(42)
-  , events = __webpack_require__(55)
+  , events = __webpack_require__(56)
   , assert = __webpack_require__(103)
   , util = __webpack_require__(43)
   , Buffer = __webpack_require__(372).Buffer
@@ -52289,7 +52289,7 @@ var SearchResults = __webpack_require__(190);
 var DerivedHelper = __webpack_require__(404);
 var requestBuilder = __webpack_require__(405);
 
-var events = __webpack_require__(55);
+var events = __webpack_require__(56);
 var inherits = __webpack_require__(193);
 var objectHasKeys = __webpack_require__(113);
 
@@ -53949,7 +53949,7 @@ module.exports = function find(array, comparator) {
 module.exports = generateTrees;
 
 var orderBy = __webpack_require__(191);
-var find = __webpack_require__(70);
+var find = __webpack_require__(71);
 var prepareHierarchicalFacetSortBy = __webpack_require__(192);
 
 function generateTrees(state) {
@@ -54152,7 +54152,7 @@ function format(
 "use strict";
 
 
-var events = __webpack_require__(55);
+var events = __webpack_require__(56);
 var inherits = __webpack_require__(193);
 
 /**
@@ -54520,19 +54520,35 @@ module.exports = requestBuilder;
 
 /***/ }),
 /* 406 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _docusaurus_ExecutionEnvironment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(20);
+/* harmony import */ var _generated_docusaurus_config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(50);
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *//* harmony default export */ __webpack_exports__["default"] = ((function(){if(!_docusaurus_ExecutionEnvironment__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"].canUseDOM){return null;}const{themeConfig:{gtag:{trackingID}}}=_generated_docusaurus_config__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"];return{onRouteUpdate({location}){// Always refer to the variable on window in-case it gets overridden elsewhere.
+window.gtag('config',trackingID,{page_path:location.pathname});}};})());
+
+/***/ }),
+/* 407 */
 /***/ (function(module, exports) {
 
 
 
 /***/ }),
-/* 407 */
+/* 408 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var prism_react_renderer_prism__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(47);
-/* harmony import */ var _docusaurus_ExecutionEnvironment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(24);
-/* harmony import */ var _generated_docusaurus_config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(85);
+/* harmony import */ var _docusaurus_ExecutionEnvironment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(20);
+/* harmony import */ var _generated_docusaurus_config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(50);
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
@@ -54542,11 +54558,11 @@ __webpack_require__.r(__webpack_exports__);
 });delete window.Prism;}})();
 
 /***/ }),
-/* 408 */
+/* 409 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const components = __webpack_require__(409);
-const getLoader = __webpack_require__(410);
+const components = __webpack_require__(410);
+const getLoader = __webpack_require__(411);
 
 
 /**
@@ -54604,14 +54620,14 @@ module.exports = loadLanguages;
 
 
 /***/ }),
-/* 409 */
+/* 410 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var components = {"core":{"meta":{"path":"components/prism-core.js","option":"mandatory"},"core":"Core"},"themes":{"meta":{"path":"themes/{id}.css","link":"index.html?theme={id}","exclusive":true},"prism":{"title":"Default","option":"default"},"prism-dark":"Dark","prism-funky":"Funky","prism-okaidia":{"title":"Okaidia","owner":"ocodia"},"prism-twilight":{"title":"Twilight","owner":"remybach"},"prism-coy":{"title":"Coy","owner":"tshedor"},"prism-solarizedlight":{"title":"Solarized Light","owner":"hectormatos2011 "},"prism-tomorrow":{"title":"Tomorrow Night","owner":"Rosey"}},"languages":{"meta":{"path":"components/prism-{id}","noCSS":true,"examplesPath":"examples/prism-{id}","addCheckAll":true},"markup":{"title":"Markup","alias":["html","xml","svg","mathml"],"aliasTitles":{"html":"HTML","xml":"XML","svg":"SVG","mathml":"MathML"},"option":"default"},"css":{"title":"CSS","option":"default","modify":"markup"},"clike":{"title":"C-like","option":"default"},"javascript":{"title":"JavaScript","require":"clike","modify":"markup","alias":"js","option":"default"},"abap":{"title":"ABAP","owner":"dellagustin"},"abnf":{"title":"Augmented Backus–Naur form","owner":"RunDevelopment"},"actionscript":{"title":"ActionScript","require":"javascript","modify":"markup","owner":"Golmote"},"ada":{"title":"Ada","owner":"Lucretia"},"antlr4":{"title":"ANTLR4","alias":"g4","owner":"RunDevelopment"},"apacheconf":{"title":"Apache Configuration","owner":"GuiTeK"},"apl":{"title":"APL","owner":"ngn"},"applescript":{"title":"AppleScript","owner":"Golmote"},"aql":{"title":"AQL","owner":"RunDevelopment"},"arduino":{"title":"Arduino","require":"cpp","owner":"eisbehr-"},"arff":{"title":"ARFF","owner":"Golmote"},"asciidoc":{"alias":"adoc","title":"AsciiDoc","owner":"Golmote"},"asm6502":{"title":"6502 Assembly","owner":"kzurawel"},"aspnet":{"title":"ASP.NET (C#)","require":["markup","csharp"],"owner":"nauzilus"},"autohotkey":{"title":"AutoHotkey","owner":"aviaryan"},"autoit":{"title":"AutoIt","owner":"Golmote"},"bash":{"title":"Bash","alias":"shell","aliasTitles":{"shell":"Shell"},"owner":"zeitgeist87"},"basic":{"title":"BASIC","owner":"Golmote"},"batch":{"title":"Batch","owner":"Golmote"},"bbcode":{"title":"BBcode","alias":"shortcode","aliasTitles":{"shortcode":"Shortcode"},"owner":"RunDevelopment"},"bison":{"title":"Bison","require":"c","owner":"Golmote"},"bnf":{"title":"Backus–Naur form","alias":"rbnf","aliasTitles":{"rbnf":"Routing Backus–Naur form"},"owner":"RunDevelopment"},"brainfuck":{"title":"Brainfuck","owner":"Golmote"},"brightscript":{"title":"BrightScript","owner":"RunDevelopment"},"bro":{"title":"Bro","owner":"wayward710"},"c":{"title":"C","require":"clike","owner":"zeitgeist87"},"concurnas":{"title":"Concurnas","alias":"conc","owner":"jasontatton"},"csharp":{"title":"C#","require":"clike","alias":["cs","dotnet"],"owner":"mvalipour"},"cpp":{"title":"C++","require":"c","owner":"zeitgeist87"},"cil":{"title":"CIL","owner":"sbrl"},"coffeescript":{"title":"CoffeeScript","require":"javascript","alias":"coffee","owner":"R-osey"},"cmake":{"title":"CMake","owner":"mjrogozinski"},"clojure":{"title":"Clojure","owner":"troglotit"},"crystal":{"title":"Crystal","require":"ruby","owner":"MakeNowJust"},"csp":{"title":"Content-Security-Policy","owner":"ScottHelme"},"css-extras":{"title":"CSS Extras","require":"css","modify":"css","owner":"milesj"},"d":{"title":"D","require":"clike","owner":"Golmote"},"dart":{"title":"Dart","require":"clike","owner":"Golmote"},"dax":{"title":"DAX","owner":"peterbud"},"diff":{"title":"Diff","owner":"uranusjr"},"django":{"title":"Django/Jinja2","require":"markup-templating","alias":"jinja2","owner":"romanvm"},"dns-zone-file":{"title":"DNS zone file","owner":"RunDevelopment","alias":"dns-zone"},"docker":{"title":"Docker","alias":"dockerfile","owner":"JustinBeckwith"},"ebnf":{"title":"Extended Backus–Naur form","owner":"RunDevelopment"},"eiffel":{"title":"Eiffel","owner":"Conaclos"},"ejs":{"title":"EJS","require":["javascript","markup-templating"],"owner":"RunDevelopment"},"elixir":{"title":"Elixir","owner":"Golmote"},"elm":{"title":"Elm","owner":"zwilias"},"etlua":{"title":"Embedded Lua templating","require":["lua","markup-templating"],"owner":"RunDevelopment"},"erb":{"title":"ERB","require":["ruby","markup-templating"],"owner":"Golmote"},"erlang":{"title":"Erlang","owner":"Golmote"},"excel-formula":{"title":"Excel Formula","alias":["xlsx","xls"],"owner":"RunDevelopment"},"fsharp":{"title":"F#","require":"clike","owner":"simonreynolds7"},"factor":{"title":"Factor","owner":"catb0t"},"firestore-security-rules":{"title":"Firestore security rules","require":"clike","owner":"RunDevelopment"},"flow":{"title":"Flow","require":"javascript","owner":"Golmote"},"fortran":{"title":"Fortran","owner":"Golmote"},"ftl":{"title":"FreeMarker Template Language","require":"markup-templating","owner":"RunDevelopment"},"gcode":{"title":"G-code","owner":"RunDevelopment"},"gdscript":{"title":"GDScript","owner":"RunDevelopment"},"gedcom":{"title":"GEDCOM","owner":"Golmote"},"gherkin":{"title":"Gherkin","owner":"hason"},"git":{"title":"Git","owner":"lgiraudel"},"glsl":{"title":"GLSL","require":"clike","owner":"Golmote"},"gml":{"title":"GameMaker Language","alias":"gamemakerlanguage","require":"clike","owner":"LiarOnce"},"go":{"title":"Go","require":"clike","owner":"arnehormann"},"graphql":{"title":"GraphQL","owner":"Golmote"},"groovy":{"title":"Groovy","require":"clike","owner":"robfletcher"},"haml":{"title":"Haml","require":"ruby","optional":["css","css-extras","coffeescript","erb","javascript","less","markdown","scss","textile"],"owner":"Golmote"},"handlebars":{"title":"Handlebars","require":"markup-templating","owner":"Golmote"},"haskell":{"title":"Haskell","alias":"hs","owner":"bholst"},"haxe":{"title":"Haxe","require":"clike","owner":"Golmote"},"hcl":{"title":"HCL","owner":"outsideris"},"http":{"title":"HTTP","optional":["css","javascript","json","markup"],"owner":"danielgtaylor"},"hpkp":{"title":"HTTP Public-Key-Pins","owner":"ScottHelme"},"hsts":{"title":"HTTP Strict-Transport-Security","owner":"ScottHelme"},"ichigojam":{"title":"IchigoJam","owner":"BlueCocoa"},"icon":{"title":"Icon","owner":"Golmote"},"inform7":{"title":"Inform 7","owner":"Golmote"},"ini":{"title":"Ini","owner":"aviaryan"},"io":{"title":"Io","owner":"AlesTsurko"},"j":{"title":"J","owner":"Golmote"},"java":{"title":"Java","require":"clike","owner":"sherblot"},"javadoc":{"title":"JavaDoc","require":["markup","java","javadoclike"],"modify":"java","optional":"scala","owner":"RunDevelopment"},"javadoclike":{"title":"JavaDoc-like","modify":["java","javascript","php"],"owner":"RunDevelopment"},"javastacktrace":{"title":"Java stack trace","owner":"RunDevelopment"},"jolie":{"title":"Jolie","require":"clike","owner":"thesave"},"jq":{"title":"JQ","owner":"RunDevelopment"},"jsdoc":{"title":"JSDoc","require":["javascript","javadoclike"],"modify":"javascript","optional":["actionscript","coffeescript"],"owner":"RunDevelopment"},"js-extras":{"title":"JS Extras","require":"javascript","modify":"javascript","optional":["actionscript","coffeescript","flow","n4js","typescript"],"owner":"RunDevelopment"},"js-templates":{"title":"JS Templates","require":"javascript","modify":"javascript","optional":["css","css-extras","graphql","markdown","markup"],"owner":"RunDevelopment"},"json":{"title":"JSON","owner":"CupOfTea696"},"jsonp":{"title":"JSONP","require":"json","owner":"RunDevelopment"},"json5":{"title":"JSON5","require":"json","owner":"RunDevelopment"},"julia":{"title":"Julia","owner":"cdagnino"},"keyman":{"title":"Keyman","owner":"mcdurdin"},"kotlin":{"title":"Kotlin","require":"clike","owner":"Golmote"},"latex":{"title":"LaTeX","alias":["tex","context"],"aliasTitles":{"tex":"TeX","context":"ConTeXt"},"owner":"japborst"},"latte":{"title":"Latte","require":["clike","markup-templating","php"],"owner":"nette"},"less":{"title":"Less","require":"css","optional":"css-extras","owner":"Golmote"},"lilypond":{"title":"LilyPond","require":"scheme","alias":"ly","owner":"RunDevelopment"},"liquid":{"title":"Liquid","owner":"cinhtau"},"lisp":{"title":"Lisp","alias":["emacs","elisp","emacs-lisp"],"owner":"JuanCaicedo"},"livescript":{"title":"LiveScript","owner":"Golmote"},"llvm":{"title":"LLVM IR","owner":"porglezomp"},"lolcode":{"title":"LOLCODE","owner":"Golmote"},"lua":{"title":"Lua","owner":"Golmote"},"makefile":{"title":"Makefile","owner":"Golmote"},"markdown":{"title":"Markdown","require":"markup","alias":"md","owner":"Golmote"},"markup-templating":{"title":"Markup templating","require":"markup","owner":"Golmote"},"matlab":{"title":"MATLAB","owner":"Golmote"},"mel":{"title":"MEL","owner":"Golmote"},"mizar":{"title":"Mizar","owner":"Golmote"},"monkey":{"title":"Monkey","owner":"Golmote"},"moonscript":{"title":"MoonScript","alias":"moon","owner":"RunDevelopment"},"n1ql":{"title":"N1QL","owner":"TMWilds"},"n4js":{"title":"N4JS","require":"javascript","optional":"jsdoc","alias":"n4jsd","owner":"bsmith-n4"},"nand2tetris-hdl":{"title":"Nand To Tetris HDL","owner":"stephanmax"},"nasm":{"title":"NASM","owner":"rbmj"},"neon":{"title":"NEON","owner":"nette"},"nginx":{"title":"nginx","owner":"westonganger","require":"clike"},"nim":{"title":"Nim","owner":"Golmote"},"nix":{"title":"Nix","owner":"Golmote"},"nsis":{"title":"NSIS","owner":"idleberg"},"objectivec":{"title":"Objective-C","require":"c","owner":"uranusjr"},"ocaml":{"title":"OCaml","owner":"Golmote"},"opencl":{"title":"OpenCL","require":"c","modify":["c","cpp"],"owner":"Milania1"},"oz":{"title":"Oz","owner":"Golmote"},"parigp":{"title":"PARI/GP","owner":"Golmote"},"parser":{"title":"Parser","require":"markup","owner":"Golmote"},"pascal":{"title":"Pascal","alias":"objectpascal","aliasTitles":{"objectpascal":"Object Pascal"},"owner":"Golmote"},"pascaligo":{"title":"Pascaligo","owner":"DefinitelyNotAGoat"},"pcaxis":{"title":"PC-Axis","alias":"px","owner":"RunDevelopment"},"perl":{"title":"Perl","owner":"Golmote"},"php":{"title":"PHP","require":["clike","markup-templating"],"owner":"milesj"},"phpdoc":{"title":"PHPDoc","require":["php","javadoclike"],"modify":"php","owner":"RunDevelopment"},"php-extras":{"title":"PHP Extras","require":"php","modify":"php","owner":"milesj"},"plsql":{"title":"PL/SQL","require":"sql","owner":"Golmote"},"powerquery":{"title":"PowerQuery","alias":["pq","mscript"],"owner":"peterbud"},"powershell":{"title":"PowerShell","owner":"nauzilus"},"processing":{"title":"Processing","require":"clike","owner":"Golmote"},"prolog":{"title":"Prolog","owner":"Golmote"},"properties":{"title":".properties","owner":"Golmote"},"protobuf":{"title":"Protocol Buffers","require":"clike","owner":"just-boris"},"pug":{"title":"Pug","require":["markup","javascript"],"optional":["coffeescript","ejs","handlebars","less","livescript","markdown","scss","stylus","twig"],"owner":"Golmote"},"puppet":{"title":"Puppet","owner":"Golmote"},"pure":{"title":"Pure","optional":["c","cpp","fortran"],"owner":"Golmote"},"python":{"title":"Python","alias":"py","owner":"multipetros"},"q":{"title":"Q (kdb+ database)","owner":"Golmote"},"qml":{"title":"QML","require":"javascript","owner":"RunDevelopment"},"qore":{"title":"Qore","require":"clike","owner":"temnroegg"},"r":{"title":"R","owner":"Golmote"},"jsx":{"title":"React JSX","require":["markup","javascript"],"optional":["jsdoc","js-extras","js-templates"],"owner":"vkbansal"},"tsx":{"title":"React TSX","require":["jsx","typescript"]},"renpy":{"title":"Ren'py","owner":"HyuchiaDiego"},"reason":{"title":"Reason","require":"clike","owner":"Golmote"},"regex":{"title":"Regex","modify":["actionscript","coffeescript","flow","javascript","typescript","vala"],"owner":"RunDevelopment"},"rest":{"title":"reST (reStructuredText)","owner":"Golmote"},"rip":{"title":"Rip","owner":"ravinggenius"},"roboconf":{"title":"Roboconf","owner":"Golmote"},"robotframework":{"title":"Robot Framework","alias":"robot","owner":"RunDevelopment"},"ruby":{"title":"Ruby","require":"clike","alias":"rb","owner":"samflores"},"rust":{"title":"Rust","owner":"Golmote"},"sas":{"title":"SAS","optional":["groovy","lua","sql"],"owner":"Golmote"},"sass":{"title":"Sass (Sass)","require":"css","owner":"Golmote"},"scss":{"title":"Sass (Scss)","require":"css","optional":"css-extras","owner":"MoOx"},"scala":{"title":"Scala","require":"java","owner":"jozic"},"scheme":{"title":"Scheme","owner":"bacchus123"},"shell-session":{"title":"Shell session","require":"bash","owner":"RunDevelopment"},"smalltalk":{"title":"Smalltalk","owner":"Golmote"},"smarty":{"title":"Smarty","require":"markup-templating","owner":"Golmote"},"solidity":{"title":"Solidity (Ethereum)","require":"clike","owner":"glachaud"},"solution-file":{"title":"Solution file","alias":"sln","owner":"RunDevelopment"},"soy":{"title":"Soy (Closure Template)","require":"markup-templating","owner":"Golmote"},"sparql":{"title":"SPARQL","require":"turtle","owner":"Triply-Dev","alias":"rq"},"splunk-spl":{"title":"Splunk SPL","owner":"RunDevelopment"},"sqf":{"title":"SQF: Status Quo Function (Arma 3)","require":"clike","owner":"RunDevelopment"},"sql":{"title":"SQL","owner":"multipetros"},"stylus":{"title":"Stylus","owner":"vkbansal"},"swift":{"title":"Swift","require":"clike","owner":"chrischares"},"tap":{"title":"TAP","owner":"isaacs","require":"yaml"},"tcl":{"title":"Tcl","owner":"PeterChaplin"},"textile":{"title":"Textile","require":"markup","optional":"css","owner":"Golmote"},"toml":{"title":"TOML","owner":"RunDevelopment"},"tt2":{"title":"Template Toolkit 2","require":["clike","markup-templating"],"owner":"gflohr"},"turtle":{"title":"Turtle","alias":"trig","aliasTitles":{"trig":"TriG"},"owner":"jakubklimek"},"twig":{"title":"Twig","require":"markup","owner":"brandonkelly"},"typescript":{"title":"TypeScript","require":"javascript","optional":"js-templates","alias":"ts","owner":"vkbansal"},"t4-cs":{"title":"T4 Text Templates (C#)","require":["t4-templating","csharp"],"alias":"t4","owner":"RunDevelopment"},"t4-vb":{"title":"T4 Text Templates (VB)","require":["t4-templating","visual-basic"],"owner":"RunDevelopment"},"t4-templating":{"title":"T4 templating","owner":"RunDevelopment"},"vala":{"title":"Vala","require":"clike","owner":"TemplarVolk"},"vbnet":{"title":"VB.Net","require":"basic","owner":"Bigsby"},"velocity":{"title":"Velocity","require":"markup","owner":"Golmote"},"verilog":{"title":"Verilog","owner":"a-rey"},"vhdl":{"title":"VHDL","owner":"a-rey"},"vim":{"title":"vim","owner":"westonganger"},"visual-basic":{"title":"Visual Basic","alias":"vb","owner":"Golmote"},"wasm":{"title":"WebAssembly","owner":"Golmote"},"wiki":{"title":"Wiki markup","require":"markup","owner":"Golmote"},"xeora":{"title":"Xeora","require":"markup","alias":"xeoracube","aliasTitles":{"xeoracube":"XeoraCube"},"owner":"freakmaxi"},"xojo":{"title":"Xojo (REALbasic)","owner":"Golmote"},"xquery":{"title":"XQuery","require":"markup","owner":"Golmote"},"yaml":{"title":"YAML","alias":"yml","owner":"hason"},"zig":{"title":"Zig","owner":"RunDevelopment"}},"plugins":{"meta":{"path":"plugins/{id}/prism-{id}","link":"plugins/{id}/"},"line-highlight":{"title":"Line Highlight","description":"Highlights specific lines and/or line ranges."},"line-numbers":{"title":"Line Numbers","description":"Line number at the beginning of code lines.","owner":"kuba-kubula"},"show-invisibles":{"title":"Show Invisibles","description":"Show hidden characters such as tabs and line breaks.","optional":["autolinker","data-uri-highlight"]},"autolinker":{"title":"Autolinker","description":"Converts URLs and emails in code to clickable links. Parses Markdown links in comments."},"wpd":{"title":"WebPlatform Docs","description":"Makes tokens link to <a href=\"https://webplatform.github.io/docs/\">WebPlatform.org documentation</a>. The links open in a new tab."},"custom-class":{"title":"Custom Class","description":"This plugin allows you to prefix Prism's default classes (<code>.comment</code> can become <code>.namespace--comment</code>) or replace them with your defined ones (like <code>.editor__comment</code>). You can even add new classes.","owner":"dvkndn","noCSS":true},"file-highlight":{"title":"File Highlight","description":"Fetch external files and highlight them with Prism. Used on the Prism website itself.","noCSS":true},"show-language":{"title":"Show Language","description":"Display the highlighted language in code blocks (inline code does not show the label).","owner":"nauzilus","noCSS":true,"require":"toolbar"},"jsonp-highlight":{"title":"JSONP Highlight","description":"Fetch content with JSONP and highlight some interesting content (e.g. GitHub/Gists or Bitbucket API).","noCSS":true,"owner":"nauzilus"},"highlight-keywords":{"title":"Highlight Keywords","description":"Adds special CSS classes for each keyword matched in the code. For example, the keyword <code>if</code> will have the class <code>keyword-if</code> as well. You can have fine grained control over the appearance of each keyword by providing your own CSS rules.","owner":"vkbansal","noCSS":true},"remove-initial-line-feed":{"title":"Remove initial line feed","description":"Removes the initial line feed in code blocks.","owner":"Golmote","noCSS":true},"inline-color":{"title":"Inline color","description":"Adds a small inline preview for colors in style sheets.","require":"css-extras","owner":"RunDevelopment"},"previewers":{"title":"Previewers","description":"Previewers for angles, colors, gradients, easing and time.","require":"css-extras","owner":"Golmote"},"autoloader":{"title":"Autoloader","description":"Automatically loads the needed languages to highlight the code blocks.","owner":"Golmote","noCSS":true},"keep-markup":{"title":"Keep Markup","description":"Prevents custom markup from being dropped out during highlighting.","owner":"Golmote","optional":"normalize-whitespace","noCSS":true},"command-line":{"title":"Command Line","description":"Display a command line with a prompt and, optionally, the output/response from the commands.","owner":"chriswells0"},"unescaped-markup":{"title":"Unescaped Markup","description":"Write markup without having to escape anything."},"normalize-whitespace":{"title":"Normalize Whitespace","description":"Supports multiple operations to normalize whitespace in code blocks.","owner":"zeitgeist87","optional":"unescaped-markup","noCSS":true},"data-uri-highlight":{"title":"Data-URI Highlight","description":"Highlights data-URI contents.","owner":"Golmote","noCSS":true},"toolbar":{"title":"Toolbar","description":"Attach a toolbar for plugins to easily register buttons on the top of a code block.","owner":"mAAdhaTTah"},"copy-to-clipboard":{"title":"Copy to Clipboard Button","description":"Add a button that copies the code block to the clipboard when clicked.","owner":"mAAdhaTTah","require":"toolbar","noCSS":true},"download-button":{"title":"Download Button","description":"A button in the toolbar of a code block adding a convenient way to download a code file.","owner":"Golmote","require":"toolbar","noCSS":true},"match-braces":{"title":"Match braces","description":"Highlights matching braces.","owner":"RunDevelopment"},"diff-highlight":{"title":"Diff Highlight","description":"Highlights the code inside diff blocks.","owner":"RunDevelopment","require":"diff"},"filter-highlight-all":{"title":"Filter highlightAll","description":"Filters the elements the <code>highlightAll</code> and <code>highlightAllUnder</code> methods actually highlight.","owner":"RunDevelopment","noCSS":true},"treeview":{"title":"Treeview","description":"A language with special styles to highlight file system tree structures.","owner":"Golmote"}}};
 if ( true && module.exports) { module.exports = components; }
 
 /***/ }),
-/* 410 */
+/* 411 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -55068,12 +55084,6 @@ if (true) {
 
 
 /***/ }),
-/* 411 */
-/***/ (function(module, exports) {
-
-
-
-/***/ }),
 /* 412 */
 /***/ (function(module, exports) {
 
@@ -55081,6 +55091,12 @@ if (true) {
 
 /***/ }),
 /* 413 */
+/***/ (function(module, exports) {
+
+
+
+/***/ }),
+/* 414 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -55796,13 +55812,13 @@ var server = __webpack_require__(200);
 var server_default = /*#__PURE__*/__webpack_require__.n(server);
 
 // EXTERNAL MODULE: ./node_modules/react-helmet/es/Helmet.js
-var Helmet = __webpack_require__(73);
+var Helmet = __webpack_require__(74);
 
 // EXTERNAL MODULE: ./node_modules/react-loadable-ssr-addon/lib/index.js
 var lib = __webpack_require__(203);
 
 // EXTERNAL MODULE: ./node_modules/react-loadable/lib/index.js
-var react_loadable_lib = __webpack_require__(56);
+var react_loadable_lib = __webpack_require__(57);
 var react_loadable_lib_default = /*#__PURE__*/__webpack_require__.n(react_loadable_lib);
 
 // EXTERNAL MODULE: ./node_modules/html-minifier-terser/src/htmlminifier.js
@@ -55833,7 +55849,7 @@ var interopRequireWildcard = __webpack_require__(7);
 var routesChunkNames = __webpack_require__(206);
 
 // CONCATENATED MODULE: ./.docusaurus/registry.js
-/* harmony default export */ var registry = ({'01a85c17':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(147))),"@theme/BlogTagsListPage",/*require.resolve*/(147)],'17896441':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(72))),"@theme/DocItem",/*require.resolve*/(72)],'1be78505':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(197))),"@theme/DocPage",/*require.resolve*/(197)],'20ac7829':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(168))),"~docs/docs-route-ff2.json",/*require.resolve*/(168)],'2868cdab':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(169))),"@site/blog/2019-05-30-welcome.md",/*require.resolve*/(169)],'31d49d87':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(170))),"~blog/blog-tags-hola-ea2.json",/*require.resolve*/(170)],'3570154c':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(171))),"@site/blog/2019-05-29-hello-world.md?truncated=true",/*require.resolve*/(171)],'3a6eb64e':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(172))),"~blog/blog-tags-hello-039.json",/*require.resolve*/(172)],'616665f6':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(173))),"@site/docs/doc3.md",/*require.resolve*/(173)],'6875c492':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(174))),"@theme/BlogTagsPostsPage",/*require.resolve*/(174)],'6ca375e2':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(175))),"~blog/blog-tags-docusaurus-0e0.json",/*require.resolve*/(175)],'8be5b89e':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(176))),"~blog/blog-tags-tags-4c2.json",/*require.resolve*/(176)],'8e9f0a8a':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(177))),"@site/blog/2019-05-28-hola.md?truncated=true",/*require.resolve*/(177)],'a09c2993':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(178))),"@site/docs/introduction.md",/*require.resolve*/(178)],'a6aa9e1f':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(198))),"@theme/BlogListPage",/*require.resolve*/(198)],'af172acd':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(179))),"@site/blog/2019-05-30-welcome.md?truncated=true",/*require.resolve*/(179)],'b2f90839':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(180))),"@site/docs/doc1.md",/*require.resolve*/(180)],'bbb4ffb5':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(181))),"~blog/blog-c06.json",/*require.resolve*/(181)],'bdd709f1':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(182))),"@site/blog/2019-05-28-hola.md",/*require.resolve*/(182)],'c4f5d8e4':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(183))),"@site/src/pages/index.js",/*require.resolve*/(183)],'ccc49370':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(199))),"@theme/BlogPostPage",/*require.resolve*/(199)],'ce3e42ad':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(184))),"@site/docs/mdx.md",/*require.resolve*/(184)],'d610846f':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(185))),"@site/blog/2019-05-29-hello-world.md",/*require.resolve*/(185)],'df361e2b':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(186))),"@site/docs/doc2.md",/*require.resolve*/(186)],'e35e9f02':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(187))),"/home/runner/work/nuz/nuz/website/node_modules/@docusaurus/theme-search-algolia/src/pages/search/index.js",/*require.resolve*/(187)],'eec15bdb':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(195))),"~blog/blog-tags-facebook-038.json",/*require.resolve*/(195)]});
+/* harmony default export */ var registry = ({'01a85c17':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(147))),"@theme/BlogTagsListPage",/*require.resolve*/(147)],'17896441':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(73))),"@theme/DocItem",/*require.resolve*/(73)],'1be78505':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(197))),"@theme/DocPage",/*require.resolve*/(197)],'20ac7829':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(168))),"~docs/docs-route-ff2.json",/*require.resolve*/(168)],'2868cdab':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(169))),"@site/blog/2019-05-30-welcome.md",/*require.resolve*/(169)],'31d49d87':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(170))),"~blog/blog-tags-hola-ea2.json",/*require.resolve*/(170)],'3570154c':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(171))),"@site/blog/2019-05-29-hello-world.md?truncated=true",/*require.resolve*/(171)],'3a6eb64e':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(172))),"~blog/blog-tags-hello-039.json",/*require.resolve*/(172)],'616665f6':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(173))),"@site/docs/doc3.md",/*require.resolve*/(173)],'6875c492':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(174))),"@theme/BlogTagsPostsPage",/*require.resolve*/(174)],'6ca375e2':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(175))),"~blog/blog-tags-docusaurus-0e0.json",/*require.resolve*/(175)],'8be5b89e':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(176))),"~blog/blog-tags-tags-4c2.json",/*require.resolve*/(176)],'8e9f0a8a':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(177))),"@site/blog/2019-05-28-hola.md?truncated=true",/*require.resolve*/(177)],'a09c2993':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(178))),"@site/docs/introduction.md",/*require.resolve*/(178)],'a6aa9e1f':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(198))),"@theme/BlogListPage",/*require.resolve*/(198)],'af172acd':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(179))),"@site/blog/2019-05-30-welcome.md?truncated=true",/*require.resolve*/(179)],'b2f90839':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(180))),"@site/docs/doc1.md",/*require.resolve*/(180)],'bbb4ffb5':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(181))),"~blog/blog-c06.json",/*require.resolve*/(181)],'bdd709f1':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(182))),"@site/blog/2019-05-28-hola.md",/*require.resolve*/(182)],'c4f5d8e4':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(183))),"@site/src/pages/index.js",/*require.resolve*/(183)],'ccc49370':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(199))),"@theme/BlogPostPage",/*require.resolve*/(199)],'ce3e42ad':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(184))),"@site/docs/mdx.md",/*require.resolve*/(184)],'d610846f':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(185))),"@site/blog/2019-05-29-hello-world.md",/*require.resolve*/(185)],'df361e2b':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(186))),"@site/docs/doc2.md",/*require.resolve*/(186)],'e35e9f02':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(187))),"/home/runner/work/nuz/nuz/website/node_modules/@docusaurus/theme-search-algolia/src/pages/search/index.js",/*require.resolve*/(187)],'eec15bdb':[()=>Promise.resolve().then(()=>Object(interopRequireWildcard["a" /* default */])(__webpack_require__(195))),"~blog/blog-tags-facebook-038.json",/*require.resolve*/(195)]});
 // CONCATENATED MODULE: ./node_modules/@docusaurus/core/lib/client/flat.js
 /**
  * Copyright (c) 2017-present, Facebook, Inc.
@@ -55866,7 +55882,7 @@ const loadedModules=JSON.parse(JSON.stringify(chunkNames));Object.keys(loaded).f
 var core_package = __webpack_require__(215);
 
 // EXTERNAL MODULE: ./node_modules/react-router-config/esm/react-router-config.js
-var react_router_config = __webpack_require__(84);
+var react_router_config = __webpack_require__(85);
 
 // CONCATENATED MODULE: ./node_modules/@docusaurus/core/lib/client/preload.js
 /**
@@ -55883,20 +55899,20 @@ var react_router_config = __webpack_require__(84);
  * @returns {Promise} Promise object represents whether pathname has been preloaded
  */function preload(routes,pathname){const matches=Object(react_router_config["a" /* matchRoutes */])(routes,pathname);return Promise.all(matches.map(match=>{const{component}=match.route;if(component&&component.preload){return component.preload();}return undefined;}));}
 // EXTERNAL MODULE: ./.docusaurus/docusaurus.config.js
-var docusaurus_config = __webpack_require__(85);
+var docusaurus_config = __webpack_require__(50);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/core/lib/client/exports/renderRoutes.js
-var renderRoutes = __webpack_require__(83);
+var renderRoutes = __webpack_require__(84);
 
 // EXTERNAL MODULE: ./node_modules/@docusaurus/core/lib/client/exports/context.js
-var exports_context = __webpack_require__(75);
+var exports_context = __webpack_require__(76);
 
 // EXTERNAL MODULE: ./node_modules/nprogress/nprogress.js
 var nprogress = __webpack_require__(89);
 var nprogress_default = /*#__PURE__*/__webpack_require__.n(nprogress);
 
 // CONCATENATED MODULE: ./.docusaurus/client-modules.js
-/* harmony default export */ var client_modules = ([__webpack_require__(196),__webpack_require__(196),__webpack_require__(406),__webpack_require__(407),__webpack_require__(411)]);
+/* harmony default export */ var client_modules = ([__webpack_require__(196),__webpack_require__(196),__webpack_require__(406),__webpack_require__(407),__webpack_require__(408),__webpack_require__(412)]);
 // CONCATENATED MODULE: ./node_modules/@docusaurus/core/lib/client/client-lifecycles-dispatcher.js
 /**
  * Copyright (c) 2017-present, Facebook, Inc.
@@ -55910,7 +55926,7 @@ var nprogress_default = /*#__PURE__*/__webpack_require__.n(nprogress);
 return['onRouteUpdate','onRouteUpdateDelayed'].reduce((lifecycles,lifecycleAction)=>{// eslint-disable-next-line no-param-reassign
 lifecycles[lifecycleAction]=function(...args){dispatchLifecycleAction(lifecycleAction,...args);};return lifecycles;},{});}/* harmony default export */ var client_lifecycles_dispatcher = (createLifecyclesDispatcher());
 // EXTERNAL MODULE: ./node_modules/nprogress/nprogress.css
-var nprogress_nprogress = __webpack_require__(412);
+var nprogress_nprogress = __webpack_require__(413);
 
 // CONCATENATED MODULE: ./node_modules/@docusaurus/core/lib/client/PendingNavigation.js
 /**
