@@ -11,6 +11,9 @@ module.exports = {
   organizationName: 'nuz-app', // Usually your GitHub org/user name.
   projectName: 'nuz', // Usually your repo name.
   themeConfig: {
+    googleAnalytics: {
+      trackingID: process.env.GA_DOCUMENT_ID,
+    },
     algolia: {
       apiKey: process.env.ALGOLIA_API_KEY,
       indexName: process.env.ALGOLIA_INDEX_NAME,
@@ -104,4 +107,5 @@ module.exports = {
       },
     ],
   ],
+  plugins: ['@docusaurus/plugin-google-analytics'],
 };

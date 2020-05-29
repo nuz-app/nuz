@@ -132,7 +132,7 @@ jobs:
         env:
           ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_API_KEY }}
           ALGOLIA_INDEX_NAME: ${{ secrets.ALGOLIA_INDEX_NAME }}
-          ALGOLIA_APP_ID: ${{ secrets.ALGOLIA_APP_ID }}
+          GA_DOCUMENT_ID: ${{ secrets.GA_DOCUMENT_ID }}
         run: yarn run build
 
       - name: Deploy document website
