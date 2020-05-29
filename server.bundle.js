@@ -26902,7 +26902,7 @@ var ReactLoadableSSRAddon = function () {
       options = defaultOptions;
     }
 
-    this.options = _extends({}, defaultOptions, {}, options);
+    this.options = _extends({}, defaultOptions, options);
     this.compiler = null;
     this.stats = null;
     this.entrypoints = new Set();
@@ -26997,7 +26997,7 @@ var ReactLoadableSSRAddon = function () {
       return 0;
     };
 
-    return compilationChunks.map(function (chunk) {
+    return compilationChunks.reduce(function (chunks, chunk) {
       var siblings = new Set();
 
       if (chunk.groupsIterable) {
@@ -27013,15 +27013,18 @@ var ReactLoadableSSRAddon = function () {
         }
       }
 
-      return {
-        id: chunk.id,
-        names: chunk.name ? [chunk.name] : [],
-        files: chunk.files.slice(),
-        hash: chunk.renderedHash,
-        siblings: Array.from(siblings).sort(compareId),
-        modules: chunk.getModules()
-      };
-    });
+      chunk.ids.forEach(function (id) {
+        chunks.push({
+          id: id,
+          names: chunk.name ? [chunk.name] : [],
+          files: chunk.files.slice(),
+          hash: chunk.renderedHash,
+          siblings: Array.from(siblings).sort(compareId),
+          modules: chunk.getModules()
+        });
+      });
+      return chunks;
+    }, []);
   };
 
   _proto.handleEmit = function handleEmit(compilation, callback) {
