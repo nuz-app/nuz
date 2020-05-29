@@ -7,6 +7,7 @@ import {
   getFetchUrls,
   interopRequireDefault,
   jsonHelpers,
+  moduleIdHelpers,
 } from '@nuz/utils'
 import LRUCache from 'lru-cache'
 
@@ -33,11 +34,14 @@ import Globals from './Globals'
 import Linked from './Linked'
 import Script from './Script'
 
+const CONFIG_FIND_MODULE_TIMEOUT = 10000
+const CONFIG_FIND_MODULE_RETRIES = 1
+
 export type RequiredBaseItem = BaseItemConfig &
   Required<
     Pick<
       BaseItemConfig,
-      'name' | 'local' | 'alias' | 'exportsOnly' | 'upstream'
+      'id' | 'version' | 'name' | 'local' | 'alias' | 'exportsOnly' | 'upstream'
     >
   >
 
@@ -93,6 +97,21 @@ function pickIfSet(upstream: any, config: RequiredBaseItem) {
     format: upstream.format || format,
     exportsOnly: upstream.exportsOnly || exportsOnly,
   }
+}
+
+function findModules(
+  id: string,
+  modules: RequiredBaseItem[],
+): RequiredBaseItem | undefined {
+  let match = modules.find((item) => item.id === id)
+  if (!match) {
+    const parsed = moduleIdHelpers.parser(id)
+    if (parsed.version === '*') {
+      match = modules.find((item) => item.name === parsed.module)
+    }
+  }
+
+  return match
 }
 
 const PRECONNECT_LIMIT_DOMAIN = 3
@@ -304,7 +323,7 @@ class Modules {
   }
 
   /**
-   * Load shared dependency by name or id
+   * Load shared dependency by id
    */
   private async loadSharedDependency(id: string) {
     if (this._resolvedDependencies.has(id)) {
@@ -406,13 +425,11 @@ class Modules {
     item: RequiredBaseItem,
     options?: LoadModuleConfig,
   ) {
-    const { upstream } = item
+    const { id, upstream } = item
     const { library, format, alias, exportsOnly } = pickIfSet(upstream, item)
     const { timeout, retries } = ensureLoadModuleConfig(options)
 
     const { main, styles } = requireHelpers.parse(upstream) || {}
-
-    const moduleId = this.moduleId(item)
 
     const moduleScript = await getScript(
       main.url,
@@ -426,12 +443,12 @@ class Modules {
     )
 
     const moduleExports = this.runScript({
-      id: moduleId,
-      code: moduleScript,
+      id,
       format,
       library,
       alias,
       exportsOnly,
+      code: moduleScript,
     })
 
     const moduleStyles = await Promise.all(
@@ -530,8 +547,8 @@ class Modules {
     }
 
     try {
-      const resolvedOnUpstream = await this.resolveOnUpstream(item, options)
-      return resolvedOnUpstream
+      const resolvedUpstream = await this.resolveOnUpstream(item, options)
+      return resolvedUpstream
     } catch (error) {
       console.error(
         `Cannot load or execute module on upstream: ${error.message || error}`,
@@ -553,8 +570,8 @@ class Modules {
         )}`,
       )
 
-      const resolvedOfFallback = await this.resolveOnUpstream(cloned, options)
-      return resolvedOfFallback
+      const resolvedFallback = await this.resolveOnUpstream(cloned, options)
+      return resolvedFallback
     }
   }
 
@@ -565,12 +582,12 @@ class Modules {
     item: RequiredBaseItem,
     options?: LoadModuleConfig,
   ): Promise<LoadResult<M>> {
-    if (!item.name) {
-      throw new Error('Not found name in item config')
+    if (!item.id) {
+      throw new Error('Not found module id')
     }
 
     let resolvedModule
-    const cacheId = this.moduleId(item)
+    const cacheId = item.id
     // In server-side mode will not use cache resolved modules
     // maybe cache the module resources rather than cache resolved
     if (!this._ssr && this._resolvedModules.has(cacheId)) {
@@ -587,12 +604,11 @@ class Modules {
    * Optimize the connection for modules and resources
    */
   private async optimizeConnection() {
-    const modules = this.getAllModules()
-    const modulesKeys = Object.keys(modules)
+    const modulesMap = this.getAllModules()
+    const modules = Object.values(modulesMap)
 
-    const urls = modulesKeys.reduce((acc, key) => {
-      const { main, styles } =
-        requireHelpers.parse(modules[key]?.upstream as any) || {}
+    const urls = modules.reduce((acc, item) => {
+      const { main, styles } = requireHelpers.parse(item?.upstream as any) || {}
 
       return acc.concat(
         ensureOrigin(main.url) as string,
@@ -639,9 +655,9 @@ class Modules {
       const config = await fetchConfig<RequiredBaseItem>(
         fetchModuleUrl,
         {
-          timeout: 10000,
+          timeout: CONFIG_FIND_MODULE_TIMEOUT,
         },
-        1,
+        CONFIG_FIND_MODULE_RETRIES,
       )
       this._modulesOnRegistry.set(id, config)
 
@@ -685,20 +701,16 @@ class Modules {
    * Handle preload modules configured in bootstrap
    */
   public async preload() {
-    const modules = this.getAllModules()
-    const valuesOf = Object.values(modules)
-
+    const modulesMap = this.getAllModules()
+    const modules = Object.values(modulesMap) as RequiredBaseItem[]
     const preload = this._config.get<NonNullable<BootstrapConfig['preload']>>(
       'preload',
     )
+    const transformed = preload.map((idOrName) => moduleIdHelpers.use(idOrName))
 
     const pings: boolean[] = []
-    for (const id of preload) {
-      let item = modules[id] as RequiredBaseItem
-      if (!item) {
-        item = valuesOf.find((m) => m.id === id) as RequiredBaseItem
-      }
-
+    for (const id of transformed) {
+      const item = findModules(id, modules) as RequiredBaseItem
       if (!item) {
         continue
       }
@@ -710,7 +722,7 @@ class Modules {
   }
 
   /**
-   * Resolve a module by name or id
+   * Resolve a module by id
    */
   public async requireModule<T = unknown>(id: string): Promise<T> {
     const resolved = await this.findAndLoadModule<T>(id)
@@ -719,15 +731,17 @@ class Modules {
   }
 
   /**
-   * Find and load the module by name or id
+   * Find and load the module by id
    */
   public async findAndLoadModule<M = unknown>(
     id: string,
   ): Promise<LoadResult<M>> {
     await this.ready()
 
-    const modules = this.getAllModules()
-    let item = modules[id] as RequiredBaseItem
+    const modulesMap = this.getAllModules()
+    const modules = Object.values(modulesMap) as RequiredBaseItem[]
+
+    let item = findModules(id, modules)
     if (!item) {
       item = (await this.findModuleOnRegistry(id)) as RequiredBaseItem
     }
@@ -743,18 +757,17 @@ class Modules {
   /**
    * Get all elements need to append in `<head />`
    */
-  public getElementsInHead(resolvedIds: string[] = []): TagElement[] {
-    const modules = this.getAllModules()
-    const resolvedInSession = resolvedIds || []
+  public getElementsInHead(preloadIdOrNames: string[] = []): TagElement[] {
+    const modulesMap = this.getAllModules()
+    const modules = Object.values(modulesMap) as RequiredBaseItem[]
+    const preloadIds = preloadIdOrNames.map((idOrName) =>
+      moduleIdHelpers.use(idOrName),
+    )
+    const preloadModules = [] as RequiredBaseItem[]
 
     if (this._ssr) {
-      const valuesOf = Object.values(modules)
-      for (const id of resolvedInSession) {
-        let item = modules[id]
-        if (!item) {
-          item = valuesOf.find((m) => m.id === id) as BaseItemConfig
-        }
-
+      for (const id of preloadIds) {
+        const item = findModules(id, modules)
         if (!item) {
           continue
         }
@@ -762,6 +775,7 @@ class Modules {
         this.ping(item as RequiredBaseItem, {
           styles: false,
         })
+        preloadModules.push(item)
       }
     }
 
@@ -769,7 +783,7 @@ class Modules {
     const resources = this._pingResources.values()
 
     const tags = [
-      this._ssr && DOMHelpers.sharedConfig(this._config.raw()),
+      this._ssr && DOMHelpers.sharedConfig(this._config.export()),
       ...preconnects,
     ].filter(Boolean) as TagElement[]
 
@@ -778,8 +792,8 @@ class Modules {
     }
 
     if (this._ssr) {
-      for (const id of resolvedInSession) {
-        const item = this._resolvedModules.get(id)
+      for (const preloadItem of preloadModules) {
+        const item = this._resolvedModules.get(preloadItem.id)
         if (!item) {
           continue
         }

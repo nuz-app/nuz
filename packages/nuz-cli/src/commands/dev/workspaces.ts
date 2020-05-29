@@ -1,5 +1,5 @@
 import { LINKED_CHANGE_EVENT, LINKED_DEFINE_EVENT } from '@nuz/shared'
-import { linkedUrls } from '@nuz/utils'
+import { linkedUrls, moduleIdHelpers } from '@nuz/utils'
 import glob from 'glob'
 import path from 'path'
 import io from 'socket.io'
@@ -186,8 +186,10 @@ async function standalone({
         styles: childModuleAssets.resolve.styles.map((style) => style.url),
       }
 
+      const id = moduleIdHelpers.use(name)
+
       return Object.assign(acc, {
-        [name]: {
+        [id]: {
           shared: childModuleInfo.config.shared,
           library: childModuleInfo.webpack.output.library,
           format: childModuleInfo.webpack.output.libraryTarget,

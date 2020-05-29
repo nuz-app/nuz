@@ -18,7 +18,6 @@ class Linked {
     const { port } = this.linked || {}
 
     const isUnused = !this.linked || !port
-
     const watchUrl = !isUnused && linkedUrls.watch(port as any)
 
     // Create connection and save io and get linked watch info

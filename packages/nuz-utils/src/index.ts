@@ -4,6 +4,7 @@ import * as getFetchUrls from './getFetchUrls'
 import * as integrityHelpers from './integrityHelpers'
 import * as jsonHelpers from './jsonHelpers'
 import * as linkedUrls from './linkedUrls'
+import * as moduleIdHelpers from './moduleIdHelpers'
 import * as tokenTypesHelpers from './tokenTypesHelpers'
 import * as validator from './validator'
 import * as versionHelpers from './versionHelpers'
@@ -18,6 +19,7 @@ export {
   assetsUrlHelpers,
   versionHelpers,
   getFetchUrls,
+  moduleIdHelpers,
 }
 
 export { default as checkIsProductionMode } from './checkIsProductionMode'

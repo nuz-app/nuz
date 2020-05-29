@@ -1,6 +1,7 @@
 import {
   ensureOriginSlash,
   integrityHelpers,
+  moduleIdHelpers,
   pick,
   validator,
   versionHelpers,
@@ -41,7 +42,6 @@ import checkIsCollaboratorIncludes from '../utils/checkIsCollaboratorIncludes'
 import checkIsNewCompose from '../utils/checkIsNewCompose'
 import checkIsNewScope from '../utils/checkIsNewScope'
 import createMongoConnection from '../utils/createMongoConnection'
-import parseModuleId from '../utils/parseModuleId'
 import pickAndParseModule from '../utils/pickAndParseModule'
 import validateAndTransformFiles, {
   TransformFile,
@@ -169,7 +169,7 @@ class Worker {
       CollaboratorTypes.contributor,
       false,
     )
-    const parsedId = parseModuleId(moduleId)
+    const parsedId = moduleIdHelpers.parser(moduleId)
 
     const staticIsNotMatched =
       ensureOriginSlash(staticOrigin as string) !==

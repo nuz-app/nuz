@@ -54,7 +54,7 @@ export type BaseItemConfig = {
    */
   name?: string
   /**
-   * Module version
+   * Requires  module version
    */
   version?: string
   /**

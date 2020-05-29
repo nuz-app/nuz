@@ -1,5 +1,9 @@
 import { ModuleFormats } from '@nuz/shared'
-import { checkIsObject, checkIsProductionMode } from '@nuz/utils'
+import {
+  checkIsObject,
+  checkIsProductionMode,
+  moduleIdHelpers,
+} from '@nuz/utils'
 
 import {
   BaseItemConfig,
@@ -10,16 +14,25 @@ import {
 } from '../types'
 
 const setDefaultIfUnset = <T extends BaseItemConfig>(
-  name: string,
+  idOrName: string,
   item: T,
-): T => {
+): Required<T> => {
   const isObject = checkIsObject(item)
   const isInvalid = !isObject
   if (isInvalid) {
-    throw new Error(`Module ${name} is invalid config`)
+    throw new Error(`Module ${idOrName} is invalid config`)
   }
 
-  const cloned = { ...item, name }
+  const id = moduleIdHelpers.use(idOrName)
+  const cloned = { ...item, id }
+
+  if (cloned.name && cloned.version) {
+    cloned.id = moduleIdHelpers.create(cloned.name, cloned.version)
+  } else if (!cloned.name) {
+    const parsedId = moduleIdHelpers.parser(cloned.id)
+    cloned.name = parsedId.module
+    cloned.version = parsedId.version
+  }
 
   if (!cloned.alias) {
     cloned.alias = {}
@@ -35,7 +48,7 @@ const setDefaultIfUnset = <T extends BaseItemConfig>(
 
   Object.freeze(cloned)
 
-  return cloned
+  return cloned as Required<T>
 }
 
 export type ConfigInitial = Pick<
@@ -95,7 +108,7 @@ class Config {
     this.assignShared(shared || {})
   }
 
-  raw(): ConfigInitial {
+  export(): ConfigInitial {
     return {
       preload: this._preload,
       modules: this._modules,
@@ -158,14 +171,13 @@ class Config {
   }
 
   defineModules(modules: ModulesConfig): ModulesConfig {
-    const keys = Object.keys(modules || {})
-    const transformed = keys.reduce(
-      (acc, key) =>
-        Object.assign(acc, {
-          [key]: setDefaultIfUnset(key, modules[key]),
-        }),
-      {},
-    )
+    const ids = Object.keys(modules || {})
+    const transformed = ids.reduce((acc, id) => {
+      const moduleEnsured = setDefaultIfUnset(id, modules[id])
+      return Object.assign(acc, {
+        [moduleEnsured.id]: moduleEnsured,
+      })
+    }, {})
 
     return transformed
   }
