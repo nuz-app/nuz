@@ -114,7 +114,6 @@ class Modules {
   private readonly _dev: boolean
   private readonly _ssr: boolean
   private readonly _resolvedModules: Caches<string, LoadResult<any>>
-  private readonly _resolvedInSession: Set<string>
   private readonly _resolvedDependencies: Caches<string, any>
   private readonly _modulesOnRegistry: Caches<string, RequiredBaseItem>
   private readonly _pingResources: Caches<
@@ -148,7 +147,6 @@ class Modules {
     this._modulesOnRegistry = new Caches()
     this._pingResources = new Caches()
     this._dnsPrefetchs = new Set()
-    this._resolvedInSession = new Set()
 
     // Create defered promise to checking ready
     this._ready = deferedPromise<boolean>()
@@ -791,16 +789,6 @@ class Modules {
     }
 
     return tags
-  }
-
-  public pushToSession(ids: string[]) {
-    for (const id of ids) {
-      this._resolvedInSession.add(id)
-    }
-  }
-
-  public clearAllSession() {
-    this._resolvedInSession.clear()
   }
 }
 

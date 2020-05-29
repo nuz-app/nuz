@@ -1,7 +1,3 @@
-import { compareFilesByHash } from '@nuz/utils'
-import fs from 'fs'
-import path from 'path'
-
 import * as bootstrap from '../bootstrap'
 
 import { extractorHelpers, inject, Loadable } from './react'
@@ -11,26 +7,11 @@ export interface NextFactoryConfig {
   autoInject?: boolean
 }
 
-const LOADABLE_UPDATED_PATH = path.join(
-  __dirname,
-  '../bundled/next/loadable.js',
-)
-
-const LOADABLE_REQUIRE_PATH = 'next/dist/next-server/lib/loadable'
-
 function nextIntegrate(config: NextFactoryConfig) {
   const { require, autoInject = true } = config || {}
 
   if (!require) {
     throw new Error('`require` is required in config, please provide to use')
-  }
-
-  const loadablePath = require.resolve(LOADABLE_REQUIRE_PATH)
-
-  // Replace loadable file of Next.js
-  const fileIsDiff = !compareFilesByHash(LOADABLE_UPDATED_PATH, loadablePath)
-  if (fileIsDiff) {
-    fs.copyFileSync(LOADABLE_UPDATED_PATH, loadablePath)
   }
 
   function withNuz(nextConfig: any = {}) {
@@ -92,18 +73,6 @@ function nextIntegrate(config: NextFactoryConfig) {
         return result
       },
     })
-
-    // const NextLoadable = require(LOADABLE_REQUIRE_PATH)
-    // const preloadAll = NextLoadable.default.preloadAll
-    // Object.assign(NextLoadable.default, {
-    //   preloadAll: async function injectedPreloadAll() {
-    //     const [result] = await Promise.all([
-    //       await preloadAll.apply(this, arguments),
-    //       await Loadable.preloadAll(),
-    //     ])
-    //     return result
-    //   },
-    // })
   }
 
   if (autoInject) {
