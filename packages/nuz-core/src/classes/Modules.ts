@@ -132,15 +132,15 @@ class Modules {
   private readonly _globals: Globals
   private readonly _dev: boolean
   private readonly _ssr: boolean
-  private readonly _resolvedModules: Caches<string, LoadResult<any>>
-  private readonly _resolvedDependencies: Caches<string, any>
+  private readonly _requiredModules: Caches<string, LoadResult<any>>
+  private readonly _requiredDependencies: Caches<string, any>
   private readonly _modulesOnRegistry: Caches<string, RequiredBaseItem>
   private readonly _pingResources: Caches<
     string,
     { script: TagElement; styles: TagElement[] }
   >
   private readonly _dnsPrefetchs: Set<TagElement>
-  private readonly _resolvedResources?: LRUCache<any, any>
+  private readonly _requiredResources?: LRUCache<any, any>
   // @ts-ignore
   private _linked: Linked
 
@@ -160,9 +160,9 @@ class Modules {
     // Set is development mode
     this._dev = this._config.get<boolean>('dev')
 
-    // Init maps for resolved modules, shared and ping resources
-    this._resolvedDependencies = new Caches()
-    this._resolvedModules = new Caches()
+    // Init maps for required modules, shared and ping resources
+    this._requiredDependencies = new Caches()
+    this._requiredModules = new Caches()
     this._modulesOnRegistry = new Caches()
     this._pingResources = new Caches()
     this._dnsPrefetchs = new Set()
@@ -175,8 +175,8 @@ class Modules {
     const isUseSSR = this._config.get<boolean>('ssr')
     this._ssr = isUseSSR && isNode
 
-    // Create resolved resources cache
-    this._resolvedResources =
+    // Create required resources cache
+    this._requiredResources =
       this._ssr && !this._dev ? initialCacheInNode() : undefined
 
     if (!isUseSSR && isNode) {
@@ -297,8 +297,8 @@ class Modules {
 
     const { upstream } = item
 
-    const resolveUrls = requireHelpers.parse(upstream) || {}
-    const { main, styles } = resolveUrls || ({} as any)
+    const requireUrls = requireHelpers.parse(upstream) || {}
+    const { main, styles } = requireUrls || ({} as any)
 
     const preloadScript = DOMHelpers.preloadScript(main.url, {
       sourceMap: this._dev,
@@ -323,11 +323,11 @@ class Modules {
   }
 
   /**
-   * Load shared dependency by id
+   * Require shared dependency by id
    */
-  private async loadSharedDependency(id: string) {
-    if (this._resolvedDependencies.has(id)) {
-      return this._resolvedDependencies.get(id)
+  private async requireSharedDependency(id: string) {
+    if (this._requiredDependencies.has(id)) {
+      return this._requiredDependencies.get(id)
     }
 
     const sharedDependencies = this._config.get<
@@ -342,24 +342,24 @@ class Modules {
       throw new Error(`Dependency factory of ${id} is invalid`)
     }
 
-    const resolvedDependency = await Promise.resolve(dependencyFactory())
-    const moduleExports = moduleHelpers.define(resolvedDependency, {
+    const requiredDependency = await Promise.resolve(dependencyFactory())
+    const moduleExports = moduleHelpers.define(requiredDependency, {
       module: true,
       shared: true,
     })
 
     this._globals.setDependency(name, moduleExports)
-    this._resolvedDependencies.set(name, moduleExports)
+    this._requiredDependencies.set(name, moduleExports)
 
-    return resolvedDependency
+    return requiredDependency
   }
 
   /**
-   * Load shared dependencies for the module
+   * Require shared dependencies for the module
    */
-  private async loadSharedDependencies(shared: string[]) {
+  private async requireSharedDependencies(shared: string[]) {
     return Promise.all(
-      (shared || []).map((item) => this.loadSharedDependency(item)),
+      (shared || []).map((item) => this.requireSharedDependency(item)),
     )
   }
 
@@ -419,9 +419,9 @@ class Modules {
   }
 
   /**
-   * Resolve the module on upstream
+   * Require the module on upstream
    */
-  private async resolveOnUpstream(
+  private async requireOnUpstream(
     item: RequiredBaseItem,
     options?: LoadModuleConfig,
   ) {
@@ -434,7 +434,7 @@ class Modules {
     const moduleScript = await getScript(
       main.url,
       {
-        resolver: this._resolvedResources,
+        resolver: this._requiredResources,
         timeout,
         integrity: main.integrity,
         sourceMap: this._dev,
@@ -455,7 +455,7 @@ class Modules {
       (styles || []).map((style) =>
         DOMHelpers.loadStyle(style.url, {
           sourceMap: this._dev,
-          resolver: this._resolvedResources,
+          requirer: this._requiredResources,
           integrity: style.integrity,
         }),
       ),
@@ -468,9 +468,9 @@ class Modules {
   }
 
   /**
-   * Resolve the module in linked workspaces
+   * Require the module in linked workspaces
    */
-  private async resolveInLinked(
+  private async requireInLinked(
     item: RequiredBaseItem,
     options?: LoadModuleConfig,
   ) {
@@ -478,9 +478,9 @@ class Modules {
       return null
     }
 
-    const resolved = await this.resolveOnUpstream(item, options)
+    const required = await this.requireOnUpstream(item, options)
 
-    moduleHelpers.define(resolved.module, {
+    moduleHelpers.define(required.module, {
       linked: true,
     })
 
@@ -489,13 +489,13 @@ class Modules {
       this._linked.watch([item.id])
     }
 
-    return resolved
+    return required
   }
 
   /**
-   * Resolve the module in local
+   * Require the module in local
    */
-  private async resolveInLocal(
+  private async requireInLocal(
     item: Required<
       Pick<BaseItemConfig, 'name' | 'local' | 'alias' | 'exportsOnly'>
     >,
@@ -503,14 +503,14 @@ class Modules {
   ) {
     const { name, local, alias, exportsOnly } = item
 
-    const resolvedInLocal = local || requireHelpers.local(name, this._globals)
-    if (!resolvedInLocal) {
+    const requiredInLocal = local || requireHelpers.local(name, this._globals)
+    if (!requiredInLocal) {
       return null
     }
 
     let moduleExports = Object.assign(
       {},
-      interopRequireDefault(resolvedInLocal),
+      interopRequireDefault(requiredInLocal),
     )
     moduleExports = moduleHelpers.transform(moduleExports, {
       alias,
@@ -528,27 +528,27 @@ class Modules {
   }
 
   /**
-   * Resolve the module by config
+   * Require the module by config
    */
-  private async resolve(item: RequiredBaseItem, options?: LoadModuleConfig) {
-    await this.loadSharedDependencies((item as any).shared)
+  private async require(item: RequiredBaseItem, options?: LoadModuleConfig) {
+    await this.requireSharedDependencies((item as any).shared)
 
-    // In development mode, allowed to resolve in local and linked
+    // In development mode, allowed to require in local and linked
     if (this._dev) {
-      const resolvedInLocal = await this.resolveInLocal(item, options)
-      if (resolvedInLocal) {
-        return resolvedInLocal
+      const requiredInLocal = await this.requireInLocal(item, options)
+      if (requiredInLocal) {
+        return requiredInLocal
       }
 
-      const resolvedInlinked = await this.resolveInLinked(item, options)
-      if (resolvedInlinked) {
-        return resolvedInlinked
+      const requiredInLinked = await this.requireInLinked(item, options)
+      if (requiredInLinked) {
+        return requiredInLinked
       }
     }
 
     try {
-      const resolvedUpstream = await this.resolveOnUpstream(item, options)
-      return resolvedUpstream
+      const requiredOnUpstream = await this.requireOnUpstream(item, options)
+      return requiredOnUpstream
     } catch (error) {
       console.error(
         `Cannot load or execute module on upstream: ${error.message || error}`,
@@ -570,8 +570,8 @@ class Modules {
         )}`,
       )
 
-      const resolvedFallback = await this.resolveOnUpstream(cloned, options)
-      return resolvedFallback
+      const requiredOnFallback = await this.requireOnUpstream(cloned, options)
+      return requiredOnFallback
     }
   }
 
@@ -586,18 +586,18 @@ class Modules {
       throw new Error('Not found module id')
     }
 
-    let resolvedModule
+    let requiredModule
     const cacheId = item.id
-    // In server-side mode will not use cache resolved modules
-    // maybe cache the module resources rather than cache resolved
-    if (!this._ssr && this._resolvedModules.has(cacheId)) {
-      return this._resolvedModules.get(cacheId) as any
+    // In server-side mode will not use cache required modules
+    // maybe cache the module resources rather than cache required
+    if (!this._ssr && this._requiredModules.has(cacheId)) {
+      return this._requiredModules.get(cacheId) as any
     }
 
-    resolvedModule = await this.resolve(item, options)
-    this._resolvedModules.set(cacheId, resolvedModule)
+    requiredModule = await this.require(item, options)
+    this._requiredModules.set(cacheId, requiredModule)
 
-    return resolvedModule
+    return requiredModule
   }
 
   /**
@@ -634,7 +634,7 @@ class Modules {
   /**
    * Find the module on registry
    */
-  private async findModuleOnRegistry(id: string) {
+  private async resolveOnRegistry(id: string) {
     const isUseGlobal = this._config.get('global')
     if (!isUseGlobal) {
       return
@@ -722,12 +722,33 @@ class Modules {
   }
 
   /**
-   * Resolve a module by id
+   * Require a module by id
    */
   public async requireModule<T = unknown>(id: string): Promise<T> {
-    const resolved = await this.findAndLoadModule<T>(id)
+    const required = await this.findAndLoadModule<T>(id)
 
-    return resolved?.module
+    return required?.module
+  }
+
+  /**
+   * Resolve a module by id
+   */
+  public async resolveModule(id: string): Promise<RequiredBaseItem> {
+    await this.ready()
+
+    const modulesMap = this.getAllModules()
+    const modules = Object.values(modulesMap) as RequiredBaseItem[]
+
+    let item = findModules(id, modules)
+    if (!item) {
+      item = (await this.resolveOnRegistry(id)) as RequiredBaseItem
+    }
+
+    if (!item) {
+      throw new Error(`Can't require ${id} module`)
+    }
+
+    return item
   }
 
   /**
@@ -736,22 +757,10 @@ class Modules {
   public async findAndLoadModule<M = unknown>(
     id: string,
   ): Promise<LoadResult<M>> {
-    await this.ready()
+    const item = (await this.resolveModule(id)) as RequiredBaseItem
+    const required = await this.loadModule<M>(item)
 
-    const modulesMap = this.getAllModules()
-    const modules = Object.values(modulesMap) as RequiredBaseItem[]
-
-    let item = findModules(id, modules)
-    if (!item) {
-      item = (await this.findModuleOnRegistry(id)) as RequiredBaseItem
-    }
-
-    if (!item) {
-      throw new Error(`Can't resolve ${id} module`)
-    }
-
-    const resolved = await this.loadModule<M>(item)
-    return resolved
+    return required
   }
 
   /**
@@ -793,7 +802,7 @@ class Modules {
 
     if (this._ssr) {
       for (const preloadItem of preloadModules) {
-        const item = this._resolvedModules.get(preloadItem.id)
+        const item = this._requiredModules.get(preloadItem.id)
         if (!item) {
           continue
         }
