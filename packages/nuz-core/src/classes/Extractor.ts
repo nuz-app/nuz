@@ -1,5 +1,16 @@
-import getElementsInHead from '../getElementsInHead'
 import { DefinedElement, Priorities } from '../utils/DOMHelpers'
+import getElementsInHead from '../utils/effects/getElementsInHead'
+
+function renderElements(elements, renderer, parser) {
+  return Array.from(
+    (elements || [])
+      .reduce((tags, element) => {
+        tags.add(renderer(parser(element)))
+        return tags
+      }, new Set())
+      .values(),
+  ).join('')
+}
 
 class Extractor {
   private readonly _session: Set<string>
@@ -77,15 +88,21 @@ class Extractor {
       },
     )
 
-    const stylesTags = (groupsElements.styles || [])
-      .map((element) => this._renderer(this._parser(element)))
-      .join('')
-    const preloadTags = (groupsElements.preload || [])
-      .map((element) => this._renderer(this._parser(element)))
-      .join('')
-    const scriptsTags = (groupsElements.scripts || [])
-      .map((element) => this._renderer(this._parser(element)))
-      .join('')
+    const stylesTags = renderElements(
+      groupsElements.styles || [],
+      this._renderer,
+      this._parser,
+    )
+    const preloadTags = renderElements(
+      groupsElements.preload || [],
+      this._renderer,
+      this._parser,
+    )
+    const scriptsTags = renderElements(
+      groupsElements.scripts || [],
+      this._renderer,
+      this._parser,
+    )
 
     return {
       groupsElements,
