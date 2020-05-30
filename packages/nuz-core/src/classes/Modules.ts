@@ -296,7 +296,6 @@ class Modules {
     }
 
     const { upstream } = item
-
     const requireUrls = requireHelpers.parse(upstream) || {}
     const { main, styles } = requireUrls || ({} as any)
 
@@ -668,39 +667,9 @@ class Modules {
   }
 
   /**
-   * Call to prepare everything before using the modules
-   */
-  public async prepare() {
-    this.bindVendors()
-
-    if (this._dev) {
-      // Call to check and use linked modules if availability
-      // Note: this feature take time for wait to ready
-      await this.linkModules()
-    }
-
-    await Promise.all([
-      // Check and prepare connections for resources
-      this.optimizeConnection(),
-      // Preload resources
-      this.preload(),
-    ])
-
-    // Fired event to inform for other know modules is ready
-    this._ready.resolve(true)
-  }
-
-  /**
-   * Ready state of the modules
-   */
-  public async ready() {
-    await this._ready.promise
-  }
-
-  /**
    * Handle preload modules configured in bootstrap
    */
-  public async preload() {
+  private preload() {
     const modulesMap = this.getAllModules()
     const modules = Object.values(modulesMap) as RequiredBaseItem[]
     const preload = this._config.get<NonNullable<BootstrapConfig['preload']>>(
@@ -719,6 +688,34 @@ class Modules {
     }
 
     return pings
+  }
+
+  /**
+   * Call to prepare everything before using the modules
+   */
+  public async prepare() {
+    this.bindVendors()
+
+    if (this._dev) {
+      // Call to check and use linked modules if availability
+      // Note: this feature take time for wait to ready
+      await this.linkModules()
+    }
+
+    await Promise.all([
+      // Check and prepare connections for resources
+      this.optimizeConnection(),
+    ])
+
+    // Fired event to inform for other know modules is ready
+    this._ready.resolve(true)
+  }
+
+  /**
+   * Ready state of the modules
+   */
+  public async ready() {
+    await this._ready.promise
   }
 
   /**
@@ -765,8 +762,12 @@ class Modules {
 
   /**
    * Get all elements need to append in `<head />`
+   * Only server-side mode
    */
   public getElementsInHead(preloadIdOrNames: string[] = []): TagElement[] {
+    // Ensure ping resources empty beforepreload all
+    this._pingResources.clear()
+
     const modulesMap = this.getAllModules()
     const modules = Object.values(modulesMap) as RequiredBaseItem[]
     const preloadIds = preloadIdOrNames.map((idOrName) =>
@@ -774,22 +775,24 @@ class Modules {
     )
     const preloadModules = [] as RequiredBaseItem[]
 
-    if (this._ssr) {
-      for (const id of preloadIds) {
-        const item = findModules(id, modules)
-        if (!item) {
-          continue
-        }
+    // Preload all resources set in `preload` field
+    this.preload()
 
-        this.ping(item as RequiredBaseItem, {
-          styles: false,
-        })
-        preloadModules.push(item)
+    // Preload for dynamic modules
+    for (const id of preloadIds) {
+      const item = findModules(id, modules)
+      if (!item) {
+        continue
       }
+
+      this.ping(item as RequiredBaseItem, {
+        styles: false,
+      })
+      preloadModules.push(item)
     }
 
-    const preconnects = Array.from(this._dnsPrefetchs.values())
     const resources = this._pingResources.values()
+    const preconnects = Array.from(this._dnsPrefetchs.values())
 
     const tags = [
       this._ssr && DOMHelpers.sharedConfig(this._config.export()),
@@ -800,16 +803,17 @@ class Modules {
       tags.push(item.script, ...(item.styles || []))
     }
 
-    if (this._ssr) {
-      for (const preloadItem of preloadModules) {
-        const item = this._requiredModules.get(preloadItem.id)
-        if (!item) {
-          continue
-        }
-
-        tags.push(...(item.styles || []))
+    for (const preloadItem of preloadModules) {
+      const item = this._requiredModules.get(preloadItem.id)
+      if (!item) {
+        continue
       }
+
+      tags.push(...(item.styles || []))
     }
+
+    // Clean up all ping resources
+    this._pingResources.clear()
 
     return tags
   }

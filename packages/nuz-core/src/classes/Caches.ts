@@ -24,6 +24,10 @@ class Caches<K = string, V = unknown> {
   entries(): [K, V][] {
     return Array.from(this._data.entries())
   }
+
+  clear() {
+    return this._data.clear()
+  }
 }
 
 export default Caches
