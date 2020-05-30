@@ -35,6 +35,7 @@ class Module extends Service<ModuleId> {
       sizes,
       exportsOnly,
       alias,
+      details,
     } = data
     const { fallback } = options || {}
 
@@ -51,6 +52,7 @@ class Module extends Service<ModuleId> {
       exportsOnly,
       alias,
       fallback,
+      details,
       publisher: userId,
     }
 
@@ -93,6 +95,7 @@ class Module extends Service<ModuleId> {
       sizes,
       exportsOnly,
       alias,
+      details,
     } = data
     const { fallback } = options || {}
 
@@ -106,6 +109,7 @@ class Module extends Service<ModuleId> {
       exportsOnly,
       alias,
       fallback,
+      details,
       publisher: userId,
     }
 

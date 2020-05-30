@@ -31,6 +31,26 @@ export interface VersionSizes {
   styles: number
 }
 
+export interface DetailsRepository {
+  type: string
+  url: string
+  directory: string
+}
+
+export interface DetailsBugs {
+  url: string
+}
+
+export interface VersionDetails {
+  description?: string
+  readme?: string
+  bugs?: Partial<DetailsRepository>
+  repository?: Partial<DetailsRepository>
+  license?: string
+  homepage?: string
+  keywords?: string[]
+}
+
 export type VersionInfo = {
   version: string
   publisher: string
@@ -42,6 +62,7 @@ export type VersionInfo = {
   }
   files: Resource[]
   sizes: VersionSizes
+  details?: VersionDetails
   library?: string
   exportsOnly?: string[]
   alias?: { [key: string]: string }

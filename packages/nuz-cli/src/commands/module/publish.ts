@@ -1,5 +1,6 @@
 import { ModuleFormats } from '@nuz/shared'
-import { assetsUrlHelpers } from '@nuz/utils'
+import { assetsUrlHelpers, pick } from '@nuz/utils'
+import glob from 'glob'
 import path from 'path'
 import { Arguments } from 'yargs'
 
@@ -26,6 +27,25 @@ function checkIsHaveSlash(url: string) {
   } catch {
     return false
   }
+}
+
+async function getDetailsOfModule(dir: string) {
+  const pkgJson = await fs.readJson(paths.packageJsonInDir(dir))
+  const details = pick(pkgJson, [
+    'description',
+    'homepage',
+    'bugs',
+    'repository',
+    'license',
+    'keywords',
+  ]) as any
+
+  const match = glob.sync(path.join(dir, '/readme.md'))
+  if (match[0]) {
+    details.readme = fs.read(match[0]).toString('utf8')
+  }
+
+  return details
 }
 
 async function publish({
@@ -89,13 +109,17 @@ async function publish({
   )
 
   const useIntegrity = false
-  const stats = await fs.readJson(statsPath)
+  const [details, stats]: any[] = await Promise.all([
+    getDetailsOfModule(dir),
+    fs.readJson(statsPath),
+  ])
   const assets = pickAssetsFromStats(stats, { useIntegrity })
   const files = pickFilesFromStats(stats)
 
   const data = {
     version,
     library,
+    details,
     resolve: assets.resolve,
     files: assets.files,
     format: ModuleFormats.umd,

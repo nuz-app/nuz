@@ -40,4 +40,5 @@ export type PublishModuleData = Pick<
   | 'alias'
   | 'sizes'
   | 'fallback'
+  | 'details'
 > & { name: string; scope?: string; files: Resource[] }
