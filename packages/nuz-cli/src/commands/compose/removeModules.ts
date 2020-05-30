@@ -19,7 +19,7 @@ async function removeModules({
 
   info('Compose id', print.name(composeId))
   info('Removed modules', print.dim(moduleIds.join(', ')))
-  success(`Done in ${print.bold(tick())}ms.`)
+  success(`Done in ${print.time(tick())}.`)
   return true
 }
 

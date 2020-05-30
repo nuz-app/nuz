@@ -9,9 +9,9 @@ import * as webpackCompiler from './webpackCompiler'
 function waitingForChanges(time: number) {
   const idx = Math.floor(Math.random() * CHANGES_EMOJI.length)
   const emoji = CHANGES_EMOJI[idx]
-  const text = isNaN(time) ? '' : ` in ${print.bold(`${time}ms`)}`
+  const text = isNaN(time) ? '' : ` in ${print.time(time)}`
 
-  log(print.dim(`[👀] build done${text}! watching for changes...`, emoji))
+  log(print.dim(`[👀] build done${text}, watching for changes...`, emoji))
 }
 
 interface WatchModeOptions {

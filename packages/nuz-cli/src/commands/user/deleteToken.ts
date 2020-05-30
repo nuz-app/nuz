@@ -18,7 +18,7 @@ async function deleteToken({ token }: Arguments<{ token: string }>) {
       auth.username,
     )} account`,
   )
-  success(`Done in ${print.bold(tick())}ms.`)
+  success(`Done in ${print.time(tick())}.`)
   return true
 }
 

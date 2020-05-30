@@ -17,7 +17,7 @@ async function allCompose() {
     )} items`,
   )
   info(pretty(composes))
-  success(`Done in ${print.bold(tick())}ms.`)
+  success(`Done in ${print.time(tick())}.`)
   return true
 }
 

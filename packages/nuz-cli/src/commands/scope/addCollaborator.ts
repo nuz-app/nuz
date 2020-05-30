@@ -24,7 +24,7 @@ async function addCollaborator({
   info(
     `Added ${print.name(user)} to scope ${print.name(scopeId)} successfully!`,
   )
-  success(`Done in ${print.bold(tick())}ms.`)
+  success(`Done in ${print.time(tick())}.`)
   return true
 }
 

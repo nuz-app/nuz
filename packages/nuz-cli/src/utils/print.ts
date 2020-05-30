@@ -1,11 +1,13 @@
 import chalk, { Chalk } from 'chalk'
 import prettyFormat from 'pretty-format'
+import prettyMs from 'pretty-ms'
 
 export const pretty = prettyFormat
 
 interface Printer extends Chalk {
   link: Chalk['green']
   name: Chalk['green']
+  time: Chalk['bold']
 }
 
 const printer = new chalk.Instance()
@@ -15,6 +17,9 @@ Object.defineProperty(printer, 'name', {
 })
 Object.defineProperty(printer, 'link', {
   value: printer.green,
+})
+Object.defineProperty(printer, 'time', {
+  value: (ms: number | string) => printer.bold(prettyMs(Number(ms))),
 })
 
 export const log = console.log

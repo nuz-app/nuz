@@ -77,7 +77,7 @@ async function register() {
     info('Signing in to account...')
     await loginAsUser({ username, password } as any)
   } else {
-    success(`Done in ${print.bold(tick())}ms.`)
+    success(`Done in ${print.time(tick())}.`)
   }
 
   return true

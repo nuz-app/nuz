@@ -30,7 +30,7 @@ async function getDetails({
     log(pretty(details))
   }
 
-  success(`Done in ${print.bold(tick())}ms.`)
+  success(`Done in ${print.time(tick())}.`)
   return true
 }
 

@@ -24,7 +24,7 @@ async function addCollaborator({
   info(
     `Added ${print.name(user)} to module ${print.name(moduleId)} successfully!`,
   )
-  success(`Done in ${print.bold(tick())}ms.`)
+  success(`Done in ${print.time(tick())}.`)
   return true
 }
 

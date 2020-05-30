@@ -43,7 +43,7 @@ async function setModules({
 
   info('Compose id', print.name(composeId))
   info(pretty(modules))
-  success(`Done in ${print.bold(tick())}ms.`)
+  success(`Done in ${print.time(tick())}.`)
   return true
 }
 

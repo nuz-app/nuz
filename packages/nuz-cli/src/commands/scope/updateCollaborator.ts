@@ -26,7 +26,7 @@ async function updateCollaborator({
       scopeId,
     )} successfully!`,
   )
-  success(`Done in ${print.bold(tick())}ms.`)
+  success(`Done in ${print.time(tick())}.`)
   return true
 }
 

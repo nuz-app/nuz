@@ -14,7 +14,7 @@ async function listCollaborators({ scope: id }: Arguments<{ scope: string }>) {
 
   info(`Collaborators of ${print.name(scopeId)} scope`)
   log(pretty(collaborators))
-  success(`Done in ${print.bold(tick())}ms.`)
+  success(`Done in ${print.time(tick())}.`)
   return true
 }
 

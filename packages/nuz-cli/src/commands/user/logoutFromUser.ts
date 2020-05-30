@@ -38,7 +38,7 @@ async function logoutFromUser({
   info(`Deleting ${print.name(username)} work folder...`)
   await Config.delete(username)
 
-  success(`Done in ${print.bold(tick())}ms.`)
+  success(`Done in ${print.time(tick())}.`)
   return true
 }
 

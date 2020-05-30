@@ -16,7 +16,7 @@ async function listCollaborators({
 
   info(`Collaborators of ${print.name(moduleId)} module`)
   log(pretty(collaborators))
-  success(`Done in ${print.bold(tick())}ms.`)
+  success(`Done in ${print.time(tick())}.`)
   return true
 }
 

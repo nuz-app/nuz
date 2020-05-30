@@ -15,7 +15,7 @@ async function createScope({ name }: Arguments<{ name: string }>) {
   const scopeId = request?.data?._id
 
   info(`Created ${print.name(scopeId)} scope successfully!`)
-  success(`Done in ${print.bold(tick())}ms.`)
+  success(`Done in ${print.time(tick())}.`)
   return true
 }
 

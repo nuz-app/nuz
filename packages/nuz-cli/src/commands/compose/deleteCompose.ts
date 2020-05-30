@@ -15,7 +15,7 @@ async function deleteCompose({ name }: Arguments<{ name: string }>) {
   const composeId = request?.data?._id
 
   info(`Deleted ${print.name(composeId)} compose successfully!`)
-  success(`Done in ${print.bold(tick())}ms.`)
+  success(`Done in ${print.time(tick())}.`)
   return true
 }
 

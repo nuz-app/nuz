@@ -107,7 +107,7 @@ async function publish({
   const moduleId = request?.data?._id
 
   info(`Published module ${moduleId} was successfully!`)
-  success(`Done in ${print.bold(tick())}ms.`)
+  success(`Done in ${print.time(tick())}.`)
   return true
 }
 
