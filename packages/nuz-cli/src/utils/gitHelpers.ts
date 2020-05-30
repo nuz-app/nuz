@@ -1,33 +1,39 @@
-import { execSync, ExecSyncOptions } from 'child_process'
+import execa from 'execa'
 import path from 'path'
 import rimraf from 'rimraf'
-
-export const checkIsInGit = () => {
-  try {
-    execSync('git rev-parse --is-inside-work-tree', { stdio: 'ignore' })
-    return true
-  } catch {
-    return false
-  }
-}
 
 export const initGitInDir = (dir: string) => {
   let didInit = false
 
-  const execOptions: ExecSyncOptions = { stdio: 'ignore', cwd: dir }
+  const execOptions: execa.Options = {
+    cwd: dir,
+  }
+
+  function git(...args) {
+    return execa('git', args, execOptions)
+  }
+
+  function checkIsInGit() {
+    try {
+      git('rev-parse --is-inside-work-tree')
+      return true
+    } catch {
+      return false
+    }
+  }
 
   try {
-    execSync('git --version', execOptions)
+    git('--version')
 
     if (checkIsInGit()) {
       return false
     }
 
-    execSync('git init', execOptions)
+    git('init')
     didInit = true
 
-    execSync('git add -A', execOptions)
-    execSync('git commit -m "Initial commit from Nuz"', execOptions)
+    git('add -A')
+    git('commit -m "Initial project by Nuz"')
 
     return true
   } catch (e) {
