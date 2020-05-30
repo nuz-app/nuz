@@ -1,3 +1,5 @@
+import { moduleIdHelpers } from '@nuz/utils'
+
 import { ComposeId, ModuleId } from '../types'
 
 import Cache, {
@@ -92,8 +94,8 @@ class LocalCache implements Cache {
     return { data: undefined, factory }
   }
 
-  public async lookupModule(moduleId: ModuleId) {
-    const moduleData = await this.getModule(moduleId)
+  public async lookupModule(id: string) {
+    const moduleData = await this.getModule(id)
     if (moduleData) {
       return { data: moduleData, factory: undefined }
     }
@@ -103,14 +105,14 @@ class LocalCache implements Cache {
       data: any,
       timeout: number = CONFIG.MODULE_TIMEOUT,
     ) => {
-      this.setModule(moduleId, data)
+      this.setModule(id, data)
 
       // Actively delete cache when it expires
       this.setTimeout(
         this.timers.modules,
-        moduleId,
+        id,
         () => {
-          this.deleteModule(moduleId)
+          this.deleteModule(id)
         },
         timeout,
       )
@@ -144,18 +146,24 @@ class LocalCache implements Cache {
     }
   }
 
-  private async setModule(moduleId: ModuleId, data: any) {
-    this.data.modules.set(moduleId, data)
+  private async setModule(id: string, data: any) {
+    this.data.modules.set(id, data)
   }
 
-  private async getModule(moduleId: ModuleId) {
-    return this.data.modules.get(moduleId)
+  private async getModule(id: string) {
+    return this.data.modules.get(id)
   }
 
   async deleteModule(moduleId: ModuleId) {
-    this.clearTimeout(this.timers.modules, moduleId)
+    const moduleIds = Array.from(this.data.modules.keys())
+    const deleteIds = moduleIds.filter(
+      (item) => moduleIdHelpers.parser(item).module === moduleId,
+    )
 
-    return this.data.modules.delete(moduleId)
+    for (const id of deleteIds) {
+      this.clearTimeout(this.timers.modules, id)
+      this.data.modules.delete(id)
+    }
   }
 
   private async clearModule() {
