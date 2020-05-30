@@ -46,6 +46,7 @@ async function standalone({ port = 4000 }: Arguments<{ port?: number }>) {
       dev: true,
       cache: true,
       dir,
+      module: name,
       config: moduleConfig,
     },
     featureConfig,

@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import os from 'os'
 import path from 'path'
 import webpack from 'webpack'
@@ -50,17 +51,23 @@ const SVG_REGEXP = /\.svg$/i
 const IMAGE_MINIFY_REGEXP = /(\.min\.(png|jpe?g|gif|svg))$/i
 const TEXT_REGEXP = /\.txt$/i
 
-const ruleFactory = (
+function generateModuleId(name: string): string {
+  return crypto.createHash('md4').update(name).digest('hex').substr(0, 4)
+}
+
+function ruleFactory(
   test: RegExp,
   exclude?: RegExp,
   use?: any[],
-): webpack.RuleSetRule & { use: webpack.RuleSetUseItem[] } => ({
-  test,
-  exclude,
-  use: use || [],
-})
+): webpack.RuleSetRule & { use: webpack.RuleSetUseItem[] } {
+  return {
+    test,
+    exclude,
+    use: use || [],
+  }
+}
 
-const getOutput = (dir: string, output: string) => {
+function getOutput(dir: string, output: string) {
   const distDir = path.isAbsolute(output)
     ? path.dirname(output)
     : path.join(dir, path.dirname(output))
@@ -85,29 +92,39 @@ const defaultExperimental: ExperimentalConfig = {
   multiThread: false,
 }
 
-const defaultNamesFactory = (dev: boolean): NamesConfig => ({
-  imageMinifiedFilename: (resourcePath: string) => {
-    const imageAllowMinify = IMAGE_MINIFY_REGEXP.test(resourcePath)
-    if (imageAllowMinify) {
-      const filename = path
-        .basename(resourcePath)
-        .replace(IMAGE_MINIFY_REGEXP, '')
+function defaultNamesFactory({
+  id,
+  dev,
+}: {
+  id: string
+  dev: boolean
+}): NamesConfig {
+  return {
+    imageMinifiedFilename: (resourcePath: string) => {
+      const imageAllowMinify = IMAGE_MINIFY_REGEXP.test(resourcePath)
+      if (imageAllowMinify) {
+        const filename = path
+          .basename(resourcePath)
+          .replace(IMAGE_MINIFY_REGEXP, '')
 
-      return dev
-        ? `${filename}.[contenthash:8].min.[ext]`
-        : `${filename}.[contenthash].min.[ext]`
-    }
+        return dev
+          ? `${filename}.[contenthash:8].min.[ext]`
+          : `${filename}.[contenthash].min.[ext]`
+      }
 
-    return dev ? `[name].[contenthash:8].[ext]` : `[name].[contenthash].[ext]`
-  },
-  chunkFilename: () => '[name]-[contenthash].js',
-  cssLocalIdentName: () =>
-    dev ? '[name]-[local]-[hash:base64:6]' : '[contenthash:8]',
-  cssFilename: () =>
-    dev ? 'styles/[name].css' : 'styles/[name].[contenthash:8].css',
-  cssChunkFilename: () =>
-    dev ? 'styles/[name].chunk.css' : 'styles/[name].[contenthash:8].chunk.css',
-})
+      return dev ? `[name].[contenthash:8].[ext]` : `[name].[contenthash].[ext]`
+    },
+    chunkFilename: () => '[name]-[contenthash].js',
+    cssLocalIdentName: () =>
+      dev ? `${id}-[name]-[local]-[hash:base64:6]` : `${id}-[contenthash:5]`,
+    cssFilename: () =>
+      dev ? 'styles/[name].css' : 'styles/[name].[contenthash:8].css',
+    cssChunkFilename: () =>
+      dev
+        ? 'styles/[name].chunk.css'
+        : 'styles/[name].[contenthash:8].chunk.css',
+  }
+}
 
 function webpackConfigFactory(
   {
@@ -141,7 +158,12 @@ function webpackConfigFactory(
     defaultExperimental,
     experimentalCustomer,
   )
-  const names = Object.assign({}, defaultNamesFactory(dev), namesCustomer)
+  const id = generateModuleId(module)
+  const names = Object.assign(
+    {},
+    defaultNamesFactory({ id, dev }),
+    namesCustomer,
+  )
 
   const target = 'web'
   const mode = dev ? 'development' : 'production'

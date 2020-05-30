@@ -50,6 +50,7 @@ async function optimized({ publicPath }: Arguments<{ publicPath?: string }>) {
       dev: false,
       cache: true,
       dir,
+      module: name,
       config: moduleConfig,
     },
     featureConfig,
