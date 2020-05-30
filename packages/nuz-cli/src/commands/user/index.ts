@@ -127,7 +127,7 @@ export const setCommands = (yargs) => {
   )
 
   yargs.command(
-    'login',
+    'login [username]',
     'Login user account [alias: user-login]',
     (yarg) =>
       yarg.option('registry', {
