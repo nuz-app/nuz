@@ -14,7 +14,7 @@ import getCurrentNodeScript from '../../utils/getCurrentNodeScript'
 import * as gitHelpers from '../../utils/gitHelpers'
 import installPackages from '../../utils/installPackages'
 import * as localTemplatesHelpers from '../../utils/localTemplatesHelpers'
-import print, { info, log } from '../../utils/print'
+import print, { info, log, warn } from '../../utils/print'
 
 import cloneFilesIfNotFound from './utils/cloneFilesIfNotFound'
 import generateTemplate from './utils/generateTemplate'
@@ -215,11 +215,14 @@ async function create({
   const installed = await installPackages(dir, { useYarn })
   if (installed.failed) {
     throw new Error('An error occurred while installing dependencies')
-  } else {
-    info(`Successfully installed dependencies for the module`)
   }
 
-  gitHelpers.initGitInDir(dir)
+  const isGitInitialized = gitHelpers.initial(dir)
+  if (!isGitInitialized) {
+    warn(`Initializing Git for module failed`)
+  }
+
+  info(`Successfully installed dependencies for the module`)
   printGuideForModule(result.name, useYarn)
 
   return true
