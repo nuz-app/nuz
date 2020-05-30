@@ -455,7 +455,7 @@ class Modules {
       (styles || []).map((style) =>
         DOMHelpers.loadStyle(style.url, {
           sourceMap: this._dev,
-          requirer: this._requiredResources,
+          resolver: this._requiredResources,
           integrity: style.integrity,
         }),
       ),
