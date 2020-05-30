@@ -768,15 +768,15 @@ class Modules {
     // Ensure ping resources empty beforepreload all
     this._pingResources.clear()
 
+    // Preload all resources set in `preload` field
+    this.preload()
+
     const modulesMap = this.getAllModules()
     const modules = Object.values(modulesMap) as RequiredBaseItem[]
     const preloadIds = preloadIdOrNames.map((idOrName) =>
       moduleIdHelpers.use(idOrName),
     )
     const preloadModules = [] as RequiredBaseItem[]
-
-    // Preload all resources set in `preload` field
-    this.preload()
 
     // Preload for dynamic modules
     for (const id of preloadIds) {
