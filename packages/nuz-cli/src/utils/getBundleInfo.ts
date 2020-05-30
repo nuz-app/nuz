@@ -9,8 +9,8 @@ export interface BundleInfoOutput {
 }
 
 const getBundleInfo = (stats: webpack.Stats): BundleInfoOutput => {
+  const results = formatMessages(stats)
   const data = stats.toJson()
-  const results = formatMessages(data)
   const done = results.errors.length === 0
 
   return {
