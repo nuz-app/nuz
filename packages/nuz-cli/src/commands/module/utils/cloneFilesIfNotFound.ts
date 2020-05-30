@@ -1,7 +1,7 @@
 import path from 'path'
 
+import * as paths from '../../../paths'
 import * as fs from '../../../utils/fs'
-import getPathInTemplate from '../../../utils/getPathInTemplate'
 
 const filesMap = {
   '.gitignore': 'gitignore',
@@ -18,7 +18,7 @@ const cloneFilesIfNotFound = (dir: string, files: string[]) =>
         return true
       }
 
-      return fs.copy(getPathInTemplate(sample), filePath)
+      return fs.copy(paths.inTemplate(sample), filePath)
     }),
   )
 

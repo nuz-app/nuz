@@ -41,3 +41,7 @@ export function resolveInApp(name: string, dir?: string) {
     ].filter(Boolean) as string[],
   })
 }
+
+export function inTemplate(file: string) {
+  return path.join(tool, './templates', file)
+}
