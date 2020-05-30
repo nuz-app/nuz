@@ -1,3 +1,4 @@
+import { MODULE_ASSET_SIZE_LIMIT, MODULE_TOTAL_SIZE_LIMIT } from '@nuz/shared'
 import crypto from 'crypto'
 import os from 'os'
 import path from 'path'
@@ -239,6 +240,15 @@ function webpackConfigFactory(
       namedModules: true,
       usedExports: true,
       splitChunks: false,
+    },
+    // https://github.com/webpack/webpack/issues/3216
+    performance: {
+      maxEntrypointSize: MODULE_TOTAL_SIZE_LIMIT,
+      maxAssetSize: MODULE_ASSET_SIZE_LIMIT,
+      hints: 'error',
+      assetFilter(assetFilename) {
+        return !/\.map$/.test(assetFilename)
+      },
     },
   }
 
