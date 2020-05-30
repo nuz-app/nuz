@@ -30,7 +30,6 @@ import {
 import * as paths from '../paths'
 import checkIsPackageInstalled from './checkIsPackageInstalled'
 import * as compilerName from './compilerName'
-import * as fs from './fs'
 
 import styleLoadersFactory from './webpack/factories/styleLoaders'
 import setExternals from './webpack/helpers/setExternals'
@@ -251,22 +250,12 @@ function webpackConfigFactory(
   )
 
   // Push source maps builder to plugins
-  const sourceMapsPlugins = dev
-    ? [
-        new webpack.SourceMapDevToolPlugin({
-          test: /\.css$/,
-        }),
-        new webpack.EvalSourceMapDevToolPlugin({
-          // @ts-ignore
-          test: /.js$/,
-        }),
-      ]
-    : [
-        new webpack.SourceMapDevToolPlugin({
-          filename: '[file].map',
-          publicPath,
-        }),
-      ]
+  const sourceMapsPlugins = [
+    new webpack.SourceMapDevToolPlugin({
+      filename: '[file].map',
+      publicPath,
+    }),
+  ]
   config.plugins.push(...sourceMapsPlugins)
 
   if (feature.react) {
@@ -347,9 +336,6 @@ function webpackConfigFactory(
     }
 
     const tsconfigPath = path.join(dir, 'tsconfig.json')
-    if (!fs.exists(tsconfigPath)) {
-      throw new Error('Not found `tsconfig.json` file in the module')
-    }
 
     scriptRule.use.push({
       loader: resolveInApp('ts-loader'),
