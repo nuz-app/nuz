@@ -42,9 +42,9 @@ class LocalCache implements Cache {
   }
 
   // tslint:disable-next-line: no-empty
-  async prepare() {}
+  public async prepare() {}
 
-  async clearAllRefsToModule(moduleId: ModuleId) {
+  public async clearAllRefsToModule(moduleId: ModuleId) {
     const composeIds = Array.from((await this.getModuleRefs(moduleId)) || [])
     for (const composeId of composeIds) {
       this.deleteCompose(composeId)
@@ -54,7 +54,7 @@ class LocalCache implements Cache {
     this.deleteModuleRefs(moduleId)
   }
 
-  async lookupCompose(composeId: ComposeId) {
+  public async lookupCompose(composeId: ComposeId) {
     const composeData = await this.getCompose(composeId)
     if (composeData) {
       return { data: composeData, factory: undefined }
@@ -92,7 +92,7 @@ class LocalCache implements Cache {
     return { data: undefined, factory }
   }
 
-  async lookupModule(moduleId: ModuleId) {
+  public async lookupModule(moduleId: ModuleId) {
     const moduleData = await this.getModule(moduleId)
     if (moduleData) {
       return { data: moduleData, factory: undefined }
@@ -119,7 +119,7 @@ class LocalCache implements Cache {
     return { data: undefined, factory }
   }
 
-  async flushAll() {
+  public async flushAll() {
     await Promise.all([
       this.clearCompose(),
       this.clearModule(),

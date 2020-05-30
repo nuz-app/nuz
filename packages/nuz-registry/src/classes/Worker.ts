@@ -1099,7 +1099,10 @@ class Worker {
   /**
    * Fetch module
    */
-  async fetchModule(moduleId: ModuleId, version: string) {
+  async fetchModule(id: string) {
+    const parsed = moduleIdHelpers.parser(id)
+    const { module: moduleId, version } = parsed
+
     if (!validator.moduleId(moduleId)) {
       throw new Error('Module id is invalid')
     }
@@ -1108,11 +1111,10 @@ class Worker {
       throw new Error('Version module is invalid')
     }
 
-    const cacheId = `${moduleId}@${version}`
     let factoryCache: SetModuleCacheFactoryFn | undefined
 
     if (this._cache) {
-      const { data: cached, factory } = await this._cache.lookupModule(cacheId)
+      const { data: cached, factory } = await this._cache.lookupModule(id)
       if (cached) {
         return cached
       }

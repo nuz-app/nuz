@@ -14,24 +14,19 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.get(
     '/fetch/module',
     onRoute(async (request, response) => {
-      // tslint:disable-next-line: prefer-const
-      let { id, module, version } = request.query
+      const { id } = request.query
 
-      if (id) {
-        const parsed = moduleIdHelpers.parser(id as string)
-        module = parsed.module
-        if (!parsed.version || parsed.version === '*') {
-          version = undefined
-        } else {
-          version = parsed.version
-        }
+      if (!id) {
+        throw new Error('Missing module id to fetch data')
       }
 
-      if (id && !version) {
-        version = LASTEST_TAG
+      let idEnsured = id as string
+      const parsed = moduleIdHelpers.parser(id as string)
+      if (!parsed.version || parsed.version === '*') {
+        idEnsured = moduleIdHelpers.create(parsed.module, LASTEST_TAG)
       }
 
-      const item = await worker.fetchModule(module as string, version as string)
+      const item = await worker.fetchModule(idEnsured)
       response.json(item)
 
       return true
