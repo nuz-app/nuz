@@ -44,12 +44,13 @@ export interface FactoryConfig {
   config: ModuleConfig
 }
 
-const TYPESCRIPT_REGEXP = /.tsx?/
-const JAVASCRIPT_REGEXP = /.m?jsx?/
+const TYPESCRIPT_REGEXP = /.tsx?/i
+const JAVASCRIPT_REGEXP = /.m?jsx?/i
 const IMAGE_REGEXP = /\.(png|jpe?g|gif)$/i
 const SVG_REGEXP = /\.svg$/i
 const IMAGE_MINIFY_REGEXP = /(\.min\.(png|jpe?g|gif|svg))$/i
 const TEXT_REGEXP = /\.txt$/i
+const FONT_REGEXP = /\.(woff|woff2|eot|ttf|otf)$/i
 
 function generateModuleId(name: string): string {
   return crypto.createHash('md4').update(name).digest('hex').substr(0, 4)
@@ -395,7 +396,7 @@ function webpackConfigFactory(
       undefined,
       regularStyleLoaders,
     )
-
+    // Push styles rule to config
     config.module.rules.push(regularStyleRule)
 
     // Push ExtractCssChunks plugin for regular and modules styles
@@ -444,12 +445,11 @@ function webpackConfigFactory(
       },
     ].filter(Boolean) as any[]),
   )
+  // Push image optimal rule to config
   config.module.rules.push(optimizedImagesRule)
 
   // Config `url-loader` and `file-loader` to use images files
   const imagesRule = ruleFactory(IMAGE_REGEXP)
-  config.module.rules.push(imagesRule)
-
   const imagesLoader = {
     loader: resolveInApp('url-loader'),
     options: {
@@ -462,6 +462,8 @@ function webpackConfigFactory(
     },
   }
   imagesRule.use.push(imagesLoader)
+  // Push regular image rule to config
+  config.module.rules.push(imagesRule)
 
   // Config loaders to use svg files as components and image files
   const svgRule = ruleFactory(SVG_REGEXP)
@@ -471,6 +473,7 @@ function webpackConfigFactory(
     },
     imagesLoader,
   )
+  // Push svg rule to config
   config.module.rules.push(svgRule)
 
   // Config `raw-loader` to use txt files
@@ -478,6 +481,16 @@ function webpackConfigFactory(
   textRule.use.push({
     loader: resolveInApp('raw-loader'),
   })
+  // Push text rule to config
+  config.module.rules.push(textRule)
+
+  // Config `file-loader` to use font files
+  const fontRule = ruleFactory(FONT_REGEXP)
+  fontRule.use.push({
+    loader: resolveInApp('file-loader'),
+  })
+  // Push font rule to config
+  config.module.rules.push(fontRule)
 
   // Set peers deps as externals
   config.plugins.push(new PeerDepsExternalsPlugin(dir, isolated))
