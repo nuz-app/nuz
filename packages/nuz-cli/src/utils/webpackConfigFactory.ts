@@ -245,7 +245,7 @@ function webpackConfigFactory(
     performance: {
       maxEntrypointSize: MODULE_TOTAL_SIZE_LIMIT,
       maxAssetSize: MODULE_ASSET_SIZE_LIMIT,
-      hints: 'error',
+      hints: 'warning',
       assetFilter(assetFilename) {
         return !/\.map$/.test(assetFilename)
       },
