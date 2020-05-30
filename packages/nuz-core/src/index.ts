@@ -14,6 +14,7 @@ export function load(idOrName: string) {
   return exportsAll.load(idOrName)
 }
 
+// @ts-ignore
 export function require(idOrName: string) {
   if (!shared.state.initialized) {
     bootstrap({})
