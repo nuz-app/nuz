@@ -1,3 +1,4 @@
+import { MODULE_LASTEST_TAG } from '@nuz/shared'
 import {
   ensureOriginSlash,
   integrityHelpers,
@@ -8,7 +9,6 @@ import {
 } from '@nuz/utils'
 import { Connection } from 'mongoose'
 
-import { LASTEST_TAG } from '../lib/const'
 import {
   AddCollaboratorData,
   CollaboratorTypes,
@@ -1107,7 +1107,10 @@ class Worker {
       throw new Error('Module id is invalid')
     }
 
-    if (!versionHelpers.checkIsValid(version) && version !== LASTEST_TAG) {
+    if (
+      !versionHelpers.checkIsValid(version) &&
+      version !== MODULE_LASTEST_TAG
+    ) {
       throw new Error('Version module is invalid')
     }
 

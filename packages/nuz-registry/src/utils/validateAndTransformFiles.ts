@@ -1,11 +1,10 @@
+import { 
+  MODULE_OTHER_SIZE_LIMIT, 
+  MODULE_TOTAL_SIZE_LIMIT,
+  MODULE_ASSET_SIZE_LIMIT,
+} from '@nuz/shared'
 import { assetsUrlHelpers, hashFile } from '@nuz/utils'
 
-import {
-  OTHER_FILE_SIZE_LIMIT,
-  SOURCE_CODE_FILE_SIZE_LIMIT,
-  SOURCE_MAP_FILE_SIZE_LIMIT,
-  TOTAL_FILE_SIZE_LIMIT,
-} from '../lib/const'
 import { ModuleId, Resource, VersionSizes } from '../types'
 
 export interface TransformFile extends Resource {
@@ -38,9 +37,9 @@ function validateAndTransformFiles(
   }
 
   const totalSize = filesUploaded.reduce((total, item) => total + item.size, 0)
-  if (totalSize > TOTAL_FILE_SIZE_LIMIT) {
+  if (totalSize > MODULE_TOTAL_SIZE_LIMIT) {
     throw new Error(
-      `Exceeded total files size limit allowed, limit is ${TOTAL_FILE_SIZE_LIMIT}!`,
+      `Exceeded total files size limit allowed, limit is ${MODULE_TOTAL_SIZE_LIMIT}!`,
     )
   }
 
@@ -57,21 +56,21 @@ function validateAndTransformFiles(
   for (const file of filesUploaded) {
     if (
       checkIsSourceMap(file.originalname) &&
-      file.size > SOURCE_MAP_FILE_SIZE_LIMIT
+      file.size > MODULE_OTHER_SIZE_LIMIT
     ) {
       throw new Error(
-        `File ${file.originalname} is exceeds the allowed size for source map, limit is ${SOURCE_MAP_FILE_SIZE_LIMIT} byte!`,
+        `File ${file.originalname} is exceeds the allowed size ${MODULE_OTHER_SIZE_LIMIT} byte for source map!`,
       )
     } else if (
       checkIsSourceCode(file.originalname) &&
-      file.size > SOURCE_CODE_FILE_SIZE_LIMIT
+      file.size > MODULE_ASSET_SIZE_LIMIT
     ) {
       throw new Error(
-        `File ${file.originalname} is exceeds the allowed size for code, limit is ${SOURCE_CODE_FILE_SIZE_LIMIT} byte!`,
+        `File ${file.originalname} is exceeds the allowed size ${MODULE_ASSET_SIZE_LIMIT} byte for asset file!`,
       )
-    } else if (file.size > OTHER_FILE_SIZE_LIMIT) {
+    } else if (file.size > MODULE_OTHER_SIZE_LIMIT) {
       throw new Error(
-        `File ${file.originalname} is exceeds the allowed size for other file, limit is ${OTHER_FILE_SIZE_LIMIT} byte!`,
+        `File ${file.originalname} is exceeds the allowed size ${MODULE_OTHER_SIZE_LIMIT} byte for other file!`,
       )
     }
 

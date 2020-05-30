@@ -1,6 +1,7 @@
+import { MODULE_LASTEST_TAG } from '@nuz/shared'
 import { versionHelpers } from '@nuz/utils'
 
-import { LASTEST_TAG, MONGOOSE_ERROR_CODES } from '../lib/const'
+import { MONGOOSE_ERROR_CODES } from '../lib/const'
 import {
   CollaboratorTypes,
   Models,
@@ -55,7 +56,7 @@ class Module extends Service<ModuleId> {
 
     const versionId = versionHelpers.encode(versionInfo.version)
     const versions = new Map([[versionId, versionInfo]])
-    const tags = new Map([[LASTEST_TAG, version]])
+    const tags = new Map([[MODULE_LASTEST_TAG, version]])
 
     const module = new this.Collection({
       name: moduleId,
@@ -115,7 +116,7 @@ class Module extends Service<ModuleId> {
       {
         $set: {
           [`versions.${versionId}`]: versionInfo,
-          [`tags.${LASTEST_TAG}`]: version,
+          [`tags.${MODULE_LASTEST_TAG}`]: version,
         },
       },
     )
