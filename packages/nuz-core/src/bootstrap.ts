@@ -6,6 +6,8 @@ import * as shared from './shared'
 import * as exportsAll from './exports'
 
 async function bootstrap(configAsRaw: BootstrapConfig) {
+  shared.state.initialized = true
+
   const deps = react.integrate()
   const configBinding = Object.assign({}, configAsRaw, {
     vendors: Object.assign(
