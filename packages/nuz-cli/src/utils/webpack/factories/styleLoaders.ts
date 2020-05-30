@@ -10,6 +10,7 @@ import getBrowserslist from '../../getBrowserslist'
 export interface StyleLoadersOptions {
   dir: string
   dev: boolean
+  sourceMap: boolean
   feature: Partial<FeatureConfig>
   names: NamesConfig
   modules?: boolean | 'auto' | RegExp
@@ -21,10 +22,10 @@ const styleLoadersFactory = ({
   feature,
   names,
   modules = 'auto',
+  sourceMap,
 }: StyleLoadersOptions): webpack.Loader[] => {
   const resolveInApp = (moduleId: string) => paths.resolveInApp(moduleId, dir)
   const browserslist = getBrowserslist({ dir, dev })
-  const sourceMap = dev
   const loaders = [] as webpack.Loader[]
 
   // Set ExtractCssChunks loader for preprocessor

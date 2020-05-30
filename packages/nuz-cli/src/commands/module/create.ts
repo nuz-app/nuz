@@ -122,7 +122,7 @@ async function create({
       return
     }
 
-    info(`Emptying current directory at ${print.link(dir)}`)
+    info(`Emptying directory at ${print.link(dir)}`)
     await fs.emptyDir(dir)
   } else {
     info(`Creating new directory at ${print.link(dir)}`)

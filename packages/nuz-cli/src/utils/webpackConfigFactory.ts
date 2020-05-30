@@ -30,6 +30,7 @@ import {
 import * as paths from '../paths'
 import checkIsPackageInstalled from './checkIsPackageInstalled'
 import * as compilerName from './compilerName'
+import * as fs from './fs'
 
 import styleLoadersFactory from './webpack/factories/styleLoaders'
 import setExternals from './webpack/helpers/setExternals'
@@ -345,18 +346,29 @@ function webpackConfigFactory(
       throw new Error('Install `typescript` to use Typescript!')
     }
 
+    const tsconfigPath = path.join(dir, 'tsconfig.json')
+    if (!fs.exists(tsconfigPath)) {
+      throw new Error('Not found `tsconfig.json` file in the module')
+    }
+
     scriptRule.use.push({
       loader: resolveInApp('ts-loader'),
       options: {
+        configFile: tsconfigPath,
         context: dir,
+        colors: !ci,
+        compilerOptions: { sourceMap },
         happyPackMode: true,
         transpileOnly: true,
-        colors: !ci,
       },
     })
 
     config.plugins.push(
-      new ForkTsCheckerWebpackPlugin({ silent: false, async: false }),
+      new ForkTsCheckerWebpackPlugin({
+        tsconfig: tsconfigPath,
+        silent: false,
+        async: false,
+      }),
     )
     config.plugins.push(new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]))
   }
@@ -387,6 +399,7 @@ function webpackConfigFactory(
     const regularStyleLoaders = styleLoadersFactory({
       dir,
       dev,
+      sourceMap,
       feature,
       modules: feature.modules || 'auto',
       names,
