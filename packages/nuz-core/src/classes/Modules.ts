@@ -474,7 +474,7 @@ class Modules {
     item: RequiredBaseItem,
     options?: LoadModuleConfig,
   ) {
-    if (!this._linked.exists(item.name)) {
+    if (!this._linked.exists(item.id)) {
       return null
     }
 
@@ -486,7 +486,7 @@ class Modules {
 
     //  Watch and reload if module was changed, only client-side
     if (!this._ssr) {
-      this._linked.watch([item.name])
+      this._linked.watch([item.id])
     }
 
     return resolved

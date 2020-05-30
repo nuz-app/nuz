@@ -86,16 +86,16 @@ class Linked {
     return this._modules
   }
 
-  exists(name: string): boolean {
-    return !!this._modules[name]
+  exists(id: string): boolean {
+    return !!this._modules[id]
   }
 
-  watch(modules: string[]) {
-    this._watching.push(...modules)
+  watch(ids: string[]) {
+    this._watching.push(...ids)
   }
 
   // tslint:disable-next-line: no-empty
-  unwatch(modules: string[]) {}
+  unwatch(ids: string[]) {}
 }
 
 export default Linked

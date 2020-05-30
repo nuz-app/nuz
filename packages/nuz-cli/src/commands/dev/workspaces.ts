@@ -185,11 +185,10 @@ async function standalone({
         main: childModuleAssets.resolve.main.url,
         styles: childModuleAssets.resolve.styles.map((style) => style.url),
       }
-
-      const id = moduleIdHelpers.use(name)
+      const moduleId = moduleIdHelpers.use(name)
 
       return Object.assign(acc, {
-        [id]: {
+        [moduleId]: {
           shared: childModuleInfo.config.shared,
           library: childModuleInfo.webpack.output.library,
           format: childModuleInfo.webpack.output.libraryTarget,
@@ -200,10 +199,10 @@ async function standalone({
 
     Object.assign(definedModules, linkedModules)
 
-    const changedModulesName = children.map((child) =>
-      compilerName.extract((child as any).name),
+    const changedModuleIds = children.map((child) =>
+      moduleIdHelpers.use(compilerName.extract((child as any).name)),
     )
-    emitOnChange(changedModulesName)
+    emitOnChange(changedModuleIds)
   })
 
   onExit(() => {
