@@ -18,4 +18,9 @@ export default Object.assign(factory({ dir, target, pkg }), {
     },
   ],
   external: [],
+  onwarn: (msg, warn) => {
+    if (!/Circular/.test(msg)) {
+      warn(msg);
+    }
+  },
 })
