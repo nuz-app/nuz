@@ -89,15 +89,15 @@ const generateTemplate = async (
         '@nuz/core': 'latest',
       },
       useTypescript && {
-        '@types/node': 'latest',
-        '@types/react': 'latest',
-        '@types/react-dom': 'latest',
+        '@types/node': '^12.12.21',
+        '@types/react': '^16.9.16',
+        '@types/react-dom': '^16.9.4',
         typescript: '^3.8.3',
       },
       mapStyleToDependencies[result.style] || {},
       {
-        react: 'latest',
-        'react-dom': 'latest',
+        react: '^16.12.0',
+        'react-dom': '^16.12.0',
       },
     ),
     peerDependencies: {

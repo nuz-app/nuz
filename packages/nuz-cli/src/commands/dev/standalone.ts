@@ -12,6 +12,7 @@ import getFeatureConfig from '../../utils/getFeatureConfig'
 import { error, info, pretty } from '../../utils/print'
 import webpackConfigFactory from '../../utils/webpack/factories/buildConfig'
 import devServerConfigFactory from '../../utils/webpack/factories/devServerConfig'
+import InterpolateHtmlPlugin from '../../utils/webpack/InterpolateHtmlPlugin'
 import * as webpackCompiler from '../../utils/webpackCompiler'
 
 async function standalone({
@@ -66,6 +67,12 @@ async function standalone({
       inject: true,
       title: name,
       template: path.join(paths.app, './public/index.html'),
+    }),
+    new InterpolateHtmlPlugin(HtmlWebpackPlugin, {
+      PUBLIC_URL:
+        buildConfig.output.publicPath !== '/'
+          ? buildConfig.output.publicPath
+          : '',
     }),
   )
 
