@@ -20,7 +20,7 @@ import print, { info, pretty } from '../../utils/print'
 import { onExit } from '../../utils/process'
 import runWatchMode from '../../utils/runWatchMode'
 import serve from '../../utils/serve'
-import webpackConfigFactory from '../../utils/webpackConfigFactory'
+import webpackConfigFactory from '../../utils/webpack/factories/buildConfig'
 
 async function standalone({
   workspaces,

@@ -12,8 +12,8 @@ import getBundleInfo from '../../utils/getBundleInfo'
 import getFeatureConfig from '../../utils/getFeatureConfig'
 import print, { info, pretty, success } from '../../utils/print'
 import showErrorsAndWarnings from '../../utils/showErrorsAndWarnings'
+import webpackConfigFactory from '../../utils/webpack/factories/buildConfig'
 import * as webpackCompiler from '../../utils/webpackCompiler'
-import webpackConfigFactory from '../../utils/webpackConfigFactory'
 
 async function optimized({ publicPath }: Arguments<{ publicPath?: string }>) {
   const dir = paths.cwd

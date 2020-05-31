@@ -78,14 +78,15 @@ const generateTemplate = async (
     source: inputPath,
     main: outputPath,
     scripts: {
-      dev: 'nuz dev --port 4001',
+      dev: 'nuz dev --port 4000',
       build: 'nuz build',
-      serve: 'nuz serve --port 4001',
+      serve: 'nuz serve --port 4000',
     },
     dependencies: {},
     devDependencies: Object.assign(
       {
         '@nuz/cli': 'latest',
+        '@nuz/core': 'latest',
       },
       useTypescript && {
         '@types/node': 'latest',
@@ -94,6 +95,10 @@ const generateTemplate = async (
         typescript: '^3.8.3',
       },
       mapStyleToDependencies[result.style] || {},
+      {
+        react: 'latest',
+        'react-dom': 'latest',
+      },
     ),
     peerDependencies: {
       '@nuz/core': '*',
@@ -134,6 +139,14 @@ const generateTemplate = async (
     )
     await Promise.all(promise)
   }
+
+  // Remove unused `index` script file
+  const pubicIndexPath = path.join(
+    dir,
+    'public',
+    useTypescript ? 'index.js' : 'index.ts',
+  )
+  await fs.remove(pubicIndexPath)
 
   // Remove styles types if not used
   const typePath = path.join(dir, 'nuz-env.d.ts')

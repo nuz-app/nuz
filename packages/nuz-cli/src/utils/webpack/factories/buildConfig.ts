@@ -16,7 +16,7 @@ import {
   FeatureConfig,
   ModuleConfig,
   NamesConfig,
-} from '../types'
+} from '../../../types'
 
 import {
   CSS_EXTENSIONS,
@@ -26,15 +26,15 @@ import {
   SASS_EXTENSIONS,
   STATS_FILENAME,
   TS_EXTENSIONS,
-} from '../lib/const'
+} from '../../../lib/const'
 
-import * as paths from '../paths'
-import checkIsPackageInstalled from './checkIsPackageInstalled'
-import * as compilerName from './compilerName'
+import * as paths from '../../../paths'
+import checkIsPackageInstalled from '../../checkIsPackageInstalled'
+import * as compilerName from '../../compilerName'
 
-import styleLoadersFactory from './webpack/factories/styleLoaders'
-import setExternals from './webpack/helpers/setExternals'
-import PeerDepsExternalsPlugin from './webpack/PeerDepsExternalsPlugin'
+import setExternals from '../helpers/setExternals'
+import PeerDepsExternalsPlugin from '../PeerDepsExternalsPlugin'
+import styleLoadersFactory from './styleLoaders'
 
 export interface FactoryConfig {
   ci?: boolean
@@ -43,6 +43,11 @@ export interface FactoryConfig {
   dev: boolean
   cache: boolean
   config: ModuleConfig
+}
+
+export interface FactoryOptions {
+  injectReact?: boolean
+  showProcess?: boolean
 }
 
 const TYPESCRIPT_REGEXP = /.tsx?/i
@@ -138,6 +143,7 @@ function webpackConfigFactory(
     config: moduleConfig,
   }: FactoryConfig,
   feature: Partial<FeatureConfig> = {},
+  { showProcess = true, injectReact = false }: FactoryOptions = {},
 ) {
   const {
     isolated,
@@ -242,7 +248,7 @@ function webpackConfigFactory(
       splitChunks: false,
     },
     // https://github.com/webpack/webpack/issues/3216
-    performance: {
+    performance: !dev && {
       maxEntrypointSize: MODULE_TOTAL_SIZE_LIMIT,
       maxAssetSize: MODULE_ASSET_SIZE_LIMIT,
       hints: 'warning',
@@ -252,13 +258,15 @@ function webpackConfigFactory(
     },
   }
 
-  // Push process bar handler to plugins
-  config.plugins.push(
-    new WebpackProcessBar({
-      name,
-      color: 'green',
-    }),
-  )
+  if (showProcess) {
+    // Push process bar handler to plugins
+    config.plugins.push(
+      new WebpackProcessBar({
+        name,
+        color: 'green',
+      }),
+    )
+  }
 
   // Push source maps builder to plugins
   const sourceMapsPlugins = [
@@ -269,7 +277,7 @@ function webpackConfigFactory(
   ]
   config.plugins.push(...sourceMapsPlugins)
 
-  if (feature.react) {
+  if (!injectReact && feature.react) {
     // tslint:disable-next-line: prettier
     (config.externals as webpack.ExternalsElement[]).push({
       react: setExternals('react', isolated),
@@ -365,6 +373,7 @@ function webpackConfigFactory(
         tsconfig: tsconfigPath,
         silent: false,
         async: false,
+        // useTypescriptIncrementalApi: false,
       }),
     )
     config.plugins.push(new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]))
@@ -503,7 +512,13 @@ function webpackConfigFactory(
   config.module.rules.push(fontRule)
 
   // Set peers deps as externals
-  config.plugins.push(new PeerDepsExternalsPlugin(dir, isolated))
+  config.plugins.push(
+    new PeerDepsExternalsPlugin(
+      dir,
+      isolated,
+      !injectReact ? [] : ['react', 'react-dom'],
+    ),
+  )
 
   // Config optimization for production mode
   if (!dev) {

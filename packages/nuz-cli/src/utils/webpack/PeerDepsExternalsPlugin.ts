@@ -5,13 +5,20 @@ import setExternals from './helpers/setExternals'
 // tslint:disable-next-line: no-var-requires
 const ExternalModuleFactoryPlugin = require('webpack/lib/ExternalModuleFactoryPlugin')
 
-function getPeerDependencies(dir: string | undefined, isolated: boolean) {
+function getPeerDependencies(
+  dir: string | undefined,
+  isolated: boolean,
+  exclude: string[] = [],
+) {
   try {
     const moduleDir = dir || process.cwd()
     const pkgJson = getPackageJsonInDir(moduleDir)
 
     return Object.keys(pkgJson.peerDependencies).reduce(
-      (acc, key) => Object.assign(acc, { [key]: setExternals(key, isolated) }),
+      (acc, key) =>
+        exclude.includes(key)
+          ? acc
+          : Object.assign(acc, { [key]: setExternals(key, isolated) }),
       {},
     )
   } catch (err) {
@@ -23,10 +30,15 @@ class PeerDepsExternalsPlugin {
   constructor(
     private readonly dir: string | undefined,
     private readonly isolated: boolean,
+    private readonly exclude: string[] = [],
   ) {}
 
   apply(compiler: any) {
-    const peerDependencies = getPeerDependencies(this.dir, this.isolated)
+    const peerDependencies = getPeerDependencies(
+      this.dir,
+      this.isolated,
+      this.exclude,
+    )
 
     // webpack 4+
     if (compiler.hooks) {
