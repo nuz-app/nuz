@@ -1,7 +1,7 @@
-import { 
-  MODULE_OTHER_SIZE_LIMIT, 
-  MODULE_TOTAL_SIZE_LIMIT,
+import {
   MODULE_ASSET_SIZE_LIMIT,
+  MODULE_OTHER_SIZE_LIMIT,
+  MODULE_TOTAL_SIZE_LIMIT,
 } from '@nuz/shared'
 import { assetsUrlHelpers, hashFile } from '@nuz/utils'
 
