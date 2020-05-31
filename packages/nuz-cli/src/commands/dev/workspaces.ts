@@ -7,7 +7,7 @@ import { Arguments } from 'yargs'
 
 import clearConsole from 'react-dev-utils/clearConsole'
 import openBrowser from 'react-dev-utils/openBrowser'
-import ensurePath from 'src/utils/ensurePath'
+import ensurePath from '../../utils/ensurePath'
 import * as paths from '../../paths'
 import checkRequiredModuleConfig from '../../utils/checkRequiredModuleConfig'
 import * as compilerName from '../../utils/compilerName'
