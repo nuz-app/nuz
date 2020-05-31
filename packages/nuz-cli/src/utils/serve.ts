@@ -1,4 +1,4 @@
-import { checkIsProductionMode, loadCertificateDefault } from '@nuz/utils'
+import { loadCertificateDefault } from '@nuz/utils'
 import compression from 'compression'
 import cors from 'cors'
 import express from 'express'
@@ -13,37 +13,17 @@ export type ServeFullConfig = ServeConfig & {
   dir: string
 }
 
-const defaultConfig: ServeConfig = {
-  hidePoweredBy: true,
-  cors: checkIsProductionMode() ? false : true,
-  compression: checkIsProductionMode() ? false : true,
-}
+const defaultConfig: ServeConfig = {}
 
 const serve = (config: ServeFullConfig) => {
-  const {
-    port,
-    dir,
-    https,
-    hidePoweredBy,
-    compression: compress,
-    cors: corsc,
-  } = Object.assign({}, defaultConfig, config)
+  const { port, dir, https } = Object.assign({}, defaultConfig, config)
 
   let server
 
   const app = express()
-
-  if (hidePoweredBy) {
-    app.disable('x-powered-by')
-  }
-
-  if (compress) {
-    app.use(compression(compress === true ? {} : compress))
-  }
-
-  if (corsc) {
-    app.use(cors(corsc === true ? {} : corsc))
-  }
+  app.disable('x-powered-by')
+  app.use(compression())
+  app.use(cors())
 
   app.use((request, response) =>
     handler(request, response, {

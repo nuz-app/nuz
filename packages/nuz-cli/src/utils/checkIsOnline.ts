@@ -2,8 +2,8 @@ import dns from 'dns'
 
 const DEFAULT_HOSTNAME = 'google.com'
 
-const checkIsOnline = (url: string = DEFAULT_HOSTNAME) =>
-  new Promise<boolean>((resolve, reject) => {
+function checkIsOnline(url: string = DEFAULT_HOSTNAME) {
+  return new Promise<boolean>((resolve, reject) => {
     dns.lookup(url, (error: NodeJS.ErrnoException | null) => {
       if (error) {
         return reject(false)
@@ -12,5 +12,6 @@ const checkIsOnline = (url: string = DEFAULT_HOSTNAME) =>
       return resolve(true)
     })
   })
+}
 
 export default checkIsOnline

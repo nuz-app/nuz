@@ -1,10 +1,11 @@
 import * as paths from '../paths'
 
-export const get = (module: string) => {
+export function get(module: string) {
   const packageJsonTool = paths.packageJsonTool() || {}
 
   return `${packageJsonTool.name}(${module})`
 }
 
-export const extract = (name: string) =>
-  name.toString().replace(/^([\s\S]+)\(([\s\S]+)\)$/i, '$2')
+export function extract(name: string) {
+  return (name || '').replace(/^([\s\S]+)\(([\s\S]+)\)$/i, '$2')
+}

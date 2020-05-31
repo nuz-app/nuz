@@ -1,8 +1,4 @@
 // @ts-ignore
-import compression = require('compression')
-// @ts-ignore
-import cors = require('cors')
-// @ts-ignore
 import webpack = require('webpack')
 import * as yargs from 'yargs'
 
@@ -72,10 +68,7 @@ export interface ServeHttpsConfig {
 }
 
 export interface ServeConfig {
-  hidePoweredBy?: boolean
   https?: boolean | ServeHttpsConfig
-  compression?: boolean | compression.CompressionOptions
-  cors?: boolean | cors.CorsOptions | cors.CorsOptionsDelegate
 }
 
 export interface ExperimentalConfig {
