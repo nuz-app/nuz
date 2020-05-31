@@ -1,13 +1,16 @@
-import path from 'path'
 import ignoredFiles from 'react-dev-utils/ignoredFiles'
+import WebpackDevServer from 'webpack-dev-server'
 
 const host = process.env.HOST || 'localhost'
 const sockHost = process.env.WDS_SOCKET_HOST
 const sockPath = process.env.WDS_SOCKET_PATH // default: '/sockjs-node'
 const sockPort = process.env.WDS_SOCKET_PORT
 
-export default function devServerConfigFactory({ dir, open }) {
-  const contentBase = path.join(dir, 'public')
+export default function devServerConfigFactory({
+  dir,
+  contentBase,
+  publicUrlOrPath,
+}): WebpackDevServer.Configuration {
   const ignored = ignoredFiles(dir)
 
   return {
@@ -30,10 +33,11 @@ export default function devServerConfigFactory({ dir, open }) {
     sockPath,
     sockPort,
     host,
+    serveIndex: true,
     // WebpackDevServer is noisy by default so we emit custom message instead
     // by listening to the compiler events with `compiler.hooks[...].tap` calls above.
     quiet: true,
-    // Shows a full- screen overlay in the browser when there are compiler errors or warnings
+    // Shows a full-screen overlay in the browser when there are compiler errors or warnings
     overlay: {
       warnings: true,
       errors: true,
@@ -47,13 +51,18 @@ export default function devServerConfigFactory({ dir, open }) {
       ignored,
       poll: true,
     },
-    // Output running progress to console
-    progress: false,
     // The bundled files will be available in the browser under this path
-    publicPath: '/',
+    publicPath: publicUrlOrPath.slice(0, -1),
     // Write generated assets to the disk
     writeToDisk: false,
     // Not show build info
     noInfo: true,
+    // Allow cors
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+      'Access-Control-Allow-Headers':
+        'X-Requested-With, content-type, Authorization',
+    },
   }
 }

@@ -28,6 +28,11 @@ export const setCommands = (yargs) => {
           describe: 'Serve port',
           type: 'number',
           required: false,
+        })
+        .option('open', {
+          describe: 'Open browser',
+          type: 'boolean',
+          required: false,
         }),
     handleOnCommand(dev),
   )

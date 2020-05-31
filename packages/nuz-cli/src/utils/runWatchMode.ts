@@ -21,7 +21,7 @@ interface WatchModeOptions {
 
 type EventOnChange = (
   bundleInfo: BundleInfoOutput,
-  other: { initialized: boolean },
+  other: { initialized: boolean; firstTime: boolean },
 ) => void
 
 const defaultOptions = { clearConsole: true }
@@ -32,6 +32,7 @@ async function runWatchMode(
   onChange?: EventOnChange,
 ) {
   let initialized = false
+  let firstTime = true
 
   const watcher = await webpackCompiler.watch(config, (err, stats) => {
     const shouldClean = initialized && options.clearConsole
@@ -58,8 +59,10 @@ async function runWatchMode(
     waitingForChanges(buildTime)
 
     if (typeof onChange === 'function') {
-      onChange(bundleInfo, { initialized })
+      onChange(bundleInfo, { initialized, firstTime })
     }
+
+    firstTime = false
   })
 
   return watcher

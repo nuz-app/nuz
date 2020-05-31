@@ -21,6 +21,7 @@ import ensurePath from '../../utils/ensurePath'
 import * as fs from '../../utils/fs'
 import getFeatureConfig from '../../utils/getFeatureConfig'
 import { info, pretty } from '../../utils/print'
+import { onExit } from '../../utils/process'
 import webpackConfigFactory from '../../utils/webpack/factories/buildConfig'
 import devServerConfigFactory from '../../utils/webpack/factories/devServerConfig'
 
@@ -109,10 +110,14 @@ async function standalone({
     tscCompileOnError: false,
   })
 
-  const serverConfig = devServerConfigFactory({ dir, open })
-  const devServer = new WebpackDevServer(compiler, serverConfig as any)
+  const serverConfig = devServerConfigFactory({
+    dir,
+    publicUrlOrPath,
+    contentBase: [publicDirectory],
+  })
 
   let isInitialized = false
+  const devServer = new WebpackDevServer(compiler, serverConfig as any)
   devServer.listen(port, host, (err) => {
     if (err) {
       return console.log(err)
@@ -129,12 +134,9 @@ async function standalone({
     isInitialized = true
   })
 
-  // tslint:disable-next-line: prettier
-  ;['SIGINT', 'SIGTERM'].forEach(function onSignal (sig: any) {
-    process.on(sig, function handleSignal() {
-      devServer.close()
-      process.exit()
-    })
+  onExit(() => {
+    devServer.close()
+    process.exit()
   })
 
   return false

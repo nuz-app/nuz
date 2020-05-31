@@ -3,7 +3,7 @@ import path from 'path'
 import webpack from 'webpack'
 
 export interface PickOptions {
-  useIntegrity?: boolean
+  md5sum?: boolean
 }
 
 export interface PickResouce {
@@ -17,9 +17,13 @@ export interface PickOutput {
   styles: PickResouce[]
 }
 
-const transformAssetFactory = (outputPath: string, publicPath: string) => (
-  fileName: string | undefined,
-) => {
+const transformAssetFactory = (
+  outputPath: string,
+  publicPath: string,
+  options?: PickOptions,
+) => (fileName: string | undefined) => {
+  const { md5sum = true } = options || {}
+
   if (!fileName) {
     throw new Error(`Can not transform asset because file name is undefined`)
   }
@@ -29,7 +33,7 @@ const transformAssetFactory = (outputPath: string, publicPath: string) => (
   return {
     path: fileName,
     url: publicPath + fileName,
-    md5sum: hashFile(filePath, 'md5'),
+    md5sum: md5sum ? hashFile(filePath, 'md5') : undefined,
   }
 }
 
@@ -44,7 +48,11 @@ const pickAssetsFromStats = (
     throw new Error('Not found outputPath or assets in stats')
   }
 
-  const transformAsset = transformAssetFactory(outputPath, publicPath as string)
+  const transformAsset = transformAssetFactory(
+    outputPath,
+    publicPath as string,
+    options,
+  )
   const main = transformAsset(assets.find((item) => /\.js$/.test(item)))
   const styles = assets
     .filter((item) => /\.css$/.test(item))

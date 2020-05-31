@@ -3,16 +3,15 @@ import { linkedUrls, moduleIdHelpers } from '@nuz/utils'
 import glob from 'glob'
 import path from 'path'
 import io from 'socket.io'
-import * as webpack from 'webpack'
 import { Arguments } from 'yargs'
 
-import { ModuleConfig } from '../../types'
-
 import clearConsole from 'react-dev-utils/clearConsole'
+import openBrowser from 'react-dev-utils/openBrowser'
+import ensurePath from 'src/utils/ensurePath'
 import * as paths from '../../paths'
+import checkRequiredModuleConfig from '../../utils/checkRequiredModuleConfig'
 import * as compilerName from '../../utils/compilerName'
 import * as configHelpers from '../../utils/configHelpers'
-import checkRequiredModuleConfig from '../../utils/checkRequiredModuleConfig'
 import * as fs from '../../utils/fs'
 import getFeatureConfig from '../../utils/getFeatureConfig'
 import pickAssetsFromStats from '../../utils/pickAssetsFromStats'
@@ -25,39 +24,32 @@ import webpackConfigFactory from '../../utils/webpack/factories/buildConfig'
 async function standalone({
   workspaces,
   port = 4000,
-}: Arguments<{ port?: number; workspaces: string[] }>) {
+  open = true,
+}: Arguments<{ port?: number; workspaces: string[]; open?: boolean }>) {
   const dir = paths.cwd
 
-  const configIsExisted = workspaces || configHelpers.exists(dir)
-  if (!configIsExisted) {
+  if (!workspaces) {
     throw new Error(
-      'Not found a config file, file named `nuz.config.js` in root dir',
+      'Provide `workspaces` field to starts workspaces development mode',
     )
   }
 
-  const rootModuleConfig =
-    configHelpers.extract(dir, false) || ({} as ModuleConfig)
-  if (!rootModuleConfig) {
-    throw new Error('Config file is invalid')
-  }
-
-  const { serve: serveConfig } = rootModuleConfig
-
   const linkedUrl = linkedUrls.modules(port)
   const publicPath = linkedUrl.href
-  const bundlesDir = paths.bundlesDirectory(dir, 'modules')
+  const bundlesDirectory = paths.bundlesDirectory(dir, 'modules')
 
   clearConsole()
-  info('Clean up distributable workspaces folder')
-  await fs.emptyDir(bundlesDir)
+  await fs.emptyDir(bundlesDirectory)
 
   // Check and get modules paths in workspace
-  const workspacesPaths = workspaces.reduce<string[]>(
+  const selectedWorkspaces = workspaces.reduce<string[]>(
     (acc, item) => acc.concat(glob.sync(item)),
     [],
   )
-  const validPaths = workspacesPaths.filter((p) => p && configHelpers.exists(p))
-  const modulesConfig = validPaths.reduce((acc, item: string) => {
+  const modulesValidPaths = selectedWorkspaces.filter(
+    (p) => p && configHelpers.exists(p),
+  )
+  const modulesConfig = modulesValidPaths.reduce((acc, item: string) => {
     // If path is empty or not found config, skip it!
     const moduleIsValid = item && configHelpers.exists(item)
     if (!moduleIsValid) {
@@ -65,88 +57,78 @@ async function standalone({
     }
 
     // Get real path and extract config
-    const childModuleDir = fs.realpathSync(item)
-    const childModuleConfig = configHelpers.extract(childModuleDir)
-    if (!childModuleConfig) {
+    const moduleDirectory = fs.realpathSync(item)
+    const moduleConfig = configHelpers.extract(moduleDirectory)
+    if (!moduleConfig) {
       throw new Error('Config file is invalid')
     }
 
     // Break if not having some important fields in module
-    checkRequiredModuleConfig(childModuleConfig)
-    const childFeatureConfig = getFeatureConfig(
-      childModuleDir,
-      childModuleConfig,
+    checkRequiredModuleConfig(moduleConfig)
+    const featuresOf = getFeatureConfig(moduleDirectory, moduleConfig)
+    const { name: moduleName, output: currentOutput } = moduleConfig
+
+    // Create output directory inside bundles directory
+    const moduleCurrentOutputs = ensurePath(moduleDirectory, currentOutput)
+    const moduleOutputDirectory = path.join(bundlesDirectory, moduleName)
+    const moduleOutputFile = path.join(
+      moduleOutputDirectory,
+      moduleCurrentOutputs.filename,
     )
-
-    // Get module name
-    const { name: childName, output } = childModuleConfig
-
-    // Factory webpack config for module
-    info(
-      `Features config using in ${print.name(childName)}`,
-      pretty(childFeatureConfig),
-    )
-
-    // Create dist info
-    const distDir = path.join(bundlesDir, childName)
-    const distFilename = path.basename(output)
-    const distPublicPath = publicPath + childName + '/'
+    const modulePublicPath = `${publicPath}${moduleName}/`
 
     // Create webpack config
-    const childWebpackConfig = webpackConfigFactory(
+    const webpackConfig = webpackConfigFactory(
       {
         dev: true,
         cache: true,
-        module: childName,
-        dir: childModuleDir,
-        config: Object.assign(childModuleConfig, {
-          publicPath: distPublicPath,
-          output: path.join(distDir, distFilename),
+        module: moduleName,
+        dir: moduleDirectory,
+        config: Object.assign({}, moduleConfig, {
+          publicPath: modulePublicPath,
+          output: moduleOutputFile,
         }),
       },
-      childFeatureConfig,
+      featuresOf,
     )
 
-    if (!childWebpackConfig.output) {
-      throw new Error('Webpack output is not defined')
+    if (!webpackConfig.output) {
+      throw new Error('An error occurred during config creation')
     }
 
-    // Create module info
-    const moduleInfo = {
-      distFile: path.join(distDir, distFilename),
-      dir: childModuleDir,
-      config: childModuleConfig,
-      feature: childFeatureConfig,
-      webpack: childWebpackConfig,
-    }
+    // Factory webpack config for module
+    info(
+      `Features config using in ${print.name(moduleName)}`,
+      pretty(featuresOf),
+    )
 
     // Merge with other modules config
-    return Object.assign(acc, { [childName]: moduleInfo })
+    return Object.assign(acc, {
+      [moduleName]: {
+        featuresOf,
+        dir: moduleDirectory,
+        config: moduleConfig,
+        webpack: webpackConfig,
+      },
+    })
   }, {} as { [name: string]: any })
 
-  const modulesConfigKeys = Object.keys(modulesConfig)
-  info(`Found ${print.bold(modulesConfigKeys.length)} module(s) in workspaces`)
-  info('Linking module(s)', modulesConfigKeys)
-
-  const webpackConfigs: webpack.Configuration[] = modulesConfigKeys.map(
-    (moduleName: string) => {
-      const moduleInfo = modulesConfig[moduleName]
-
-      // Push webpack config
-      return moduleInfo.webpack
-    },
+  const modulesName = Object.keys(modulesConfig)
+  const multiWebpackConfig = modulesName.map(
+    (moduleName: string) => modulesConfig[moduleName].webpack,
   )
+
+  info(`Found ${print.bold(modulesName.length)} module(s) in workspaces`)
+  info('Linking module(s)', modulesName)
+
+  const allModules = {}
+  const watchUrl = linkedUrls.watch(port)
 
   // Create server to serve file serving and directory listing in workspace
-  const server = serve(
-    Object.assign({}, serveConfig, {
-      port,
-      dir: bundlesDir,
-    }),
-  )
-
-  const watchUrl = linkedUrls.watch(port)
-  const definedModules = {}
+  const server = serve({
+    port,
+    dir: bundlesDirectory,
+  })
 
   // Create socket to watching changes and reload
   const socket = io(server, {
@@ -160,50 +142,57 @@ async function standalone({
     socket.emit(LINKED_CHANGE_EVENT, { changes })
 
   // Fired a callback on connection event
-  socket.on('connection', (client) =>
+  socket.on('connection', function connection(client) {
     client.emit(LINKED_DEFINE_EVENT, {
-      modules: definedModules,
-    }),
-  )
-
-  // Build and watching modules
-  await runWatchMode(webpackConfigs, { clearConsole: true }, ({ data }) => {
-    const { children = [] } = data || {}
-
-    const linkedModules = children.reduce((acc, item) => {
-      const name = item.name?.replace(
-        /^(@nuz\/cli\(([\S\s]+)\))/,
-        '$2',
-      ) as string
-      const childModuleInfo = modulesConfig[name]
-      if (!childModuleInfo) {
-        throw Error(`Not found config of ${name} module`)
-      }
-
-      const childModuleAssets = pickAssetsFromStats(item)
-      const childModuleUpstreamResolve = {
-        main: childModuleAssets.resolve.main.url,
-        styles: childModuleAssets.resolve.styles.map((style) => style.url),
-      }
-      const moduleId = moduleIdHelpers.use(name)
-
-      return Object.assign(acc, {
-        [moduleId]: {
-          shared: childModuleInfo.config.shared,
-          library: childModuleInfo.webpack.output.library,
-          format: childModuleInfo.webpack.output.libraryTarget,
-          upstream: childModuleUpstreamResolve,
-        },
-      })
-    }, {})
-
-    Object.assign(definedModules, linkedModules)
-
-    const changedModuleIds = children.map((child) =>
-      moduleIdHelpers.use(compilerName.extract((child as any).name)),
-    )
-    emitOnChange(changedModuleIds)
+      modules: allModules,
+    })
   })
+
+  runWatchMode(
+    multiWebpackConfig,
+    { clearConsole: true },
+    ({ data }, { firstTime }) => {
+      const { children = [] } = data || {}
+
+      const bundledModules = children.reduce((acc, item) => {
+        const moduleName = item.name?.replace(
+          /^(@nuz\/cli\(([\S\s]+)\))/,
+          '$2',
+        ) as string
+        const moduleData = modulesConfig[moduleName]
+        if (!moduleData) {
+          throw Error(`Can't get module data of ${moduleName}`)
+        }
+
+        const moduleAssets = pickAssetsFromStats(item, { md5sum: false })
+        const moduleResolve = {
+          main: moduleAssets.resolve.main.url,
+          styles: moduleAssets.resolve.styles.map((style) => style.url),
+        }
+        const moduleId = moduleIdHelpers.use(moduleName)
+
+        return Object.assign(acc, {
+          [moduleId]: {
+            shared: moduleData.config.shared,
+            library: moduleData.webpack.output.library,
+            format: moduleData.webpack.output.libraryTarget,
+            upstream: moduleResolve,
+          },
+        })
+      }, {})
+
+      Object.assign(allModules, bundledModules)
+
+      const changedModuleIds = children.map((child) =>
+        moduleIdHelpers.use(compilerName.extract((child as any).name)),
+      )
+      emitOnChange(changedModuleIds)
+
+      if (firstTime && open) {
+        openBrowser(publicPath)
+      }
+    },
+  )
 
   onExit(() => {
     server.close()

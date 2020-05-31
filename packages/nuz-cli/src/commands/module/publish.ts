@@ -108,12 +108,11 @@ async function publish({
     )} module...`,
   )
 
-  const useIntegrity = false
   const [details, stats]: any[] = await Promise.all([
     getDetailsOfModule(dir),
     fs.readJson(statsPath),
   ])
-  const assets = pickAssetsFromStats(stats, { useIntegrity })
+  const assets = pickAssetsFromStats(stats, { md5sum: true })
   const files = pickFilesFromStats(stats)
 
   const data = {
