@@ -27,7 +27,7 @@ import devServerConfigFactory from '../../utils/webpack/factories/devServerConfi
 
 async function standalone({
   port = 4000,
-  open,
+  open = true,
 }: Arguments<{ port?: number; open?: string | boolean }>) {
   const dir = paths.cwd
 
