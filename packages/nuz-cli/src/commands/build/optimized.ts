@@ -1,12 +1,12 @@
 import { integrityHelpers } from '@nuz/utils'
 import path from 'path'
+import clearConsole from 'react-dev-utils/clearConsole'
 import * as webpack from 'webpack'
 import { Arguments } from 'yargs'
 
 import * as paths from '../../paths'
-import clearConsole from '../../utils/clearConsole'
+import checkRequiredModuleConfig from '../../utils/checkRequiredModuleConfig'
 import * as configHelpers from '../../utils/configHelpers'
-import exitIfModuleInsufficient from '../../utils/exitIfModuleInsufficient'
 import * as fs from '../../utils/fs'
 import getBundleInfo from '../../utils/getBundleInfo'
 import getFeatureConfig from '../../utils/getFeatureConfig'
@@ -30,7 +30,7 @@ async function optimized({ publicPath }: Arguments<{ publicPath?: string }>) {
     throw new Error('Config file is invalid')
   }
 
-  exitIfModuleInsufficient(moduleConfig)
+  checkRequiredModuleConfig(moduleConfig)
   if (publicPath) {
     moduleConfig.publicPath = publicPath
   }

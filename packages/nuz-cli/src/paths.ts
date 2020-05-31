@@ -1,38 +1,40 @@
+import { checkIsProductionMode } from '@nuz/utils'
 import findCacheDir from 'find-cache-dir'
 import fs from 'fs'
 import path from 'path'
+import getPublicUrlOrPath from 'react-dev-utils/getPublicUrlOrPath'
 
 export const tool = fs.realpathSync(path.join(__dirname, '..'))
 export const cwd = fs.realpathSync(process.cwd())
 
 export const app = cwd
 
-export function getPackageJsonTool() {
-  return require(packageJsonInDir(tool))
+export function packageJsonTool() {
+  return require(resolvePackageJson(tool))
 }
 
-export function configInDir(dir: string, ...rest: string[]) {
+export function bundlesDirectory(dir: string, ...rest: string[]) {
   return path.join(dir, '.nuz', ...rest)
 }
 
-export function newAppInDir(dir: string, name: string) {
+export function newModuleDirectory(dir: string, name: string) {
   return `${dir}/${name}`
 }
 
-export function configFileInDir(dir: string, ext: string = '*') {
+export function resolveConfigFile(dir: string, ext: string = '*') {
   return `${dir}/nuz.config.${ext}`
 }
 
-export function packageJsonInDir(dir: string) {
+export function resolvePackageJson(dir: string) {
   return `${dir}/package.json`
 }
 
-export const cacheInApp = findCacheDir({
-  name: getPackageJsonTool().name,
+export const resolveModuleCache = findCacheDir({
+  name: packageJsonTool().name,
   thunk: true,
 })
 
-export function resolveInApp(name: string, dir?: string) {
+export function resolveModule(name: string, dir?: string) {
   return require.resolve(name, {
     paths: [
       dir && dir !== app && path.join(dir, 'node_modules'),
@@ -42,6 +44,14 @@ export function resolveInApp(name: string, dir?: string) {
   })
 }
 
-export function inTemplate(file: string) {
+export function resolveFromTemplate(file: string) {
   return path.join(tool, './templates', file)
+}
+
+export function publicUrlOrPath(dir: string, publicUrl: string) {
+  return getPublicUrlOrPath(
+    !checkIsProductionMode(),
+    require(resolvePackageJson(dir)).homepage,
+    publicUrl,
+  )
 }

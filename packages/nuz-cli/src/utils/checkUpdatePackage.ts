@@ -5,7 +5,7 @@ import checkIsYarnInstalled from './checkIsYarnInstalled'
 import print, { error, log } from './print'
 
 async function checkUpdatePackage() {
-  const pkg = require(paths.packageJsonInDir(paths.tool))
+  const pkg = require(paths.resolvePackageJson(paths.tool))
 
   let update: Result | null = null
 

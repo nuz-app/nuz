@@ -1,24 +1,33 @@
 import path from 'path'
+import webpack from 'webpack'
 import { Arguments } from 'yargs'
 
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import checkRequiredFiles from 'react-dev-utils/checkRequiredFiles'
+import clearConsole from 'react-dev-utils/clearConsole'
+import InterpolateHtmlPlugin from 'react-dev-utils/InterpolateHtmlPlugin'
+import openBrowser from 'react-dev-utils/openBrowser'
+import {
+  createCompiler,
+  prepareUrls,
+} from 'react-dev-utils/WebpackDevServerUtils'
 import WebpackDevServer from 'webpack-dev-server'
+
 import * as paths from '../../paths'
-import clearConsole from '../../utils/clearConsole'
+import checkIsYarnInstalled from '../../utils/checkIsYarnInstalled'
+import checkRequiredModuleConfig from '../../utils/checkRequiredModuleConfig'
 import * as configHelpers from '../../utils/configHelpers'
-import exitIfModuleInsufficient from '../../utils/exitIfModuleInsufficient'
+import ensurePath from '../../utils/ensurePath'
 import * as fs from '../../utils/fs'
 import getFeatureConfig from '../../utils/getFeatureConfig'
-import { error, info, pretty } from '../../utils/print'
+import { info, pretty } from '../../utils/print'
 import webpackConfigFactory from '../../utils/webpack/factories/buildConfig'
 import devServerConfigFactory from '../../utils/webpack/factories/devServerConfig'
-import InterpolateHtmlPlugin from '../../utils/webpack/InterpolateHtmlPlugin'
-import * as webpackCompiler from '../../utils/webpackCompiler'
 
 async function standalone({
   port = 4000,
-  open = 'Google Chrome',
-}: Arguments<{ port?: number; open?: string }>) {
+  open,
+}: Arguments<{ port?: number; open?: string | boolean }>) {
   const dir = paths.cwd
 
   const configIsExisted = configHelpers.exists(dir)
@@ -33,68 +42,99 @@ async function standalone({
     throw new Error('Config file is invalid')
   }
 
-  exitIfModuleInsufficient(moduleConfig)
+  checkRequiredModuleConfig(moduleConfig)
 
-  const { name, output } = moduleConfig
-
-  const featureConfig = getFeatureConfig(dir, moduleConfig)
-  const distDir = path.join(dir, path.dirname(output))
+  const publicUrlOrPath = paths.publicUrlOrPath(dir, moduleConfig.publicPath)
+  const featuresOf = getFeatureConfig(dir, moduleConfig)
+  const outputs = ensurePath(dir, moduleConfig.output)
+  const publicDirectory = path.join(dir, 'public')
+  const publicJsIndexPath = path.join(
+    publicDirectory,
+    featuresOf.typescript ? 'index.ts' : 'index.js',
+  )
+  const publicHtmlIndexPath = path.join(publicDirectory, 'index.html')
+  if (!checkRequiredFiles([publicJsIndexPath, publicHtmlIndexPath])) {
+    throw new Error(
+      'Some required files were not found in the `public` directory',
+    )
+  }
 
   clearConsole()
-  info('Clean up distributable module folder')
-  await fs.emptyDir(distDir)
+  await fs.emptyDir(outputs.directory)
+  info('Features config using', pretty(featuresOf))
 
-  info('Features config using', pretty(featureConfig))
-  const buildConfig = webpackConfigFactory(
-    {
-      dev: true,
-      cache: true,
-      dir,
-      module: name,
-      config: moduleConfig,
-    },
-    featureConfig,
-    { showProcess: true, injectReact: true },
-  )
-  buildConfig.entry = path.join(
+  const bundleConfig = {
+    dev: true,
+    cache: true,
     dir,
-    featureConfig.typescript ? 'public/index.ts' : 'public/index.js',
+    module: moduleConfig.name,
+    config: Object.assign({}, moduleConfig, { input: publicJsIndexPath }),
+  }
+  const bundleOptions = { showProcess: false, injectReact: true }
+  const webpackConfig = webpackConfigFactory(
+    bundleConfig,
+    featuresOf,
+    bundleOptions,
   )
+  if (!webpackConfig.output || !webpackConfig.plugins) {
+    throw new Error('An error occurred during config creation')
+  }
 
-  // @ts-ignore
-  buildConfig.plugins.push(
+  webpackConfig.plugins.push(
+    // @ts-ignore
     new HtmlWebpackPlugin({
       inject: true,
-      title: name,
-      template: path.join(paths.app, './public/index.html'),
+      template: publicHtmlIndexPath,
     }),
     new InterpolateHtmlPlugin(HtmlWebpackPlugin, {
-      PUBLIC_URL:
-        buildConfig.output.publicPath !== '/'
-          ? buildConfig.output.publicPath
-          : '',
+      // Remove slash at end from `publicPath`
+      // Example publicPath: `https://nuz.app/` -> `https://nuz.app`
+      PUBLIC_URL: publicUrlOrPath?.slice(0, -1) as string,
     }),
   )
 
-  const devServerConfig = devServerConfigFactory({ dir, open })
-  const compiler = webpackCompiler.get(
-    buildConfig as webpackCompiler.AllowWebpackConfig,
-  )
-  const devServer = new WebpackDevServer(compiler, devServerConfig)
+  const useYarn = checkIsYarnInstalled()
+  const protocol = process.env.HTTPS === 'true' ? 'https' : 'http'
+  const host = 'localhost'
 
-  devServer.listen(port, (err) => {
+  const urls = prepareUrls(protocol, host, port)
+  // @ts-ignore
+  const compiler = createCompiler({
+    appName: moduleConfig.name,
+    config: webpackConfig,
+    urls,
+    useYarn,
+    webpack,
+    useTypeScript: featuresOf.typescript,
+    tscCompileOnError: false,
+  })
+
+  const serverConfig = devServerConfigFactory({ dir, open })
+  const devServer = new WebpackDevServer(compiler, serverConfig as any)
+
+  let isInitialized = false
+  devServer.listen(port, host, (err) => {
     if (err) {
-      return error(err)
+      return console.log(err)
     }
 
-    info(`Server was created to files serving for the module`)
-    info(
-      'Module information',
-      pretty({
-        name,
-        port,
-      }),
-    )
+    if (isInitialized) {
+      clearConsole()
+    }
+
+    if (open) {
+      openBrowser(urls.localUrlForBrowser)
+    }
+
+    isInitialized = true
+  })
+
+  // tslint:disable-next-line: prettier
+  ;['SIGINT', 'SIGTERM'].forEach(function onSignal (sig: any) {
+    process.on(sig, function handleSignal() {
+      devServer.close()
+      process.exit()
+    })
   })
 
   return false

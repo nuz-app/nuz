@@ -1,6 +1,7 @@
+import clearConsole from 'react-dev-utils/clearConsole'
+
 import { CHANGES_EMOJI } from '../lib/const'
 
-import clearConsole from './clearConsole'
 import getBundleInfo, { BundleInfoOutput } from './getBundleInfo'
 import print, { error, log } from './print'
 import showErrorsAndWarnings from './showErrorsAndWarnings'

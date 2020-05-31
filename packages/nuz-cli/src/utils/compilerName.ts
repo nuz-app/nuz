@@ -1,7 +1,7 @@
 import * as paths from '../paths'
 
 export const get = (module: string) => {
-  const packageJsonTool = paths.getPackageJsonTool() || {}
+  const packageJsonTool = paths.packageJsonTool() || {}
 
   return `${packageJsonTool.name}(${module})`
 }

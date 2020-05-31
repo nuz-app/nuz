@@ -112,7 +112,7 @@ async function create({
     )}!`,
   )
 
-  const dir = paths.newAppInDir(cwd, result.name)
+  const dir = paths.newModuleDirectory(cwd, result.name)
   const dirIsExisted = fs.exists(dir)
   if (dirIsExisted) {
     const { isOverried } = await createQuestions<{ isOverried: boolean }>([

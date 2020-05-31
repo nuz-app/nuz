@@ -24,7 +24,7 @@ const styleLoadersFactory = ({
   modules = 'auto',
   sourceMap,
 }: StyleLoadersOptions): webpack.Loader[] => {
-  const resolveInApp = (moduleId: string) => paths.resolveInApp(moduleId, dir)
+  const resolveModule = (moduleId: string) => paths.resolveModule(moduleId, dir)
   const browserslist = getBrowserslist({ dir, dev })
   const loaders = [] as webpack.Loader[]
 
@@ -39,7 +39,7 @@ const styleLoadersFactory = ({
 
   // Set css loader
   loaders.push({
-    loader: resolveInApp('css-loader'),
+    loader: resolveModule('css-loader'),
     options: Object.assign(
       {
         sourceMap,
@@ -84,7 +84,7 @@ const styleLoadersFactory = ({
     ]
   }
   loaders.push({
-    loader: resolveInApp('postcss-loader'),
+    loader: resolveModule('postcss-loader'),
     options: Object.assign(
       {
         ident: 'postcss',
@@ -107,13 +107,13 @@ const styleLoadersFactory = ({
 
     // Set sass loader
     loaders.push({
-      loader: resolveInApp('sass-loader'),
+      loader: resolveModule('sass-loader'),
       options: Object.assign(
         {
           sourceMap,
           implementation: dartSassIsInstalled
-            ? require(paths.resolveInApp('dart-sass', dir))
-            : require(paths.resolveInApp('node-sass', dir)),
+            ? require(paths.resolveModule('dart-sass', dir))
+            : require(paths.resolveModule('node-sass', dir)),
         },
         feature.sass === true ? {} : feature.sass,
       ),
@@ -128,7 +128,7 @@ const styleLoadersFactory = ({
 
     // Set less loader
     loaders.push({
-      loader: resolveInApp('less-loader'),
+      loader: resolveModule('less-loader'),
       options: Object.assign(
         { sourceMap },
         feature.less === true ? {} : feature.less,

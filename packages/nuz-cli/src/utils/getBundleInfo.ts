@@ -1,5 +1,5 @@
+import formatWebpackMessages from 'react-dev-utils/formatWebpackMessages'
 import webpack from 'webpack'
-import formatMessages from 'webpack-format-messages'
 
 export interface BundleInfoOutput {
   data: webpack.Stats.ToJsonOutput
@@ -9,8 +9,8 @@ export interface BundleInfoOutput {
 }
 
 const getBundleInfo = (stats: webpack.Stats): BundleInfoOutput => {
-  const results = formatMessages(stats)
   const data = stats.toJson()
+  const results = formatWebpackMessages(data)
   const done = results.errors.length === 0
 
   return {

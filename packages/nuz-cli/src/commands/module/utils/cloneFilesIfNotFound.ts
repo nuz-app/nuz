@@ -18,7 +18,7 @@ const cloneFilesIfNotFound = (dir: string, files: string[]) =>
         return true
       }
 
-      return fs.copy(paths.inTemplate(sample), filePath)
+      return fs.copy(paths.resolveFromTemplate(sample), filePath)
     }),
   )
 

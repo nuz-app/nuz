@@ -1,10 +1,10 @@
 import path from 'path'
+import clearConsole from 'react-dev-utils/clearConsole'
 import { Arguments } from 'yargs'
 
 import * as paths from '../../paths'
-import clearConsole from '../../utils/clearConsole'
 import * as configHelpers from '../../utils/configHelpers'
-import exitIfModuleInsufficient from '../../utils/exitIfModuleInsufficient'
+import checkRequiredModuleConfig from '../../utils/checkRequiredModuleConfig'
 import * as fs from '../../utils/fs'
 import { info, pretty } from '../../utils/print'
 import { onExit } from '../../utils/process'
@@ -25,7 +25,7 @@ async function serve({ port = 4000 }: Arguments<{ port?: number }>) {
     throw new Error('Config file is invalid')
   }
 
-  exitIfModuleInsufficient(moduleConfig)
+  checkRequiredModuleConfig(moduleConfig)
 
   const { name, output, serve: serveConfig } = moduleConfig
 

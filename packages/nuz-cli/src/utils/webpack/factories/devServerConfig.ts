@@ -1,14 +1,5 @@
-import escape from 'escape-string-regexp'
 import path from 'path'
-
-function ignoredFiles(dir: string) {
-  return new RegExp(
-    `^(?!${escape(
-      path.normalize(dir + '/').replace(/[\\]+/g, '/'),
-    )}).+/node_modules/`,
-    'g',
-  )
-}
+import ignoredFiles from 'react-dev-utils/ignoredFiles'
 
 const host = process.env.HOST || 'localhost'
 const sockHost = process.env.WDS_SOCKET_HOST
@@ -58,12 +49,11 @@ export default function devServerConfigFactory({ dir, open }) {
     },
     // Output running progress to console
     progress: false,
-    // Open `Google Chrome`
-    open,
     // The bundled files will be available in the browser under this path
     publicPath: '/',
     // Write generated assets to the disk
     writeToDisk: false,
+    // Not show build info
     noInfo: true,
   }
 }

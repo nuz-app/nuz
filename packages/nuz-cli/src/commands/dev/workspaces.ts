@@ -8,11 +8,11 @@ import { Arguments } from 'yargs'
 
 import { ModuleConfig } from '../../types'
 
-// import clearConsole from '../../utils/clearConsole'
+import clearConsole from 'react-dev-utils/clearConsole'
 import * as paths from '../../paths'
 import * as compilerName from '../../utils/compilerName'
 import * as configHelpers from '../../utils/configHelpers'
-import exitIfModuleInsufficient from '../../utils/exitIfModuleInsufficient'
+import checkRequiredModuleConfig from '../../utils/checkRequiredModuleConfig'
 import * as fs from '../../utils/fs'
 import getFeatureConfig from '../../utils/getFeatureConfig'
 import pickAssetsFromStats from '../../utils/pickAssetsFromStats'
@@ -45,9 +45,9 @@ async function standalone({
 
   const linkedUrl = linkedUrls.modules(port)
   const publicPath = linkedUrl.href
-  const bundlesDir = paths.configInDir(dir, 'modules')
+  const bundlesDir = paths.bundlesDirectory(dir, 'modules')
 
-  // clearConsole()
+  clearConsole()
   info('Clean up distributable workspaces folder')
   await fs.emptyDir(bundlesDir)
 
@@ -72,7 +72,7 @@ async function standalone({
     }
 
     // Break if not having some important fields in module
-    exitIfModuleInsufficient(childModuleConfig)
+    checkRequiredModuleConfig(childModuleConfig)
     const childFeatureConfig = getFeatureConfig(
       childModuleDir,
       childModuleConfig,

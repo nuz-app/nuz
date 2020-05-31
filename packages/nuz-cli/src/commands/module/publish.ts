@@ -30,7 +30,7 @@ function checkIsHaveSlash(url: string) {
 }
 
 async function getDetailsOfModule(dir: string) {
-  const pkgJson = await fs.readJson(paths.packageJsonInDir(dir))
+  const pkgJson = await fs.readJson(paths.resolvePackageJson(dir))
   const details = pick(pkgJson, [
     'description',
     'homepage',

@@ -1,12 +1,11 @@
 import { MODULE_ASSET_SIZE_LIMIT, MODULE_TOTAL_SIZE_LIMIT } from '@nuz/shared'
 import crypto from 'crypto'
-import os from 'os'
-import path from 'path'
-import webpack from 'webpack'
-
 import ExtractCssChunks from 'extract-css-chunks-webpack-plugin'
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
+import os from 'os'
+import path from 'path'
 import TerserPlugin from 'terser-webpack-plugin'
+import webpack from 'webpack'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import WebpackProcessBar from 'webpackbar'
 
@@ -31,6 +30,7 @@ import {
 import * as paths from '../../../paths'
 import checkIsPackageInstalled from '../../checkIsPackageInstalled'
 import * as compilerName from '../../compilerName'
+import ensurePath from '../../ensurePath'
 
 import setExternals from '../helpers/setExternals'
 import PeerDepsExternalsPlugin from '../PeerDepsExternalsPlugin'
@@ -71,18 +71,6 @@ function ruleFactory(
     test,
     exclude,
     use: use || [],
-  }
-}
-
-function getOutput(dir: string, output: string) {
-  const distDir = path.isAbsolute(output)
-    ? path.dirname(output)
-    : path.join(dir, path.dirname(output))
-  const distFilename = path.basename(output)
-
-  return {
-    directory: distDir,
-    filename: distFilename,
   }
 }
 
@@ -133,6 +121,26 @@ function defaultNamesFactory({
   }
 }
 
+export type WebpackConfiguration = NonNullable<
+  Pick<
+    webpack.Configuration,
+    | 'entry'
+    | 'bail'
+    | 'mode'
+    | 'target'
+    | 'devtool'
+    | 'cache'
+    | 'context'
+    | 'entry'
+    | 'output'
+    | 'resolve'
+    | 'externals'
+    | 'plugins'
+    | 'optimization'
+    | 'performance'
+  >
+>
+
 function webpackConfigFactory(
   {
     dev,
@@ -144,7 +152,7 @@ function webpackConfigFactory(
   }: FactoryConfig,
   feature: Partial<FeatureConfig> = {},
   { showProcess = true, injectReact = false }: FactoryOptions = {},
-) {
+): WebpackConfiguration {
   const {
     isolated,
     library,
@@ -177,8 +185,8 @@ function webpackConfigFactory(
   const mode = dev ? 'development' : 'production'
   const sourceMap = true
   const bail = !dev
-  const inputFile = path.join(dir, input)
-  const { directory: distDir, filename: distFilename } = getOutput(dir, output)
+  const inputs = ensurePath(dir, input)
+  const outputs = ensurePath(dir, output)
   const distChunkFilename = names.chunkFilename()
   const umdNamedDefine = format === 'umd'
   const scriptType = 'text/javascript'
@@ -194,10 +202,10 @@ function webpackConfigFactory(
     : [...JS_EXTENSIONS, ...JSON_EXTENSIONS]
 
   const cacheDirectories = {
-    bundles: (paths as any).cacheInApp('bundles'),
-    babel: (paths as any).cacheInApp('babel'),
-    terser: (paths as any).cacheInApp('terser'),
-    images: (paths as any).cacheInApp('images'),
+    bundles: (paths as any).resolveModuleCache('bundles'),
+    babel: (paths as any).resolveModuleCache('babel'),
+    terser: (paths as any).resolveModuleCache('terser'),
+    images: (paths as any).resolveModuleCache('images'),
   }
   const cacheConfig = cache
     ? {
@@ -207,7 +215,9 @@ function webpackConfigFactory(
       }
     : false
 
-  const resolveInApp = (moduleId: string) => paths.resolveInApp(moduleId, dir)
+  function resolveModule(moduleId: string) {
+    return paths.resolveModule(moduleId, dir)
+  }
 
   const config = {
     name,
@@ -217,15 +227,15 @@ function webpackConfigFactory(
     devtool: false,
     cache: cacheConfig,
     context: dir,
-    entry: inputFile,
+    entry: inputs.path,
     output: {
       // Ref https://github.com/webpack/webpack/issues/959#issuecomment-546506221
       library: library || '[name]',
       umdNamedDefine,
       globalObject,
       publicPath,
-      path: distDir,
-      filename: distFilename,
+      path: outputs.directory,
+      filename: outputs.filename,
       libraryTarget: format,
       chunkLoadTimeout: loadTimeout,
       jsonpScriptType: scriptType,
@@ -323,7 +333,7 @@ function webpackConfigFactory(
   if (experimental.multiThread) {
     // Set thread loader to use child process
     scriptRule.use.push({
-      loader: resolveInApp('thread-loader'),
+      loader: resolveModule('thread-loader'),
       options: {
         workers: Math.max(1, os.cpus().length - 1),
         poolTimeout: !dev ? 2000 : Infinity,
@@ -333,16 +343,16 @@ function webpackConfigFactory(
 
   // Set babel loader to transplie es
   scriptRule.use.push({
-    loader: resolveInApp('babel-loader'),
+    loader: resolveModule('babel-loader'),
     options: {
       cacheDirectory: cache ? cacheDirectories.babel : false,
       presets: [
-        resolveInApp('@babel/preset-env'),
-        feature.react && resolveInApp('@babel/preset-react'),
+        resolveModule('@babel/preset-env'),
+        feature.react && resolveModule('@babel/preset-react'),
       ].filter(Boolean) as string[],
       plugins: [
-        resolveInApp('@babel/plugin-syntax-dynamic-import'),
-        resolveInApp('@babel/plugin-transform-runtime'),
+        resolveModule('@babel/plugin-syntax-dynamic-import'),
+        resolveModule('@babel/plugin-transform-runtime'),
       ],
     },
   })
@@ -357,7 +367,7 @@ function webpackConfigFactory(
     const tsconfigPath = path.join(dir, 'tsconfig.json')
 
     scriptRule.use.push({
-      loader: resolveInApp('ts-loader'),
+      loader: resolveModule('ts-loader'),
       options: {
         configFile: tsconfigPath,
         context: dir,
@@ -434,14 +444,14 @@ function webpackConfigFactory(
   optimizedImagesRule.use.push(
     ...([
       cache && {
-        loader: resolveInApp('cache-loader'),
+        loader: resolveModule('cache-loader'),
         options: {
           cacheDirectory: cacheDirectories.images,
           cacheContext: dir,
         },
       },
       {
-        loader: resolveInApp('image-webpack-loader'),
+        loader: resolveModule('image-webpack-loader'),
         options: {
           mozjpeg: {
             progressive: true,
@@ -470,10 +480,10 @@ function webpackConfigFactory(
   // Config `url-loader` and `file-loader` to use images files
   const imagesRule = ruleFactory(IMAGE_REGEXP)
   const imagesLoader = {
-    loader: resolveInApp('url-loader'),
+    loader: resolveModule('url-loader'),
     options: {
       limit: 5 * 1024,
-      fallback: resolveInApp('file-loader'),
+      fallback: resolveModule('file-loader'),
       context: dir,
       emitFile: true,
       outputPath: 'images',
@@ -488,7 +498,7 @@ function webpackConfigFactory(
   const svgRule = ruleFactory(SVG_REGEXP)
   svgRule.use.push(
     {
-      loader: resolveInApp('@svgr/webpack'),
+      loader: resolveModule('@svgr/webpack'),
     },
     imagesLoader,
   )
@@ -498,7 +508,7 @@ function webpackConfigFactory(
   // Config `raw-loader` to use txt files
   const textRule = ruleFactory(TEXT_REGEXP)
   textRule.use.push({
-    loader: resolveInApp('raw-loader'),
+    loader: resolveModule('raw-loader'),
   })
   // Push text rule to config
   config.module.rules.push(textRule)
@@ -506,7 +516,7 @@ function webpackConfigFactory(
   // Config `file-loader` to use font files
   const fontRule = ruleFactory(FONT_REGEXP)
   fontRule.use.push({
-    loader: resolveInApp('file-loader'),
+    loader: resolveModule('file-loader'),
   })
   // Push font rule to config
   config.module.rules.push(fontRule)
@@ -595,7 +605,7 @@ function webpackConfigFactory(
   }
 
   if (typeof webpackCustomer === 'function') {
-    const customConfig = webpackCustomer(config as webpack.Configuration)
+    const customConfig = webpackCustomer(config as WebpackConfiguration)
 
     if (!customConfig.output) {
       throw new Error('Webpack config is missing output field')
@@ -604,7 +614,7 @@ function webpackConfigFactory(
     return customConfig
   }
 
-  return config
+  return config as WebpackConfiguration
 }
 
 export default webpackConfigFactory

@@ -1,6 +1,6 @@
 import { ModuleConfig } from '../types'
 
-const exitIfModuleInsufficient = (moduleConfig: ModuleConfig) => {
+function checkRequiredModuleConfig(moduleConfig: ModuleConfig): void {
   const { name, input, output } = moduleConfig || {}
 
   if (!name) {
@@ -18,4 +18,4 @@ const exitIfModuleInsufficient = (moduleConfig: ModuleConfig) => {
   }
 }
 
-export default exitIfModuleInsufficient
+export default checkRequiredModuleConfig
