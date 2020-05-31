@@ -223,7 +223,11 @@ function createLoadableComponent(id: string, opts: LoadableOptions) {
   }
 
   const LoadableComponent = (props, ref) => {
-    shared.extractor.push(id)
+    initial()
+
+    if (typeof window === 'undefined') {
+      shared.extractor.push(id)
+    }
 
     const state = useSubscription(subscription)
 
