@@ -6,7 +6,8 @@ import commonjs from '@rollup/plugin-commonjs'
 import replace from '@rollup/plugin-replace'
 import sourceMaps from 'rollup-plugin-sourcemaps'
 import ts from 'rollup-plugin-typescript2'
-import polyfills from 'rollup-plugin-node-polyfills';
+import polyfills from 'rollup-plugin-node-polyfills'
+import progress from 'rollup-plugin-progress'
 
 export default ({
   dir,
@@ -27,6 +28,8 @@ export default ({
     ),
   ),
   plugins: [
+    // Render build progress
+    progress(),
     // Allow json resolution
     json(),
     // Allow node_modules resolution, so you can use 'external' to control
