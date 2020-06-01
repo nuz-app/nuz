@@ -1,7 +1,7 @@
 {
   "name": "@nuz/core",
   "description": "Core to manage and handles resolve runtime packages in the application",
-  "version": "1.0.0-beta.42",
+  "version": "1.0.0-beta.43",
   "repository": {
     "type": "git",
     "url": "https://github.com/nuz-app/nuz.git",
@@ -29,8 +29,8 @@
     "build": "rollup -c"
   },
   "dependencies": {
-    "@nuz/shared": "^1.0.0-beta.42",
-    "@nuz/utils": "^1.0.0-beta.42",
+    "@nuz/shared": "^1.0.0-beta.43",
+    "@nuz/utils": "^1.0.0-beta.43",
     "abort-controller": "^3.0.0",
     "lru-cache": "^5.1.1",
     "node-fetch": "^2.6.0",
@@ -52,7 +52,7 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.1",
-    "utf-8-validate": "^5.0.2",
-    "socket.io-client": "^2.3.0"
+    "socket.io-client": "^2.3.0",
+    "utf-8-validate": "^5.0.2"
   }
 }
