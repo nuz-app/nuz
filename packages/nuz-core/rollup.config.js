@@ -3,7 +3,7 @@ import factory from '../../rollup.factory'
 import pkg from './package.json'
 
 const dir = __dirname
-const target = 'web'
+const target = 'node'
 
 export default Object.assign(factory({ dir, target, pkg }), {
   output: [
