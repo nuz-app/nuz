@@ -1,5 +1,4 @@
 import { ModuleFormats } from '@nuz/shared'
-import vm from 'vm'
 
 import getCodeTemplate, {
   Defined,
@@ -42,6 +41,7 @@ class Script {
   }
 
   runInContext(context: any) {
+    const vm = require('vm')
     const name = this.generateId()
     const code = this.getContextTemplate({
       name,

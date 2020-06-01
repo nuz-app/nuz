@@ -1,13 +1,9 @@
 import { LINKED_CHANGE_EVENT, LINKED_DEFINE_EVENT } from '@nuz/shared'
 import { deferedPromise, DeferedPromise, linkedUrls } from '@nuz/utils'
-import io from 'socket.io-client'
 
 import { LinkedConfig, ModulesConfig } from '../types'
 
-const createSocket = (url: URL) =>
-  io.connect(url.origin, {
-    path: url.pathname,
-  })
+import createSocketConnection from '../utils/createSocketConnection'
 
 class Linked {
   private readonly _socket: SocketIOClient.Socket | undefined
@@ -21,7 +17,7 @@ class Linked {
     const watchUrl = !isUnused && linkedUrls.watch(port as any)
 
     // Create connection and save io and get linked watch info
-    this._socket = !watchUrl ? undefined : createSocket(watchUrl)
+    this._socket = !watchUrl ? undefined : createSocketConnection(watchUrl)
 
     // Create empty watching list
     this._watching = []

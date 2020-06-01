@@ -32,12 +32,11 @@
     "@nuz/shared": "^1.0.0-beta.42",
     "@nuz/utils": "^1.0.0-beta.42",
     "abort-controller": "^3.0.0",
-    "cross-fetch": "^3.0.4",
     "lru-cache": "^5.1.1",
-    "socket.io-client": "^2.3.0",
+    "node-fetch": "^2.6.0",
     "tslib": "^1.11.1",
     "use-subscription": "^1.4.1",
-    "yargs": "^15.1.0"
+    "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
     "@types/lru-cache": "^5.1.0",
@@ -53,6 +52,7 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.1",
-    "utf-8-validate": "^5.0.2"
+    "utf-8-validate": "^5.0.2",
+    "socket.io-client": "^2.3.0"
   }
 }

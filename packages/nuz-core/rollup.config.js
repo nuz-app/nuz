@@ -1,3 +1,4 @@
+// @ts-check
 import factory from '../../rollup.factory'
 import pkg from './package.json'
 
@@ -17,10 +18,9 @@ export default Object.assign(factory({ dir, target, pkg }), {
       format: 'esm',
     },
   ],
-  external: [],
   onwarn: (msg, warn) => {
     if (!/Circular/.test(msg)) {
-      warn(msg);
+      warn(msg)
     }
   },
 })
