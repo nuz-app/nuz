@@ -24,7 +24,7 @@
     "postinstall": "lerna bootstrap",
     "reinstall": "rimraf **/node_modules **/yarn.lock && yarn",
     "clean": "lerna run clean --parallel",
-    "build": "lerna run build",
+    "build": "lerna run build --stream",
     "test:types": "tsc --build tsconfig.test.json",
     "test:unit": "lerna run test --stream",
     "test": "yarn test:types && yarn test:unit",
