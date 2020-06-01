@@ -11,7 +11,7 @@ async function checkUpdatePackage() {
 
   try {
     update = await checkForUpdate(pkg, {
-      interval: 3600000, // 1h
+      interval: 1800000, // 12h
       distTag: 'latest',
     })
   } catch (err) {
