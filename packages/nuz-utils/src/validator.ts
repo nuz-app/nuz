@@ -8,7 +8,7 @@ export const username = (value: string) =>
   typeof value === 'string' &&
   USER_ID_REGEXP.test(value) &&
   !DENIED_REGEXP.test(value) &&
-  value.length >= 6 &&
+  value.length >= 4 &&
   value.length <= 24
 
 export const email = (value: string) =>
@@ -21,7 +21,7 @@ export const password = (value: string) =>
 export const COMPOSITION_ID_REGEXP = /([a-zA-Z0-9\-\_]+)$/
 export const composeId = (value: string) =>
   typeof value === 'string' &&
-  value.length >= 6 &&
+  value.length >= 4 &&
   value.length <= 24 &&
   COMPOSITION_ID_REGEXP.test(value) &&
   !DENIED_REGEXP.test(value)
@@ -29,7 +29,7 @@ export const composeId = (value: string) =>
 export const SCOPE_ID_REGEXP = /([a-zA-Z0-9\-\_]+)$/
 export const scopeId = (value: string) =>
   typeof value === 'string' &&
-  value.length >= 6 &&
+  value.length >= 4 &&
   value.length <= 24 &&
   SCOPE_ID_REGEXP.test(value) &&
   !DENIED_REGEXP.test(value)

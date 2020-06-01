@@ -484,7 +484,7 @@ class Worker {
       throw new Error('Name is invalid. Length allows 4-32 characters!')
     } else if (!validator.username(data.username)) {
       throw new Error(
-        'Username is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", length allows 6-24 characters!',
+        'Username is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", length allows 4-24 characters!',
       )
     } else if (!validator.password(data.password)) {
       throw new Error('Password is invalid. Length allows >=8 characters!')
@@ -595,7 +595,7 @@ class Worker {
 
     if (!validator.composeId(name)) {
       throw new Error(
-        'Compose id/name is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", length allows 6-24 characters!',
+        'Compose id/name is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", length allows 4-24 characters!',
       )
     }
 
@@ -856,7 +856,7 @@ class Worker {
 
     if (!validator.scopeId(name)) {
       throw new Error(
-        'Scope id/name is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", length allows 6-24 characters!',
+        'Scope id/name is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", length allows 4-24 characters!',
       )
     }
 
