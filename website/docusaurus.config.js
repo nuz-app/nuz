@@ -83,6 +83,18 @@ module.exports = {
         },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Nuz Project, Inc. Built with Docusaurus ❤️.`,
+      // Display update user, ex: Last updated by <Author Name>
+      enableUpdateBy: true,
+      // Display update time, ex: Last updated on <date>
+      enableUpdateTime: true,
+      // Display scroll to top button
+      scrollToTop: true,
+      // Clean up
+      // https://docusaurus.io/docs/en/site-config.html#cleanurl-boolean
+      cleanUrl: true,
+      stylesheets: [
+        'https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600&display=swap',
+      ],
     },
   },
   presets: [
