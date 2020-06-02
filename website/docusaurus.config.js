@@ -28,12 +28,12 @@ module.exports = {
       },
       links: [
         {
-          to: 'docs/doc1',
+          to: 'docs/overview',
           activeBasePath: 'docs',
-          label: 'Docs',
-          position: 'left',
+          label: 'Documents',
+          position: 'right',
         },
-        { to: 'blog', label: 'Blog', position: 'left' },
+        { to: 'blog', label: 'Blog', position: 'right' },
         {
           href: GITHUB_URL,
           label: 'GitHub',
@@ -45,7 +45,7 @@ module.exports = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: 'Quick links',
           items: [
             {
               label: 'Introduction',
