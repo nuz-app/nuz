@@ -1,6 +1,7 @@
 const GITHUB_ORG = 'nuz-app';
 const GITHUB_PROJECT = 'nuz';
 const GITHUB_URL = `https://github.com/${GITHUB_ORG}/${GITHUB_PROJECT}`
+const GITHUB_BRANCH = 'next';
 
 module.exports = {
   title: 'Nuz',
@@ -87,12 +88,6 @@ module.exports = {
       copyright: `Copyright © ${new Date().getFullYear()} Nuz Project, Inc. Built with Docusaurus ❤️.`,
     },
   },
-  stylesheets: [
-    {
-      href: 'https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400&family=Nunito:wght@600&display=swap',
-      rel: 'stylesheet',
-    },
-  ],
   presets: [
     [
       '@docusaurus/preset-classic',
@@ -101,7 +96,7 @@ module.exports = {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl:
-            `${GITHUB_URL}/edit/next/website/`,
+            `${GITHUB_URL}/edit/${GITHUB_BRANCH}/website/`,
           // Display update user, ex: Last updated by <Author Name>
           showLastUpdateAuthor: false,
           // Display update time, ex: Last updated on <date>
@@ -111,23 +106,91 @@ module.exports = {
           showReadingTime: true,
           // Please change this to your repo.
           editUrl:
-            `${GITHUB_URL}/edit/next/website/blog/`,
+            `${GITHUB_URL}/edit/${GITHUB_BRANCH}/website/blog/`,
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: require.resolve('./src/css/base.css'),
         },
       },
     ],
   ],
-  // plugins: [
-  //   [
-  //     '@docusaurus/plugin-ideal-image',
-  //     {
-  //       quality: 85,
-  //       max: 1030, // max resized image's size.
-  //       min: 640, // min resized image's size. if original is lower, use that size.
-  //       steps: 2, // the max number of images generated between min and max (inclusive)
-  //     },
-  //   ],
-  // ],
+  stylesheets: [
+    {
+      href: 'https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400&family=Nunito:wght@600&display=swap',
+      rel: 'stylesheet',
+    },
+    {
+      rel: 'apple-touch-icon',
+      sizes: '57x57',
+      href: '/images/apple-icon-57x57.png',
+    },
+    {
+      rel: 'apple-touch-icon',
+      sizes: '60x60',
+      href: '/images/apple-icon-60x60.png',
+    },
+    {
+      rel: 'apple-touch-icon',
+      sizes: '72x72',
+      href: '/images/apple-icon-72x72.png',
+    },
+    {
+      rel: 'apple-touch-icon',
+      sizes: '76x76',
+      href: '/images/apple-icon-76x76.png',
+    },
+    {
+      rel: 'apple-touch-icon',
+      sizes: '114x114',
+      href: '/images/apple-icon-114x114.png',
+    },
+    {
+      rel: 'apple-touch-icon',
+      sizes: '120x120',
+      href: '/images/apple-icon-120x120.png',
+    },
+    {
+      rel: 'apple-touch-icon',
+      sizes: '144x144',
+      href: '/images/apple-icon-144x144.png',
+    },
+    {
+      rel: 'apple-touch-icon',
+      sizes: '152x152',
+      href: '/images/apple-icon-152x152.png',
+    },
+    {
+      rel: 'apple-touch-icon',
+      sizes: '180x180',
+      href: '/images/apple-icon-180x180.png',
+    },
+    {
+      rel: 'icon',
+      type: 'image/png',
+      sizes: '192x192',
+      href: '/images/android-icon-192x192.png',
+    },
+    {
+      rel: 'icon',
+      type: 'image/png',
+      sizes: '32x32',
+      href: '/images/favicon-32x32.png',
+    },
+    {
+      rel: 'icon',
+      type: 'image/png',
+      sizes: '96x96',
+      href: '/images/favicon-96x96.png',
+    },
+    {
+      rel: 'icon',
+      type: 'image/png',
+      sizes: '16x16',
+      href: '/images/favicon-16x16.png',
+    },
+    {
+      rel: 'manifest',
+      href: '/images/manifest.json',
+    }
+  ],
 };

@@ -191,18 +191,66 @@ function Home() {
       description="Nuz is an ecosystem to manage runtime packages for web platform">
       <header className={classnames('hero hero--primary', styles.heroBanner)}>
         <div className="container">
-          <h1 className="hero__title">{siteConfig.title}</h1>
+          <h1 className="hero__title">🔮 {siteConfig.title}</h1>
           <p className="hero__subtitle">{siteConfig.tagline}</p>
+          <div className={styles.buttons}>
+            <Link
+              className={classnames(
+                'button button--outline button--secondary button--lg',
+                styles.getStarted,
+              )}
+              to={useBaseUrl('docs/doc1')}>
+              Get Started
+            </Link>
+          </div>
         </div>
       </header>
       <main>
         <section className={styles.features}>
           <div className="container">
-            <h1 className={classnames('hero__title', styles.textCenter)}>~</h1>
-            <h3 className={classnames('hero__subtitle', styles.textCenter)}>
-              Document is being updated, please come back later.
-            </h3>
+            <h1 className={classnames('hero__title', styles.textCenter)}>Missions</h1>
+            <h3 className={classnames('hero__subtitle', styles.textCenter)}>Change the way you develop, maintain, and operate a web application.</h3>
             <br />
+            <div className="row">
+              {missions.map((props, idx) => (
+                <Feature key={idx} {...props} />
+              ))}
+            </div>
+          </div>
+        </section>
+        <section className={classnames(styles.features, styles.packages)}>
+          <div className="container">
+            <h1 className={classnames('hero__title', styles.textCenter)}>Packages</h1>
+            <div className="row">
+              {packages.map((props, idx) => (
+                <Feature key={idx} {...props} />
+              ))}
+            </div>
+            <br />
+            <h2 className={classnames('hero__title', styles.textCenter)}>Conpects by Nuz</h2>
+            <div className="row">
+              {conpects.map((props, idx) => (
+                <Feature key={idx} {...props} />
+              ))}
+            </div>
+          </div>
+        </section>
+        <section className={styles.features}>
+          <div className="container">
+            <h1 className={classnames('hero__title', styles.textCenter)}>Solution for Micro Frontends</h1>
+            <h2 className={classnames('hero__subtitle', styles.textCenter)}>Problems encountered</h2>
+            <div className="row">
+              {problems.map((props, idx) => (
+                <Feature key={idx} {...props} />
+              ))}
+            </div>
+            <br />
+            <h2 className={classnames('hero__subtitle', styles.textCenter)}>Resovled by Nuz</h2>
+            <div className="row">
+              {solutions.map((props, idx) => (
+                <Feature key={idx} {...props} />
+              ))}
+            </div>
           </div>
         </section>
       </main>

@@ -10,3 +10,59 @@ Command-line interface (CLI) is alias for [@nuz/cli](https://github.com/nuz-app/
 :::
 
 ...
+
+## Commands
+
+...
+
+### dev
+
+...
+
+### build
+
+...
+
+### serve
+
+...
+
+### config
+
+...
+
+### user
+
+...
+
+### whoami
+
+...
+
+### login
+
+...
+
+### logout
+
+...
+
+### register
+
+...
+
+### scope
+
+...
+
+### module
+
+...
+
+### publish
+
+...
+
+### compose
+
+...

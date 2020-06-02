@@ -14,6 +14,7 @@ module.exports = {
     ],
     Guides: [
       'create-new-module', 
+      'publish-a-module', 
     ],
     Support: [
       {
