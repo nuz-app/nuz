@@ -34,7 +34,7 @@
     "abort-controller": "^3.0.0",
     "lru-cache": "^5.1.1",
     "node-fetch": "^2.6.0",
-    "tslib": "^1.11.1",
+    "tslib": "^2.0.0",
     "use-subscription": "^1.4.1",
     "whatwg-fetch": "^3.0.0"
   },
