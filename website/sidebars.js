@@ -1,6 +1,26 @@
 module.exports = {
-  someSidebar: {
-    Docusaurus: ['introduction', 'doc1', 'doc2', 'doc3'],
-    Features: ['mdx'],
+  sidebar: {
+    Introduction: [
+      'overview', 
+      'motivation', 
+      'concepts', 
+      'getting-started', 
+    ],
+    Reference: [
+      'core',
+      'cli',
+      'registry',
+      'module',
+    ],
+    Guides: [
+      'create-new-module', 
+    ],
+    Support: [
+      {
+        type: 'link',
+        label: 'Report an issue',
+        href: 'https://github.com/nuz-app/nuz/issues/new',
+      }
+    ],
   },
 };

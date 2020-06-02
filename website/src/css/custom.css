@@ -23,6 +23,13 @@
   --ifm-font-family-base: 'Nunito Sans', -apple-system, sans-serif;
 }
 
+html[data-theme='dark'] {
+  --ifm-background-color: #222;
+  --ifm-background-surface-color: #333;
+  --ifm-hover-overlay: rgba(255, 255, 255, 0.05);
+  --ifm-color-content-secondary: rgba(255, 255, 255, 1);
+}
+
 html {
   font-weight: 400;
 }

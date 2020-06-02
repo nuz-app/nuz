@@ -11,6 +11,8 @@ module.exports = {
   organizationName: 'nuz-app', // Usually your GitHub org/user name.
   projectName: 'nuz', // Usually your repo name.
   themeConfig: {
+    // Always expanded sidebar
+    sidebarCollapsible: false,
     gtag: {
       trackingID: process.env.GA_DOCUMENT_ID,
     },
@@ -47,11 +49,11 @@ module.exports = {
           items: [
             {
               label: 'Introduction',
-              to: 'docs/introduction',
+              to: 'docs/overview',
             },
             {
-              label: 'Second Doc',
-              to: 'docs/doc2',
+              label: 'Getting started',
+              to: 'docs/getting-started',
             },
           ],
         },
@@ -83,15 +85,6 @@ module.exports = {
         },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Nuz Project, Inc. Built with Docusaurus ❤️.`,
-      // Display update user, ex: Last updated by <Author Name>
-      enableUpdateBy: true,
-      // Display update time, ex: Last updated on <date>
-      enableUpdateTime: true,
-      // Display scroll to top button
-      scrollToTop: true,
-      // Clean up
-      // https://docusaurus.io/docs/en/site-config.html#cleanurl-boolean
-      cleanUrl: true,
     },
   },
   stylesheets: [
@@ -108,13 +101,17 @@ module.exports = {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl:
-            `${GITHUB_URL}/edit/develop/website/`,
+            `${GITHUB_URL}/edit/next/website/`,
+          // Display update user, ex: Last updated by <Author Name>
+          showLastUpdateAuthor: false,
+          // Display update time, ex: Last updated on <date>
+          showLastUpdateTime: false,
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
           editUrl:
-            `${GITHUB_URL}/edit/develop/website/blog/`,
+            `${GITHUB_URL}/edit/next/website/blog/`,
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
