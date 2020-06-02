@@ -92,11 +92,14 @@ module.exports = {
       // Clean up
       // https://docusaurus.io/docs/en/site-config.html#cleanurl-boolean
       cleanUrl: true,
-      stylesheets: [
-        'https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600&display=swap',
-      ],
     },
   },
+  stylesheets: [
+    {
+      href: 'https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400&family=Nunito:wght@600&display=swap',
+      rel: 'stylesheet',
+    },
+  ],
   presets: [
     [
       '@docusaurus/preset-classic',

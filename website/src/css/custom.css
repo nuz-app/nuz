@@ -15,23 +15,20 @@
   --ifm-color-primary-lighter: #7a4ec7;
   --ifm-color-primary-lightest: #8e6ad0;
   --ifm-code-font-size: 95%;
+
+  --ifm-heading-font-family: 'Nunito', -apple-system, sans-serif;
+  --ifm-heading-font-weight: normal;
+  --ifm-heading-line-height: 1.25;
+  
+  --ifm-font-family-base: 'Nunito Sans', -apple-system, sans-serif;
 }
 
-body {
-  font-family: "Nunito", -apple-system, sans-serif;
+html {
   font-weight: 400;
 }
 
-h1, h2, h3 {
-  font-family: "Nunito", -apple-system, sans-serif;
-}
-
-h1, h2 {
-  font-weight: 300;
-}
-
-h3, h4, h5 {
-  font-weight: 400;
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--ifm-heading-font-family);
 }
 
 blockquote {
