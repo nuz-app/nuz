@@ -85,7 +85,7 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Nuz Project, Inc. Built with Docusaurus ❤️.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Nuz. Built with Docusaurus ❤️.`,
     },
   },
   presets: [
