@@ -5,7 +5,7 @@ title: Module
 
 :::note
 
-The module or runtime module mentioned in the description below is one
+The module or runtime module mentioned in the description below is one.
 
 :::
 

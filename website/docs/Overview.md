@@ -30,3 +30,11 @@ You should not use when:
 - ..
 - ..
 - ..
+
+## You should know
+
+...
+
+### Don't forget to check out changelog
+
+...
