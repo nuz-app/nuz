@@ -1,25 +1,25 @@
 module.exports = {
   sidebar: {
     Introduction: [
-      'overview', 
-      'motivation', 
-      'concepts', 
-      'getting-started', 
+      'introduction/overview', 
+      'introduction/motivation', 
+      'introduction/concepts', 
+      'introduction/getting-started', 
     ],
     Reference: [
-      'core',
-      'cli',
-      'registry',
-      'module',
-      'workspaces',
+      'reference/core',
+      'reference/cli',
+      'reference/registry',
+      'reference/module',
+      'reference/workspaces',
     ],
     Services: [
-      'nuz-registry',
-      'nuz-static',
+      'services/nuz-registry',
+      'services/nuz-static',
     ],
     Guides: [
-      'create-new-module', 
-      'publish-a-module', 
+      'guides/create-new-module', 
+      'guides/publish-a-module', 
     ],
     Support: [
       'faq',

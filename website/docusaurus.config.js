@@ -33,9 +33,15 @@ module.exports = {
       },
       links: [
         {
-          to: 'docs/overview',
-          activeBasePath: 'docs',
-          label: 'Documents',
+          to: 'introduction/overview',
+          activeBasePath: 'introduction',
+          label: 'Introduction',
+          position: 'right',
+        },
+        {
+          to: 'reference/core',
+          activeBasePath: 'reference',
+          label: 'Reference',
           position: 'right',
         },
         { to: 'blog', label: 'Blog', position: 'right' },
@@ -54,11 +60,11 @@ module.exports = {
           items: [
             {
               label: 'Introduction',
-              to: 'docs/overview',
+              to: 'introduction/overview',
             },
             {
               label: 'Getting started',
-              to: 'docs/getting-started',
+              to: 'introduction/getting-started',
             },
           ],
         },
@@ -97,6 +103,8 @@ module.exports = {
       '@docusaurus/preset-classic',
       {
         docs: {
+          // Set base path of document pages
+          routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl:
