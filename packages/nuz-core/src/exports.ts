@@ -1,5 +1,5 @@
 export { default as load } from './load'
-export { default as require } from './require'
+export { default as require, default as import } from './require'
 
 export { Loadable } from './factories/react'
 
