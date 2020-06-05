@@ -11,6 +11,7 @@ module.exports = {
       'cli',
       'registry',
       'module',
+      'workspaces',
     ],
     Services: [
       'nuz-registry',
