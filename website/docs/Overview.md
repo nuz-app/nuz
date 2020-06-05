@@ -16,7 +16,7 @@ Nuz is an [open-source](https://github.com/nuz-app/nuz) project, the runtime pac
 ### Keys features
 
 - 🧩 Compatible as dynamic [import()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#Dynamic_Imports) expressions, is [nuz.import()](getting-started#usage).
-- ⚙️ Easy to [install](getting-started#installation) and flexible to customize.
+- ⚙️ Easy to [setup](getting-started#installation) and flexible to customize.
 - 📦 Import and use any modules don't need to install through [@nuz/core](core).
 - ⏰ Not take time to rebuild time for the modules.
 - 🚔 Safer by [integrity hash](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) check is default.
@@ -29,12 +29,16 @@ Nuz is an [open-source](https://github.com/nuz-app/nuz) project, the runtime pac
 - ✨ Build and share great things with everyone through [registry](nuz-registry).
 - 🎯 Fully support server-side with optimized options.
 
-#### Limitations
+### Limitations
 
 - ⚠️ Impossible to use modules on the [registry](registry) without a network connection.
 - 🤔 Performance may be affected by network connection.
 
 Recommended using Nuz services are [registry](nuz-registry) and [static](nuz-static) as CDNs to be optimized for Nuz ecosystem.
+
+## Desire
+
+Nuz hopes to change the way of developing modern web applications with great things.
 
 ### For developder
 
