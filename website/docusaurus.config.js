@@ -12,6 +12,8 @@ module.exports = {
   organizationName: 'nuz-app', // Usually your GitHub org/user name.
   projectName: 'nuz', // Usually your repo name.
   themeConfig: {
+    // Thumbnail image,
+    image: 'images/thumbnail.png',
     // Always expanded sidebar
     sidebarCollapsible: false,
     gtag: {
@@ -26,6 +28,8 @@ module.exports = {
       logo: {
         alt: 'Nuz Logo',
         src: 'images/logo.png',
+        href: '/',
+        target: '_self',
       },
       links: [
         {
@@ -85,6 +89,10 @@ module.exports = {
           ],
         },
       ],
+      logo: {
+        alt: 'Nuz Project',
+        src: '/images/logo-320x320.png',
+      },
       copyright: `Copyright © ${new Date().getFullYear()} Nuz. Built with Docusaurus ❤️.`,
     },
   },
@@ -98,9 +106,9 @@ module.exports = {
           editUrl:
             `${GITHUB_URL}/edit/${GITHUB_BRANCH}/website/`,
           // Display update user, ex: Last updated by <Author Name>
-          showLastUpdateAuthor: false,
+          showLastUpdateAuthor: true,
           // Display update time, ex: Last updated on <date>
-          showLastUpdateTime: false,
+          showLastUpdateTime: true,
         },
         blog: {
           showReadingTime: true,
@@ -113,6 +121,25 @@ module.exports = {
         },
       },
     ],
+  ],
+  plugins: [
+    [
+      require.resolve('@docusaurus/plugin-sitemap'),
+      {
+        cacheTime: 600 * 1000,
+        changefreq: 'daily',
+        priority: 0.5,
+      },
+    ],
+    // [
+    //   require.resolve('@docusaurus/plugin-ideal-image'),
+    //   {
+    //     quality: 85,
+    //     max: 1030, // max resized image's size.
+    //     min: 640, // min resized image's size. if original is lower, use that size.
+    //     steps: 2, // the max number of images generated between min and max (inclusive)
+    //   },
+    // ],
   ],
   stylesheets: [
     {
