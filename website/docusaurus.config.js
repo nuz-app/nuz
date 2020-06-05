@@ -89,10 +89,6 @@ module.exports = {
           ],
         },
       ],
-      logo: {
-        alt: 'Nuz Project',
-        src: '/images/logo-320x320.png',
-      },
       copyright: `Copyright © ${new Date().getFullYear()} Nuz. Built with Docusaurus ❤️.`,
     },
   },
