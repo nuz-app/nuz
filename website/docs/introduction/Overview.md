@@ -11,22 +11,22 @@ Nuz is an experimental version that prepares for the 1.0.0 release. Suggestions 
 
 :::
 
-Nuz is an [open-source](https://github.com/nuz-app/nuz) project, the runtime packages manager to sharing packages such as components or libraries across the web application.
+Nuz is an [open-source](https://github.com/nuz-app/nuz) project, the runtime package manager to sharing packages such as components or libraries across the web application.
 
 ### Keys features
 
-- 🧩 Compatible as dynamic [import()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#Dynamic_Imports) expressions, is [nuz.import()](introduction/getting-started#usage).
+- 🧩 Compatible as dynamic [import()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#Dynamic_Imports) expressions, is [nuz.import()](getting-started#usage).
 - ⚙️ Easy to [setup](getting-started#installation) and flexible to customize.
-- 📦 Import and use any modules don't need to install through [@nuz/core](../reference/core).
+- 📦 Import and use any modules that don't need to install through [@nuz/core](../reference/core).
 - ⏰ Not take time to rebuild time for the modules.
-- 🚔 Safer by [integrity hash](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) check is default.
+- 🚔 Safer by [integrity hash](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) check is the default.
 - 🚨 Self-retry if it fails on download and auto fallback if initial fails.
-- 🔥 Hot update the modules in the application without rebuild.
+- 🔥 Hot update the modules in the application without a rebuild.
 - 📚 Write once, use in cross the applications.
-- ⚡️ Easy to create, build and publish quickly by [@nuz/cli](../reference/cli).
+- ⚡️ Easy to create, build, and publish quickly by [@nuz/cli](../reference/cli).
 - 💼 Support fully-features to develop the module with [@nuz/cli](../reference/cli).
-- ☁️ Provided [CDNs](../services/nuz-static) and [registry](../services/nuz-registry) public services on cloud, it's free.
-- ✨ Build and share great things with everyone through [registry](../services/nuz-registry).
+- ☁️ Provided [CDNs](../services/nuz-static) and [registry](../services/nuz-registry) public services on the cloud, it's free.
+- ✨ Build and share great things with everyone through [the registry](../services/nuz-registry).
 - 🎯 Fully support server-side with optimized options.
 
 ### Limitations

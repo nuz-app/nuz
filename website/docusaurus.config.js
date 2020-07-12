@@ -5,7 +5,7 @@ const GITHUB_BRANCH = 'next';
 
 module.exports = {
   title: 'Nuz',
-  tagline: 'Nuz is an ecosystem to manage runtime packages for web platform',
+  tagline: 'Nuz is an open-source project, the runtime package manager for web platform.',
   url: 'https://docs.nuz.app',
   baseUrl: '/',
   favicon: 'images/favicon.ico',

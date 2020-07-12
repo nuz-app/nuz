@@ -188,7 +188,7 @@ function Home() {
   return (
     <Layout
       title="A manager runtime packages for web platform"
-      description="Nuz is an ecosystem to manage runtime packages for web platform">
+      description="Nuz is an open-source project, the runtime package manager for web platform.">
       <header className={classnames('hero hero--primary', styles.heroBanner)}>
         <div className="container">
           <h1 className="hero__title">🔮 {siteConfig.title}</h1>
