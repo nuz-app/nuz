@@ -1,7 +1,7 @@
 {
   "name": "nuz",
   "version": "1.0.0-beta",
-  "description": "Nuz is an ecosystem to manage runtime packages for web platform",
+  "description": "Nuz is an open-source project, the runtime package manager for web platform.",
   "author": "Hieu Lam <lamhieu.vk@gmail.com> (https://lamhieu.info)",
   "repository": {
     "type": "git",
