@@ -105,6 +105,7 @@ async function standalone({
     config: webpackConfig,
     urls,
     useYarn,
+    // @ts-expect-error
     webpack,
     useTypeScript: featuresOf.typescript,
     tscCompileOnError: false,
