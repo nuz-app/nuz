@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "env-cmd docusaurus start",
-    "build": "docusaurus build",
+    "build": "env-cmd docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy"
   },
@@ -12,8 +12,8 @@
     "node": "^10.13 || ^12 || ^14"
   },
   "dependencies": {
-    "@docusaurus/core": "^2.0.0-alpha.56",
-    "@docusaurus/preset-classic": "^2.0.0-alpha.56",
+    "@docusaurus/core": "^2.0.0-alpha.61",
+    "@docusaurus/preset-classic": "^2.0.0-alpha.61",
     "classnames": "^2.2.6",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"

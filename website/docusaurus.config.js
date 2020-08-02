@@ -31,7 +31,7 @@ module.exports = {
         href: '/',
         target: '_self',
       },
-      links: [
+      items: [
         {
           to: 'introduction/overview',
           activeBasePath: 'introduction',
@@ -127,14 +127,14 @@ module.exports = {
     ],
   ],
   plugins: [
-    [
-      require.resolve('@docusaurus/plugin-sitemap'),
-      {
-        cacheTime: 600 * 1000,
-        changefreq: 'daily',
-        priority: 0.5,
-      },
-    ],
+    // [
+    //   require.resolve('@docusaurus/plugin-sitemap'),
+    //   {
+    //     cacheTime: 600 * 1000,
+    //     changefreq: 'daily',
+    //     priority: 0.5,
+    //   },
+    // ],
     // [
     //   require.resolve('@docusaurus/plugin-ideal-image'),
     //   {
@@ -149,79 +149,91 @@ module.exports = {
     {
       href: 'https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400&family=Nunito:wght@600&display=swap',
       rel: 'stylesheet',
+      type: 'text/css',
     },
     {
       rel: 'apple-touch-icon',
       sizes: '57x57',
       href: '/images/apple-icon-57x57.png',
+      type: 'image/png',
     },
     {
       rel: 'apple-touch-icon',
       sizes: '60x60',
       href: '/images/apple-icon-60x60.png',
+      type: 'image/png',
     },
     {
       rel: 'apple-touch-icon',
       sizes: '72x72',
       href: '/images/apple-icon-72x72.png',
+      type: 'image/png',
     },
     {
       rel: 'apple-touch-icon',
       sizes: '76x76',
       href: '/images/apple-icon-76x76.png',
+      type: 'image/png',
     },
     {
       rel: 'apple-touch-icon',
       sizes: '114x114',
       href: '/images/apple-icon-114x114.png',
+      type: 'image/png',
     },
     {
       rel: 'apple-touch-icon',
       sizes: '120x120',
       href: '/images/apple-icon-120x120.png',
+      type: 'image/png',
     },
     {
       rel: 'apple-touch-icon',
       sizes: '144x144',
       href: '/images/apple-icon-144x144.png',
+      type: 'image/png',
     },
     {
       rel: 'apple-touch-icon',
       sizes: '152x152',
       href: '/images/apple-icon-152x152.png',
+      type: 'image/png',
     },
     {
       rel: 'apple-touch-icon',
       sizes: '180x180',
       href: '/images/apple-icon-180x180.png',
+      type: 'image/png',
     },
     {
       rel: 'icon',
-      type: 'image/png',
       sizes: '192x192',
       href: '/images/android-icon-192x192.png',
+      type: 'image/png',
     },
     {
       rel: 'icon',
-      type: 'image/png',
       sizes: '32x32',
       href: '/images/favicon-32x32.png',
+      type: 'image/png',
     },
     {
       rel: 'icon',
-      type: 'image/png',
       sizes: '96x96',
       href: '/images/favicon-96x96.png',
+      type: 'image/png',
     },
     {
       rel: 'icon',
-      type: 'image/png',
       sizes: '16x16',
       href: '/images/favicon-16x16.png',
+      type: 'image/png',
     },
     {
       rel: 'manifest',
       href: '/images/manifest.json',
+      type: 'application/json'
     }
   ],
+  onBrokenLinks: 'warn',
 };
