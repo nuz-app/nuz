@@ -154,6 +154,7 @@ jobs:
         run: yarn install
       
       - name: Create environment file
+        working-directory: ${{ env.WEBSITE_DIRECTORY }}
         env:
           ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_API_KEY }}
           ALGOLIA_INDEX_NAME: ${{ secrets.ALGOLIA_INDEX_NAME }}
