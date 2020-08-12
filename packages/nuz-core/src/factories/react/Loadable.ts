@@ -242,7 +242,7 @@ function createLoadableComponent(id: string, _options?: LoadableOptions) {
 
     return React.useMemo(() => {
       if (state.loading || state.error) {
-        return React.createElement(options.loading, {
+        return React.createElement(options.loading as any, {
           loading: state.loading,
           delayed: state.delayed,
           timeout: state.timeout,
