@@ -5,7 +5,7 @@ import requireModule from '../../require'
 import * as shared from '../../shared'
 
 export interface LoadableOptions {
-  loading: React.ElementType<any>
+  loading?: React.ElementType<any>
   timeout?: number
   render?: any
 }
@@ -104,8 +104,8 @@ class LoadableSubscription {
     this._resolve = this._load(this._loader)
 
     this._state = {
-      pastDelay: false,
-      timedOut: false,
+      delayed: false,
+      timeout: false,
     }
 
     const { _resolve: resolve, _options: options } = this
@@ -113,11 +113,11 @@ class LoadableSubscription {
     if (resolve.loading) {
       if (typeof options.delay === 'number') {
         if (options.delay === 0) {
-          this._state.pastDelay = true
+          this._state.delayed = true
         } else {
           this._delay = setTimeout(() => {
             this._update({
-              pastDelay: true,
+              delayed: true,
             })
           }, options.delay)
         }
@@ -125,7 +125,7 @@ class LoadableSubscription {
 
       if (typeof options.timeout === 'number') {
         this._timeout = setTimeout(() => {
-          this._update({ timedOut: true })
+          this._update({ timeout: true })
         }, options.timeout)
       }
     }
@@ -181,7 +181,7 @@ function empty() {
   return null
 }
 
-function createLoadableComponent(id: string, opts: LoadableOptions) {
+function createLoadableComponent(id: string, _options?: LoadableOptions) {
   const options = Object.assign(
     {
       loading: empty,
@@ -189,7 +189,7 @@ function createLoadableComponent(id: string, opts: LoadableOptions) {
       delay: 0,
       render,
     },
-    opts,
+    _options,
   ) as NonNullable<LoadableOptions>
 
   if (!options.loading) {
@@ -205,6 +205,7 @@ function createLoadableComponent(id: string, opts: LoadableOptions) {
         () => requireModule(id),
         options,
       )
+
       subscription = {
         getCurrentValue: sub.getCurrentValue.bind(sub),
         subscribe: sub.subscribe.bind(sub),
@@ -242,9 +243,9 @@ function createLoadableComponent(id: string, opts: LoadableOptions) {
     return React.useMemo(() => {
       if (state.loading || state.error) {
         return React.createElement(options.loading, {
-          isLoading: state.loading,
-          pastDelay: state.pastDelay,
-          timedOut: state.timedOut,
+          loading: state.loading,
+          delayed: state.delayed,
+          timeout: state.timeout,
           error: state.error,
           retry: subscription.retry,
         })
@@ -264,8 +265,8 @@ function createLoadableComponent(id: string, opts: LoadableOptions) {
   return React.forwardRef(LoadableComponent)
 }
 
-function Loadable(id: string, opts: LoadableOptions) {
-  return createLoadableComponent(id, opts)
+function Loadable(id: string, options: LoadableOptions) {
+  return createLoadableComponent(id, options)
 }
 
 Loadable.flushAll = function flushAll() {
