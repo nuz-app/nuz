@@ -1,13 +1,13 @@
 import * as shared from '../shared'
 
-import { extractorHelpers, inject, Loadable } from './react'
+import * as server from './server'
 
 export interface NextFactoryConfig {
   require: NodeRequire
   autoInject?: boolean
 }
 
-function nextIntegrate(config: NextFactoryConfig) {
+export function integrate(config: NextFactoryConfig) {
   const { require, autoInject = true } = config || {}
 
   if (!require) {
@@ -41,34 +41,18 @@ function nextIntegrate(config: NextFactoryConfig) {
   }
 
   function injectNext() {
-    inject({
-      react: require('react'),
-      'react-dom': require('react-dom'),
-    })
-
-    shared.extractor.prepare({
-      parser: extractorHelpers.parser,
-      renderer: extractorHelpers.renderer,
-    })
+    server.prepare()
 
     const nextServerRender = require('next/dist/next-server/server/render')
     const renderToHTML = nextServerRender.renderToHTML.bind(nextServerRender)
     Object.assign(nextServerRender, {
       renderToHTML: async function injectedRenderToHTML() {
-        await Promise.all([
-          shared.process.ready(),
-          shared.extractor.setup(),
-          Loadable.preloadAll(),
-        ])
+        await server.setup()
 
         const html = await renderToHTML.apply(this, arguments)
         const result = shared.extractor.appendTagsToHTML(html)
 
-        await Promise.all([
-          shared.process.closeSession(),
-          shared.extractor.teardown(),
-          shared.process.checkUpdate(() => Loadable.flushAll()),
-        ])
+        await server.teardown()
 
         return result
       },
@@ -81,5 +65,3 @@ function nextIntegrate(config: NextFactoryConfig) {
 
   return { withNuz, injectNext }
 }
-
-export default nextIntegrate

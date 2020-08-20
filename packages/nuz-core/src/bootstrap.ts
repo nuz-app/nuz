@@ -9,7 +9,7 @@ async function bootstrap(configAsRaw: BootstrapConfig) {
   shared.state.initialized = true
 
   const deps = react.integrate()
-  const configBinding = Object.assign({}, configAsRaw, {
+  const config = Object.assign({}, configAsRaw, {
     vendors: Object.assign(
       {
         '@nuz/core': exportsAll,
@@ -19,7 +19,7 @@ async function bootstrap(configAsRaw: BootstrapConfig) {
     ),
   })
 
-  await shared.process.initial(configBinding)
+  await shared.process.initial(config)
 
   return shared.process
 }
