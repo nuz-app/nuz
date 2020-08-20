@@ -13,6 +13,9 @@
     "@nuz/registry"
   ],
   "command": {
+    "publish": {
+      "registry": "https://registry.npmjs.com"
+    },
     "version": {
       "allowBranch": [
         "master",
