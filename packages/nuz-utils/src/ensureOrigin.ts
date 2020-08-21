@@ -1,4 +1,4 @@
-const ensureOriginSlash = (value: string): string | undefined => {
+const ensureOrigin = (value: string): string | undefined => {
   try {
     const url = new URL(value)
     return url.origin
@@ -6,4 +6,4 @@ const ensureOriginSlash = (value: string): string | undefined => {
   } catch {}
 }
 
-export default ensureOriginSlash
+export default ensureOrigin

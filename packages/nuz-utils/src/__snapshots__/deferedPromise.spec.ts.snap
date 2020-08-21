@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`deferedPromise Should match to snapshot 1`] = `
+Object {
+  "promise": Promise {},
+  "reject": [Function],
+  "resolve": [Function],
+}
+`;
