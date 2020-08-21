@@ -21,6 +21,7 @@ import {
 } from '../types'
 
 import checkIsFunction from '../utils/checkIsFunction'
+import convertMapToObject from '../utils/convertMapToObject'
 import * as DOMHelpers from '../utils/DOMHelpers'
 import getConfig, { Config } from '../utils/effects/getConfig'
 import fetchConfig from '../utils/fetchConfig'
@@ -218,7 +219,7 @@ class Modules {
   /**
    * Get all modules config
    */
-  private getAllModules() {
+  private getAllModules(includeResolvedOnRegistry: boolean) {
     const definedModules = Object.assign(
       {},
       this._config.get<ModulesConfig>('modules'),
@@ -228,6 +229,13 @@ class Modules {
     if (this._dev) {
       const linkedModules = this._linked.getModules()
       Object.assign(definedModules, this._config.defineModules(linkedModules))
+    }
+
+    if (includeResolvedOnRegistry) {
+      Object.assign(
+        definedModules,
+        convertMapToObject(this._modulesOnRegistry.export()),
+      )
     }
 
     return definedModules
@@ -603,7 +611,7 @@ class Modules {
    * Optimize the connection for modules and resources
    */
   private async optimizeConnection() {
-    const modulesMap = this.getAllModules()
+    const modulesMap = this.getAllModules(true)
     const modules = Object.values(modulesMap)
 
     const urls = modules.reduce((acc, item) => {
@@ -661,7 +669,8 @@ class Modules {
       this._modulesOnRegistry.set(id, config)
 
       return config
-    } catch {
+    } catch (error) {
+      console.log(error, 'error in resolveOnRegistry')
       return
     }
   }
@@ -670,7 +679,7 @@ class Modules {
    * Handle preload modules configured in bootstrap
    */
   private preload() {
-    const modulesMap = this.getAllModules()
+    const modulesMap = this.getAllModules(true)
     const modules = Object.values(modulesMap) as RequiredBaseItem[]
     const preload = this._config.get<NonNullable<BootstrapConfig['preload']>>(
       'preload',
@@ -733,7 +742,7 @@ class Modules {
   public async resolveModule(id: string): Promise<RequiredBaseItem> {
     await this.ready()
 
-    const modulesMap = this.getAllModules()
+    const modulesMap = this.getAllModules(false)
     const modules = Object.values(modulesMap) as RequiredBaseItem[]
 
     let item = findModules(id, modules)
@@ -771,7 +780,7 @@ class Modules {
     // Preload all resources set in `preload` field
     this.preload()
 
-    const modulesMap = this.getAllModules()
+    const modulesMap = this.getAllModules(true)
     const modules = Object.values(modulesMap) as RequiredBaseItem[]
     const preloadIds = preloadIdOrNames.map((idOrName) =>
       moduleIdHelpers.use(idOrName),

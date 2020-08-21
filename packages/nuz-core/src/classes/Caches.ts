@@ -28,6 +28,10 @@ class Caches<K = string, V = unknown> {
   clear() {
     return this._data.clear()
   }
+
+  export() {
+    return this._data
+  }
 }
 
 export default Caches
