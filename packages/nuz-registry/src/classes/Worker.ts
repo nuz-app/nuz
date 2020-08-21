@@ -1,4 +1,4 @@
-import { MODULE_LASTEST_TAG } from '@nuz/shared'
+import { MODULE_LATEST_TAG } from '@nuz/shared'
 import {
   ensureOriginSlash,
   integrityHelpers,
@@ -1109,7 +1109,7 @@ class Worker {
 
     if (
       !versionHelpers.checkIsValid(version) &&
-      version !== MODULE_LASTEST_TAG
+      version !== MODULE_LATEST_TAG
     ) {
       throw new Error('Version module is invalid')
     }

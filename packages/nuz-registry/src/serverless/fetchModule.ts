@@ -1,4 +1,4 @@
-import { MODULE_LASTEST_TAG } from '@nuz/shared'
+import { MODULE_LATEST_TAG } from '@nuz/shared'
 import { moduleIdHelpers } from '@nuz/utils'
 import { Express } from 'express'
 
@@ -22,7 +22,7 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
       let idEnsured = id as string
       const parsed = moduleIdHelpers.parser(id as string)
       if (!parsed.version || parsed.version === '*') {
-        idEnsured = moduleIdHelpers.create(parsed.module, MODULE_LASTEST_TAG)
+        idEnsured = moduleIdHelpers.create(parsed.module, MODULE_LATEST_TAG)
       }
 
       const item = await worker.fetchModule(idEnsured)
