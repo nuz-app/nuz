@@ -1,6 +1,6 @@
 import { SHARED_CONFIG_KEY } from '@nuz/shared'
 import { jsonHelpers } from '@nuz/utils'
-import LRUCache from 'lru-cache'
+import type LRUCache from 'lru-cache'
 
 import appendQueryToUrl, {
   AppendQueryToUrlConfiguration,
@@ -44,7 +44,7 @@ export function canUse(): boolean {
 }
 
 export function appendHead(element: Element): Element {
-  return document.head.appendChild(element)
+  return document.getElementsByTagName('head')[0].appendChild(element)
 }
 
 export function createElement(defined: DefinedElement): Element {
@@ -53,8 +53,7 @@ export function createElement(defined: DefinedElement): Element {
   const element = document.createElement(type)
   const keys = Object.keys(attributes)
 
-  // tslint:disable-next-line: forin
-  for (const key in keys) {
+  for (const key of keys) {
     if (key === 'dangerouslySetInnerHTML') {
       element.innerHTML = attributes.dangerouslySetInnerHTML.__html
     } else if (attributes[key]) {
@@ -159,6 +158,7 @@ export async function loadStyle(
       rest,
     ),
   )
+
   if (canUse()) {
     appendHead(createElement(defined))
   }

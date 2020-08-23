@@ -43,7 +43,7 @@ export function transform<T extends unknown>(
   module: any,
   configuration?: Pick<BaseModuleConfiguration, 'exportsOnly' | 'alias'>,
 ): T {
-  const { alias, exportsOnly } = Object.assign({ alias: {} }, configuration)
+  const { alias = {}, exportsOnly } = configuration || {}
 
   function checkIsExport(n: string): boolean {
     return !exportsOnly || exportsOnly.includes(n)
