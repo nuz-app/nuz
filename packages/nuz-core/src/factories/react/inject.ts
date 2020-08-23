@@ -21,8 +21,8 @@ function inject(dependencies: ReactInjectDependencies): boolean {
   const renderOriginal = ReactDOM.render.bind(ReactDOM)
   const hydrateOriginal = ReactDOM.hydrate.bind(ReactDOM)
 
-  const renderFactory = (fn: any) =>
-    async function renderInjected(
+  function handlerFactory(fn: any) {
+    return async function handlerInjected(
       element: JSX.Element,
       container: Element,
       callback?: () => any,
@@ -31,10 +31,11 @@ function inject(dependencies: ReactInjectDependencies): boolean {
 
       return fn(element, container, callback)
     }
+  }
 
   Object.assign(ReactDOM, {
-    render: renderFactory(renderOriginal),
-    hydrate: renderFactory(hydrateOriginal),
+    render: handlerFactory(renderOriginal),
+    hydrate: handlerFactory(hydrateOriginal),
   })
 
   Object.defineProperty(ReactDOM, REACT_DOM_INJECTED, { value: true })

@@ -71,7 +71,7 @@ async function transformConfiguration<C extends BootstrapConfiguration>(
   const isNode = getCurrentPlatform() === RuntimePlatforms.node
   const registryUrl = ensureOrigin(registry as string) as string
   const isInitialized =
-    !isNode && composeId && checkIsObject((window as any)[SHARED_CONFIG_KEY])
+    !isNode && checkIsObject((window as any)[SHARED_CONFIG_KEY])
 
   let updated = !isInitialized
     ? undefined

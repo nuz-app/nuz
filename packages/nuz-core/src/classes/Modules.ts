@@ -807,8 +807,22 @@ class Modules {
     const resources = this.resourcesPreload.values()
     const preconnects = Array.from(this.dnsPrefetchs.values())
 
+    const {
+      preload: exportsPreload,
+      modules: exportsModules,
+    } = this.config.export()
+
+    //
     const tags = [
-      this.ssr && documentHelpers.defineSharedConfig(this.config.export()),
+      this.ssr &&
+        documentHelpers.defineSharedConfig({
+          preload: exportsPreload,
+          modules: Object.assign(
+            {},
+            convertMapToObject(this.resolvedRegistry.export()),
+            exportsModules,
+          ),
+        }),
       ...preconnects,
     ].filter(Boolean) as TagElement[]
 
