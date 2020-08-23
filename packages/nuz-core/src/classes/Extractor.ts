@@ -20,24 +20,6 @@ export interface CollectTagsResult {
   scripts: string
 }
 
-function renderToString(
-  elements: DefinedElement[],
-  parser: any,
-  renderer: any,
-): string {
-  let html = (elements || []).reduce((acc, element) => {
-    // Parse element and render to string
-    acc.add(renderer(parser(element)))
-
-    return acc
-  }, new Set<string>())
-
-  // Merge all html into once
-  html = Array.from<string>(html.values()).join('') as any
-
-  return html as any
-}
-
 class Extractor<P = any, R = any> {
   private readonly session: Set<string>
 
@@ -122,17 +104,17 @@ class Extractor<P = any, R = any> {
     )
 
     // Render all elements to html
-    const styles = renderToString(
+    const styles = Extractor.renderToString(
       grouped.styles || [],
       this.renderer,
       this.parser,
     )
-    const preload = renderToString(
+    const preload = Extractor.renderToString(
       grouped.preload || [],
       this.renderer,
       this.parser,
     )
-    const scripts = renderToString(
+    const scripts = Extractor.renderToString(
       grouped.scripts || [],
       this.renderer,
       this.parser,
@@ -144,6 +126,24 @@ class Extractor<P = any, R = any> {
       preload,
       scripts,
     }
+  }
+
+  static renderToString(
+    elements: DefinedElement[],
+    renderer: any,
+    parser: any,
+  ): string {
+    let html = (elements || []).reduce((acc, element) => {
+      // Parse element and render to string
+      acc.add(renderer(parser(element)))
+
+      return acc
+    }, new Set<string>())
+
+    // Merge all html into once
+    html = Array.from<string>(html.values()).join('') as any
+
+    return html as any
   }
 }
 
