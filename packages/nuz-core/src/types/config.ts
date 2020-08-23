@@ -1,6 +1,6 @@
-import { BaseItemConfig } from './common'
+import { BaseModuleConfiguration } from './common'
 
-export type ModuleItemConfig = BaseItemConfig
+export type ModuleItemConfig = BaseModuleConfiguration
 export interface ModulesConfig {
   [name: string]: ModuleItemConfig
 }
@@ -17,7 +17,7 @@ export interface SharedConfig {
   [name: string]: any
 }
 
-export interface BootstrapConfig {
+export interface BootstrapConfiguration {
   /**
    * Set development mode
    */

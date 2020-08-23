@@ -2,20 +2,21 @@ import { CONFIG_KEY } from '@nuz/shared'
 
 import Config, { ConfigInitial } from '../../classes/Config'
 import * as selfHelpers from '../selfHelpers'
-
 export { default as Config } from '../../classes/Config'
 
-export let refConfig = (selfHelpers.get() as any)[CONFIG_KEY]
+let referenceConfig = (selfHelpers.get() as any)[CONFIG_KEY]
 
-export const initConfig = (config: ConfigInitial): Config => {
-  if (!refConfig) {
-    refConfig = new Config(config)
-    selfHelpers.set(CONFIG_KEY, refConfig)
+export function initializeConfig(initial: ConfigInitial): Config {
+  if (!referenceConfig) {
+    referenceConfig = new Config(initial)
+    selfHelpers.set(CONFIG_KEY, referenceConfig)
   }
 
-  return refConfig
+  return referenceConfig
 }
 
-const getConfig = (): Config => refConfig
+function getConfig(): Config {
+  return referenceConfig
+}
 
 export default getConfig

@@ -1,11 +1,8 @@
 import { assetsUrlHelpers } from '@nuz/utils'
-
+import type aws from 'aws-sdk'
 import fs from 'fs'
 import throat from 'throat'
 import util from 'util'
-
-// @ts-ignore
-import aws = require('aws-sdk')
 
 import { ModuleId } from '../types'
 import { TransformFile } from '../utils/validateAndTransformFiles'

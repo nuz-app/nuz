@@ -1,9 +1,8 @@
 import ExtractCssChunks from 'extract-css-chunks-webpack-plugin'
 import webpack from 'webpack'
 
-import { FeatureConfig, NamesConfig } from '../../../types'
-
 import * as paths from '../../../paths'
+import { FeatureConfig, NamesConfig } from '../../../types'
 import checkIsPackageInstalled from '../../checkIsPackageInstalled'
 import getBrowserslist from '../../getBrowserslist'
 

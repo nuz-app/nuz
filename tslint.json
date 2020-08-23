@@ -27,8 +27,18 @@
     "quotemark": [true, "single", "jsx-double"],
     "trailing-comma": [true],
     "semicolon": [true, "never"],
-    "ordered-imports": [true],
-    "max-line-length": [true, { "code": 80, "comments": 100, "tabWidth": 2, "ignoreUrls": true }],
+    "ordered-imports": [
+      true,
+      {
+        "import-sources-order": "lowercase-first",
+        "named-imports-order": "lowercase-last",
+        "grouped-imports": true
+      }
+    ],
+    "max-line-length": [
+      true,
+      { "code": 80, "comments": 100, "tabWidth": 2, "ignoreUrls": true }
+    ],
     "no-console": false,
     "object-literal-sort-keys": false,
     "eofline": true

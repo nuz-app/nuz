@@ -1,8 +1,7 @@
 import { LINKED_CHANGE_EVENT, LINKED_DEFINE_EVENT } from '@nuz/shared'
-import { deferedPromise, DeferedPromise, linkedUrls } from '@nuz/utils'
+import { DeferedPromise, deferedPromise, linkedUrls } from '@nuz/utils'
 
 import { LinkedConfig, ModulesConfig } from '../types'
-
 import createSocketConnection from '../utils/createSocketConnection'
 
 class Linked {

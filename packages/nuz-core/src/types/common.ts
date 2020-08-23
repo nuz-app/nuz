@@ -10,7 +10,8 @@ export enum RuntimePlatforms {
   node = 'node',
 }
 
-export interface LoadModuleConfig {
+export interface LoadModuleConfiguration {
+  [key: string]: any
   timeout?: number
   retries?: number
 }
@@ -41,10 +42,13 @@ export type UpstreamResolveConfig = {
  */
 export type UpstreamConfigAllowed =
   | (UpstreamResolveConfig &
-      Pick<BaseItemConfig, 'library' | 'format' | 'alias' | 'exportsOnly'>)
+      Pick<
+        BaseModuleConfiguration,
+        'library' | 'format' | 'alias' | 'exportsOnly'
+      >)
   | string
 
-export type BaseItemConfig = {
+export type BaseModuleConfiguration = {
   /**
    * Module id
    */
@@ -88,9 +92,17 @@ export type BaseItemConfig = {
   /**
    * Install options
    */
-  options?: LoadModuleConfig
+  options?: LoadModuleConfiguration
   /**
    * Shared dependencies module used
    */
   shared?: string[]
 }
+
+export type RequiredModuleConfiguration = BaseModuleConfiguration &
+  Required<
+    Pick<
+      BaseModuleConfiguration,
+      'id' | 'version' | 'name' | 'local' | 'alias' | 'exportsOnly' | 'upstream'
+    >
+  >

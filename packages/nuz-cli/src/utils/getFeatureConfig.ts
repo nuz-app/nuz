@@ -2,9 +2,8 @@ import { checkIsObject } from '@nuz/utils'
 import glob from 'glob'
 import path from 'path'
 
-import { FeatureConfig, ModuleConfig } from '../types/common'
-
 import { CSS_EXTENSIONS, LESS_EXTENSIONS, SASS_EXTENSIONS } from '../lib/const'
+import { FeatureConfig, ModuleConfig } from '../types/common'
 
 import * as fs from './fs'
 

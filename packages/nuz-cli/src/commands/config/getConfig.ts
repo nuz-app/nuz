@@ -2,7 +2,6 @@ import { pick } from '@nuz/utils'
 import { Arguments } from 'yargs'
 
 import Config, { ConfigKeys } from '../../classes/Config'
-
 import { info, pretty } from '../../utils/print'
 
 const keysAllowToSet = Object.values<string>(ConfigKeys)

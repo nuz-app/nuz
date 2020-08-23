@@ -1,3 +1,5 @@
-const checkIsFunction = <T = unknown>(fn: T) => typeof fn === 'function'
+function checkIsFunction(value: any): boolean {
+  return typeof value === 'function'
+}
 
 export default checkIsFunction

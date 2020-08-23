@@ -1,8 +1,7 @@
 import { Express } from 'express'
 
-import { CollaboratorTypes } from '../types'
-
 import Worker from '../classes/Worker'
+import { CollaboratorTypes } from '../types'
 import * as collaboratorTypesHelpers from '../utils/collaboratorTypesHelpers'
 import onRoute from '../utils/onRoute'
 

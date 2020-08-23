@@ -2,7 +2,6 @@ import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
-
 import { NUZ_DEFAULT_USERNAME } from '../../lib/const'
 import print, { info, success } from '../../utils/print'
 import timer from '../../utils/timer'

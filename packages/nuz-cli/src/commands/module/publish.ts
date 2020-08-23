@@ -4,11 +4,9 @@ import glob from 'glob'
 import path from 'path'
 import { Arguments } from 'yargs'
 
-import { STATS_FILENAME } from '../../lib/const'
-
 import Config, { ConfigKeys } from '../../classes/Config'
 import Worker from '../../classes/Worker'
-
+import { STATS_FILENAME } from '../../lib/const'
 import * as paths from '../../paths'
 import * as configHelpers from '../../utils/configHelpers'
 import createQuestions from '../../utils/createQuestions'
@@ -17,7 +15,6 @@ import pickAssetsFromStats from '../../utils/pickAssetsFromStats'
 import pickFilesFromStats from '../../utils/pickFilesFromStats'
 import print, { info, success } from '../../utils/print'
 import timer from '../../utils/timer'
-
 import optimized from '../build/optimized'
 
 function checkIsHaveSlash(url: string) {

@@ -4,7 +4,6 @@ import {
   CollaboratorTypes,
   UserId,
 } from '../types'
-
 import * as collaboratorTypesHelpers from '../utils/collaboratorTypesHelpers'
 
 type VerifyCollaboratorParams<T> = {

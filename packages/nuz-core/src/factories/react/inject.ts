@@ -4,18 +4,22 @@ import * as shared from '../../shared'
 
 import Loadable from './Loadable'
 
-function inject(deps): void {
-  const dom = deps['react-dom']
-  if (!dom) {
-    throw new Error('No `react-dom` dependency found, please provide to use')
+export interface ReactInjectDependencies {
+  'react-dom': any
+}
+
+function inject(dependencies: ReactInjectDependencies): boolean {
+  const ReactDOM = dependencies['react-dom']
+  if (!ReactDOM) {
+    throw new Error('Cannot find `react-dom` to inject')
   }
 
-  if (dom[REACT_DOM_INJECTED]) {
-    return
+  if (ReactDOM[REACT_DOM_INJECTED]) {
+    return true
   }
 
-  const renderOriginal = dom.render.bind(dom)
-  const hydrateOriginal = dom.hydrate.bind(dom)
+  const renderOriginal = ReactDOM.render.bind(ReactDOM)
+  const hydrateOriginal = ReactDOM.hydrate.bind(ReactDOM)
 
   const renderFactory = (fn: any) =>
     async function renderInjected(
@@ -23,17 +27,19 @@ function inject(deps): void {
       container: Element,
       callback?: () => any,
     ) {
-      await Promise.all([shared.process.ready(), Loadable.readyAll()])
+      await Promise.all([shared.process.isReady(), Loadable.readyAll()])
 
       return fn(element, container, callback)
     }
 
-  Object.assign(dom, {
+  Object.assign(ReactDOM, {
     render: renderFactory(renderOriginal),
     hydrate: renderFactory(hydrateOriginal),
   })
 
-  Object.defineProperty(dom, REACT_DOM_INJECTED, { value: true })
+  Object.defineProperty(ReactDOM, REACT_DOM_INJECTED, { value: true })
+
+  return true
 }
 
 export default inject

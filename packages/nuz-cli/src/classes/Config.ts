@@ -10,7 +10,6 @@ import {
   NUZ_DEFAULT_USERNAME,
   NUZ_USERS_DIR,
 } from '../lib/const'
-
 import * as paths from '../paths'
 import * as fs from '../utils/fs'
 import { info, warn } from '../utils/print'

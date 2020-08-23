@@ -1,14 +1,13 @@
-// @ts-ignore
-import React = require('react')
-
 import inject from './inject'
 
-function integrate(deps = {} as any) {
-  const dependencies = {
-    react: deps.react,
-    'react-dom': deps['react-dom'],
-  } as any
+export interface ReactIntegrateDependencies {
+  react: any
+  'react-dom': any
+}
 
+function integrate(
+  dependencies: ReactIntegrateDependencies,
+): ReactIntegrateDependencies {
   if (!dependencies.react) {
     try {
       dependencies.react = require('react')

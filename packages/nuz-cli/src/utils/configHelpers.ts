@@ -1,9 +1,8 @@
 import { getPackageJsonInDir } from '@nuz/utils'
 import glob from 'glob'
 
-import { ModuleConfig } from '../types/common'
-
 import * as paths from '../paths'
+import { ModuleConfig } from '../types/common'
 import * as fs from '../utils/fs'
 
 export const get = (dir: string): string => {

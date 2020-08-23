@@ -1,68 +1,99 @@
-import { DefinedElement, Priorities } from '../utils/DOMHelpers'
-import getElementsInHead from '../utils/effects/getElementsInHead'
+import { DefinedElement, Priorities } from '../utils/documentHelpers'
+import collectPreloadElements from '../utils/effects/collectPreloadElements'
 
-function renderElements(elements, renderer, parser) {
-  return Array.from(
-    (elements || [])
-      .reduce((tags, element) => {
-        tags.add(renderer(parser(element)))
-        return tags
-      }, new Set())
-      .values(),
-  ).join('')
+export interface ExtractorPrepareConfiguration<
+  P extends unknown,
+  R extends unknown
+> {
+  parser: P
+  renderer: R
 }
 
-class Extractor {
-  private readonly _session: Set<string>
+export interface CollectTagsResult {
+  elements: {
+    styles: DefinedElement[]
+    preload: DefinedElement[]
+    scripts: DefinedElement[]
+  }
+  preload: string
+  styles: string
+  scripts: string
+}
 
-  private _parser?: any
-  private _renderer?: any
+function renderToString(
+  elements: DefinedElement[],
+  parser: any,
+  renderer: any,
+): string {
+  let html = (elements || []).reduce((acc, element) => {
+    // Parse element and render to string
+    acc.add(renderer(parser(element)))
+
+    return acc
+  }, new Set<string>())
+
+  // Merge all html into once
+  html = Array.from<string>(html.values()).join('') as any
+
+  return html as any
+}
+
+class Extractor<P = any, R = any> {
+  private readonly session: Set<string>
+
+  private parser?: P
+  private renderer?: R
 
   constructor() {
-    this._session = new Set()
+    this.session = new Set()
   }
 
-  public prepare({ parser, renderer }) {
-    this._parser = parser
-    this._renderer = renderer
+  public prepare(configuration: ExtractorPrepareConfiguration<P, R>): void {
+    const { parser, renderer } = configuration
+
+    this.parser = parser
+    this.renderer = renderer
   }
 
-  public async setup() {
-    this._session.clear()
+  public setup(): void {
+    this.session.clear()
   }
 
-  public async teardown() {
-    this._session.clear()
+  public teardown(): void {
+    this.session.clear()
   }
 
-  public async push(id: string) {
-    this._session.add(id)
+  public push(id: string): void {
+    this.session.add(id)
   }
 
-  public getAllElements() {
-    const resolvedIds = Array.from(this._session.values())
-    const elements = getElementsInHead(resolvedIds)
+  public collectElements(): DefinedElement[] {
+    // Get all module ids resolved in the session
+    const resolvedIds = Array.from(this.session.values())
+    const elements = collectPreloadElements(resolvedIds)
 
     return elements
   }
 
-  public appendTagsToHTML(html: string) {
-    const allTags = this.getAllTags()
+  public appendIntoDocument(document: string): string {
+    const { preload, styles, scripts } = this.collectTags()
 
-    let result = html
-    result = result.replace(
-      /(\<\s?head\s?\>)/i,
-      `$1${allTags.preloadTags}${allTags.stylesTags}`,
-    )
-    result = result.replace(/(\<\/\s?body\>)/i, `${allTags.scriptsTags}$1`)
+    // Append preload and styles into head
+    let html = document.replace(/(\<\s?head\s?\>)/i, `$1${preload}${styles}`)
 
-    return result
+    // Append scripts into body
+    html = html.replace(/(\<\/\s?body\>)/i, `${scripts}$1`)
+
+    return html
   }
 
-  public getAllTags() {
-    const allElements = this.getAllElements()
-    const groupsElements = allElements.reduce(
+  public collectTags(): CollectTagsResult {
+    const elements = this.collectElements()
+
+    // Grouping the elements based on type and attributes
+    const grouped = elements.reduce(
       (acc, defined) => {
+        // Should be included link tags and scripts for configuration
         if (
           defined.type === 'link' ||
           defined.attributes?.priority === Priorities.high
@@ -71,10 +102,12 @@ class Extractor {
           return acc
         }
 
+        // Other style tags
         if (defined.type === 'style') {
           acc.styles.push(defined)
         }
 
+        // And scripts tags
         if (defined.type === 'script') {
           acc.scripts.push(defined)
         }
@@ -88,27 +121,28 @@ class Extractor {
       },
     )
 
-    const stylesTags = renderElements(
-      groupsElements.styles || [],
-      this._renderer,
-      this._parser,
+    // Render all elements to html
+    const styles = renderToString(
+      grouped.styles || [],
+      this.renderer,
+      this.parser,
     )
-    const preloadTags = renderElements(
-      groupsElements.preload || [],
-      this._renderer,
-      this._parser,
+    const preload = renderToString(
+      grouped.preload || [],
+      this.renderer,
+      this.parser,
     )
-    const scriptsTags = renderElements(
-      groupsElements.scripts || [],
-      this._renderer,
-      this._parser,
+    const scripts = renderToString(
+      grouped.scripts || [],
+      this.renderer,
+      this.parser,
     )
 
     return {
-      groupsElements,
-      stylesTags,
-      preloadTags,
-      scriptsTags,
+      elements: grouped,
+      styles,
+      preload,
+      scripts,
     }
   }
 }

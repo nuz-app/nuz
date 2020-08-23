@@ -1,17 +1,16 @@
-import path from 'path'
-import webpack from 'webpack'
-import { Arguments } from 'yargs'
-
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import path from 'path'
 import checkRequiredFiles from 'react-dev-utils/checkRequiredFiles'
 import clearConsole from 'react-dev-utils/clearConsole'
-import InterpolateHtmlPlugin from 'react-dev-utils/InterpolateHtmlPlugin'
 import openBrowser from 'react-dev-utils/openBrowser'
+import InterpolateHtmlPlugin from 'react-dev-utils/InterpolateHtmlPlugin'
 import {
   createCompiler,
   prepareUrls,
 } from 'react-dev-utils/WebpackDevServerUtils'
+import webpack from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
+import { Arguments } from 'yargs'
 
 import * as paths from '../../paths'
 import checkIsYarnInstalled from '../../utils/checkIsYarnInstalled'

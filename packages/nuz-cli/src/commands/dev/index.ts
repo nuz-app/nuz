@@ -1,4 +1,5 @@
 import { Arguments } from 'yargs'
+
 import handleOnCommand from '../../utils/handleOnCommand'
 
 import standalone from './standalone'

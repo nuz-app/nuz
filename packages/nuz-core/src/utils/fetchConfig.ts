@@ -1,22 +1,27 @@
 import fetchWithTimeout, { FetchOptions } from './fetchWithTimeout'
 
-const defaultConfig = {
-  cache: 'default',
-  headers: { 'content-type': 'application/json' },
-}
-
-const fetchConfig = async <T = unknown>(
+async function fetchConfig<T extends unknown>(
   url: string,
-  config: FetchOptions = {},
+  _configuration: FetchOptions = {},
   retries: number = 0,
-): Promise<T> => {
-  const mergedConfig = Object.assign({}, defaultConfig, config)
+): Promise<T> {
+  const config = Object.assign(
+    {
+      cache: 'default',
+      headers: { 'content-type': 'application/json' },
+    },
+    _configuration,
+  )
 
   let content
   try {
-    const response = await fetchWithTimeout(url, mergedConfig)
+    const response = await fetchWithTimeout(url, config)
     if (!response.ok) {
-      throw new Error(`Response from ${url} is invalid, response: ${response}`)
+      throw new Error(
+        `The response returned was not valid to use, from ${JSON.stringify(
+          url,
+        )}`,
+      )
     }
 
     content = await response.json()
@@ -25,7 +30,7 @@ const fetchConfig = async <T = unknown>(
       content = await fetchConfig(url, config, retries - 1)
     } else {
       throw new Error(
-        `Cannot get config from ${url}, details: ${error.message || error}`,
+        `Can't download the resource to use, message: ${error.message}.`,
       )
     }
   }

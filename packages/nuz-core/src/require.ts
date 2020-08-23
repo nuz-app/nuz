@@ -4,14 +4,19 @@ import bootstrap from './bootstrap'
 import * as shared from './shared'
 import getModules from './utils/effects/getModules'
 
-export default async function <T = any>(idOrName: string): Promise<T> {
+async function _require<M extends unknown>(idOrName: string): Promise<M> {
   if (!shared.state.initialized) {
     bootstrap({})
   }
 
-  await shared.process.ready()
+  // Wait for the process to be ready
+  await shared.process.isReady()
 
+  // Get module id
   const id = moduleIdHelpers.use(idOrName)
 
-  return getModules().requireModule<T>(id)
+  // Require module by id
+  return getModules().require<M>(id)
 }
+
+export default _require

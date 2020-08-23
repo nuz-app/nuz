@@ -1,4 +1,5 @@
 import { CollaboratorTypes } from '@nuz/shared'
+
 import { Resource, UserId, VersionInfo } from './common'
 
 export type ModuleAsObject = { [id: string]: string }

@@ -5,7 +5,7 @@ import { DEPENDENCIES_KEY, GLBOALS_KEY } from '@nuz/shared'
 import { RuntimePlatforms } from '../types/common'
 
 class Globals {
-  private _globals: Window | typeof globalThis
+  private globals: Window | typeof globalThis
 
   constructor(private readonly platform: RuntimePlatforms) {
     const isNode = this.platform === RuntimePlatforms.node
@@ -15,56 +15,56 @@ class Globals {
       (global as any)[GLBOALS_KEY] = {}
     }
 
-    this._globals = isNode ? (global as any)[GLBOALS_KEY] : window
+    this.globals = isNode ? (global as any)[GLBOALS_KEY] : window
 
     // Clone dependencies store from global this
-    if (!(this._globals as any)[DEPENDENCIES_KEY]) {
-      (this._globals as any)[DEPENDENCIES_KEY] = Object.create(this._globals)
+    if (!(this.globals as any)[DEPENDENCIES_KEY]) {
+      (this.globals as any)[DEPENDENCIES_KEY] = Object.create(this.globals)
     }
   }
 
-  get() {
-    return this._globals
+  get(): any {
+    return this.globals
   }
 
-  set(key: any, value: any) {
-    (this._globals as any)[key] = value
+  set(key: any, value: any): any {
+    (this.globals as any)[key] = value
   }
 
-  has(key: any) {
-    return !!(this._globals as any)[key]
+  has(key: any): boolean {
+    return !!(this.globals as any)[key]
   }
 
-  delete(key: any) {
-    (this._globals as any)[key] = undefined
+  delete(key: any): any {
+    (this.globals as any)[key] = undefined
   }
 
-  clear() {
-    (this._globals as any) = undefined
+  clear(): any {
+    (this.globals as any) = undefined
   }
 
-  getContext() {
-    return (this._globals as any)[DEPENDENCIES_KEY]
+  getContext(): any {
+    return (this.globals as any)[DEPENDENCIES_KEY]
   }
 
-  getDependency(key: string) {
-    return (this._globals as any)[DEPENDENCIES_KEY][key]
+  getDependency(key: string): any {
+    return (this.globals as any)[DEPENDENCIES_KEY][key]
   }
 
-  setDependency(key: string, value: any) {
-    return ((this._globals as any)[DEPENDENCIES_KEY][key] = value)
+  setDependency(key: string, value: any): any {
+    return ((this.globals as any)[DEPENDENCIES_KEY][key] = value)
   }
 
-  hasDependency(key: string) {
-    return !!(this._globals as any)[DEPENDENCIES_KEY][key]
+  hasDependency(key: string): boolean {
+    return !!(this.globals as any)[DEPENDENCIES_KEY][key]
   }
 
-  deleteDependency(key: string) {
-    return (this._globals as any)[DEPENDENCIES_KEY][key] = undefined
+  deleteDependency(key: string): any{
+    return (this.globals as any)[DEPENDENCIES_KEY][key] = undefined
   }
 
-  clearDependency() {
-    return (this._globals as any)[DEPENDENCIES_KEY] = undefined
+  clearDependency(): any {
+    return (this.globals as any)[DEPENDENCIES_KEY] = undefined
   }
 }
 

@@ -10,14 +10,6 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import WebpackProcessBar from 'webpackbar'
 
 import {
-  AnalyzerConfig,
-  ExperimentalConfig,
-  FeatureConfig,
-  ModuleConfig,
-  NamesConfig,
-} from '../../../types'
-
-import {
   CSS_EXTENSIONS,
   JSON_EXTENSIONS,
   JS_EXTENSIONS,
@@ -26,14 +18,20 @@ import {
   STATS_FILENAME,
   TS_EXTENSIONS,
 } from '../../../lib/const'
-
 import * as paths from '../../../paths'
+import {
+  AnalyzerConfig,
+  ExperimentalConfig,
+  FeatureConfig,
+  ModuleConfig,
+  NamesConfig,
+} from '../../../types'
 import checkIsPackageInstalled from '../../checkIsPackageInstalled'
 import * as compilerName from '../../compilerName'
 import ensurePath from '../../ensurePath'
-
 import setExternals from '../helpers/setExternals'
 import PeerDepsExternalsPlugin from '../PeerDepsExternalsPlugin'
+
 import styleLoadersFactory from './styleLoaders'
 
 export interface FactoryConfig {

@@ -3,7 +3,6 @@ import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
-
 import print, { info, pretty, success } from '../../utils/print'
 import timer from '../../utils/timer'
 

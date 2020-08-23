@@ -1,11 +1,11 @@
 import { ROOT_KEY } from '@nuz/shared'
 
-import { VERSION } from './env'
+import * as environment from './environment'
 import * as selfHelpers from './utils/selfHelpers'
 
 // tslint:disable-next-line: prettier
-(function autoload() {
+;(function autoload() {
   if (!selfHelpers.has(ROOT_KEY)) {
-    selfHelpers.set(ROOT_KEY, { version: VERSION })
+    selfHelpers.set(ROOT_KEY, { version: environment.VERSION })
   }
 })()

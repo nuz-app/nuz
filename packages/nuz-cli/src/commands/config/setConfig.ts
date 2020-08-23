@@ -2,7 +2,6 @@ import { checkIsUrl } from '@nuz/utils'
 import { Arguments } from 'yargs'
 
 import Config, { ConfigKeys } from '../../classes/Config'
-
 import print, { success } from '../../utils/print'
 
 const keysAllowToSet = Object.values<string>(ConfigKeys)

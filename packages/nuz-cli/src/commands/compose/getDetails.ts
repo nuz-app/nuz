@@ -1,7 +1,6 @@
 import { Arguments } from 'yargs'
 
 import Worker from '../../classes/Worker'
-
 import print, { info, log, pretty, success } from '../../utils/print'
 import timer from '../../utils/timer'
 

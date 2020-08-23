@@ -59,7 +59,7 @@ const { App } = reactHelpersFactory({
 
 // run bootstrap
 bootstrap(
-  // BootstrapConfig
+  // BootstrapConfiguration
 )
 ```
 
@@ -100,7 +100,7 @@ const { App: AppProvider } = reactHelpersFactory({
 })
 
 bootstrap({
-  // ... BootstrapConfig
+  // ... BootstrapConfiguration
   linked: {
     port: 4000,
   },

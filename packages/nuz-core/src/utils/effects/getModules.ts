@@ -1,20 +1,22 @@
 import { MODULES_KEY } from '@nuz/shared'
 
 import Modules from '../../classes/Modules'
-
 import * as selfHelpers from '../selfHelpers'
-
 export { default as Modules } from '../../classes/Modules'
 
-export let refModules = (selfHelpers.get() as any)[MODULES_KEY]
+let referenceModules = (selfHelpers.get() as any)[MODULES_KEY]
 
-export const initModules = () => {
-  if (!refModules) {
-    refModules = new Modules()
-    selfHelpers.set(MODULES_KEY, refModules)
+export function initializeModules(): Modules {
+  if (!referenceModules) {
+    referenceModules = new Modules()
+    selfHelpers.set(MODULES_KEY, referenceModules)
   }
+
+  return referenceModules
 }
 
-const getModules = (): Modules => refModules
+function getModules(): Modules {
+  return referenceModules
+}
 
 export default getModules

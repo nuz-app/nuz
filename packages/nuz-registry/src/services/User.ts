@@ -8,7 +8,6 @@ import {
   UserAccessTokenTypes,
   UserId,
 } from '../types'
-
 import genarateTokenId from '../utils/genarateTokenId'
 
 const UPDATE_FIELDS_ALLOWED = ['email', 'name', 'password']

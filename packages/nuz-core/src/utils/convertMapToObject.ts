@@ -1,9 +1,10 @@
-function convertMapToObject<T = any>(map: Map<any, any>): T {
+function convertMapToObject<T extends any>(map: Map<any, any>): T {
   const mapAsList = Array.from(map) as any[]
   return mapAsList.reduce<T>((acc, [key, value]) => {
-    acc[key] = value
+    // tslint:disable-next-line: semicolon
+    ;(acc as any)[key] = value
     return acc
-  }, {} as T)
+  }, {} as any)
 }
 
 export default convertMapToObject

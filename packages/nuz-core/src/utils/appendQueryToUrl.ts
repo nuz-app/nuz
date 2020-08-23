@@ -1,27 +1,31 @@
 import { qs } from '@nuz/utils'
 
-export interface AppendConfig {
+export interface AppendQueryToUrlConfiguration {
   sourceMap: boolean
 }
 
-function appendQueryToUrl(value: string, config: AppendConfig) {
-  const { sourceMap } = config
-
-  if (!sourceMap) {
-    return value
-  }
+function appendQueryToUrl(
+  url: string,
+  configuration: AppendQueryToUrlConfiguration,
+): string {
+  const { sourceMap } = configuration
 
   try {
-    const url = new URL(value)
-    url.search = qs.stringify(
-      Object.assign(qs.parse((url.search || '').replace(/^\?/, '')) || {}, {
-        sourceMap,
-      }),
+    const parsed = new URL(url)
+    parsed.search = qs.stringify(
+      Object.assign(
+        qs.parse(parsed.search, {
+          ignoreQueryPrefix: true,
+        }) || {},
+        sourceMap && {
+          sourceMap,
+        },
+      ),
     )
 
-    return url.href
+    return parsed.href
   } catch {
-    return value
+    return url
   }
 }
 

@@ -1,4 +1,4 @@
-function createSocketConnection(url: URL) {
+function createSocketConnection(url: URL): any {
   let io
   try {
     io = require('socket.io-client')

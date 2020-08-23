@@ -2,45 +2,59 @@ import * as shared from '../shared'
 
 import * as server from './server'
 
-export interface NextFactoryConfig {
+export interface NextFactoryConfiguration {
   require: NodeRequire
-  autoInject?: boolean
+  inject?: boolean
 }
 
-export function integrate(config: NextFactoryConfig) {
-  const { require, autoInject = true } = config || {}
+export function integrate(
+  configuration: NextFactoryConfiguration,
+): {
+  withNuz: <C extends unknown>(nextConfiguration?: C) => C
+  inject: () => void
+} {
+  const { require, inject } = Object.assign({ inject: true }, configuration)
 
   if (!require) {
-    throw new Error('`require` is required in config, please provide to use')
+    throw new Error('Pass the `require` function to integrate with Next.js')
   }
 
-  function withNuz(nextConfig: any = {}) {
-    return Object.assign({}, nextConfig, {
-      webpack: (webpackConfig, { isServer, ...rest }) => {
-        const webpackCustom = nextConfig.webpack
-        const updatedConfig = !webpackCustom
-          ? webpackConfig
-          : webpackCustom(webpackConfig, { isServer, ...rest })
+  function withNuz<C extends unknown>(nextConfiguration: C = {} as C): C {
+    return Object.assign({}, nextConfiguration, {
+      webpack: (webpackConfiguration: any, otherConfiguration: any) => {
+        const { isServer } = otherConfiguration
+
+        // Check and use if next configuration defined webpack field
+        const isDefinedWebpack = !!(nextConfiguration as any).webpack
+
+        const updatedConfiguration = isDefinedWebpack
+          ? (nextConfiguration as any).webpack(
+              webpackConfiguration,
+              otherConfiguration,
+            )
+          : webpackConfiguration
 
         if (!isServer) {
-          if (!updatedConfig.node) {
-            updatedConfig.node = {}
+          if (!updatedConfiguration.node) {
+            updatedConfiguration.node = {}
           }
 
           const useNodeBuiltins = ['child_process', 'fs', 'net']
           useNodeBuiltins.forEach((builtins) => {
-            updatedConfig.node[builtins] = !updatedConfig.node[builtins]
+            updatedConfiguration.node[builtins] = !updatedConfiguration.node[
+              builtins
+            ]
               ? 'empty'
-              : updatedConfig.node[builtins]
+              : updatedConfiguration.node[builtins]
           })
         }
 
-        return updatedConfig
+        return updatedConfiguration
       },
     })
   }
 
-  function injectNext() {
+  function injectNext(): void {
     server.prepare()
 
     const nextServerRender = require('next/dist/next-server/server/render')
@@ -50,7 +64,7 @@ export function integrate(config: NextFactoryConfig) {
         await server.setup()
 
         const html = await renderToHTML.apply(this, arguments)
-        const result = shared.extractor.appendTagsToHTML(html)
+        const result = shared.extractor.appendIntoDocument(html)
 
         await server.teardown()
 
@@ -59,9 +73,9 @@ export function integrate(config: NextFactoryConfig) {
     })
   }
 
-  if (autoInject) {
+  if (inject) {
     injectNext()
   }
 
-  return { withNuz, injectNext }
+  return { withNuz, inject: injectNext }
 }

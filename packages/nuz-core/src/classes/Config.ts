@@ -6,53 +6,14 @@ import {
 } from '@nuz/utils'
 
 import {
-  BaseItemConfig,
-  BootstrapConfig,
+  BaseModuleConfiguration,
+  BootstrapConfiguration,
   ModulesConfig,
-  SharedConfig,
-  VendorsConfig,
+  RequiredModuleConfiguration,
 } from '../types'
 
-const setDefaultIfUnset = <T extends BaseItemConfig>(
-  idOrName: string,
-  item: T,
-): Required<T> => {
-  const isObject = checkIsObject(item)
-  const isInvalid = !isObject
-  if (isInvalid) {
-    throw new Error(`Module ${idOrName} is invalid config`)
-  }
-
-  const id = moduleIdHelpers.use(idOrName)
-  const cloned = { ...item, id }
-
-  if (cloned.name && cloned.version) {
-    cloned.id = moduleIdHelpers.create(cloned.name, cloned.version)
-  } else if (!cloned.name) {
-    const parsedId = moduleIdHelpers.parser(cloned.id)
-    cloned.name = parsedId.module
-    cloned.version = parsedId.version
-  }
-
-  if (!cloned.alias) {
-    cloned.alias = {}
-  }
-
-  if (!cloned.shared) {
-    cloned.shared = []
-  }
-
-  if (!cloned.format) {
-    cloned.format = ModuleFormats.umd
-  }
-
-  Object.freeze(cloned)
-
-  return cloned as Required<T>
-}
-
 export type ConfigInitial = Pick<
-  BootstrapConfig,
+  BootstrapConfiguration,
   | 'ssr'
   | 'shared'
   | 'preload'
@@ -64,122 +25,122 @@ export type ConfigInitial = Pick<
   | 'global'
 >
 
+export type ConfigUpdate = Pick<
+  ConfigInitial,
+  'preload' | 'vendors' | 'modules' | 'shared'
+>
+
 class Config {
-  // @ts-ignore
-  private _registry: string
-  // @ts-ignore
-  private _global: boolean
-  private _vendors: VendorsConfig
-  private _modules: ModulesConfig
-  private _shared: SharedConfig
-  // @ts-ignore
-  private _linked: BootstrapConfig['linked']
-  private _preload: BootstrapConfig['preload']
-  private _locked: boolean
-  // @ts-ignore
-  private _dev: boolean
-  // @ts-ignore
-  private _ssr: boolean
+  private readonly config: NonNullable<ConfigInitial>
 
-  constructor({
-    registry,
-    global,
-    dev,
-    ssr,
-    preload,
-    vendors,
-    modules,
-    shared,
-    linked,
-  }: ConfigInitial) {
-    this._dev = typeof dev === 'boolean' ? dev : !checkIsProductionMode()
-    this._global = global as boolean
-    this._registry = registry as string
-    this._vendors = {}
-    this._modules = {}
-    this._shared = {}
-    this._linked = Object.assign({}, linked)
-    this._ssr = ssr as boolean
-    this._preload = preload || []
-    this._locked = false
+  /**
+   * Check the lock status of the configuration,
+   * when the lock is not updated.
+   */
+  private locked: boolean
 
-    this.assignVendors(vendors || {})
-    this.assignModules(modules || {})
-    this.assignShared(shared || {})
+  constructor(configuration: ConfigInitial) {
+    const { dev } = configuration
+
+    this.locked = false
+    this.config = Object.assign(
+      {
+        preload: [],
+        linked: {},
+        vendors: {},
+        shared: {},
+        modules: {},
+      },
+      configuration,
+      {
+        dev: typeof dev === 'boolean' ? dev : !checkIsProductionMode(),
+      },
+    )
   }
 
-  export(): ConfigInitial {
+  export(): Pick<ConfigInitial, 'preload' | 'modules'> {
     return {
-      preload: this._preload,
-      modules: this._modules,
+      preload: this.config.preload,
+      modules: this.config.modules,
     }
   }
 
-  update({
-    preload,
-    vendors,
-    modules,
-    shared,
-  }: Pick<ConfigInitial, 'preload' | 'vendors' | 'modules' | 'shared'>) {
-    this.ensureUnlock('any')
+  update(update: Required<ConfigUpdate>): void {
+    this.verify()
 
-    this._vendors = {}
-    this._modules = {}
-    this._shared = {}
-    this._preload = preload || []
+    const { preload, vendors, modules, shared } = update
 
-    this.assignVendors(vendors || {})
-    this.assignModules(modules || {})
-    this.assignShared(shared || {})
+    this.config.vendors = vendors || {}
+    this.config.shared = shared || {}
+    this.config.preload = preload || []
+    this.config.modules = Config.transforms(modules)
   }
 
-  lock() {
-    return (this._locked = true)
+  lock(): boolean {
+    return (this.locked = true)
   }
 
-  unlock() {
-    return (this._locked = false)
+  unlock(): boolean {
+    return (this.locked = false)
   }
 
-  get<T = unknown>(field: string): T {
-    return this[`_${field}`] as T
+  get<T = any>(field: string): T {
+    return (this.config as any)[field]
   }
 
-  ensureUnlock(field: string) {
-    if (this._locked) {
-      throw new Error(`Can't assign or set ${field} because config was locked`)
+  verify(): void {
+    if (this.locked) {
+      throw new Error('Cannot be updated because the configuration is locked')
     }
   }
 
-  assignShared(shared: SharedConfig): SharedConfig {
-    this.ensureUnlock('shared')
+  static ensure(
+    idOrName: string,
+    configuration: BaseModuleConfiguration,
+  ): RequiredModuleConfiguration {
+    if (!configuration || !checkIsObject(configuration)) {
+      throw new Error(`Module configuration is invalid`)
+    }
 
-    return Object.assign(this._shared, shared)
+    const moduleId = moduleIdHelpers.use(idOrName)
+    const updated = Object.assign(
+      { alias: {}, shared: [], format: ModuleFormats.umd },
+      configuration,
+      {
+        id: moduleId,
+      },
+    )
+
+    const shouldBeUpdatedId = !!(updated.name && updated.version)
+    if (shouldBeUpdatedId) {
+      updated.id = moduleIdHelpers.create(
+        updated.name as string,
+        updated.version,
+      )
+    }
+
+    const shouldBeUpdateNameAndVersion = !shouldBeUpdatedId && !updated.name
+    if (shouldBeUpdateNameAndVersion) {
+      const parsed = moduleIdHelpers.parser(updated.id)
+      updated.name = parsed.module
+      updated.version = parsed.version
+    }
+
+    Object.freeze(updated)
+
+    return updated as RequiredModuleConfiguration
   }
 
-  assignVendors(vendors: VendorsConfig): VendorsConfig {
-    this.ensureUnlock('vendors')
-
-    return Object.assign(this._vendors, vendors)
-  }
-
-  assignModules(modules: ModulesConfig): ModulesConfig {
-    this.ensureUnlock('modules')
-
-    const transformed = this.defineModules(modules)
-    return Object.assign(this._modules, transformed)
-  }
-
-  defineModules(modules: ModulesConfig): ModulesConfig {
-    const ids = Object.keys(modules || {})
-    const transformed = ids.reduce((acc, id) => {
-      const moduleEnsured = setDefaultIfUnset(id, modules[id])
+  static transforms(modules: ModulesConfig): ModulesConfig {
+    const keys = Object.keys(modules || {})
+    const updated = keys.reduce((acc, id) => {
+      const item = Config.ensure(id, modules[id])
       return Object.assign(acc, {
-        [moduleEnsured.id]: moduleEnsured,
+        [item.id]: item,
       })
     }, {})
 
-    return transformed
+    return updated
   }
 }
 

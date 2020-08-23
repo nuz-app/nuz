@@ -1,60 +1,60 @@
 import Globals from '../classes/Globals'
-
 import {
   UpstreamConfigAllowed,
   UpstreamResolveConfig,
   UpstreamResolveResource,
 } from '../types'
 
-export const local = (name: string, globals: Globals) => {
-  // try {
-  //   const moduleId = require.resolve(name)
-  //   return require(moduleId)
-  //   // tslint:disable-next-line: no-empty
-  // } catch (error) {}
-
-  try {
-    return (globals.get() as any)[name]
-    // tslint:disable-next-line: no-empty
-  } catch (error) {}
-
-  return null
-}
-
 type Resource = {
   url: string
   integrity: string | undefined
 }
 
-const ensureResolve = (
-  resource: string | UpstreamResolveResource,
-): Resource => ({
-  url: typeof resource === 'string' ? resource : (resource as any)?.url,
-  integrity: (resource as any)?.integrity as string | undefined,
-})
+export function local(name: string, globals: Globals): any {
+  return (globals.get() as any)[name]
+}
 
-const resolveByUrl = (resolve: string | UpstreamResolveConfig) => {
+function ensureUrlAndIntegrity(
+  resource: string | UpstreamResolveResource,
+): Resource {
+  return {
+    url: typeof resource === 'string' ? resource : (resource as any)?.url,
+    integrity: (resource as any)?.integrity as string | undefined,
+  }
+}
+
+function getResolvedUrls(
+  resolve: string | UpstreamResolveConfig,
+): {
+  main: any
+  styles: Resource[]
+} {
   const resolveUrls = { main: null as any, styles: [] as Resource[] }
 
   if (typeof resolve === 'string') {
-    resolveUrls.main = ensureResolve(resolve)
+    resolveUrls.main = ensureUrlAndIntegrity(resolve)
   } else {
     const { main, styles } = resolve as UpstreamResolveConfig
 
-    resolveUrls.main = ensureResolve(main)
+    resolveUrls.main = ensureUrlAndIntegrity(main)
 
     if (styles) {
       resolveUrls.styles = styles
         .filter(Boolean)
-        .map((style) => ensureResolve(style))
+        .map((style) => ensureUrlAndIntegrity(style))
     }
   }
 
   return resolveUrls
 }
 
-export const parse = (resolve: UpstreamConfigAllowed) => {
-  const resolveUrls = {
+export function parse(
+  resolve: UpstreamConfigAllowed,
+): {
+  main: any
+  styles: Resource[]
+} | null {
+  const resolvedUrls = {
     main: undefined as any,
     styles: [] as Resource[],
   }
@@ -64,10 +64,11 @@ export const parse = (resolve: UpstreamConfigAllowed) => {
   }
 
   if (typeof resolve === 'string') {
-    resolveUrls.main = { url: resolve, integrity: undefined }
-    return resolveUrls
+    resolvedUrls.main = { url: resolve, integrity: undefined }
+    return resolvedUrls
   }
 
-  Object.assign(resolveUrls, resolveByUrl(resolve))
-  return resolveUrls
+  Object.assign(resolvedUrls, getResolvedUrls(resolve))
+
+  return resolvedUrls
 }

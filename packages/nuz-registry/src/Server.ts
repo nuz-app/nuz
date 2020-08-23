@@ -1,17 +1,14 @@
 import { checkIsProductionMode, loadCertificateDefault } from '@nuz/utils'
-
 import bodyParser from 'body-parser'
 import compression from 'compression'
 import express from 'express'
 import http from 'http'
 import spdy from 'spdy'
 
-import { ServerlessOptions, ServerOptions, StorageTypes } from './types'
-
 import Cache from './classes/Cache'
 import Worker from './classes/Worker'
-
 import serverless from './serverless'
+import { ServerOptions, ServerlessOptions, StorageTypes } from './types'
 
 class Server {
   private readonly _dev: boolean

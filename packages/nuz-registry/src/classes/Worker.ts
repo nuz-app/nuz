@@ -9,6 +9,8 @@ import {
 } from '@nuz/utils'
 import { Connection } from 'mongoose'
 
+import { createModels } from '../models'
+import { Services, createServices } from '../services'
 import {
   AddCollaboratorData,
   CollaboratorTypes,
@@ -33,10 +35,6 @@ import {
   VersionSizes,
   WorkerOptions,
 } from '../types'
-
-import { createModels } from '../models'
-import { createServices, Services } from '../services'
-
 import checkIsCollaboratorAllowSet from '../utils/checkIsCollaboratorAllowSet'
 import checkIsCollaboratorIncludes from '../utils/checkIsCollaboratorIncludes'
 import checkIsNewCompose from '../utils/checkIsNewCompose'

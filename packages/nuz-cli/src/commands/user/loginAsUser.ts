@@ -1,11 +1,10 @@
+import { Arguments } from 'yargs'
+
 import Config, { AuthKeys, ConfigKeys } from '../../classes/Config'
 import Worker from '../../classes/Worker'
-
-import { Arguments } from 'yargs'
 import createQuestions from '../../utils/createQuestions'
 import print, { info, success } from '../../utils/print'
 import timer from '../../utils/timer'
-
 import setConfig from '../config/setConfig'
 
 const usernameQuestion = {

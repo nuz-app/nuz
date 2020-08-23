@@ -1,5 +1,5 @@
 import { UserAccessTokenTypes } from '@nuz/shared'
-import { got, GotRequestConfig } from '@nuz/utils'
+import { GotRequestConfig, got } from '@nuz/utils'
 import FormData from 'form-data'
 import fs from 'fs'
 

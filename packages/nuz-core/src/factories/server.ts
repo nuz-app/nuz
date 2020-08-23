@@ -6,8 +6,13 @@ import Loadable from './react/Loadable'
 
 type Hook = () => Promise<any>
 
-export async function prepare() {
+function callOrNoop<T extends any>(caller: any): Promise<T> {
+  return typeof caller === 'function' ? caller() : Promise.resolve()
+}
+
+export async function prepare(): Promise<void> {
   inject({
+    // @ts-expect-error
     react: require('react'),
     'react-dom': require('react-dom'),
   })
@@ -18,25 +23,21 @@ export async function prepare() {
   })
 }
 
-export async function setup(other?: Hook) {
+export async function setup(other?: Hook): Promise<any> {
   await Promise.all([
-    shared.process.ready(),
+    shared.process.isReady(),
     shared.extractor.setup(),
     Loadable.preloadAll(),
-    typeof other === 'function' ? other() : Promise.resolve(),
+    callOrNoop(other),
   ])
 }
 
-export async function teardown(other?: Hook, updater?: Hook) {
+export async function teardown(other?: Hook, updater?: Hook): Promise<any> {
   await Promise.all([
-    shared.process.closeSession(),
     shared.extractor.teardown(),
     shared.process.checkUpdate(() =>
-      Promise.all([
-        Loadable.flushAll(),
-        typeof updater === 'function' ? updater() : Promise.resolve(),
-      ]),
+      Promise.all([Loadable.flushAll(), callOrNoop(updater)]),
     ),
-    typeof other === 'function' ? other() : Promise.resolve(),
+    callOrNoop(other),
   ])
 }

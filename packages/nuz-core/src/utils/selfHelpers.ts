@@ -1,7 +1,13 @@
-export const get = () =>
-  (typeof self !== 'undefined' && self) ||
-  (typeof window !== 'undefined' ? window : global)
+import getGlobal from './getGlobal'
 
-export const set = (key: any, value: any) => ((get() as any)[key] = value)
+export function get(): any {
+  return getGlobal()
+}
 
-export const has = (key: any) => !!(get() as any)[key]
+export function set(key: any, value: any): any {
+  return ((get() as any)[key] = value)
+}
+
+export function has(key: any): boolean {
+  return !!(get() as any)[key]
+}

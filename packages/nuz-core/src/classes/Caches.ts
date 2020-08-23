@@ -1,8 +1,8 @@
-class Caches<K = string, V = unknown> {
+class Caches<K extends string, V extends unknown> {
   private readonly _data: Map<K, V>
 
-  constructor(init?: [K, V][]) {
-    this._data = new Map(init)
+  constructor(initial?: [K, V][]) {
+    this._data = new Map(initial)
   }
 
   set(key: K, value: V) {

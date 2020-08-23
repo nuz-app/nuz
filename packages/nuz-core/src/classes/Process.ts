@@ -1,170 +1,192 @@
 import { NUZ_REGISTRY_URL, SHARED_CONFIG_KEY } from '@nuz/shared'
 import {
+  DeferedPromise,
   checkIsObject,
   checkIsProductionMode,
   deferedPromise,
-  DeferedPromise,
   ensureOrigin,
   getFetchUrls,
 } from '@nuz/utils'
 
-import { BootstrapConfig, RuntimePlatforms } from '../types'
-
-import { Config, initConfig } from '../utils/effects/getConfig'
-import getModules, { initModules, Modules } from '../utils/effects/getModules'
+import { BootstrapConfiguration, RuntimePlatforms } from '../types'
+import { Config, initializeConfig } from '../utils/effects/getConfig'
+import { Modules, initializeModules } from '../utils/effects/getModules'
 import fetchConfig from '../utils/fetchConfig'
-import getRuntimePlatform from '../utils/getRuntimePlatform'
+import getCurrentPlatform from '../utils/getCurrentPlatform'
+import * as logger from '../utils/logger'
 import uniq from '../utils/uniq'
 
+/**
+ * Timeout when calling to get configuration information
+ */
 const FETCH_CONFIG_TIMEOUT = 10000
+
+/**
+ *  Limit the number of retries
+ */
 const FETCH_CONFIG_RETRIES = 1
+
+/**
+ *  Timeout to call to check update configuration
+ */
 const CHECK_UPDATE_TIMEOUT = checkIsProductionMode() ? 30000 : 5000
 
-function mergeConfig(
-  localConfig: BootstrapConfig,
-  { modules, preload }: BootstrapConfig = {},
-): BootstrapConfig {
-  return {
-    ...localConfig,
-    preload: uniq(preload, localConfig.preload),
-    modules: { ...modules, ...localConfig.modules },
-  }
+/**
+ * Merge local and upstream configuration into once
+ */
+function mergeConfiguration<C extends BootstrapConfiguration>(
+  local: C,
+  upstream?: C,
+): C {
+  const { modules: modulesInLocal, preload: preloadInLocal } = local
+  const { modules: modulesOnUpstream, preload: preloadOnUpstream } =
+    upstream || ({} as C)
+
+  return Object.assign({}, local, {
+    preload: uniq(preloadOnUpstream, preloadInLocal),
+    modules: Object.assign({}, modulesOnUpstream, modulesInLocal),
+  })
 }
 
-function ensureConfig(config: BootstrapConfig): BootstrapConfig {
-  return {
-    ...(config || {}),
-    registry: config.registry || NUZ_REGISTRY_URL,
-    ssr: typeof config.ssr === 'boolean' ? config.ssr : false,
-    global: typeof config.global === 'boolean' ? config.global : true,
-  }
+/**
+ * Make sure configuration defined important fields
+ */
+function ensureConfiguration<C extends BootstrapConfiguration>(
+  configuration: C,
+): C {
+  const { registry, ssr, global, ...rest } = configuration
+
+  return Object.assign({}, rest, {
+    registry: registry || NUZ_REGISTRY_URL, // default is value of `NUZ_REGISTRY_URL`
+    ssr: typeof ssr === 'boolean' ? ssr : false, // default is `false`
+    global: typeof global === 'boolean' ? global : true, // default is `true`
+  }) as C
 }
 
-async function transformConfig(config: BootstrapConfig) {
-  const registryUrl = ensureOrigin(config.registry as string) as string
+async function transformConfiguration<C extends BootstrapConfiguration>(
+  local: C,
+): Promise<C> {
+  const { registry, compose: composeId } = local
 
-  const isNode = getRuntimePlatform() === RuntimePlatforms.node
-  const composeIsDefined = !!config.compose
-  const sharedIsValid =
-    !isNode && composeIsDefined && checkIsObject(window[SHARED_CONFIG_KEY])
+  const isNode = getCurrentPlatform() === RuntimePlatforms.node
+  const registryUrl = ensureOrigin(registry as string) as string
+  const isInitialized =
+    !isNode && composeId && checkIsObject((window as any)[SHARED_CONFIG_KEY])
 
-  let configOfCompose = !sharedIsValid
+  let updated = !isInitialized
     ? undefined
-    : (window[SHARED_CONFIG_KEY] as BootstrapConfig)
+    : ((window as any)[SHARED_CONFIG_KEY] as C)
 
-  if (composeIsDefined && !configOfCompose) {
-    const fetchComposeUrl = getFetchUrls.compose(
-      config.compose as string,
-      registryUrl,
-    )
-
-    configOfCompose = await fetchConfig<BootstrapConfig>(
-      fetchComposeUrl,
+  if (composeId && !updated) {
+    updated = await fetchConfig<C>(
+      getFetchUrls.compose(composeId, registryUrl),
       {
         timeout: FETCH_CONFIG_TIMEOUT,
       },
       FETCH_CONFIG_RETRIES,
     )
-
-    // if (configOfCompose.warnings) {
-    //   configOfCompose.warnings.forEach(({ code, message }) => {
-    //     console.warn(`[${code}] ${message}`)
-    //   })
-    // }
   }
 
-  return mergeConfig(config, configOfCompose)
+  return mergeConfiguration(local, updated) as C
 }
 
 class Processs {
-  private readonly _ready: DeferedPromise<boolean>
-  private readonly _timers: {
-    checkUpdate?: NodeJS.Timeout
-  }
+  private readonly ready: DeferedPromise<boolean>
 
-  private _session?: any
-  private _config?: Config
-  private _modules?: Modules
-  private _configAsRaw?: BootstrapConfig
+  private scheduledToUpdate: boolean
+
+  /**
+   * Configuration manager
+   */
+  private config?: Config
+
+  /**
+   * Modules manager
+   */
+  private modules?: Modules
+
+  /**
+   * Bootstrap configuration
+   */
+  private configured?: BootstrapConfiguration
 
   constructor() {
-    this._ready = deferedPromise<boolean>()
-    this._timers = {
-      checkUpdate: undefined,
-    }
+    // Create defered promise to detect ready status
+    this.ready = deferedPromise<boolean>()
+
+    // Use to duplicated calls to update
+    this.scheduledToUpdate = false
   }
 
-  private async update() {
+  private async update(): Promise<void> {
     try {
-      const config = await transformConfig(this._configAsRaw as BootstrapConfig)
+      const config = await transformConfiguration(
+        this.configured as BootstrapConfiguration,
+      )
 
-      if (!this._config) {
+      if (!this.config) {
         throw new Error('The process did not run in sequence')
       }
 
-      this._config.unlock()
-      this._config.update(config)
-      this._config.lock()
-      // tslint:disable-next-line: no-empty
-    } catch {}
+      this.config.unlock()
+      this.config.update(
+        Object.assign(
+          { vendors: {}, shared: {}, preload: [], modules: {} },
+          config,
+        ),
+      )
+      this.config.lock()
+    } catch (error) {
+      logger.error(
+        `There was an error updating the configuration, see details:`,
+        error,
+      )
+    }
   }
 
-  public async ready(): Promise<boolean> {
-    return this._ready.promise
+  public async isReady(): Promise<boolean> {
+    return this.ready.promise
   }
 
-  public async initial(configAsRaw: BootstrapConfig): Promise<void> {
-    this._configAsRaw = ensureConfig(configAsRaw)
-    const config = await transformConfig(this._configAsRaw)
+  public async initialize(configAsRaw: BootstrapConfiguration): Promise<void> {
+    // Save the initialize configuration value
+    this.configured = ensureConfiguration(configAsRaw)
 
-    // Set vendors and modules to config, using in modules manager
-    this._config = initConfig(config)
+    // Transform configuration
+    const config = await transformConfiguration(this.configured)
 
-    // Lock config, not allow changing any config
-    // Note: change config after initialized is dangerous!
-    this._config.lock()
+    this.config = initializeConfig(config)
+    this.config.lock()
 
-    // Init modules manager to using for resolve and more
-    initModules()
-
-    // Prepare externals and preload modules if it defined
-    this._modules = getModules()
-    await Promise.all([this._modules.prepare(), this._modules.ready()])
+    // Initialize the modules manager
+    this.modules = initializeModules()
+    await Promise.all([this.modules.prepare(), this.modules.isReady()])
 
     // Fired a callback if everything's ok
-    this._ready.resolve(true)
+    this.ready.resolve(true)
   }
 
-  public async checkUpdate(cleanUp?: () => any) {
-    if (!this._configAsRaw) {
+  public async checkUpdate(cleanUp?: () => any): Promise<boolean> {
+    if (!this.configured) {
       throw new Error('The process did not run in sequence')
     }
 
-    if (this._timers.checkUpdate) {
-      return
+    if (this.scheduledToUpdate) {
+      return false
     }
 
-    this._timers.checkUpdate = setTimeout(
-      () => (this._timers.checkUpdate = undefined),
-      CHECK_UPDATE_TIMEOUT,
-    )
+    setTimeout(() => (this.scheduledToUpdate = false), CHECK_UPDATE_TIMEOUT)
+    this.scheduledToUpdate = true
 
+    // Call to update configuration
     await this.update()
+
+    // Hook to trigger on clean up step
     if (typeof cleanUp === 'function') {
       cleanUp()
     }
-  }
 
-  public createSession() {
-    this._session = new Set()
-  }
-
-  public getSession() {
-    return this._session
-  }
-
-  public closeSession() {
-    this._session = undefined
+    return true
   }
 }
 

@@ -1,6 +1,6 @@
-import { BaseItemConfig } from '../types'
+import { BaseModuleConfiguration } from '../types'
 
-export interface ExportedConfig {
+export interface DefineExportsConfiguration {
   module?: boolean
   upstream?: boolean
   local?: boolean
@@ -11,7 +11,7 @@ export interface ExportedConfig {
   id?: string
 }
 
-const definedKeys = {
+const EXPORTS_MODULE_DEFINED = {
   module: '__esModule',
   linked: '__linked',
   local: '__local',
@@ -21,11 +21,14 @@ const definedKeys = {
   shared: '__shared',
 } as { [name: string]: any }
 
-export const define = (module: any, config: ExportedConfig) => {
+export function define<M extends unknown>(
+  module: M,
+  configuration: DefineExportsConfiguration,
+): M {
   // tslint:disable-next-line: forin
-  for (const key in config) {
-    const defined = definedKeys[key]
-    const value = (config as any)[key]
+  for (const key in configuration) {
+    const defined = EXPORTS_MODULE_DEFINED[key]
+    const value = (configuration as any)[key]
     if (value && defined) {
       Object.defineProperty(module, defined, { value: true })
     } else if (value) {
@@ -36,28 +39,33 @@ export const define = (module: any, config: ExportedConfig) => {
   return module
 }
 
-export const transform = (
-  exportsModule: any,
-  config?: Pick<BaseItemConfig, 'exportsOnly' | 'alias'>,
-) => {
-  const { alias = {}, exportsOnly } = config || ({} as any)
+export function transform<T extends unknown>(
+  module: any,
+  configuration?: Pick<BaseModuleConfiguration, 'exportsOnly' | 'alias'>,
+): T {
+  const { alias, exportsOnly } = Object.assign({ alias: {} }, configuration)
 
-  const checkIsExport = (n: string) => !exportsOnly || exportsOnly.includes(n)
+  function checkIsExport(n: string): boolean {
+    return !exportsOnly || exportsOnly.includes(n)
+  }
 
   // tslint:disable-next-line: forin
-  for (const name in exportsModule) {
+  for (const name in module) {
     const changed = alias[name]
     if (changed) {
       if (checkIsExport(changed)) {
-        exportsModule[changed] = exportsModule[name]
+        module[changed] = module[name]
       }
+
       if (checkIsExport(name)) {
-        exportsModule[name] = exportsModule[name]
+        module[name] = module[name]
       }
-    } else if (checkIsExport(name)) {
-      exportsModule[name] = exportsModule[name]
+    }
+
+    if (!changed && checkIsExport(name)) {
+      module[name] = module[name]
     }
   }
 
-  return exportsModule
+  return module
 }

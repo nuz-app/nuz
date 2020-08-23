@@ -24,7 +24,7 @@ const READY_INITIALIZERS = [] as Initializer[]
 
 const ALL_UPDATERS = new Set<() => void>()
 
-function flushInitializers(initializers: Initializer[]) {
+function flushInitializers(initializers: Initializer[]): any {
   const promises = [] as any[]
 
   while (initializers.length) {
@@ -39,7 +39,7 @@ function flushInitializers(initializers: Initializer[]) {
   })
 }
 
-function load<T>(loader): LoadState<T> {
+function load<T>(loader: any): LoadState<T> {
   const promise: Promise<T> = loader()
 
   const state = {
@@ -56,7 +56,7 @@ function load<T>(loader): LoadState<T> {
 
       return loaded
     })
-    .catch((error) => {
+    .catch((error: Error) => {
       state.loading = false
       state.error = error
 
@@ -66,11 +66,14 @@ function load<T>(loader): LoadState<T> {
   return state
 }
 
-function resolveExports(obj) {
+function resolveExports(obj: any): any {
   return obj && obj.__esModule ? obj.default : obj
 }
 
-function render(loaded: any, props) {
+function render(
+  loaded: any,
+  props: any,
+): React.CElement<any, React.Component<any, any, any>> {
   return React.createElement(resolveExports(loaded), props)
 }
 
@@ -84,7 +87,7 @@ class LoadableSubscription {
   _state: any
   _loader: any
 
-  constructor(loadFn, loader, options) {
+  constructor(loadFn: any, loader: any, options: any) {
     this._load = loadFn
     this._loader = loader
     this._options = options
@@ -95,11 +98,11 @@ class LoadableSubscription {
     this.retry()
   }
 
-  promise() {
+  promise(): any {
     return this._resolve.promise
   }
 
-  retry() {
+  retry(): void {
     this._clearTimeouts()
     this._resolve = this._load(this._loader)
 
@@ -135,7 +138,7 @@ class LoadableSubscription {
         this._update({})
         this._clearTimeouts()
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         this._update({})
         this._clearTimeouts()
       })
@@ -147,7 +150,7 @@ class LoadableSubscription {
     }
   }
 
-  _update(partial) {
+  _update(partial: any): void {
     this._state = {
       ...this._state,
       error: this._resolve.error,
@@ -156,19 +159,19 @@ class LoadableSubscription {
       ...partial,
     }
 
-    this._callbacks.forEach((callback) => callback())
+    this._callbacks.forEach((callback: () => void) => callback())
   }
 
-  _clearTimeouts() {
+  _clearTimeouts(): void {
     clearTimeout(this._delay)
     clearTimeout(this._timeout)
   }
 
-  getCurrentValue() {
+  getCurrentValue(): any {
     return this._state
   }
 
-  subscribe(callback) {
+  subscribe(callback: () => void): () => void {
     this._callbacks.add(callback)
 
     return () => {
@@ -177,11 +180,16 @@ class LoadableSubscription {
   }
 }
 
-function empty() {
+function empty(): any {
   return null
 }
 
-function createLoadableComponent(id: string, _options?: LoadableOptions) {
+function createLoadableComponent(
+  id: string,
+  _options?: LoadableOptions,
+): React.ForwardRefExoticComponent<
+  Pick<any, string | number | symbol> & React.RefAttributes<unknown>
+> {
   const options = Object.assign(
     {
       loading: empty,
@@ -198,7 +206,7 @@ function createLoadableComponent(id: string, _options?: LoadableOptions) {
 
   let subscription = null as any
 
-  function initial() {
+  function initial(): any {
     if (!subscription) {
       const sub = new LoadableSubscription(
         load,
@@ -223,14 +231,14 @@ function createLoadableComponent(id: string, _options?: LoadableOptions) {
     READY_INITIALIZERS.push(initial)
   }
 
-  const LoadableComponent = (props, ref) => {
+  function LoadableComponent<T extends unknown>(props: any, ref: any): T {
     initial()
 
     if (typeof window === 'undefined') {
       shared.extractor.push(id)
     }
 
-    const state = useSubscription(subscription)
+    const state = useSubscription(subscription) as any
 
     React.useImperativeHandle(
       ref,
@@ -265,11 +273,16 @@ function createLoadableComponent(id: string, _options?: LoadableOptions) {
   return React.forwardRef(LoadableComponent)
 }
 
-function Loadable(id: string, options: LoadableOptions) {
+function Loadable(
+  id: string,
+  options: LoadableOptions,
+): React.ForwardRefExoticComponent<
+  Pick<any, string | number | symbol> & React.RefAttributes<unknown>
+> {
   return createLoadableComponent(id, options)
 }
 
-Loadable.flushAll = function flushAll() {
+Loadable.flushAll = function flushAll(): void {
   const updaters = Array.from(ALL_UPDATERS.values())
   ALL_UPDATERS.clear()
 

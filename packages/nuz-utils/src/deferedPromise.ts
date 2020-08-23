@@ -1,10 +1,10 @@
-export interface DeferedPromise<T> extends Promise<T> {
-  promise: Promise<any>
+export interface DeferedPromise<T extends unknown> extends Promise<T> {
+  promise: Promise<T>
   resolve: (value: T) => void
   reject: (error: Error) => void
 }
 
-const deferedPromise = <T = unknown>() => {
+function deferedPromise<T extends unknown>(): DeferedPromise<T> {
   const defered = {} as DeferedPromise<T>
 
   defered.promise = new Promise((resolve, reject) => {

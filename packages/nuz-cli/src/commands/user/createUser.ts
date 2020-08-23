@@ -1,5 +1,4 @@
 import Worker from '../../classes/Worker'
-
 import createQuestions from '../../utils/createQuestions'
 import print, { info, success } from '../../utils/print'
 import timer from '../../utils/timer'
