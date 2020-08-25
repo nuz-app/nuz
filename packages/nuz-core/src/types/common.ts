@@ -54,47 +54,47 @@ export type BaseModuleConfiguration = {
    */
   id?: string
   /**
-   * Module name, it's using to resolve local if module was installed
+   * Module name
    */
   name?: string
   /**
-   * Requires  module version
+   * Specify the version you want to use
    */
   version?: string
   /**
-   * Upstream is resolve info of module
+   * Module information is used at this time
    */
   upstream?: UpstreamConfigAllowed
   /**
-   * Fallback resolve for module, define like `upstream`
+   * Module information is used if an error occurs
    */
   fallback?: UpstreamConfigAllowed
   /**
-   * Override local modules
+   * Override module by a Node.js require
    */
   local?: LoadedModule<any>
   /**
-   * Library name, bundle with `umd` format
+   * The name of the module if it is an UMD library
    */
   library?: string
   /**
-   * Format of library. Currently, just support `umd` format
+   * The module format, currently only supports UMD.
    */
   format?: ModuleFormats
   /**
-   * Alias name for fields in module
+   * Alias some properties of the module are exports
    */
   alias?: { [field: string]: any }
   /**
-   * Export only, not use will exports fields
+   * Only give properties allowed, remove the rest.
    */
   exportsOnly?: string[]
   /**
-   * Install options
+   * Configure when downloading for the module
    */
   options?: LoadModuleConfiguration
   /**
-   * Shared dependencies module used
+   * Declare shared dependencies
    */
   shared?: string[]
 }

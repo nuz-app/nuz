@@ -19,49 +19,56 @@ export interface SharedConfig {
 
 export interface BootstrapConfiguration {
   /**
-   * Set development mode
+   * Turn on developer mode,
+   * if not configured, it will be the value of the current environment.
    */
   dev?: boolean
   /**
-   * Allow server-side-rendering
+   * Support server-side rendering
    */
   ssr?: boolean
   /**
-   * Config registry server endpoint
+   * Configure the registry endpoint,
+   * the default will be the Nuz Services server.
    */
   registry?: string
   /**
-   * Compose of application
+   * Declare compose to use for the application
    */
   compose?: string
   /**
-   * Linked info, use for workspace
+   * Information about server dev workspaces
    */
   linked?: LinkedConfig
   /**
-   * Defined modules to resolve in runtime
+   * Declare detailed information the modules used
    */
   modules?: ModulesConfig
   /**
-   * Defined vendors dependencies
+   * Declare vendors dependencies
    */
   vendors?: VendorsConfig
   /**
-   * Defined shared dependencies
+   * Declare shared dependencies
    */
   shared?: SharedConfig
   /**
-   * Allow preload modules in runtime, only support in browser
+   * Support preloading the modules
    */
   preload?: string[]
   /**
-   * Warnings
+   * The warnings returned from the server
    */
   warnings?: WarningsConfig[]
   /**
-   * Enable global mode
+   * Turn on the mode that allows you to resolve information
+   * from the server if it can't be found internally.
    */
   global?: boolean
+  /**
+   * Configure where to store and execute code.
+   */
+  context?: string | false
 }
 
 export interface WarningsConfig {

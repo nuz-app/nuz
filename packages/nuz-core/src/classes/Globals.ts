@@ -4,30 +4,42 @@ import { DEPENDENCIES_KEY, GLBOALS_KEY } from '@nuz/shared'
 
 import { RuntimePlatforms } from '../types/common'
 
+export interface GlobalsConfiguration {
+  platform: RuntimePlatforms
+  context: false | string
+}
+
 class Globals {
+  private readonly config: GlobalsConfiguration
+
   private globals: Window | typeof globalThis
 
-  constructor(private readonly platform: RuntimePlatforms) {
-    const isNode = this.platform === RuntimePlatforms.node
+  constructor(_config: GlobalsConfiguration) {
+    this.config = Object.assign({}, _config, {
+      context: [undefined, null, '', true].includes(_config.context)
+        ? DEPENDENCIES_KEY
+        : _config.context,
+    })
+
+    const isNode = this.config.platform === RuntimePlatforms.node
     const isExisted = !!(global as any)[GLBOALS_KEY]
     if (isNode && !isExisted) {
       // Create a key in global to prevent leaking memory and side effects
       (global as any)[GLBOALS_KEY] = {}
     }
 
+    // Create globals instance
     this.globals = isNode ? (global as any)[GLBOALS_KEY] : window
 
-    // Clone dependencies store from global this
-    if (!(this.globals as any)[DEPENDENCIES_KEY]) {
-      (this.globals as any)[DEPENDENCIES_KEY] = Object.create(this.globals)
-    }
+    // Create context in the globals
+    this.createContext()
   }
 
-  get(): any {
+  get(): Window | typeof globalThis {
     return this.globals
   }
 
-  set(key: any, value: any): any {
+  set(key: any, value: any): void {
     (this.globals as any)[key] = value
   }
 
@@ -35,36 +47,35 @@ class Globals {
     return !!(this.globals as any)[key]
   }
 
-  delete(key: any): any {
+  delete(key: any): void {
     (this.globals as any)[key] = undefined
   }
 
-  clear(): any {
+  clear(): void {
     (this.globals as any) = undefined
   }
 
-  getContext(): any {
-    return (this.globals as any)[DEPENDENCIES_KEY]
+  createContext(): void {
+    const { context } = this.config
+
+    // Create new objects that inherit from global
+    if (!this.getContext() && context) {
+      (this.globals as any)[context] = Object.create(this.globals)
+    }
   }
 
-  getDependency(key: string): any {
-    return (this.globals as any)[DEPENDENCIES_KEY][key]
+  getContext<C extends unknown>(): C {
+    const { context } = this.config
+
+    if (!context) {
+      return this.globals as any
+    }
+
+    return (this.globals as any)[context]
   }
 
-  setDependency(key: string, value: any): any {
-    return ((this.globals as any)[DEPENDENCIES_KEY][key] = value)
-  }
-
-  hasDependency(key: string): boolean {
-    return !!(this.globals as any)[DEPENDENCIES_KEY][key]
-  }
-
-  deleteDependency(key: string): any{
-    return (this.globals as any)[DEPENDENCIES_KEY][key] = undefined
-  }
-
-  clearDependency(): any {
-    return (this.globals as any)[DEPENDENCIES_KEY] = undefined
+  installDependency(key: string, value: any): void {
+    this.getContext<any>()[key] = value
   }
 }
 

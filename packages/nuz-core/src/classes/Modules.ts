@@ -152,7 +152,10 @@ class Modules {
     //
     this.config = config
     this.platform = getCurrentPlatform()
-    this.globals = new Globals(this.platform)
+    this.globals = new Globals({
+      platform: this.platform,
+      context: this.config.get('context'),
+    })
     this.dev = this.config.get<boolean>('dev')
 
     //
@@ -263,7 +266,7 @@ class Modules {
       )
 
       // Set vendor dependency to global
-      this.globals.setDependency(
+      this.globals.installDependency(
         key,
         // Define properties for vendor dependency
         moduleHelpers.define(dependency, {
@@ -347,7 +350,7 @@ class Modules {
       shared: true,
     })
 
-    this.globals.setDependency(name, dependency)
+    this.globals.installDependency(name, dependency)
     this.resolvedDependencies.set(name, dependency)
 
     return dependency

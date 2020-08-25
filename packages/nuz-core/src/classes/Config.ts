@@ -23,6 +23,7 @@ export type ConfigInitial = Pick<
   | 'linked'
   | 'registry'
   | 'global'
+  | 'context'
 >
 
 export type ConfigUpdate = Pick<
