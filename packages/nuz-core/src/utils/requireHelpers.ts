@@ -11,6 +11,11 @@ type Resource = {
 }
 
 export function local(name: string, globals: Globals): any {
+  try {
+    return require(name)
+    // tslint:disable-next-line: no-empty
+  } catch {}
+
   return (globals.get() as any)[name]
 }
 
