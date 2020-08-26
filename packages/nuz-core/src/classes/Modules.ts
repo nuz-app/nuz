@@ -379,7 +379,10 @@ class Modules {
     try {
       const executor = this.ssr ? Script.executeOnNode : Script.executeOnBrowser
       // Extract the module from the executable context
-      resolved = getExportsModule(executor(code, context), library)
+      resolved = getExportsModule(
+        executor.apply(context, [code, context]),
+        library,
+      )
 
       // Ensure the module properties are full
       resolved = Object.assign({}, interopRequireDefault(resolved), resolved)
@@ -404,7 +407,7 @@ class Modules {
     }
 
     // Ensure exports default is exists
-    if (!checkIsFunction(resolved.default)) {
+    if (!resolved.default) {
       throw new Error(
         'Something wrong happened, the module initialized was not valid.',
       )
