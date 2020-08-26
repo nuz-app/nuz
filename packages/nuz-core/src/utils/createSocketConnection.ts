@@ -8,7 +8,7 @@ function createSocketConnection(url: URL): any {
     )
   }
 
-  return io.connect(url.origin, {
+  return io(url.origin, {
     path: url.pathname,
   })
 }

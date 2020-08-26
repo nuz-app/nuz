@@ -40,6 +40,7 @@ export function resolveModule(name: string, dir?: string) {
       dir && dir !== app && path.join(dir, 'node_modules'),
       path.join(app, 'node_modules'),
       path.join(tool, 'node_modules'),
+      'node_modules',
     ].filter(Boolean) as string[],
   })
 }

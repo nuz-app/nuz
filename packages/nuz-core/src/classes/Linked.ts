@@ -5,9 +5,9 @@ import { LinkedConfig, ModulesConfig } from '../types'
 import createSocketConnection from '../utils/createSocketConnection'
 
 class Linked {
-  private readonly _socket: SocketIOClient.Socket | undefined
-  private readonly _watching: string[]
-  private _modules: ModulesConfig
+  private readonly socket: SocketIOClient.Socket | undefined
+  private readonly modulesWatching: string[]
+  private internalModules: ModulesConfig
 
   constructor(private readonly linked: LinkedConfig) {
     const { port } = this.linked || {}
@@ -16,22 +16,22 @@ class Linked {
     const watchUrl = !isUnused && linkedUrls.watch(port as any)
 
     // Create connection and save io and get linked watch info
-    this._socket = !watchUrl ? undefined : createSocketConnection(watchUrl)
+    this.socket = !watchUrl ? undefined : createSocketConnection(watchUrl)
 
-    // Create empty watching list
-    this._watching = []
+    // Create empty modules watching list
+    this.modulesWatching = []
 
     // Create empty modules list
-    this._modules = {}
+    this.internalModules = {}
   }
 
   private async waitConnect() {
     return new Promise((resolve, reject) => {
-      if (!this._socket) {
+      if (!this.socket) {
         return resolve(true)
       }
 
-      this._socket.on('connect', (error: Error) => {
+      this.socket.on('connect', (error: Error) => {
         if (error) {
           reject(error)
         } else {
@@ -46,21 +46,21 @@ class Linked {
   }
 
   private async bindEvents(dfPromise: DeferedPromise<any>) {
-    if (!this._socket) {
+    if (!this.socket) {
       dfPromise.resolve(true)
       return
     }
 
     // Bind event on `define`, received modules as linked modules
-    this._socket.on(LINKED_DEFINE_EVENT, ({ modules: linkedModules }: any) => {
-      this._modules = linkedModules || {}
+    this.socket.on(LINKED_DEFINE_EVENT, ({ modules: linkedModules }: any) => {
+      this.internalModules = linkedModules || {}
       dfPromise.resolve(true)
     })
 
     // Bind event on `change`, received modules as changed modules
-    this._socket.on(LINKED_CHANGE_EVENT, ({ changes: changedModules }: any) => {
+    this.socket.on(LINKED_CHANGE_EVENT, ({ changes: changedModules }: any) => {
       const includingModulesChanged = changedModules.some((name: any) =>
-        this._watching.includes(name),
+        this.modulesWatching.includes(name),
       )
       if (includingModulesChanged) {
         this.reload()
@@ -78,15 +78,15 @@ class Linked {
   }
 
   getModules(): ModulesConfig {
-    return this._modules
+    return this.internalModules
   }
 
   exists(id: string): boolean {
-    return !!this._modules[id]
+    return !!this.internalModules[id]
   }
 
   watch(ids: string[]) {
-    this._watching.push(...ids)
+    this.modulesWatching.push(...ids)
   }
 
   // tslint:disable-next-line: no-empty
