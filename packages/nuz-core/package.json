@@ -35,13 +35,13 @@
     "abort-controller": "^3.0.0",
     "lru-cache": "^6.0.0",
     "node-fetch": "^2.6.0",
-    "tslib": "^2.0.0",
+    "tslib": "^2.0.1",
     "use-subscription": "^1.4.1",
-    "whatwg-fetch": "^3.2.0"
+    "whatwg-fetch": "^3.4.0"
   },
   "devDependencies": {
     "@types/lru-cache": "^5.1.0",
-    "@types/react": "^16.9.44",
+    "@types/react": "^16.9.49",
     "@types/react-dom": "^16.9.8",
     "@types/socket.io-client": "^1.4.33",
     "@types/use-subscription": "^1.0.0",
