@@ -350,8 +350,8 @@ class Modules {
       shared: true,
     })
 
-    this.globals.installDependency(name, dependency)
-    this.resolvedDependencies.set(name, dependency)
+    this.globals.installDependency(id, dependency)
+    this.resolvedDependencies.set(id, dependency)
 
     return dependency
   }
