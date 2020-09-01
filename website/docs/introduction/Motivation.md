@@ -14,4 +14,4 @@ Nuz hopes to change the way of developing modern web applications with great thi
 - 🧩 Everything called a module and it's isolated to sharing, build a new application quickly by just to picks and use the shared modules.
 - 🎯 Easy to maintain the application with many modules, update any modules just by a command.
 
-View [desire here](getting-started#installation).
+View [desire here](./overview#desire).
