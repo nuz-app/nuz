@@ -15,6 +15,7 @@ module.exports = {
         "ci",
         "perf",
       ]
-    ]
+    ],
+    "body-max-line-length": [2, "always", 200],
   },
 }
