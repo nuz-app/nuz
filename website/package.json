@@ -5,15 +5,15 @@
   "scripts": {
     "start": "env-cmd docusaurus start",
     "build": "env-cmd docusaurus build",
-    "swizzle": "docusaurus swizzle",
-    "deploy": "docusaurus deploy"
+    "swizzle": "env-cmd docusaurus swizzle --typescript",
+    "deploy": "env-cmd docusaurus deploy"
   },
   "engines": {
     "node": "^10.13 || ^12 || ^14"
   },
   "dependencies": {
-    "@docusaurus/core": "^2.0.0-alpha.61",
-    "@docusaurus/preset-classic": "^2.0.0-alpha.61",
+    "@docusaurus/core": "^2.0.0-alpha.62",
+    "@docusaurus/preset-classic": "^2.0.0-alpha.62",
     "classnames": "^2.2.6",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
@@ -31,6 +31,12 @@
     ]
   },
   "devDependencies": {
-    "env-cmd": "^10.1.0"
+    "@docusaurus/module-type-aliases": "^2.0.0-alpha.51",
+    "@tsconfig/docusaurus": "^1.0.2",
+    "@types/react": "^16.9.49",
+    "@types/react-helmet": "^6.1.0",
+    "@types/react-router-dom": "^5.1.5",
+    "env-cmd": "^10.1.0",
+    "typescript": "^4.0.2"
   }
 }
