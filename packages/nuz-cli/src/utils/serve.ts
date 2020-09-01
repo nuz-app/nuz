@@ -1,4 +1,4 @@
-import { loadCertificateDefault } from '@nuz/utils'
+import { loadLocalCertificate } from '@nuz/utils'
 import compression from 'compression'
 import cors from 'cors'
 import express from 'express'
@@ -35,7 +35,7 @@ const serve = (config: ServeFullConfig) => {
 
   if (https) {
     const httpsConfig =
-      https === true ? Object.assign({}, loadCertificateDefault()) : https
+      https === true ? Object.assign({}, loadLocalCertificate()) : https
     server = spdy.createServer(httpsConfig, app)
   } else {
     server = http.createServer(app)

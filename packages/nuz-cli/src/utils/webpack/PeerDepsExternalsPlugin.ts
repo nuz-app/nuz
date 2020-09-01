@@ -1,4 +1,4 @@
-import { getPackageJsonInDir } from '@nuz/utils'
+import { getPackageJsonInDirectory } from '@nuz/utils'
 
 import setExternals from './helpers/setExternals'
 
@@ -12,7 +12,7 @@ function getPeerDependencies(
 ) {
   try {
     const moduleDir = dir || process.cwd()
-    const pkgJson = getPackageJsonInDir(moduleDir)
+    const pkgJson = getPackageJsonInDirectory(moduleDir)
 
     return Object.keys(pkgJson.peerDependencies).reduce(
       (acc, key) =>

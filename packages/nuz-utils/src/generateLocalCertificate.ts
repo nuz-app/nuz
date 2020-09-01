@@ -1,10 +1,9 @@
-// @ts-ignore
 import selfsigned from 'selfsigned'
 
-const generateSelfCertificate = (
+function generateLocalCertificate(
   attributes: any,
-): { private: string; public: string; cert: string } =>
-  selfsigned.generate(attributes, {
+): { private: string; public: string; cert: string } {
+  return selfsigned.generate(attributes, {
     algorithm: 'sha256',
     days: 30,
     keySize: 2048,
@@ -61,5 +60,6 @@ const generateSelfCertificate = (
       },
     ],
   })
+}
 
-export default generateSelfCertificate
+export default generateLocalCertificate

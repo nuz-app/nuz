@@ -1,4 +1,4 @@
-import { getPackageJsonInDir } from '@nuz/utils'
+import { getPackageJsonInDirectory } from '@nuz/utils'
 import glob from 'glob'
 
 import * as paths from '../paths'
@@ -28,7 +28,13 @@ export const extract = (
   required: boolean = true,
 ): ModuleConfig | null => {
   try {
-    const { name, version, library, source, main } = getPackageJsonInDir(dir)
+    const packageJson = getPackageJsonInDirectory(dir)
+
+    if (!packageJson) {
+      return null
+    }
+
+    const { name, version, library, source, main } = packageJson
 
     const config = require(require.resolve(get(dir)))
     const full = Object.assign(

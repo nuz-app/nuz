@@ -1,4 +1,4 @@
-import { getPackageJsonInDir } from '@nuz/utils'
+import { getPackageJsonInDirectory } from '@nuz/utils'
 import path from 'path'
 
 import * as fs from '../../../utils/fs'
@@ -11,7 +11,7 @@ interface ModuleInfo {
 
 const updatePackageJson = async (dir: string, info: ModuleInfo) => {
   const packageJsonPath = path.join(dir, 'package.json')
-  const packageJson = getPackageJsonInDir(dir) || {}
+  const packageJson = getPackageJsonInDirectory(dir) || {}
 
   const {
     name: _name,

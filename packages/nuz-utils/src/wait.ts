@@ -1,4 +1,5 @@
-const wait = (time: number) =>
-  new Promise((resolve) => setTimeout(resolve, time))
+function wait(time: number): Promise<any> {
+  return new Promise((resolve) => setTimeout(resolve, time))
+}
 
 export default wait

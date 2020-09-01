@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-import generateSelfCertificate from './generateSelfCertificate'
+import generateLocalCertificate from './generateLocalCertificate'
 
 const DEFAULT_ENCODING = 'utf8'
 
@@ -10,7 +10,10 @@ const paths = {
   pem: path.join(__dirname, '../keys/https/server.pem'),
 }
 
-const loadCertificateDefault = () => {
+function loadLocalCertificate(): {
+  key: Buffer
+  cert: Buffer
+} {
   let certificateIsExisted = fs.existsSync(paths.pem)
 
   if (certificateIsExisted) {
@@ -29,7 +32,7 @@ const loadCertificateDefault = () => {
   const shouldEmptyDir = !fs.existsSync(paths.pem)
   if (shouldEmptyDir) {
     const attributes = [{ name: 'commonName', value: 'localhost' }]
-    const pems = generateSelfCertificate(attributes)
+    const pems = generateLocalCertificate(attributes)
 
     fs.writeFileSync(paths.pem, pems.private + pems.cert, {
       encoding: DEFAULT_ENCODING,
@@ -44,4 +47,4 @@ const loadCertificateDefault = () => {
   }
 }
 
-export default loadCertificateDefault
+export default loadLocalCertificate

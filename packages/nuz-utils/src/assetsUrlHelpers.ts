@@ -2,7 +2,15 @@ import ensureOriginSlash from './ensureOriginSlash'
 import * as validator from './validator'
 import * as versionHelpers from './versionHelpers'
 
-export const parse = (pathname: string) => {
+export interface ParsedResult {
+  pathname: string
+  paths: string[]
+  moduleId: string
+  version: string
+  file: string
+}
+
+export function parse(pathname: string): ParsedResult {
   const paths = (pathname || '').split('/-/')
   if (!paths[1]) {
     throw new Error('URL is invalid')
@@ -28,12 +36,12 @@ export const parse = (pathname: string) => {
   }
 }
 
-export const create = (
+export function create(
   moduleId: string,
   version: string,
   file: string,
   origin: string,
-) => {
+): string {
   if (!versionHelpers.checkIsValid(version)) {
     throw new Error(`Version is invalid, value ${version}`)
   }
@@ -45,11 +53,11 @@ export const create = (
   return `${origin}/${moduleId}/-/${version}/${file}`
 }
 
-export const createOrigin = (
+export function createOrigin(
   moduleId: string,
   version: string,
   origin: string,
-) => {
+): string {
   if (!versionHelpers.checkIsValid(version)) {
     throw new Error(`Version is invalid, value ${version}`)
   }
@@ -61,5 +69,6 @@ export const createOrigin = (
   return `${ensureOriginSlash(origin)}${moduleId}/-/${version}/`
 }
 
-export const key = (moduleId: string, version: string, file: string) =>
-  `${moduleId}/${version}/${file}`
+export function key(moduleId: string, version: string, file: string): string {
+  return `${moduleId}/${version}/${file}`
+}

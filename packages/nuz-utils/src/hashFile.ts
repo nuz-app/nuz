@@ -1,7 +1,8 @@
 import crypto from 'crypto'
 import fs from 'fs'
 
-const hashFile = (path: string, hash: string) =>
-  crypto.createHash(hash).update(fs.readFileSync(path)).digest('hex')
+function hashFile(path: string, hash: string): string {
+  return crypto.createHash(hash).update(fs.readFileSync(path)).digest('hex')
+}
 
 export default hashFile

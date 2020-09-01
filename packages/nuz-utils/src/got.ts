@@ -1,13 +1,16 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 
 import * as jsonHelpers from './jsonHelpers'
 
 export type GotRequestConfig = AxiosRequestConfig
 
-const got = async (config: AxiosRequestConfig): Promise<any> => {
+async function got<R = AxiosResponse<any>>(
+  config: AxiosRequestConfig,
+): Promise<R> {
   try {
     const response = await axios(config)
-    return response
+
+    return response as any
   } catch (error) {
     if (error.response) {
       /*

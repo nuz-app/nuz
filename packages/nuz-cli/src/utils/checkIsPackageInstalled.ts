@@ -1,7 +1,7 @@
-import { getPackageJsonInDir } from '@nuz/utils'
+import { getPackageJsonInDirectory } from '@nuz/utils'
 
 const checkIsInstalledPackage = (name: string, dir: string): boolean => {
-  const pkgJson = getPackageJsonInDir(dir)
+  const pkgJson = getPackageJsonInDirectory(dir)
 
   const allDependencies = Object.assign(
     {},

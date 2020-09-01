@@ -1,4 +1,4 @@
-import { checkIsProductionMode, loadCertificateDefault } from '@nuz/utils'
+import { checkIsProductionMode, loadLocalCertificate } from '@nuz/utils'
 import bodyParser from 'body-parser'
 import compression from 'compression'
 import express from 'express'
@@ -66,7 +66,7 @@ class Server {
     // Check if using secure connection
     if (https) {
       const httpsConfig =
-        https === true ? Object.assign({}, loadCertificateDefault()) : https
+        https === true ? Object.assign({}, loadLocalCertificate()) : https
       this._server = spdy.createServer(httpsConfig, this._app)
     } else {
       this._server = http.createServer(this._app)

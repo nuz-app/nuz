@@ -1,4 +1,4 @@
-function checkIsUrl(url: string) {
+function checkIsUrl(url: string): boolean {
   try {
     // @ts-ignore
     const value = new URL(url)

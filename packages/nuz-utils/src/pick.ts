@@ -1,4 +1,4 @@
-const pick = <T = unknown>(data: any, keys: string[]): T => {
+function pick<T = any>(data: any, keys: string[]): T {
   const result = {} as any
 
   for (const key of keys) {

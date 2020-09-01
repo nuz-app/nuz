@@ -26,7 +26,7 @@ export function parser(id: string): ModuleIdParsed {
   }
 }
 
-parser.silent = function silent(id: string) {
+parser.silent = function silent(id: string): ModuleIdParsed | null {
   try {
     return parser.apply(this, arguments as any)
   } catch {

@@ -1,8 +1,10 @@
 const LOCAL_HOST = 'localhost'
 
-export const ipv4 = () => LOCAL_HOST
+export function ipv4(): string {
+  return LOCAL_HOST
+}
 
-export const modules = (port: number): URL => {
+export function modules(port: number): URL {
   const protocol = 'http'
   const hostname = ipv4()
   const pathname = ''
@@ -10,7 +12,7 @@ export const modules = (port: number): URL => {
   return new URL(`${protocol}://${hostname}:${port}${pathname}`)
 }
 
-export const watch = (port: number): URL => {
+export function watch(port: number): URL {
   const protocol = 'http'
   const hostname = ipv4()
   const pathname = '/watching'

@@ -4,23 +4,34 @@ import satisfies from 'semver/functions/satisfies'
 import maxSatisfying from 'semver/ranges/max-satisfying'
 import valid from 'semver/ranges/valid'
 
-export const checkIsValid = (version: string) => !!valid(version)
+export function checkIsValid(version: string): boolean {
+  return !!valid(version)
+}
 
-export const getMaxSatisfying = (
+export function getMaxSatisfying(
   versions: string[],
   range: string,
-): string | null => maxSatisfying(versions, range)
+): string | null {
+  return maxSatisfying(versions, range)
+}
 
-export const getSatisfies = (versions: string[], range: string): string[] =>
-  versions.filter((version) => satisfies(version, range))
+export function getSatisfies(versions: string[], range: string): string[] {
+  return versions.filter((version) => satisfies(version, range))
+}
 
-export const order = (
+export function order(
   versions: string[],
   isMaxToSmall: boolean = true,
-): string[] => versions.sort(isMaxToSmall ? rcompare : compare)
+): string[] {
+  return versions.sort(isMaxToSmall ? rcompare : compare)
+}
 
 // Convert `1.23.45-beta.6` -> `1:23:45-beta:6`
-export const encode = (version: string) => (version || '').replace(/\./g, ':')
+export function encode(version: string): string {
+  return (version || '').replace(/\./g, ':')
+}
 
 // Convert `1:23:45-beta:6` -> `1.23.45-beta.6`
-export const decode = (version: string) => (version || '').replace(/\:/g, '.')
+export function decode(version: string): string {
+  return (version || '').replace(/\:/g, '.')
+}
