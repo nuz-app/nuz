@@ -29,7 +29,7 @@
     "ts:dev": "tsc --build --watch tsconfig.dev.json",
     "test:only": "lerna run test --stream",
     "test": "yarn ts:test && yarn test:only",
-    "lint": "tslint --config tslint.json 'packages/**/*.ts{,x}' --exclude '**/+(dist|node_modules|coverage)/**'",
+    "lint": "tslint --config tslint.json 'packages/**/*.+(ts{,x}|js{,x})' --exclude '**/+(dist|node_modules|coverage)/**'",
     "lint:fix": "yarn lint --fix",
     "dev": "lerna exec --parallel -- yarn dev",
     "preversion:beta": "yarn clean && yarn build",

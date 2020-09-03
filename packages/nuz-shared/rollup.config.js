@@ -1,5 +1,5 @@
-// @ts-check
 import factory from '../../rollup.factory'
+
 import pkg from './package.json'
 
 const dir = __dirname

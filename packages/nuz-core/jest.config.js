@@ -5,4 +5,4 @@ module.exports = Object.assign(
   factory({
     dir: process.cwd(),
   }),
-);
+)

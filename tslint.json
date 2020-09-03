@@ -5,12 +5,10 @@
     "tslint-plugin-prettier",
     "tslint-config-prettier"
   ],
-  "jsRules": {
-    "no-unused-expression": true
-  },
   "linterOptions": {
     "exclude": ["**/templates/**", "**/examples/**"]
   },
+  "jsRules": true,
   "rules": {
     "prettier": [
       true,
