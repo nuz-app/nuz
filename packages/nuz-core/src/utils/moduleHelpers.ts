@@ -46,7 +46,7 @@ export function transform<T extends unknown>(
   const { alias = {}, exportsOnly } = configuration || {}
 
   function checkIsExport(n: string): boolean {
-    return !exportsOnly || exportsOnly.includes(n)
+    return !exportsOnly || exportsOnly?.includes(n)
   }
 
   // tslint:disable-next-line: forin

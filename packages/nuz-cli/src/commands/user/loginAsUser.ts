@@ -55,7 +55,7 @@ async function loginAsUser({
   info(`Logging in to the registry server at ${print.bold(registry)}`)
 
   const tick = timer()
-  const request = await Worker.loginAsUser(username, password)
+  const request = await Worker.loginAsUser(username as string, password)
 
   const userId = request?.data?._id
   const accessToken = request?.data?.accessToken

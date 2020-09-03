@@ -1,5 +1,4 @@
-// @ts-ignore
-import webpack = require('webpack')
+import type webpack from 'webpack'
 import * as yargs from 'yargs'
 
 export enum CommandTypes {
