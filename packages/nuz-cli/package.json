@@ -27,7 +27,7 @@
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "clean": "rimraf dist coverage tsconfig.tsbuildinfo",
+    "clean": "rimraf dist coverage *.tsbuildinfo",
     "dev": "rollup -c -w",
     "build": "rollup -c"
   },
