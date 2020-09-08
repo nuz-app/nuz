@@ -11,7 +11,7 @@ import * as paths from '../../paths'
 import * as configHelpers from '../../utils/configHelpers'
 import createQuestions from '../../utils/createQuestions'
 import * as fs from '../../utils/fs'
-import pickAssetsFromStats from '../../utils/pickAssetsFromStats'
+import getModuleAssetsOnly from '../../utils/getModuleAssetsOnly'
 import pickFilesFromStats from '../../utils/pickFilesFromStats'
 import print, { info, success } from '../../utils/print'
 import timer from '../../utils/timer'
@@ -109,7 +109,7 @@ async function publish({
     getDetailsOfModule(dir),
     fs.readJson(statsPath),
   ])
-  const assets = pickAssetsFromStats(stats, { md5sum: true })
+  const assets = getModuleAssetsOnly(stats, { md5sum: true })
   const files = pickFilesFromStats(stats)
 
   const data = {

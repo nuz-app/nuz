@@ -14,7 +14,7 @@ import * as configHelpers from '../../utils/configHelpers'
 import ensurePath from '../../utils/ensurePath'
 import * as fs from '../../utils/fs'
 import getFeatureConfig from '../../utils/getFeatureConfig'
-import pickAssetsFromStats from '../../utils/pickAssetsFromStats'
+import getModuleAssetsOnly from '../../utils/getModuleAssetsOnly'
 import print, { info, pretty } from '../../utils/print'
 import { onExit } from '../../utils/process'
 import runWatchMode from '../../utils/runWatchMode'
@@ -164,7 +164,7 @@ async function standalone({
           throw Error(`Can't get module data of ${moduleName}`)
         }
 
-        const moduleAssets = pickAssetsFromStats(item, { md5sum: false })
+        const moduleAssets = getModuleAssetsOnly(item, { md5sum: false })
         const moduleResolve = {
           main: moduleAssets.resolve.main.url,
           styles: moduleAssets.resolve.styles.map((style) => style.url),
