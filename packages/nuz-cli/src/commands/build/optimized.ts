@@ -15,7 +15,11 @@ import showErrorsAndWarnings from '../../utils/showErrorsAndWarnings'
 import webpackConfigFactory from '../../utils/webpack/factories/buildConfig'
 import * as webpackCompiler from '../../utils/webpackCompiler'
 
-async function optimized({ publicPath }: Arguments<{ publicPath?: string }>) {
+interface BuildOptimizedOptions extends Arguments<{ publicPath?: string }> {}
+
+async function optimized(options: BuildOptimizedOptions) {
+  const { publicPath } = options
+
   const dir = paths.cwd
 
   const configIsExisted = configHelpers.exists(dir)

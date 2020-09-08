@@ -36,10 +36,10 @@ async function standalone({
 
   const linkedUrl = linkedUrls.modules(port)
   const publicPath = linkedUrl.href
-  const bundlesDirectory = paths.bundlesDirectory(dir, 'modules')
+  const resolveBuildDirectory = paths.resolveBuildDirectory(dir, 'modules')
 
   clearConsole()
-  await fs.emptyDir(bundlesDirectory)
+  await fs.emptyDir(resolveBuildDirectory)
 
   // Check and get modules paths in workspace
   const selectedWorkspaces = workspaces.reduce<string[]>(
@@ -70,7 +70,7 @@ async function standalone({
 
     // Create output directory inside bundles directory
     const moduleCurrentOutputs = ensurePath(moduleDirectory, currentOutput)
-    const moduleOutputDirectory = path.join(bundlesDirectory, moduleName)
+    const moduleOutputDirectory = path.join(resolveBuildDirectory, moduleName)
     const moduleOutputFile = path.join(
       moduleOutputDirectory,
       moduleCurrentOutputs.filename,
@@ -127,7 +127,7 @@ async function standalone({
   // Create server to serve file serving and directory listing in workspace
   const server = serve({
     port,
-    dir: bundlesDirectory,
+    dir: resolveBuildDirectory,
   })
 
   // Create socket to watching changes and reload

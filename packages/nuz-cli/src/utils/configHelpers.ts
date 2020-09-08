@@ -6,7 +6,7 @@ import { ModuleConfig } from '../types/common'
 import * as fs from '../utils/fs'
 
 export const get = (dir: string): string => {
-  const matches = glob.sync(paths.resolveConfigFile(dir))
+  const matches = glob.sync(paths.resolveInternalConfig(dir))
   const configPath = matches[0]
   return configPath
 }
@@ -14,7 +14,7 @@ export const get = (dir: string): string => {
 export const exists = (dir: string): boolean => !!get(dir)
 
 export const ensure = (dir: string) => {
-  const file = paths.resolveConfigFile(dir)
+  const file = paths.resolveInternalConfig(dir)
   const existed = fs.exists(file)
   if (!existed) {
     //

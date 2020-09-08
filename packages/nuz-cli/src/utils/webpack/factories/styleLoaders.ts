@@ -23,7 +23,7 @@ const styleLoadersFactory = ({
   modules = 'auto',
   sourceMap,
 }: StyleLoadersOptions): webpack.Loader[] => {
-  const resolveModule = (moduleId: string) => paths.resolveModule(moduleId, dir)
+  const resolveModule = (moduleId: string) => paths.resolveNodeModules(moduleId, dir)
   const browserslist = getBrowserslist({ dir, dev })
   const loaders = [] as webpack.Loader[]
 
@@ -111,8 +111,8 @@ const styleLoadersFactory = ({
         {
           sourceMap,
           implementation: dartSassIsInstalled
-            ? require(paths.resolveModule('dart-sass', dir))
-            : require(paths.resolveModule('node-sass', dir)),
+            ? require(paths.resolveNodeModules('dart-sass', dir))
+            : require(paths.resolveNodeModules('node-sass', dir)),
         },
         feature.sass === true ? {} : feature.sass,
       ),

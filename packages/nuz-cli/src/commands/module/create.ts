@@ -1,5 +1,6 @@
 import { deferedPromise } from '@nuz/utils'
 import inquirer from 'inquirer'
+import path from 'path'
 import ProgressBar from 'progress'
 import { Arguments } from 'yargs'
 
@@ -112,7 +113,7 @@ async function create({
     )}!`,
   )
 
-  const dir = paths.newModuleDirectory(cwd, result.name)
+  const dir = path.join(cwd, result.name)
   const dirIsExisted = fs.exists(dir)
   if (dirIsExisted) {
     const { isOverried } = await createQuestions<{ isOverried: boolean }>([

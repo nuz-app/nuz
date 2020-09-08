@@ -200,10 +200,10 @@ function webpackConfigFactory(
     : [...JS_EXTENSIONS, ...JSON_EXTENSIONS]
 
   const cacheDirectories = {
-    bundles: (paths as any).resolveModuleCache('bundles'),
-    babel: (paths as any).resolveModuleCache('babel'),
-    terser: (paths as any).resolveModuleCache('terser'),
-    images: (paths as any).resolveModuleCache('images'),
+    bundles: (paths as any).resolveLocalCache('bundles'),
+    babel: (paths as any).resolveLocalCache('babel'),
+    terser: (paths as any).resolveLocalCache('terser'),
+    images: (paths as any).resolveLocalCache('images'),
   }
   const cacheConfig = cache
     ? {
@@ -214,7 +214,7 @@ function webpackConfigFactory(
     : false
 
   function resolveModule(moduleId: string) {
-    return paths.resolveModule(moduleId, dir)
+    return paths.resolveNodeModules(moduleId, dir)
   }
 
   const config = {
