@@ -1,5 +1,5 @@
-import wrapCommand from '../../utils/wrapCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
+import wrapCommand from '../../utils/wrapCommand'
 
 import getConfig from './getConfig'
 import listConfig from './listConfig'

@@ -1,5 +1,5 @@
-import wrapCommand from '../../utils/wrapCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
+import wrapCommand from '../../utils/wrapCommand'
 
 import addCollaborator from './addCollaborator'
 import createScope from './createScope'

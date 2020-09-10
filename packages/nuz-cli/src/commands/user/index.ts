@@ -1,5 +1,5 @@
-import wrapCommand from '../../utils/wrapCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
+import wrapCommand from '../../utils/wrapCommand'
 
 import allCompose from './allCompose'
 import allModules from './allModules'
@@ -17,12 +17,7 @@ export const setCommands = (yargs) => {
   yargs.command('user', 'Manage user', (child) => {
     child.usage('usage: $0 user <item> [options]')
 
-    child.command(
-      'whoami',
-      'Who I am?',
-      (yarg) => yarg,
-      wrapCommand(whoami),
-    )
+    child.command('whoami', 'Who I am?', (yarg) => yarg, wrapCommand(whoami))
 
     child.command(
       'login [username]',
