@@ -1,12 +1,13 @@
 import print, { error, log, warn } from './print'
 
-function showErrorsAndWarnings({
-  errors,
-  warnings,
-}: {
+interface Messages {
   errors: string[]
   warnings: string[]
-}) {
+}
+
+function printBuildOutputMessages(messages: Messages): void {
+  const { errors, warnings } = messages
+
   if (errors.length > 0) {
     error(print.dim('Error(s) has occurred'))
     errors.forEach((item) => log(item))
@@ -18,4 +19,4 @@ function showErrorsAndWarnings({
   }
 }
 
-export default showErrorsAndWarnings
+export default printBuildOutputMessages

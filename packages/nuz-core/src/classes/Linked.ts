@@ -1,5 +1,5 @@
 import { LINKED_CHANGE_EVENT, LINKED_DEFINE_EVENT } from '@nuz/shared'
-import { DeferedPromise, deferedPromise, linkedUrls } from '@nuz/utils'
+import { DeferedPromise, deferedPromise, internalUrlsCreators } from '@nuz/utils'
 
 import { LinkedConfig, ModulesConfig } from '../types'
 import createSocketConnection from '../utils/createSocketConnection'
@@ -13,7 +13,7 @@ class Linked {
     const { port } = this.linked || {}
 
     const isUnused = !this.linked || !port
-    const watchUrl = !isUnused && linkedUrls.watch(port as any)
+    const watchUrl = !isUnused && internalUrlsCreators.watch(port as any)
 
     // Create connection and save io and get linked watch info
     this.socket = !watchUrl ? undefined : createSocketConnection(watchUrl)

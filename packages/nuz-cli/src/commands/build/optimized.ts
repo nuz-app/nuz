@@ -1,78 +1,75 @@
 import { integrityHelpers } from '@nuz/utils'
+import fs from 'fs-extra'
 import path from 'path'
 import clearConsole from 'react-dev-utils/clearConsole'
 import * as webpack from 'webpack'
 import { Arguments } from 'yargs'
 
 import * as paths from '../../paths'
-import checkRequiredModuleConfig from '../../utils/checkRequiredModuleConfig'
-import * as configHelpers from '../../utils/configHelpers'
-import * as fs from '../../utils/fs'
-import getBundleInfo from '../../utils/getBundleInfo'
-import getFeatureConfig from '../../utils/getFeatureConfig'
+import builder from '../../utils/builder'
+import detectFeaturesUsed from '../../utils/detectFeaturesUsed'
+import getBuildOutputInformation from '../../utils/getBuildOutputInformation'
+import getOutputDirectory from '../../utils/getOutputDirectory'
 import print, { info, pretty, success } from '../../utils/print'
-import showErrorsAndWarnings from '../../utils/showErrorsAndWarnings'
+import printBuildOutputMessages from '../../utils/printBuildOutputMessages'
+import requireInternalConfig from '../../utils/requireInternalConfig'
 import webpackConfigFactory from '../../utils/webpack/factories/buildConfig'
-import * as webpackCompiler from '../../utils/webpackCompiler'
 
 interface BuildOptimizedOptions extends Arguments<{ publicPath?: string }> {}
 
-async function optimized(options: BuildOptimizedOptions) {
+async function optimized(options: BuildOptimizedOptions): Promise<boolean> {
   const { publicPath } = options
 
-  const dir = paths.cwd
+  const directory = paths.cwd
+  const dev = false
+  const cache = true
+  const internalConfig = requireInternalConfig(directory, true)
 
-  const configIsExisted = configHelpers.exists(dir)
-  if (!configIsExisted) {
-    throw new Error(
-      'Not found a config file, file named `nuz.config.js` in root dir',
-    )
+  // Override `publicPath` field in internal config
+  if (typeof publicPath === 'string') {
+    internalConfig.publicPath = publicPath
   }
 
-  const moduleConfig = configHelpers.extract(dir)
-  if (!moduleConfig) {
-    throw new Error('Config file is invalid')
-  }
-
-  checkRequiredModuleConfig(moduleConfig)
-  if (publicPath) {
-    moduleConfig.publicPath = publicPath
-  }
-
-  const { name, output } = moduleConfig
-
-  const featureConfig = getFeatureConfig(dir, moduleConfig)
-  const distDir = path.join(dir, path.dirname(output))
+  // Detect features used and get output directory
+  const featuresUsed = detectFeaturesUsed(directory)
+  const outputDirectory = getOutputDirectory(directory, internalConfig.output)
 
   clearConsole()
-  info('Clean up distributable module folder')
-  await fs.emptyDir(distDir)
+  info('Cleaning up the directories before proceeding...')
 
-  info('Features config using', pretty(featureConfig))
+  // Empty output directory
+  fs.emptyDirSync(outputDirectory)
+
+  info('Identified features used', pretty(featuresUsed))
+
+  //
   const buildConfig = webpackConfigFactory(
     {
-      dev: false,
-      cache: true,
-      dir,
+      dev,
+      cache,
+      dir: directory,
       module: name,
-      config: moduleConfig,
+      config: internalConfig,
     },
-    featureConfig,
+    featuresUsed,
   )
 
-  const compiler = webpackCompiler.run(buildConfig as webpack.Configuration)
+  const compile = builder(buildConfig as webpack.Configuration)
   info('Compiler was created for this module')
-  const bundle = await compiler
 
-  const bundleInfo = getBundleInfo(bundle)
-  if (!bundleInfo.done) {
-    showErrorsAndWarnings(bundleInfo)
-    throw new Error('Have errors thrown while bundle module, please check it!')
+  //
+  const buildOutput = await compile
+  const buildInfo = getBuildOutputInformation(buildOutput.stats)
+  if (!buildInfo.done) {
+    printBuildOutputMessages(buildInfo)
+    throw new Error('There was a build error, please see details above.')
   }
 
-  const outputFile = path.join(dir, output)
-  const integrity = integrityHelpers.file(outputFile)
+  const integrity = integrityHelpers.file(
+    path.join(directory, internalConfig.output),
+  )
 
+  //
   success(`${print.name(name)} module was built successfully!`)
   info(`Output file integrity is ${print.blueBright(integrity)}`)
 

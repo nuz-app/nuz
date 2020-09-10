@@ -1,20 +1,19 @@
 import { Arguments } from 'yargs'
 
-import handleOnCommand from '../../utils/handleOnCommand'
+import wrapCommand from '../../utils/wrapCommand'
 
 import standalone from './standalone'
 import workspaces from './workspaces'
 
-async function dev(argv: Arguments<{ workspaces?: string[] }>) {
-  const isWorkspaces = !!argv.workspaces
+interface DevOptions extends Arguments<{ workspaces?: string[] }> {}
 
-  const result = await (isWorkspaces
-    ? workspaces(argv as any)
-    : standalone(argv as any))
-  return result
+async function dev(argv: DevOptions): Promise<boolean> {
+  const useWorksapces = !!argv.workspaces
+
+  return useWorksapces ? workspaces(argv as any) : standalone(argv as any)
 }
 
-export const setCommands = (yargs) => {
+export function setCommands(yargs): void {
   yargs.command(
     'dev',
     'Start the development mode for the module(s)',
@@ -35,6 +34,6 @@ export const setCommands = (yargs) => {
           type: 'boolean',
           required: false,
         }),
-    handleOnCommand(dev),
+    wrapCommand(dev),
   )
 }

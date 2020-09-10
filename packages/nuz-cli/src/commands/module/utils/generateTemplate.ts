@@ -49,9 +49,8 @@ const generateTemplate = async (
     library,
   }: { name: string; version: string; library?: string },
 ) => {
-  const questions = getQuestions(name)
   const result = await createQuestions<{ language: string; style: string }>(
-    questions,
+    getQuestions(name),
   )
   const useTypescript = result.language === 'typescript'
   const scriptExtension = useTypescript ? 'tsx' : 'jsx'

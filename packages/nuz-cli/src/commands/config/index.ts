@@ -1,4 +1,4 @@
-import handleOnCommand from '../../utils/handleOnCommand'
+import wrapCommand from '../../utils/wrapCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
 import getConfig from './getConfig'
@@ -13,21 +13,21 @@ export const setCommands = (yargs) => {
       'set <key> <value>',
       'Set configuration',
       (yarg) => yarg,
-      handleOnCommand(setConfig),
+      wrapCommand(setConfig),
     )
 
     child.command(
       'get <keys..>',
       'Get configuration',
       (yarg) => yarg,
-      handleOnCommand(getConfig),
+      wrapCommand(getConfig),
     )
 
     child.command(
       'list',
       'List configuration',
       (yarg) => yarg,
-      handleOnCommand(listConfig),
+      wrapCommand(listConfig),
     )
 
     showHelpIfInvalid(child, child.argv, 2)

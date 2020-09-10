@@ -1,4 +1,4 @@
-import handleOnCommand from '../../utils/handleOnCommand'
+import wrapCommand from '../../utils/wrapCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
 import checkUpdate from './checkUpdate'
@@ -11,7 +11,7 @@ export const setCommands = (yargs) => {
       'check-update',
       'Check update for package',
       (yarg) => yarg,
-      handleOnCommand(checkUpdate),
+      wrapCommand(checkUpdate),
     )
 
     showHelpIfInvalid(child, child.argv, 2, 3)

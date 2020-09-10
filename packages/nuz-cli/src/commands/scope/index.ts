@@ -1,4 +1,4 @@
-import handleOnCommand from '../../utils/handleOnCommand'
+import wrapCommand from '../../utils/wrapCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
 import addCollaborator from './addCollaborator'
@@ -16,21 +16,21 @@ export const setCommands = (yargs) => {
       'get <scope> [fields..]',
       'Get details of a scope',
       (yarg) => yarg,
-      handleOnCommand(getDetails),
+      wrapCommand(getDetails),
     )
 
     child.command(
       'create <name>',
       'Create a scope',
       (yarg) => yarg,
-      handleOnCommand(createScope),
+      wrapCommand(createScope),
     )
 
     child.command(
       'delete <name>',
       'Delete a scope',
       (yarg) => yarg,
-      handleOnCommand(deleteScope),
+      wrapCommand(deleteScope),
     )
 
     child.command('collaborator', 'Manage collaborator of scope', (schild) => {
@@ -40,21 +40,21 @@ export const setCommands = (yargs) => {
         'add <scope> <user> [type]',
         'Add collaborator to the scope',
         (yarg) => yarg,
-        handleOnCommand(addCollaborator),
+        wrapCommand(addCollaborator),
       )
 
       schild.command(
         'update <scope> <user> <type>',
         'Update collaborator of the scope',
         (yarg) => yarg,
-        handleOnCommand(updateCollaborator),
+        wrapCommand(updateCollaborator),
       )
 
       schild.command(
         'remove <scope> <user>',
         'Remove collaborator from the scope',
         (yarg) => yarg,
-        handleOnCommand(removeCollaborator),
+        wrapCommand(removeCollaborator),
       )
 
       showHelpIfInvalid(schild, schild.argv, 3, 4)

@@ -18,19 +18,18 @@ export interface PickOutput {
 }
 
 function getModuleAssetsOnly(
-  _stats: webpack.Stats | webpack.Stats.ToJsonOutput,
+  stats: webpack.Stats | webpack.Stats.ToJsonOutput,
   options: PickOptions = {},
 ): { resolve: PickOutput; files: PickResouce[] } {
-  const stats = 'toJson' in _stats ? _stats.toJson() : _stats
+  const data = 'toJson' in stats ? stats.toJson() : stats
 
-  const { outputPath, publicPath, entrypoints, assets: allAssets } = stats
-
-  const entrypointsAssets = entrypoints?.main.assets
+  const { outputPath, publicPath, entrypoints, assets: allAssets } = data
 
   if (!outputPath) {
     throw new Error('Missing `outoutPath` in the stats')
   }
 
+  const entrypointsAssets = entrypoints?.main.assets
   if (!entrypointsAssets) {
     throw new Error('Missing entrypoints assets in the stats')
   }

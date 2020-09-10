@@ -1,90 +1,131 @@
+import fs from 'fs-extra'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import path from 'path'
 import checkRequiredFiles from 'react-dev-utils/checkRequiredFiles'
 import clearConsole from 'react-dev-utils/clearConsole'
+import ignoredFiles from 'react-dev-utils/ignoredFiles'
 import openBrowser from 'react-dev-utils/openBrowser'
 import InterpolateHtmlPlugin from 'react-dev-utils/InterpolateHtmlPlugin'
-import {
-  createCompiler,
-  prepareUrls,
-} from 'react-dev-utils/WebpackDevServerUtils'
+import { createCompiler } from 'react-dev-utils/WebpackDevServerUtils'
 import webpack from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
 import { Arguments } from 'yargs'
 
 import * as paths from '../../paths'
 import checkIsYarnInstalled from '../../utils/checkIsYarnInstalled'
-import checkRequiredModuleConfig from '../../utils/checkRequiredModuleConfig'
-import * as configHelpers from '../../utils/configHelpers'
-import ensurePath from '../../utils/ensurePath'
-import * as fs from '../../utils/fs'
-import getFeatureConfig from '../../utils/getFeatureConfig'
+import createQuestions from '../../utils/createQuestions'
+import detectFeaturesUsed from '../../utils/detectFeaturesUsed'
+import getSystemPaths from '../../utils/getSystemPaths'
+import prepareUrls from '../../utils/prepareUrls'
 import { info, pretty } from '../../utils/print'
-import { onExit } from '../../utils/process'
-import webpackConfigFactory from '../../utils/webpack/factories/buildConfig'
-import devServerConfigFactory from '../../utils/webpack/factories/devServerConfig'
+import * as processHelpers from '../../utils/process'
+import requireInternalConfig from '../../utils/requireInternalConfig'
+import createWebpackConfig from '../../utils/webpack/factories/buildConfig'
+import createDevServerConfig from '../../utils/webpack/factories/devServerConfig'
 
-async function standalone({
-  port = 4000,
-  open = true,
-}: Arguments<{ port?: number; open?: string | boolean }>) {
-  const dir = paths.cwd
+interface DevStandaloneOptions
+  extends Arguments<{ port?: number; open?: string | boolean }> {}
 
-  const configIsExisted = configHelpers.exists(dir)
-  if (!configIsExisted) {
-    throw new Error(
-      'Not found a config file, file named `nuz.config.js` in root dir',
-    )
-  }
+async function standalone(options: DevStandaloneOptions): Promise<boolean> {
+  const { port, open } = Object.assign({ port: 4000, open: true }, options)
 
-  const moduleConfig = configHelpers.extract(dir)
-  if (!moduleConfig) {
-    throw new Error('Config file is invalid')
-  }
+  const dev = true
+  const cache = true
+  const directory = paths.cwd
 
-  checkRequiredModuleConfig(moduleConfig)
+  // Get the information needed to start development mode
+  const internalConfig = requireInternalConfig(directory, true)
+  const publicUrlOrPath = paths.publicUrlOrPath(
+    directory,
+    internalConfig.publicPath,
+  )
+  const featuresUsed = detectFeaturesUsed(directory)
+  const outputPaths = getSystemPaths(directory, internalConfig.output)
+  const publicDirectory = paths.resolvePublicDirectory(directory)
 
-  const publicUrlOrPath = paths.publicUrlOrPath(dir, moduleConfig.publicPath)
-  const featuresOf = getFeatureConfig(dir, moduleConfig)
-  const outputs = ensurePath(dir, moduleConfig.output)
-  const publicDirectory = path.join(dir, 'public')
-  const publicJsIndexPath = path.join(
+  // Get and ensure public script and html index files
+  const publicScriptIndexPath = path.join(
     publicDirectory,
-    featuresOf.typescript ? 'index.ts' : 'index.js',
+    featuresUsed.typescript ? 'index.ts' : 'index.js',
   )
   const publicHtmlIndexPath = path.join(publicDirectory, 'index.html')
-  if (!checkRequiredFiles([publicJsIndexPath, publicHtmlIndexPath])) {
-    throw new Error(
-      'Some required files were not found in the `public` directory',
-    )
+
+  //
+  function canUsePublicDirectory(): boolean {
+    return checkRequiredFiles([publicScriptIndexPath, publicHtmlIndexPath])
+  }
+
+  if (!canUsePublicDirectory()) {
+    const answers = await createQuestions<{ isConfirmed: boolean }>([
+      {
+        type: 'confirm',
+        name: 'isConfirmed',
+        default: true,
+        message: `Not found public directory. Do you want to initial it?`,
+      },
+    ])
+    if (answers.isConfirmed) {
+      const moduleTemplateDirectory = paths.resolveModuleTemplate('public')
+
+      //
+      await fs.copy(paths.resolveModuleTemplate('public'), publicDirectory, {
+        recursive: true,
+        dereference: true,
+      })
+      await fs.remove(
+        path.join(
+          moduleTemplateDirectory,
+          !featuresUsed.typescript ? 'index.ts' : 'index.js',
+        ),
+      )
+    }
+
+    if (!canUsePublicDirectory()) {
+      throw new Error(
+        'Some required files were not found in the public directory',
+      )
+    }
   }
 
   clearConsole()
-  await fs.emptyDir(outputs.directory)
-  info('Features config using', pretty(featuresOf))
+  info('Cleaning up the directories before proceeding...')
 
-  const bundleConfig = {
-    dev: true,
-    cache: true,
-    dir,
-    module: moduleConfig.name,
-    config: Object.assign({}, moduleConfig, { input: publicJsIndexPath }),
-  }
-  const bundleOptions = { showProcess: false, injectReact: true }
-  const webpackConfig = webpackConfigFactory(
-    bundleConfig,
-    featuresOf,
-    bundleOptions,
+  // Empty output directory
+  await fs.emptyDir(outputPaths.directory)
+
+  info('Identified features used', pretty(featuresUsed))
+
+  //
+  const webpackConfig = createWebpackConfig(
+    {
+      dev,
+      cache,
+      dir: directory,
+      module: internalConfig.name,
+      config: Object.assign({}, internalConfig, {
+        input: publicScriptIndexPath,
+      }),
+    },
+    featuresUsed,
+    { showProcess: false, injectReact: true },
   )
-  if (!webpackConfig.output || !webpackConfig.plugins) {
-    throw new Error('An error occurred during config creation')
-  }
 
-  webpackConfig.plugins.push(
+  webpackConfig.plugins?.push(
     // @ts-ignore
     new HtmlWebpackPlugin({
-      inject: true,
       template: publicHtmlIndexPath,
+      // Inject all main scripts to template
+      inject: true,
+      // Errors details will be written into the HTML page
+      showErrors: true,
+      // Modern browsers support non blocking javascript loading ('defer') to
+      // improve the page startup performance.
+      scriptLoading: 'blocking',
+      // The file to write the HTML to
+      filename: 'index.html',
+      // Allows to control how chunks should be sorted before
+      // they are included to the HTML
+      chunksSortMode: 'auto',
     }),
     new InterpolateHtmlPlugin(HtmlWebpackPlugin, {
       // Remove slash at end from `publicPath`
@@ -93,31 +134,36 @@ async function standalone({
     }),
   )
 
+  // Get the require fields to create compiler
   const useYarn = checkIsYarnInstalled()
   const protocol = process.env.HTTPS === 'true' ? 'https' : 'http'
   const host = 'localhost'
+  const urls = await prepareUrls({ protocol, host, port })
 
-  const urls = prepareUrls(protocol, host, port)
   // @ts-ignore
   const compiler = createCompiler({
-    appName: moduleConfig.name,
+    appName: internalConfig.name,
     config: webpackConfig,
     urls,
     useYarn,
     webpack,
-    useTypeScript: featuresOf.typescript,
+    useTypeScript: featuresUsed.typescript,
     tscCompileOnError: false,
   })
 
-  const serverConfig = devServerConfigFactory({
-    dir,
-    publicUrlOrPath,
-    contentBase: [publicDirectory],
-  })
-
   let isInitialized = false
-  const devServer = new WebpackDevServer(compiler, serverConfig as any)
-  devServer.listen(port, host, (err) => {
+
+  //
+  const devServer = new WebpackDevServer(
+    compiler,
+    createDevServerConfig({
+      standalone: true,
+      publicUrlOrPath,
+      ignored: [ignoredFiles(directory)],
+      contentBase: [publicDirectory],
+    }) as any,
+  )
+  devServer.listen(urls.port, urls.host, (err) => {
     if (err) {
       return console.log(err)
     }
@@ -133,7 +179,8 @@ async function standalone({
     isInitialized = true
   })
 
-  onExit(() => {
+  //
+  processHelpers.onExit(() => {
     devServer.close()
     process.exit()
   })

@@ -1,64 +1,45 @@
-import path from 'path'
+import fs from 'fs-extra'
 import clearConsole from 'react-dev-utils/clearConsole'
 import { Arguments } from 'yargs'
 
 import * as paths from '../../paths'
-import checkRequiredModuleConfig from '../../utils/checkRequiredModuleConfig'
-import * as configHelpers from '../../utils/configHelpers'
-import * as fs from '../../utils/fs'
-import { info, pretty } from '../../utils/print'
-import { onExit } from '../../utils/process'
-import serveServer from '../../utils/serve'
+import getOutputDirectory from '../../utils/getOutputDirectory'
+import print, { info } from '../../utils/print'
+import * as processHelpers from '../../utils/process'
+import requireInternalConfig from '../../utils/requireInternalConfig'
+import serve from '../../utils/serve'
 
-async function serve({ port = 4000 }: Arguments<{ port?: number }>) {
-  const dir = paths.cwd
+export interface ServeMainOptions extends Arguments<{ port?: number }> {}
 
-  const configIsExisted = configHelpers.exists(dir)
-  if (!configIsExisted) {
+async function _serve(options: ServeMainOptions): Promise<boolean> {
+  const { port } = Object.assign({ port: 4000 }, options)
+
+  const directory = paths.cwd
+  const internalConfig = requireInternalConfig(directory, true)
+
+  const outputDirectory = getOutputDirectory(directory, internalConfig.output)
+  if (!fs.existsSync(outputDirectory)) {
     throw new Error(
-      'Not found a config file, file named `nuz.config.js` in root dir',
+      `Not found build output directory, at ${print.link(outputDirectory)}.`,
     )
   }
 
-  const moduleConfig = configHelpers.extract(dir)
-  if (!moduleConfig) {
-    throw new Error('Config file is invalid')
-  }
-
-  checkRequiredModuleConfig(moduleConfig)
-
-  const { name, output, serve: serveConfig } = moduleConfig
-
-  if (!fs.exists(output)) {
-    throw new Error(`Output directory is not found, at ${output}`)
-  }
-
   clearConsole()
+  info('Preparing to service static resources...')
 
-  const outputDirname = path.dirname(output)
-  const outputFilename = path.basename(output)
-  const server = serveServer(
-    Object.assign({}, serveConfig, {
+  const server = serve(
+    Object.assign({}, internalConfig.serve, {
       port,
-      dir: outputDirname,
+      directory: outputDirectory,
     }),
   )
-
   info(`Server was created to files serving for the module`)
-  info(
-    'Module information',
-    pretty({
-      name,
-      port,
-      url: `http://localhost:${port}/${outputFilename}`,
-    }),
-  )
 
-  onExit(() => {
+  processHelpers.onExit(() => {
     server.close()
   })
 
   return false
 }
 
-export default serve
+export default _serve

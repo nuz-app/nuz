@@ -1,16 +1,6 @@
 import type webpack from 'webpack'
-import * as yargs from 'yargs'
 
-export enum CommandTypes {
-  create = 'create',
-  dev = 'dev',
-  build = 'build',
-  serve = 'serve',
-  publish = 'publish',
-  workspace = 'workspace',
-}
-
-export interface RegistryConfig {
+export interface RegistryConfiguration {
   /**
    * Access token
    */
@@ -21,60 +11,25 @@ export interface RegistryConfig {
   endpoint: string
 }
 
-export interface CommandConfig<C = unknown> {
-  type: CommandTypes
-  description: string
-  transform: (yargs: any) => any
-  execute: (yargs: yargs.Argv<C>) => Promise<any>
-}
-
-export interface CreateCommand {
-  name?: string
-  template?: string
-}
-
-export interface PublishCommand {
-  fallback?: boolean
-}
-
-export interface BuildCommand {
-  clean?: boolean
-}
-
-export interface DevCommand {
-  port?: number
-  clean?: boolean
-}
-
-export interface ServeCommand {
-  port?: number
-}
-
-export interface WorkspaceCommand {
-  workspace?: string[]
-  port?: number
-  clean?: boolean
-}
-
-export interface AnalyzerConfig {
+export interface AnalyzerConfiguration {
   open: boolean
   statsOptions?: { [key: string]: any }
 }
 
-export interface ServeHttpsConfig {
+export interface ServeHttpsConfiguration {
   key: Buffer | string
   cert: Buffer | string
 }
 
-export interface ServeConfig {
-  https?: boolean | ServeHttpsConfig
+export interface ServeConfiguration {
+  https?: boolean | ServeHttpsConfiguration
 }
 
-export interface ExperimentalConfig {
+export interface ExperimentalConfiguration {
   multiThread?: boolean
 }
 
-export interface ModuleConfig {
+export interface InternalConfiguration {
   /**
    * Name of module
    */
@@ -106,11 +61,11 @@ export interface ModuleConfig {
   /**
    * Enable feature by loader and plugins
    */
-  feature?: boolean | FeatureConfig
+  feature?: boolean | FeaturesUsed
   /**
    * Bundle analyzer for production mode
    */
-  analyzer?: boolean | AnalyzerConfig
+  analyzer?: boolean | AnalyzerConfiguration
   /**
    * Allow to custom webpack config
    */
@@ -125,7 +80,7 @@ export interface ModuleConfig {
   /**
    * Publish config
    */
-  registry?: RegistryConfig
+  registry?: RegistryConfiguration
   /**
    * Workspace paths
    */
@@ -138,11 +93,11 @@ export interface ModuleConfig {
    * Serve config
    * Config using for dev, serve and workspace mode
    */
-  serve?: ServeConfig
+  serve?: ServeConfiguration
   /**
    * Experimental
    */
-  experimental?: ExperimentalConfig
+  experimental?: ExperimentalConfiguration
   /**
    * Build isolated module
    */
@@ -154,10 +109,10 @@ export interface ModuleConfig {
   /**
    * Filenames of webpack plugins
    */
-  names?: Partial<NamesConfig>
+  names?: Partial<NamedConfiguration>
 }
 
-export interface NamesConfig {
+export interface NamedConfiguration {
   chunkFilename: () => string
   cssLocalIdentName: () => string
   cssFilename: () => string
@@ -165,7 +120,7 @@ export interface NamesConfig {
   imageMinifiedFilename: (resourcePath: string) => string
 }
 
-export interface FeatureConfig {
+export interface FeaturesUsed {
   typescript: boolean
   react: boolean
   postcss: boolean | any

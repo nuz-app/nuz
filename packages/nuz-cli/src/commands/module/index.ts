@@ -1,5 +1,5 @@
-import handleOnCommand from '../../utils/handleOnCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
+import wrapCommand from '../../utils/wrapCommand'
 
 import addCollaborator from './addCollaborator'
 import create from './create'
@@ -10,7 +10,7 @@ import removeCollaborator from './removeCollaborator'
 import setDeprecate from './setDeprecate'
 import updateCollaborator from './updateCollaborator'
 
-export const setCommands = (yargs) => {
+export function setCommands(yargs): void {
   yargs.command('module', 'Manage module', (child) => {
     child.usage('usage: $0 module <item> [options]')
 
@@ -18,14 +18,14 @@ export const setCommands = (yargs) => {
       'create [name] [template]',
       'Create new module',
       (yarg) => yarg,
-      handleOnCommand(create),
+      wrapCommand(create),
     )
 
     child.command(
       'get <module> [fields..]',
       'Get details of a module',
       (yarg) => yarg,
-      handleOnCommand(getDetails),
+      wrapCommand(getDetails),
     )
 
     child.command(
@@ -38,48 +38,52 @@ export const setCommands = (yargs) => {
           default: false,
           required: false,
         }),
-      handleOnCommand(publish),
+      wrapCommand(publish),
     )
 
-    child.command('collaborator', 'Manage collaborator of module', (schild) => {
-      schild.usage('usage: $0 module collaborator <type> [options]')
+    child.command(
+      'collaborator',
+      'Manage collaborator of module',
+      function setCollaborator(schild) {
+        schild.usage('usage: $0 module collaborator <type> [options]')
 
-      schild.command(
-        'add <module> <user> [type]',
-        'Add collaborator to the module',
-        (yarg) => yarg,
-        handleOnCommand(addCollaborator),
-      )
+        schild.command(
+          'add <module> <user> [type]',
+          'Add collaborator to the module',
+          (yarg) => yarg,
+          wrapCommand(addCollaborator),
+        )
 
-      schild.command(
-        'update <module> <user> <type>',
-        'Update collaborator of the module',
-        (yarg) => yarg,
-        handleOnCommand(updateCollaborator),
-      )
+        schild.command(
+          'update <module> <user> <type>',
+          'Update collaborator of the module',
+          (yarg) => yarg,
+          wrapCommand(updateCollaborator),
+        )
 
-      schild.command(
-        'remove <module> <user>',
-        'Remove collaborator from the module',
-        (yarg) => yarg,
-        handleOnCommand(removeCollaborator),
-      )
+        schild.command(
+          'remove <module> <user>',
+          'Remove collaborator from the module',
+          (yarg) => yarg,
+          wrapCommand(removeCollaborator),
+        )
 
-      schild.command(
-        'list <module>',
-        'List collaborators of the module',
-        (yarg) => yarg,
-        handleOnCommand(listCollaborators),
-      )
+        schild.command(
+          'list <module>',
+          'List collaborators of the module',
+          (yarg) => yarg,
+          wrapCommand(listCollaborators),
+        )
 
-      showHelpIfInvalid(schild, schild.argv, 3, 4)
-    })
+        showHelpIfInvalid(schild, schild.argv, 3, 4)
+      },
+    )
 
     child.command(
       'deprecate <module> <versions> [deprecate]',
       'Deprecate a module',
       (yarg) => yarg,
-      handleOnCommand(setDeprecate),
+      wrapCommand(setDeprecate),
     )
 
     showHelpIfInvalid(child, child.argv, 2, 3)
@@ -89,13 +93,13 @@ export const setCommands = (yargs) => {
     'create [name] [template]',
     'Create new module [alias: module-create]',
     (yarg) => yarg,
-    handleOnCommand(create),
+    wrapCommand(create),
   )
 
   yargs.command(
     'publish [fallback]',
     `Publish version for the module [alias: module-publish]`,
     (yarg) => yarg,
-    handleOnCommand(publish),
+    wrapCommand(publish),
   )
 }

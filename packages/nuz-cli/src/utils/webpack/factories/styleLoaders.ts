@@ -2,7 +2,7 @@ import ExtractCssChunks from 'extract-css-chunks-webpack-plugin'
 import webpack from 'webpack'
 
 import * as paths from '../../../paths'
-import { FeatureConfig, NamesConfig } from '../../../types'
+import { FeaturesUsed, NamedConfiguration } from '../../../types'
 import checkIsPackageInstalled from '../../checkIsPackageInstalled'
 import getBrowserslist from '../../getBrowserslist'
 
@@ -10,8 +10,8 @@ export interface StyleLoadersOptions {
   dir: string
   dev: boolean
   sourceMap: boolean
-  feature: Partial<FeatureConfig>
-  names: NamesConfig
+  feature: Partial<FeaturesUsed>
+  names: NamedConfiguration
   modules?: boolean | 'auto' | RegExp
 }
 

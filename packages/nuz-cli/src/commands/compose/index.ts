@@ -1,4 +1,4 @@
-import handleOnCommand from '../../utils/handleOnCommand'
+import wrapCommand from '../../utils/wrapCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
 import addCollaborator from './addCollaborator'
@@ -18,21 +18,21 @@ export const setCommands = (yargs) => {
       'get <compose> [fields..]',
       'Get details of a compose',
       (yarg) => yarg,
-      handleOnCommand(getDetails),
+      wrapCommand(getDetails),
     )
 
     child.command(
       'create <name>',
       'Create a compose',
       (yarg) => yarg,
-      handleOnCommand(createCompose),
+      wrapCommand(createCompose),
     )
 
     child.command(
       'delete <name>',
       'Delete a compose',
       (yarg) => yarg,
-      handleOnCommand(deleteCompose),
+      wrapCommand(deleteCompose),
     )
 
     child.command(
@@ -45,21 +45,21 @@ export const setCommands = (yargs) => {
           'add <compose> <user> [type]',
           'Add collaborator to the compose',
           (yarg) => yarg,
-          handleOnCommand(addCollaborator),
+          wrapCommand(addCollaborator),
         )
 
         schild.command(
           'update <compose> <user> <type>',
           'Update collaborator of the compose',
           (yarg) => yarg,
-          handleOnCommand(updateCollaborator),
+          wrapCommand(updateCollaborator),
         )
 
         schild.command(
           'remove <compose> <user>',
           'Remove collaborator from the compose',
           (yarg) => yarg,
-          handleOnCommand(removeCollaborator),
+          wrapCommand(removeCollaborator),
         )
 
         showHelpIfInvalid(schild, schild.argv, 3, 4)
@@ -73,14 +73,14 @@ export const setCommands = (yargs) => {
         'set <compose> <modules..>',
         'Set modules for the compose',
         (yarg) => yarg,
-        handleOnCommand(setModules),
+        wrapCommand(setModules),
       )
 
       schild.command(
         'remove <compose> <moduleIds..>',
         'Remove modules from the compose',
         (yarg) => yarg,
-        handleOnCommand(removeModules),
+        wrapCommand(removeModules),
       )
 
       showHelpIfInvalid(schild, schild.argv, 3, 4)

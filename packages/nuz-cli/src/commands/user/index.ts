@@ -1,4 +1,4 @@
-import handleOnCommand from '../../utils/handleOnCommand'
+import wrapCommand from '../../utils/wrapCommand'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 
 import allCompose from './allCompose'
@@ -21,7 +21,7 @@ export const setCommands = (yargs) => {
       'whoami',
       'Who I am?',
       (yarg) => yarg,
-      handleOnCommand(whoami),
+      wrapCommand(whoami),
     )
 
     child.command(
@@ -33,28 +33,28 @@ export const setCommands = (yargs) => {
           type: 'string',
           required: false,
         }),
-      handleOnCommand(loginAsUser),
+      wrapCommand(loginAsUser),
     )
 
     child.command(
       'logout [username]',
       'Logout of user account',
       (yarg) => yarg,
-      handleOnCommand(logoutFromUser),
+      wrapCommand(logoutFromUser),
     )
 
     child.command(
       'register',
       'Register a new user',
       (yarg) => yarg,
-      handleOnCommand(createUser),
+      wrapCommand(createUser),
     )
 
     child.command(
       'list',
       'List all users in work folder',
       (yarg) => yarg,
-      handleOnCommand(listUsers),
+      wrapCommand(listUsers),
     )
 
     child.command(
@@ -66,7 +66,7 @@ export const setCommands = (yargs) => {
           type: 'string',
           required: true,
         }),
-      handleOnCommand(useAs),
+      wrapCommand(useAs),
     )
 
     child.command('token', 'Manage token of user', (schild) => {
@@ -76,14 +76,14 @@ export const setCommands = (yargs) => {
         'create <type>',
         'Create a token for user',
         (yarg) => yarg,
-        handleOnCommand(createToken),
+        wrapCommand(createToken),
       )
 
       schild.command(
         'delete <token>',
         'Delete a token from user',
         (yarg) => yarg,
-        handleOnCommand(deleteToken),
+        wrapCommand(deleteToken),
       )
 
       showHelpIfInvalid(schild, schild.argv, 3, 4)
@@ -96,21 +96,21 @@ export const setCommands = (yargs) => {
         'composes',
         'List composes of current user',
         (yarg) => yarg,
-        handleOnCommand(allCompose),
+        wrapCommand(allCompose),
       )
 
       schild.command(
         'scopes',
         'List scopes of current user',
         (yarg) => yarg,
-        handleOnCommand(allScopes),
+        wrapCommand(allScopes),
       )
 
       schild.command(
         'modules',
         'List modules of current user',
         (yarg) => yarg,
-        handleOnCommand(allModules),
+        wrapCommand(allModules),
       )
 
       showHelpIfInvalid(schild, schild.argv, 3, 4)
@@ -123,7 +123,7 @@ export const setCommands = (yargs) => {
     'whoami',
     'Who I am? [alias: user-whoami]',
     (yarg) => yarg,
-    handleOnCommand(whoami),
+    wrapCommand(whoami),
   )
 
   yargs.command(
@@ -135,20 +135,20 @@ export const setCommands = (yargs) => {
         type: 'string',
         required: false,
       }),
-    handleOnCommand(loginAsUser),
+    wrapCommand(loginAsUser),
   )
 
   yargs.command(
     'logout [username]',
     'Logout of user account [alias: user-logout]',
     (yarg) => yarg,
-    handleOnCommand(logoutFromUser),
+    wrapCommand(logoutFromUser),
   )
 
   yargs.command(
     'register',
     'Register a new user [alias: user-register]',
     (yarg) => yarg,
-    handleOnCommand(createUser),
+    wrapCommand(createUser),
   )
 }

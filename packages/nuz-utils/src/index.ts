@@ -4,7 +4,7 @@ import * as assetsUrlHelpers from './assetsUrlHelpers'
 import * as getFetchUrls from './getFetchUrls'
 import * as integrityHelpers from './integrityHelpers'
 import * as jsonHelpers from './jsonHelpers'
-import * as linkedUrls from './linkedUrls'
+import * as internalUrlsCreators from './internalUrlsCreators'
 import * as moduleIdHelpers from './moduleIdHelpers'
 import * as tokenTypesHelpers from './tokenTypesHelpers'
 import * as validator from './validator'
@@ -14,7 +14,7 @@ export {
   qs,
   integrityHelpers,
   jsonHelpers,
-  linkedUrls,
+  internalUrlsCreators,
   tokenTypesHelpers,
   validator,
   assetsUrlHelpers,

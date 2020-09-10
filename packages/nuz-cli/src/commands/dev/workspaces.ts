@@ -1,204 +1,270 @@
 import { LINKED_CHANGE_EVENT, LINKED_DEFINE_EVENT } from '@nuz/shared'
-import { linkedUrls, moduleIdHelpers } from '@nuz/utils'
+import { internalUrlsCreators, moduleIdHelpers } from '@nuz/utils'
+import fs from 'fs-extra'
 import glob from 'glob'
 import path from 'path'
 import clearConsole from 'react-dev-utils/clearConsole'
+import ignoredFiles from 'react-dev-utils/ignoredFiles'
 import openBrowser from 'react-dev-utils/openBrowser'
+import { createCompiler } from 'react-dev-utils/WebpackDevServerUtils'
 import io from 'socket.io'
+import webpack from 'webpack'
+import WebpackDevServer from 'webpack-dev-server'
 import { Arguments } from 'yargs'
 
 import * as paths from '../../paths'
-import checkRequiredModuleConfig from '../../utils/checkRequiredModuleConfig'
+import checkIsYarnInstalled from '../../utils/checkIsYarnInstalled'
 import * as compilerName from '../../utils/compilerName'
-import * as configHelpers from '../../utils/configHelpers'
-import ensurePath from '../../utils/ensurePath'
-import * as fs from '../../utils/fs'
-import getFeatureConfig from '../../utils/getFeatureConfig'
+import detectFeaturesUsed from '../../utils/detectFeaturesUsed'
 import getModuleAssetsOnly from '../../utils/getModuleAssetsOnly'
+import getSystemPaths from '../../utils/getSystemPaths'
+import prepareUrls from '../../utils/prepareUrls'
 import print, { info, pretty } from '../../utils/print'
-import { onExit } from '../../utils/process'
-import runWatchMode from '../../utils/runWatchMode'
-import serve from '../../utils/serve'
-import webpackConfigFactory from '../../utils/webpack/factories/buildConfig'
+import * as processHelpers from '../../utils/process'
+import requireInternalConfig from '../../utils/requireInternalConfig'
+import createWebpackConfig from '../../utils/webpack/factories/buildConfig'
+import createDevServerConfig from '../../utils/webpack/factories/devServerConfig'
 
-async function standalone({
-  workspaces,
-  port = 4000,
-  open = true,
-}: Arguments<{ port?: number; workspaces: string[]; open?: boolean }>) {
-  const dir = paths.cwd
+interface DevWorkspacesOptions
+  extends Arguments<{ port?: number; workspaces: string[]; open?: boolean }> {}
 
-  if (!workspaces) {
-    throw new Error(
-      'Provide `workspaces` field to starts workspaces development mode',
-    )
+async function devWorkspaces(options: DevWorkspacesOptions): Promise<boolean> {
+  const { port, open, workspaces: _workspaces } = Object.assign(
+    { port: 4000, open: true },
+    options,
+  )
+
+  const dev = true
+  const cache = true
+  const directory = paths.cwd
+
+  // Get the information needed to start workspaces mode
+  const internalConfig = requireInternalConfig(directory, false)
+  const featuresUsed = detectFeaturesUsed(directory)
+
+  const workspaces = _workspaces ?? internalConfig.workspaces
+  if (!Array.isArray(workspaces)) {
+    throw new Error('Provide `workspaces` field to starts workspaces mode')
   }
 
-  const linkedUrl = linkedUrls.modules(port)
-  const publicPath = linkedUrl.href
-  const resolveBuildDirectory = paths.resolveBuildDirectory(dir, 'modules')
-
-  clearConsole()
-  await fs.emptyDir(resolveBuildDirectory)
-
-  // Check and get modules paths in workspace
-  const selectedWorkspaces = workspaces.reduce<string[]>(
-    (acc, item) => acc.concat(glob.sync(item)),
-    [],
-  )
-  const modulesValidPaths = selectedWorkspaces.filter(
-    (p) => p && configHelpers.exists(p),
-  )
-  const modulesConfig = modulesValidPaths.reduce((acc, item: string) => {
-    // If path is empty or not found config, skip it!
-    const moduleIsValid = item && configHelpers.exists(item)
-    if (!moduleIsValid) {
-      return acc
-    }
-
-    // Get real path and extract config
-    const moduleDirectory = fs.realpathSync(item)
-    const moduleConfig = configHelpers.extract(moduleDirectory)
-    if (!moduleConfig) {
-      throw new Error('Config file is invalid')
-    }
-
-    // Break if not having some important fields in module
-    checkRequiredModuleConfig(moduleConfig)
-    const featuresOf = getFeatureConfig(moduleDirectory, moduleConfig)
-    const { name: moduleName, output: currentOutput } = moduleConfig
-
-    // Create output directory inside bundles directory
-    const moduleCurrentOutputs = ensurePath(moduleDirectory, currentOutput)
-    const moduleOutputDirectory = path.join(resolveBuildDirectory, moduleName)
-    const moduleOutputFile = path.join(
-      moduleOutputDirectory,
-      moduleCurrentOutputs.filename,
-    )
-    const modulePublicPath = `${publicPath}${moduleName}/`
-
-    // Create webpack config
-    const webpackConfig = webpackConfigFactory(
-      {
-        dev: true,
-        cache: true,
-        module: moduleName,
-        dir: moduleDirectory,
-        config: Object.assign({}, moduleConfig, {
-          publicPath: modulePublicPath,
-          output: moduleOutputFile,
-        }),
-      },
-      featuresOf,
-    )
-
-    if (!webpackConfig.output) {
-      throw new Error('An error occurred during config creation')
-    }
-
-    // Factory webpack config for module
-    info(
-      `Features config using in ${print.name(moduleName)}`,
-      pretty(featuresOf),
-    )
-
-    // Merge with other modules config
-    return Object.assign(acc, {
-      [moduleName]: {
-        featuresOf,
-        dir: moduleDirectory,
-        config: moduleConfig,
-        webpack: webpackConfig,
-      },
-    })
-  }, {} as { [name: string]: any })
-
-  const modulesName = Object.keys(modulesConfig)
-  const multiWebpackConfig = modulesName.map(
-    (moduleName: string) => modulesConfig[moduleName].webpack,
-  )
-
-  info(`Found ${print.bold(modulesName.length)} module(s) in workspaces`)
-  info('Linking module(s)', modulesName)
-
-  const allModules = {}
-  const watchUrl = linkedUrls.watch(port)
-
-  // Create server to serve file serving and directory listing in workspace
-  const server = serve({
+  // Get the require fields to create compiler
+  const useYarn = checkIsYarnInstalled()
+  const protocol = process.env.HTTPS === 'true' ? 'https' : 'http'
+  const host = 'localhost'
+  const urls = await prepareUrls({
+    protocol,
+    host,
     port,
-    dir: resolveBuildDirectory,
   })
 
+  const publicUrlOrPath = internalUrlsCreators.modules(urls.port).href
+  const resolveOutputDirectory = paths.resolveBuildDirectory(
+    directory,
+    'workspaces',
+  )
+
+  clearConsole()
+  info('Cleaning up the directories before proceeding...')
+
+  // Empty output directory
+  await fs.emptyDir(resolveOutputDirectory)
+
+  // Check and get modules paths in workspace
+  const resolvesWorkspaces = workspaces.reduce<string[]>(
+    (acc, item) => acc.concat(glob.sync(item, { absolute: true })),
+    [],
+  )
+  const internalModulesData = resolvesWorkspaces.reduce(
+    (acc, internalModulePath: string) => {
+      // Get the information needed of internal module
+      const resolveInternalModule = fs.realpathSync(internalModulePath)
+      const internalModuleConfig = requireInternalConfig(
+        resolveInternalModule,
+        true,
+      )
+      const internalModulesFeaturesUsed = detectFeaturesUsed(
+        resolveInternalModule,
+      )
+
+      const { name: moduleName } = internalModuleConfig
+
+      // Define output directory and file
+      // match with structure define to serve
+      const internalModuleCurrentOutputs = getSystemPaths(
+        resolveInternalModule,
+        internalModuleConfig.output,
+      )
+      const internalModuleOutputDirectory = path.join(
+        resolveOutputDirectory,
+        moduleName,
+      )
+      const internalModuleOutputFile = path.join(
+        internalModuleOutputDirectory,
+        internalModuleCurrentOutputs.filename,
+      )
+      const internalModulePublicPath = publicUrlOrPath + moduleName + '/'
+
+      //
+      const webpackConfig = createWebpackConfig(
+        {
+          dev,
+          cache,
+          module: moduleName,
+          dir: resolveInternalModule,
+          config: Object.assign({}, internalModuleConfig, {
+            publicPath: internalModulePublicPath,
+            output: internalModuleOutputFile,
+          }),
+        },
+        internalModulesFeaturesUsed,
+      )
+
+      info(
+        `Identified features used for ${print.name(moduleName)}`,
+        pretty(internalModulesFeaturesUsed),
+      )
+
+      return Object.assign(acc, {
+        [moduleName]: {
+          webpackConfig,
+          directory: resolveInternalModule,
+          internalConfig: internalModuleConfig,
+          featuresUsed: internalModulesFeaturesUsed,
+        },
+      })
+    },
+    {} as { [name: string]: any },
+  )
+
+  const internalModulesKeys = Object.keys(internalModulesData)
+  const internalModulesConfiguration = internalModulesKeys.map(
+    (key: string) => internalModulesData[key].webpackConfig,
+  )
+
+  info(
+    `Found ${print.bold(internalModulesKeys.length)} module(s) in workspaces`,
+  )
+  info('Linking module(s)', pretty(internalModulesKeys))
+
+  const compiler = createCompiler({
+    appName: internalConfig.name ?? '??',
+    // @ts-expect-error
+    config: internalModulesConfiguration,
+    urls,
+    useYarn,
+    webpack,
+    useTypeScript: featuresUsed.typescript,
+    tscCompileOnError: false,
+  })
+
+  //
+  compiler.hooks.done.tap('done', async (stats: webpack.Stats) => {
+    const { children } = stats.toJson()
+
+    //
+    const updatedModules = (children ?? []).reduce((acc, item) => {
+      const internalModuleName = item.name?.replace(
+        /^(@nuz\/cli\(([\S\s]+)\))/,
+        '$2',
+      ) as string
+      const internalModuleId = moduleIdHelpers.use(internalModuleName)
+
+      const internalModuleData = internalModulesData[internalModuleName]
+      if (!internalModuleData) {
+        throw Error(
+          `Not found internal module data by ${JSON.stringify(
+            internalModuleName,
+          )}`,
+        )
+      }
+
+      const modulesAssetsOnly = getModuleAssetsOnly(item, { md5sum: false })
+
+      const {
+        internalConfig: internalModuleConfig,
+        webpackConfig: internalModuleWebpackConfig,
+      } = internalModuleData
+
+      return Object.assign(acc, {
+        [internalModuleId]: {
+          shared: internalModuleConfig.shared,
+          library: internalModuleWebpackConfig.output.library,
+          format: internalModuleWebpackConfig.output.libraryTarget,
+          upstream: {
+            main: modulesAssetsOnly.resolve.main.url,
+            styles: modulesAssetsOnly.resolve.styles.map((style) => style.url),
+          },
+        },
+      })
+    }, {})
+
+    //
+    Object.assign(linkingModules, updatedModules)
+
+    //
+    triggerModulesReload(
+      (children ?? []).map((item) =>
+        moduleIdHelpers.use(compilerName.extract((item as any).name)),
+      ),
+    )
+  })
+
+  let isInitialized = false
+
+  const devServer = new WebpackDevServer(
+    compiler,
+    createDevServerConfig({
+      publicUrlOrPath,
+      standalone: false,
+      ignored: [ignoredFiles(directory)],
+      contentBase: [resolveOutputDirectory],
+    }) as any,
+  )
+
+  const httpServer = devServer.listen(urls.port, urls.host, (err) => {
+    if (err) {
+      return console.log(err)
+    }
+
+    if (isInitialized) {
+      clearConsole()
+    }
+
+    if (open) {
+      openBrowser(urls.localUrlForBrowser)
+    }
+
+    isInitialized = true
+  })
+
+  const linkingModules = {}
+
   // Create socket to watching changes and reload
-  const socket = io(server, {
-    path: watchUrl.pathname,
+  const socket = io(httpServer, {
+    path: internalUrlsCreators.watch(urls.port).pathname,
     serveClient: false,
     cookie: false,
   })
-
-  // Create socket helpers
-  const emitOnChange = (changes: string[]) =>
-    socket.emit(LINKED_CHANGE_EVENT, { changes })
-
   // Fired a callback on connection event
   socket.on('connection', function connection(client) {
     client.emit(LINKED_DEFINE_EVENT, {
-      modules: allModules,
+      modules: linkingModules,
     })
   })
 
-  runWatchMode(
-    multiWebpackConfig,
-    { clearConsole: true },
-    ({ data }, { firstTime }) => {
-      const { children = [] } = data || {}
+  // Create socket helpers
+  function triggerModulesReload(changes: string[]) {
+    socket.emit(LINKED_CHANGE_EVENT, { changes })
+  }
 
-      const bundledModules = children.reduce((acc, item) => {
-        const moduleName = item.name?.replace(
-          /^(@nuz\/cli\(([\S\s]+)\))/,
-          '$2',
-        ) as string
-        const moduleData = modulesConfig[moduleName]
-        if (!moduleData) {
-          throw Error(`Can't get module data of ${moduleName}`)
-        }
-
-        const moduleAssets = getModuleAssetsOnly(item, { md5sum: false })
-        const moduleResolve = {
-          main: moduleAssets.resolve.main.url,
-          styles: moduleAssets.resolve.styles.map((style) => style.url),
-        }
-        const moduleId = moduleIdHelpers.use(moduleName)
-
-        return Object.assign(acc, {
-          [moduleId]: {
-            shared: moduleData.config.shared,
-            library: moduleData.webpack.output.library,
-            format: moduleData.webpack.output.libraryTarget,
-            upstream: moduleResolve,
-          },
-        })
-      }, {})
-
-      Object.assign(allModules, bundledModules)
-
-      const changedModuleIds = children.map((child) =>
-        moduleIdHelpers.use(compilerName.extract((child as any).name)),
-      )
-      emitOnChange(changedModuleIds)
-
-      if (firstTime && open) {
-        openBrowser(publicPath)
-      }
-    },
-  )
-
-  onExit(() => {
-    server.close()
+  //
+  processHelpers.onExit(() => {
+    socket.close()
+    devServer.close()
+    process.exit()
   })
 
   return false
 }
 
-export default standalone
+export default devWorkspaces

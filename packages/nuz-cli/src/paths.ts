@@ -43,7 +43,7 @@ export function resolvePackageJson(directory: string): string {
 /**
  * Read package.json file in the tool directory
  */
-export function packageJsonTool(): any {
+export function packageJsonTool<T = any>(): T {
   return require(resolvePackageJson(tool))
 }
 
@@ -58,7 +58,10 @@ export const resolveLocalCache = findCacheDir({
 /**
  * Resolve in the project build directory
  */
-export function resolveBuildDirectory(directory: string, ...rest: string[]) {
+export function resolveBuildDirectory(
+  directory: string,
+  ...rest: string[]
+): string {
   return path.join(directory, '.nuz', ...rest)
 }
 
@@ -67,9 +70,19 @@ export function resolveBuildDirectory(directory: string, ...rest: string[]) {
  */
 export function resolveInternalConfig(
   directory: string,
-  extension: string = '*',
-): string {
-  return path.join(directory, `nuz.config.${extension}`)
+  defaultIfNull: boolean,
+): string | undefined {
+  const useTypescript = fs.existsSync(resolveTsConfigFile(directory))
+  const resolvePath = path.join(
+    directory,
+    useTypescript ? 'nuz.config.ts' : 'nuz.config.js',
+  )
+
+  if (fs.existsSync(resolvePath)) {
+    return resolvePath
+  }
+
+  return defaultIfNull ? resolvePath : undefined
 }
 
 /**
@@ -92,8 +105,22 @@ export function resolveNodeModules(id: string, directory?: string): string {
 /**
  * Resolve relative path in the tool templates directory
  */
-export function resolveTemplate(file: string): string {
-  return path.join(tool, 'templates', file)
+export function resolveTemplate(...rest: string[]): string {
+  return path.join(tool, 'templates', ...rest)
+}
+
+/**
+ * Resolve relative path in the module template directory
+ */
+export function resolveModuleTemplate(...rest: string[]): string {
+  return resolveTemplate('module', ...rest)
+}
+
+/**
+ * Resolve relative path in the root template directory
+ */
+export function resolveRootTemplate(...rest: string[]): string {
+  return resolveTemplate('root', ...rest)
 }
 
 /**
@@ -108,4 +135,28 @@ export function publicUrlOrPath(directory: string, publicUrl: string): string {
     packageJson.homepage,
     publicUrl,
   )
+}
+
+/**
+ * Resolve tsconfig.json file in the directory
+ */
+export function resolveTsConfigFile(directory: string): string {
+  return path.resolve(directory, 'tsconfig.json')
+}
+
+/**
+ * Resolve README.md file in the directory
+ */
+export function resolveReadmeFile(directory: string): string {
+  return path.resolve(directory, 'readme.md')
+}
+
+/**
+ * Resolve in the project public directory
+ */
+export function resolvePublicDirectory(
+  directory: string,
+  ...rest: string[]
+): string {
+  return path.join(directory, 'public', ...rest)
 }

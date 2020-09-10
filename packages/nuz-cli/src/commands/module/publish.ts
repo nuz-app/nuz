@@ -1,6 +1,6 @@
 import { ModuleFormats } from '@nuz/shared'
-import { assetsUrlHelpers, pick } from '@nuz/utils'
-import glob from 'glob'
+import { assetsUrlHelpers } from '@nuz/utils'
+import fs from 'fs-extra'
 import path from 'path'
 import { Arguments } from 'yargs'
 
@@ -8,74 +8,43 @@ import Config, { ConfigKeys } from '../../classes/Config'
 import Worker from '../../classes/Worker'
 import { STATS_FILENAME } from '../../lib/const'
 import * as paths from '../../paths'
-import * as configHelpers from '../../utils/configHelpers'
+import checkIsHaveSlash from '../../utils/checkIsHaveSlash'
 import createQuestions from '../../utils/createQuestions'
-import * as fs from '../../utils/fs'
+import getFilesBufferOnly from '../../utils/getFilesBufferOnly'
 import getModuleAssetsOnly from '../../utils/getModuleAssetsOnly'
-import pickFilesFromStats from '../../utils/pickFilesFromStats'
+import getOutputDirectory from '../../utils/getOutputDirectory'
 import print, { info, success } from '../../utils/print'
+import requireInternalConfig from '../../utils/requireInternalConfig'
+import snapshotReport from '../../utils/snapshotReport'
 import timer from '../../utils/timer'
 import optimized from '../build/optimized'
 
-function checkIsHaveSlash(url: string) {
-  try {
-    const lastChar = url[url.length - 1]
-    return lastChar === '/'
-  } catch {
-    return false
-  }
-}
+interface ModulePublishOptions
+  extends Arguments<{ fallback: string; selfHosted: boolean; yes: boolean }> {}
 
-async function getDetailsOfModule(dir: string) {
-  const pkgJson = await fs.readJson(paths.resolvePackageJson(dir))
-  const details = pick(pkgJson, [
-    'description',
-    'homepage',
-    'bugs',
-    'repository',
-    'license',
-    'keywords',
-  ]) as any
+async function publish(options: ModulePublishOptions): Promise<boolean> {
+  const { fallback, selfHosted, yes } = Object.assign(
+    { selfHosted: false, yes: false },
+    options,
+  )
 
-  const match = glob.sync(path.join(dir, '/readme.md'))
-  if (match[0]) {
-    details.readme = fs.read(match[0]).toString('utf8')
-  }
+  const directory = paths.cwd
+  const internalConfig = requireInternalConfig(directory, true)
+  const outputDirectory = getOutputDirectory(directory, internalConfig.output)
 
-  return details
-}
-
-async function publish({
-  fallback,
-  selfHosted = false,
-  yes = false,
-}: Arguments<{ fallback: string; selfHosted: boolean; yes: boolean }>) {
-  const dir = paths.cwd
-
-  const configIsExisted = configHelpers.exists(dir)
-  if (!configIsExisted) {
-    throw new Error(
-      'Not found a config file, file named `nuz.config.js` in root dir',
-    )
-  }
-
-  const moduleConfig = configHelpers.extract(dir)
-  if (!moduleConfig) {
-    throw new Error('Config file is invalid')
-  }
-
-  const { name, library, version, output, publicPath } = moduleConfig
+  const { name, library, version } = internalConfig
 
   const staticOrigin = (await Config.readConfig())[ConfigKeys.static]
-  const publicPathUsed = selfHosted
-    ? publicPath
+  const publicPath = selfHosted
+    ? internalConfig.publicPath
     : assetsUrlHelpers.createOrigin(name, version, staticOrigin)
-  const publicPathIsHaveSlash = checkIsHaveSlash(publicPathUsed)
-  if (!publicPathIsHaveSlash) {
+
+  if (!checkIsHaveSlash(publicPath)) {
     throw new Error('The public path needs have slash at end')
   }
 
-  const result = yes
+  // Confirm version before publish new module
+  const answers = yes
     ? { isConfirmed: true }
     : await createQuestions<{ isConfirmed: boolean }>([
         {
@@ -87,16 +56,19 @@ async function publish({
           )} ?`,
         },
       ])
-  if (!result.isConfirmed) {
+  if (!answers.isConfirmed) {
     return true
   }
 
-  await optimized({ publicPath: publicPathUsed } as any)
+  // Build with optimized before publish to registry
+  await optimized({ publicPath } as any)
 
-  const distDir = path.join(dir, path.dirname(output))
-  const statsPath = path.join(distDir, STATS_FILENAME)
-  if (!fs.exists(statsPath)) {
-    throw new Error('Not found stats file of bundle')
+  // Resolve output stats file
+  const resolvedStatsFile = path.join(outputDirectory, STATS_FILENAME)
+  if (!fs.existsSync(resolvedStatsFile)) {
+    throw new Error(
+      `Not found ${JSON.stringify(STATS_FILENAME)} file in output directory`,
+    )
   }
 
   info(
@@ -105,29 +77,37 @@ async function publish({
     )} module...`,
   )
 
-  const [details, stats]: any[] = await Promise.all([
-    getDetailsOfModule(dir),
-    fs.readJson(statsPath),
-  ])
+  // Get the information needed to publish
+  const details = snapshotReport(directory)
+  const stats = fs.readJsonSync(resolvedStatsFile)
   const assets = getModuleAssetsOnly(stats, { md5sum: true })
-  const files = pickFilesFromStats(stats)
-
-  const data = {
-    version,
-    library,
-    details,
-    resolve: assets.resolve,
-    files: assets.files,
-    format: ModuleFormats.umd,
-  }
-  const options = { fallback, selfHosted, static: staticOrigin }
+  const filesBuffer = getFilesBufferOnly(stats)
 
   const tick = timer()
-  const request = await Worker.publishModule(name, data, files, options)
+
+  // Request to publish the new version
+  const request = await Worker.publishModule(
+    name,
+    {
+      version,
+      library,
+      details,
+      resolve: assets.resolve,
+      files: assets.files,
+      format: ModuleFormats.umd,
+    },
+    filesBuffer,
+    {
+      fallback,
+      selfHosted,
+      static: staticOrigin,
+    },
+  )
   const moduleId = request?.data?._id
 
   info(`Published module ${moduleId} was successfully!`)
   success(`Done in ${print.time(tick())}.`)
+
   return true
 }
 

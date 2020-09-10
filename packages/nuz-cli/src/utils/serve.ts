@@ -6,33 +6,34 @@ import http from 'http'
 import handler from 'serve-handler'
 import spdy from 'spdy'
 
-import { ServeConfig } from '../types'
+import { ServeConfiguration } from '../types'
 
-export type ServeFullConfig = ServeConfig & {
+export interface ServeFullConfig extends ServeConfiguration {
   port: number
-  dir: string
+  directory: string
 }
 
-const defaultConfig: ServeConfig = {}
-
-const serve = (config: ServeFullConfig) => {
-  const { port, dir, https } = Object.assign({}, defaultConfig, config)
+function serve(config: ServeFullConfig): any {
+  const { port, directory, https } = config
 
   let server
 
   const app = express()
+  //
   app.disable('x-powered-by')
   app.use(compression())
   app.use(cors())
 
+  //
   app.use((request, response) =>
     handler(request, response, {
-      public: dir,
+      public: directory,
       symlinks: true,
       etag: true,
     }),
   )
 
+  //
   if (https) {
     const httpsConfig =
       https === true ? Object.assign({}, loadLocalCertificate()) : https

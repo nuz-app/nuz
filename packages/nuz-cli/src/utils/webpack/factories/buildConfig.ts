@@ -20,15 +20,15 @@ import {
 } from '../../../lib/const'
 import * as paths from '../../../paths'
 import {
-  AnalyzerConfig,
-  ExperimentalConfig,
-  FeatureConfig,
-  ModuleConfig,
-  NamesConfig,
+  AnalyzerConfiguration,
+  ExperimentalConfiguration,
+  FeaturesUsed,
+  InternalConfiguration,
+  NamedConfiguration,
 } from '../../../types'
 import checkIsPackageInstalled from '../../checkIsPackageInstalled'
 import * as compilerName from '../../compilerName'
-import ensurePath from '../../ensurePath'
+import getSystemPaths from '../../getSystemPaths'
 import setExternals from '../helpers/setExternals'
 import PeerDepsExternalsPlugin from '../PeerDepsExternalsPlugin'
 
@@ -40,7 +40,7 @@ export interface FactoryConfig {
   dir: string
   dev: boolean
   cache: boolean
-  config: ModuleConfig
+  config: InternalConfiguration
 }
 
 export interface FactoryOptions {
@@ -81,7 +81,7 @@ const defaultConfig = {
   alias: {},
 }
 
-const defaultExperimental: ExperimentalConfig = {
+const defaultExperimental: ExperimentalConfiguration = {
   multiThread: false,
 }
 
@@ -91,7 +91,7 @@ function defaultNamesFactory({
 }: {
   id: string
   dev: boolean
-}): NamesConfig {
+}): NamedConfiguration {
   return {
     imageMinifiedFilename: (resourcePath: string) => {
       const imageAllowMinify = IMAGE_MINIFY_REGEXP.test(resourcePath)
@@ -148,7 +148,7 @@ function webpackConfigFactory(
     module = '~',
     config: moduleConfig,
   }: FactoryConfig,
-  feature: Partial<FeatureConfig> = {},
+  feature: Partial<FeaturesUsed> = {},
   { showProcess = true, injectReact = false }: FactoryOptions = {},
 ): WebpackConfiguration {
   const {
@@ -183,8 +183,8 @@ function webpackConfigFactory(
   const mode = dev ? 'development' : 'production'
   const sourceMap = true
   const bail = !dev
-  const inputs = ensurePath(dir, input)
-  const outputs = ensurePath(dir, output)
+  const inputs = getSystemPaths(dir, input)
+  const outputs = getSystemPaths(dir, output)
   const distChunkFilename = names.chunkFilename()
   const umdNamedDefine = format === 'umd'
   const scriptType = 'text/javascript'
@@ -600,7 +600,7 @@ function webpackConfigFactory(
   // Config optimization for production mode
   if (!dev) {
     // Push bundle analyzer for production mde
-    const analyzerConfig = (analyzer || {}) as AnalyzerConfig
+    const analyzerConfig = (analyzer || {}) as AnalyzerConfiguration
     const statsOptions = Object.assign({}, analyzerConfig.statsOptions, {
       hash: true,
       builtAt: true,

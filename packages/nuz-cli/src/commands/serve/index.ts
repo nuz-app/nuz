@@ -1,8 +1,8 @@
-import handleOnCommand from '../../utils/handleOnCommand'
+import wrapCommand from '../../utils/wrapCommand'
 
 import serve from './serve'
 
-export const setCommands = (yargs) => {
+export function setCommands(yargs: any): void {
   yargs.command(
     'serve',
     'File serving and directory listing in the module',
@@ -12,6 +12,6 @@ export const setCommands = (yargs) => {
         type: 'number',
         required: false,
       }),
-    handleOnCommand(serve),
+    wrapCommand(serve),
   )
 }
