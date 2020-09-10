@@ -30,6 +30,7 @@
       {
         "import-sources-order": "lowercase-first",
         "named-imports-order": "lowercase-last",
+        "module-source-path": "full",
         "grouped-imports": true
       }
     ],
