@@ -32,10 +32,10 @@
     "@nuz/utils": "^1.0.0-beta.58",
     "abort-controller": "^3.0.0",
     "lru-cache": "^6.0.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "tslib": "^2.0.1",
     "use-subscription": "^1.4.1",
-    "whatwg-fetch": "^3.4.0"
+    "whatwg-fetch": "^3.4.1"
   },
   "devDependencies": {
     "@types/lru-cache": "^5.1.0",
