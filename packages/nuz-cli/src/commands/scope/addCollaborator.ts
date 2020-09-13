@@ -11,7 +11,7 @@ async function addCollaborator({
   user,
   type = CollaboratorTypes.contributor,
 }: Arguments<{ scope: string; user: string; type: CollaboratorTypes }>) {
-  await Config.authRequired(UserAccessTokenTypes.fullAccess)
+  await Config.requireAs(UserAccessTokenTypes.fullAccess)
 
   const tick = timer()
   const request = await Worker.addCollaboratorToScope(scope, {

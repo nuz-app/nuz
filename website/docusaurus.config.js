@@ -1,7 +1,7 @@
 const GITHUB_ORG = 'nuz-app';
 const GITHUB_PROJECT = 'nuz';
 const GITHUB_URL = `https://github.com/${GITHUB_ORG}/${GITHUB_PROJECT}`
-const GITHUB_BRANCH = 'next';
+const GITHUB_DEFAULT_BRANCH = 'next';
 
 module.exports = {
   title: 'Nuz',
@@ -108,7 +108,7 @@ module.exports = {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl:
-            `${GITHUB_URL}/edit/${GITHUB_BRANCH}/website/`,
+            `${GITHUB_URL}/edit/${GITHUB_DEFAULT_BRANCH}/website/`,
           // Display update user, ex: Last updated by <Author Name>
           showLastUpdateAuthor: true,
           // Display update time, ex: Last updated on <date>
@@ -118,7 +118,7 @@ module.exports = {
           showReadingTime: true,
           // Please change this to your repo.
           editUrl:
-            `${GITHUB_URL}/edit/${GITHUB_BRANCH}/website/blog/`,
+            `${GITHUB_URL}/edit/${GITHUB_DEFAULT_BRANCH}/website/blog/`,
         },
         theme: {
           customCss: require.resolve('./src/css/base.css'),

@@ -9,7 +9,7 @@ class Worker {
   static endpoint: string
   static token: string
 
-  static async prepare(endpoint: string, token: string) {
+  static async prepare(endpoint: string, token: string): Promise<void> {
     this.endpoint = endpoint
     this.token = token
   }

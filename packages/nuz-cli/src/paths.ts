@@ -1,6 +1,7 @@
 import { checkIsProductionMode } from '@nuz/utils'
 import findCacheDir from 'find-cache-dir'
-import fs from 'fs'
+import fs from 'fs-extra'
+import os from 'os'
 import path from 'path'
 import getPublicUrlOrPath from 'react-dev-utils/getPublicUrlOrPath'
 
@@ -159,4 +160,11 @@ export function resolvePublicDirectory(
   ...rest: string[]
 ): string {
   return path.join(directory, 'public', ...rest)
+}
+
+/**
+ * Resolve in the root directory
+ */
+export function resolveRootDirectory(...rest: string[]): string {
+  return path.join(os.homedir(), ...rest)
 }

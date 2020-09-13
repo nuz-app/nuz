@@ -4,14 +4,14 @@ import print, { info, pretty, success } from '../../utils/print'
 import timer from '../../utils/timer'
 
 async function allScopes() {
-  const auth = await Config.authRequired()
+  const authentication = await Config.requireAs()
 
   const tick = timer()
-  const request = await Worker.getAllScopesOfUser(auth.id)
+  const request = await Worker.getAllScopesOfUser(authentication.id)
   const scopes = request?.data?.scopes
 
   info(
-    `Scopes list of ${print.name(auth.username)}, ${print.bold(
+    `Scopes list of ${print.name(authentication.username)}, ${print.bold(
       scopes.length,
     )} items`,
   )

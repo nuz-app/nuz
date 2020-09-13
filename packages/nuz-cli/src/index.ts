@@ -10,9 +10,9 @@ import * as commands from './commands'
   await Config.prepare()
 
   // Prepare worker requests to APIs
-  const config = await Config.readConfig()
-  const auth = await Config.readAuth()
-  await Worker.prepare(config.registry, auth.token)
+  const config = await Config.readConfiguration()
+  const authentication = await Config.readAuthentication()
+  await Worker.prepare(config.registry, authentication.token)
 
   // Bind all comands to cli
   await commands.setCommands(yargs)

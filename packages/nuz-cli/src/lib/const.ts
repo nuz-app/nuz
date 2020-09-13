@@ -27,13 +27,13 @@ export const CHANGES_EMOJI = [
 
 export const STATS_FILENAME = 'stats.json'
 
-export const GITHUB_USERNAME = 'nuz-app'
-export const GITHUB_REPO = 'nuz'
-export const GITHUB_BRANCH = 'next'
+export const GITHUB_ORGANIZATION = 'nuz-app'
+export const GITHUB_REPOSITORY = 'nuz'
+export const GITHUB_DEFAULT_BRANCH = 'next'
 
-export const NUZ_DIRNAME = '.nuz'
-export const NUZ_USERS_DIR = 'users'
-export const NUZ_CONFIG_FILENAME = 'config.json'
-export const NUZ_AUTH_FILENAME = 'auth.json'
-export const NUZ_DEFAULT_USERNAME = 'default'
-export const NUZ_CONFIG_ALLOW_SET_KEYS = ['registry']
+export const ROOT_DIRECTORY = '.nuz'
+export const ROOT_CURRENT_WORKING_FILENAME = '.nuzrc'
+export const ROOT_USERS_DIRECTORY = 'users'
+export const ROOT_USER_CONFIGURATION_FILENAME = 'config.json'
+export const ROOT_USER_AUTHENTICATION_FILENAME = 'auth.json'
+export const ROOT_USER_DEFAULT_DIRECTORY = 'default'

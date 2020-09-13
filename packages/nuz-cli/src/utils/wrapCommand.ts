@@ -4,7 +4,6 @@ import { exit } from './process'
 type Caller = (...rest: any[]) => Promise<any>
 
 function wrapCommand(caller: Caller): Caller {
-  // tslint:disable-next-line: only-arrow-functions
   return async function (...rest) {
     try {
       const closed = await caller(...rest)

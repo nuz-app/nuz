@@ -1,4 +1,4 @@
-import { tokenTypesHelpers } from '@nuz/utils'
+import { accessTokenHelpers } from '@nuz/utils'
 
 import { MONGOOSE_ERROR_CODES } from '../lib/const'
 import {
@@ -86,7 +86,7 @@ class User {
       throw new Error(`Not found token by value ${token}`)
     }
 
-    const permissionIsDenied = !tokenTypesHelpers.verify(
+    const permissionIsDenied = !accessTokenHelpers.verify(
       accessToken.type,
       requiredType,
     )

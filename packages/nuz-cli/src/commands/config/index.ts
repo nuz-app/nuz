@@ -5,8 +5,8 @@ import getConfig from './getConfig'
 import listConfig from './listConfig'
 import setConfig from './setConfig'
 
-export const setCommands = (yargs) => {
-  yargs.command('config', 'Manage configuration', (child) => {
+export function setCommands(yargs) {
+  yargs.command('config', 'Manage configuration', function (child) {
     child.usage('usage: $0 config <item> [options]')
 
     child.command(

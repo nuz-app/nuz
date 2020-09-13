@@ -1,5 +1,3 @@
-import { Argv } from 'yargs'
-
 import showHelpIfInvalid from '../utils/showHelpIfInvalid'
 
 import * as build from './build'
@@ -13,7 +11,7 @@ import * as tools from './tools'
 import checkUpdate from './tools/checkUpdate'
 import * as user from './user'
 
-export const setCommands = async (yargs: Argv) => {
+export async function setCommands(yargs: any): Promise<any> {
   dev.setCommands(yargs)
   build.setCommands(yargs)
   serve.setCommands(yargs)

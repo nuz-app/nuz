@@ -6,15 +6,25 @@ import Worker from '../../classes/Worker'
 import print, { info, success } from '../../utils/print'
 import timer from '../../utils/timer'
 
-async function createCompose({ name }: Arguments<{ name: string }>) {
-  await Config.authRequired(UserAccessTokenTypes.fullAccess)
+interface ComposeCreateComposeOptions extends Arguments<{ name: string }> {}
+
+async function createCompose(
+  options: ComposeCreateComposeOptions,
+): Promise<boolean> {
+  const { name } = options
+
+  // Check permissions before executing
+  await Config.requireAs(UserAccessTokenTypes.fullAccess)
 
   const tick = timer()
+
+  //
   const request = await Worker.createCompose(name)
   const composeId = request?.data?._id
 
   info(`Created ${print.name(composeId)} compose successfully!`)
   success(`Done in ${print.time(tick())}.`)
+
   return true
 }
 

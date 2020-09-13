@@ -1,7 +1,8 @@
 import { Arguments } from 'yargs'
 
-import Config, { AuthKeys, ConfigKeys } from '../../classes/Config'
+import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
+import { AuthenticationFields, ConfigurationFields } from '../../types'
 import createQuestions from '../../utils/createQuestions'
 import print, { info, success } from '../../utils/print'
 import timer from '../../utils/timer'
@@ -44,12 +45,12 @@ async function loginAsUser({
   let registry = _registry
   if (registry) {
     await setConfig({
-      key: ConfigKeys.registry,
+      key: ConfigurationFields.registry,
       value: registry,
     } as any)
   } else {
-    const config = await Config.readConfig()
-    registry = config[ConfigKeys.registry]
+    const config = await Config.readConfiguration()
+    registry = config[ConfigurationFields.registry]
   }
 
   info(`Logging in to the registry server at ${print.bold(registry)}`)
@@ -69,17 +70,17 @@ async function loginAsUser({
   await Config.create(username)
   await Config.use(username)
 
-  const auth = await Config.readAuth()
-  auth[AuthKeys.id] = userId
-  auth[AuthKeys.username] = username
-  auth[AuthKeys.token] = accessToken.value
-  auth[AuthKeys.type] = accessToken.type
-  auth[AuthKeys.loggedAt] = new Date()
+  const authentication = await Config.readAuthentication()
+  authentication[AuthenticationFields.id] = userId
+  authentication[AuthenticationFields.username] = username
+  authentication[AuthenticationFields.token] = accessToken.value
+  authentication[AuthenticationFields.type] = accessToken.type
+  authentication[AuthenticationFields.loggedAt] = new Date()
 
-  await Config.writeAuth(auth)
+  await Config.writeAuthentication(authentication)
 
   await setConfig({
-    key: ConfigKeys.static,
+    key: ConfigurationFields.static,
     value: staticOrigin,
   } as any)
 

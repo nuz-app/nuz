@@ -10,8 +10,8 @@ import removeModules from './removeModules'
 import setModules from './setModules'
 import updateCollaborator from './updateCollaborator'
 
-export const setCommands = (yargs) => {
-  yargs.command('compose', 'Manage compose', (child) => {
+export function setCommands(yargs: any): void {
+  yargs.command('compose', 'Manage compose', function (child) {
     child.usage('usage: $0 compose <item> [options]')
 
     child.command(
@@ -35,38 +35,36 @@ export const setCommands = (yargs) => {
       wrapCommand(deleteCompose),
     )
 
-    child.command(
-      'collaborator',
-      'Manage collaborator of compose',
-      (schild) => {
-        schild.usage('usage: $0 compose collaborator <type> [options]')
+    child.command('collaborator', 'Manage collaborator of compose', function (
+      schild,
+    ) {
+      schild.usage('usage: $0 compose collaborator <type> [options]')
 
-        schild.command(
-          'add <compose> <user> [type]',
-          'Add collaborator to the compose',
-          (yarg) => yarg,
-          wrapCommand(addCollaborator),
-        )
+      schild.command(
+        'add <compose> <user> [type]',
+        'Add collaborator to the compose',
+        (yarg) => yarg,
+        wrapCommand(addCollaborator),
+      )
 
-        schild.command(
-          'update <compose> <user> <type>',
-          'Update collaborator of the compose',
-          (yarg) => yarg,
-          wrapCommand(updateCollaborator),
-        )
+      schild.command(
+        'update <compose> <user> <type>',
+        'Update collaborator of the compose',
+        (yarg) => yarg,
+        wrapCommand(updateCollaborator),
+      )
 
-        schild.command(
-          'remove <compose> <user>',
-          'Remove collaborator from the compose',
-          (yarg) => yarg,
-          wrapCommand(removeCollaborator),
-        )
+      schild.command(
+        'remove <compose> <user>',
+        'Remove collaborator from the compose',
+        (yarg) => yarg,
+        wrapCommand(removeCollaborator),
+      )
 
-        showHelpIfInvalid(schild, schild.argv, 3, 4)
-      },
-    )
+      showHelpIfInvalid(schild, schild.argv, 3, 4)
+    })
 
-    child.command('modules', 'Manage modules of compose', (schild) => {
+    child.command('modules', 'Manage modules of compose', function (schild) {
       schild.usage('usage: $0 compose modules <type> [options]')
 
       schild.command(

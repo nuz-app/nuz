@@ -7,7 +7,7 @@ import print, { info, success } from '../../utils/print'
 import timer from '../../utils/timer'
 
 async function createScope({ name }: Arguments<{ name: string }>) {
-  await Config.authRequired(UserAccessTokenTypes.fullAccess)
+  await Config.requireAs(UserAccessTokenTypes.fullAccess)
 
   const tick = timer()
   const request = await Worker.createScope(name)

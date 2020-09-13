@@ -1,23 +1,33 @@
 import { pick } from '@nuz/utils'
 import { Arguments } from 'yargs'
 
-import Config, { ConfigKeys } from '../../classes/Config'
-import { info, pretty } from '../../utils/print'
+import Config from '../../classes/Config'
+import { ConfigurationFields } from '../../types'
+import print, { info, pretty } from '../../utils/print'
 
-const keysAllowToSet = Object.values<string>(ConfigKeys)
+const CONFIGURATION_FIELDS = Object.values<string>(ConfigurationFields)
 
-async function getConfig({ keys }: Arguments<{ keys: string[] }>) {
+interface ConfigGetConfigOptions extends Arguments<{ keys: string[] }> {}
+
+async function getConfig(options: ConfigGetConfigOptions): Promise<boolean> {
+  const { keys } = options
+
   for (const key of keys) {
-    const keyIsInvalid = !keysAllowToSet.includes(key)
-    if (keyIsInvalid) {
-      throw new Error(`Can't get value of ${key} because key is invalid`)
+    if (!CONFIGURATION_FIELDS.includes(key)) {
+      throw new Error(
+        `Can't find the ${print.name(
+          key,
+        )} configuration field, please check again.`,
+      )
     }
   }
 
-  const config = await Config.readConfig()
-  const values = pick(config, keys)
+  //
+  const configuration = await Config.readConfiguration()
+  const values = pick(configuration, keys)
 
   info(pretty(values))
+
   return true
 }
 

@@ -15,7 +15,7 @@ export function parser(id: string): ModuleIdParsed {
   }
 
   const [, , scope, name, , version] = matched
-  const module = `${matched[1]}${matched[3]}`
+  const module = matched[1] + matched[3]
 
   return {
     id,

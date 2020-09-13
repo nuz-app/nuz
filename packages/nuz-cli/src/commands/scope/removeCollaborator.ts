@@ -10,7 +10,7 @@ async function removeCollaborator({
   scope,
   user,
 }: Arguments<{ scope: string; user: string }>) {
-  await Config.authRequired(UserAccessTokenTypes.fullAccess)
+  await Config.requireAs(UserAccessTokenTypes.fullAccess)
 
   const tick = timer()
   const request = await Worker.removeCollaboratorFromScope(scope, user)

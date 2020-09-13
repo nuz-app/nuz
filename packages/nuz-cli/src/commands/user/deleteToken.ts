@@ -7,14 +7,14 @@ import print, { info, success } from '../../utils/print'
 import timer from '../../utils/timer'
 
 async function deleteToken({ token }: Arguments<{ token: string }>) {
-  const auth = await Config.authRequired(UserAccessTokenTypes.fullAccess)
+  const authentication = await Config.requireAs(UserAccessTokenTypes.fullAccess)
 
   const tick = timer()
-  await Worker.deleteTokenFromUser(auth.id, token)
+  await Worker.deleteTokenFromUser(authentication.id, token)
 
   info(
     `Successfully deleted token ${print.dim(token)} from ${print.name(
-      auth.username,
+      authentication.username,
     )} account`,
   )
   success(`Done in ${print.time(tick())}.`)

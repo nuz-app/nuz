@@ -4,10 +4,11 @@ import fs from 'fs-extra'
 import path from 'path'
 import { Arguments } from 'yargs'
 
-import Config, { ConfigKeys } from '../../classes/Config'
+import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
 import { STATS_FILENAME } from '../../lib/const'
 import * as paths from '../../paths'
+import { ConfigurationFields } from '../../types'
 import checkIsHaveSlash from '../../utils/checkIsHaveSlash'
 import createQuestions from '../../utils/createQuestions'
 import getFilesBufferOnly from '../../utils/getFilesBufferOnly'
@@ -34,7 +35,9 @@ async function publish(options: ModulePublishOptions): Promise<boolean> {
 
   const { name, library, version } = internalConfig
 
-  const staticOrigin = (await Config.readConfig())[ConfigKeys.static]
+  const staticOrigin = (await Config.readConfiguration())[
+    ConfigurationFields.static
+  ]
   const publicPath = selfHosted
     ? internalConfig.publicPath
     : assetsUrlHelpers.createOrigin(name, version, staticOrigin)

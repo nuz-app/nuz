@@ -15,7 +15,7 @@ async function createToken({
     throw new Error(`${type} is invalid access token type`)
   }
 
-  const auth = await Config.authRequired(type)
+  const authentication = await Config.requireAs(type)
 
   const tick = timer()
   const request = await Worker.createTokenForUser(type)
@@ -28,7 +28,7 @@ async function createToken({
     `Successfully created token ${print.dim(
       accessToken.value,
     )} type is ${print.bold(accessToken.type)} for ${print.name(
-      auth.username,
+      authentication.username,
     )} account`,
   )
   success(`Done in ${print.time(tick())}.`)

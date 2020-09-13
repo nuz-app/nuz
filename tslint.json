@@ -40,7 +40,8 @@
     ],
     "no-console": false,
     "object-literal-sort-keys": false,
-    "eofline": true
+    "eofline": true,
+    "only-arrow-functions": false
   },
   "rulesDirectory": []
 }

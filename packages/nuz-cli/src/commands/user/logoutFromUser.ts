@@ -2,7 +2,7 @@ import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
-import { NUZ_DEFAULT_USERNAME } from '../../lib/const'
+import { ROOT_USER_DEFAULT_DIRECTORY } from '../../lib/const'
 import print, { info, success } from '../../utils/print'
 import timer from '../../utils/timer'
 
@@ -16,10 +16,10 @@ async function logoutFromUser({
     await Config.use(_username)
   }
 
-  const auth = await Config.readAuth()
-  const { id, username, token } = auth
+  const authentication = await Config.readAuthentication()
+  const { id, username, token } = authentication
 
-  if (username === NUZ_DEFAULT_USERNAME) {
+  if (username === ROOT_USER_DEFAULT_DIRECTORY) {
     throw new Error('Unable to logout because you use the default profile')
   }
 
@@ -31,7 +31,7 @@ async function logoutFromUser({
     info(`Switching back to ${print.name((currentUser as any).username)}...`)
     await Config.use((currentUser as any).username)
   } else {
-    await Config.use(NUZ_DEFAULT_USERNAME)
+    await Config.use(ROOT_USER_DEFAULT_DIRECTORY)
   }
 
   info(`Deleting ${print.name(username)} work folder...`)

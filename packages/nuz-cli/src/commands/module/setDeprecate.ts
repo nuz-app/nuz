@@ -15,7 +15,7 @@ async function setDeprecate({
   versions: string
   deprecate: string | undefined
 }>) {
-  await Config.authRequired(UserAccessTokenTypes.fullAccess)
+  await Config.requireAs(UserAccessTokenTypes.fullAccess)
 
   if (!id || !versions) {
     throw new Error('Id or versions is invalid')

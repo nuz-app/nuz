@@ -1,40 +1,56 @@
 import { checkIsUrl } from '@nuz/utils'
 import { Arguments } from 'yargs'
 
-import Config, { ConfigKeys } from '../../classes/Config'
+import Config from '../../classes/Config'
+import { ConfigurationFields } from '../../types'
 import print, { success } from '../../utils/print'
 
-const keysAllowToSet = Object.values<string>(ConfigKeys)
+const CONFIGURATION_FIELDS = Object.values<string>(ConfigurationFields)
 
-async function setConfig({
-  key,
-  value,
-}: Arguments<{ key: string; value: string }>) {
-  const config = await Config.readConfig()
+interface ConfigSetConfigOptions
+  extends Arguments<{ key: string; value: string }> {}
 
-  const keyIsInvalid = !keysAllowToSet.includes(key)
-  if (keyIsInvalid) {
-    throw new Error(`Can't set ${key} to config because key is invalid`)
+async function setConfig(options: ConfigSetConfigOptions): Promise<boolean> {
+  const { key, value } = options
+
+  //
+  const configuration = await Config.readConfiguration()
+
+  if (!CONFIGURATION_FIELDS.includes(key)) {
+    throw new Error(
+      `Can't find the ${print.name(
+        key,
+      )} configuration field, please check again.`,
+    )
   }
 
-  if (key === ConfigKeys.registry || key === ConfigKeys.static) {
+  if (
+    key === ConfigurationFields.registry ||
+    key === ConfigurationFields.static
+  ) {
     if (!checkIsUrl(value)) {
-      throw new Error(`Can't set value because it is invalid, value ${value}`)
+      throw new Error(
+        `${print.dim(value)} value set for field ${print.name(
+          key,
+        )} is not valid.`,
+      )
     }
 
-    const slash = key === ConfigKeys.static ? '/' : ''
-    config[key] = new URL(value).origin + slash
+    const slash = key === ConfigurationFields.static ? '/' : ''
+    configuration[key] = new URL(value).origin + slash
   } else {
-    config[key] = value
+    configuration[key] = value
   }
 
-  await Config.writeConfig(config)
+  //
+  await Config.writeConfiguration(configuration)
 
   success(
     `Set ${print.bold(key)} value with ${print.bold(
-      config[key],
+      configuration[key],
     )} successfully!`,
   )
+
   return true
 }
 

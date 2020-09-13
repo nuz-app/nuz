@@ -1,10 +1,10 @@
 import Config from '../../classes/Config'
-import { NUZ_DEFAULT_USERNAME } from '../../lib/const'
+import { ROOT_USER_DEFAULT_DIRECTORY } from '../../lib/const'
 import print, { info } from '../../utils/print'
 
 async function whoami() {
   const { username } = await Config.whoami()
-  if (username === NUZ_DEFAULT_USERNAME) {
+  if (username === ROOT_USER_DEFAULT_DIRECTORY) {
     info('You are using the default configuration!')
     return true
   }
