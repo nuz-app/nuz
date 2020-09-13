@@ -1,4 +1,8 @@
-import { GITHUB_DEFAULT_BRANCH, GITHUB_REPOSITORY, GITHUB_ORGANIZATION } from '../lib/const'
+import {
+  GITHUB_DEFAULT_BRANCH,
+  GITHUB_ORGANIZATION,
+  GITHUB_REPOSITORY,
+} from '../lib/const'
 
 export const packageJson = (template: string) =>
   `https://api.github.com/repos/${GITHUB_ORGANIZATION}/${GITHUB_REPOSITORY}/contents/templates/${template}/package.json`
