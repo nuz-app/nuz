@@ -1,7 +1,7 @@
 {
   "name": "@nuz/utils",
   "description": "Includes utils using in nuz packages",
-  "version": "1.0.0-beta.58",
+  "version": "1.0.0-beta.59",
   "repository": {
     "type": "git",
     "url": "https://github.com/nuz-app/nuz.git",
@@ -27,7 +27,7 @@
     "build": "rollup -c"
   },
   "dependencies": {
-    "@nuz/shared": "^1.0.0-beta.58",
+    "@nuz/shared": "^1.0.0-beta.59",
     "axios": "^0.20.0",
     "qs": "^6.9.4",
     "selfsigned": "^1.10.7",
