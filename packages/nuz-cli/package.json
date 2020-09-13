@@ -84,7 +84,7 @@
     "spdy": "^4.0.2",
     "tar": "^6.0.5",
     "terser-webpack-plugin": "^4.2.0",
-    "thread-loader": "^2.1.3",
+    "thread-loader": "^3.0.0",
     "ts-loader": "^8.0.3",
     "update-check": "^1.5.4",
     "url-loader": "^4.1.0",
