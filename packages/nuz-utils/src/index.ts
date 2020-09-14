@@ -5,7 +5,6 @@ import * as assetsUrlHelpers from './assetsUrlHelpers'
 import * as getFetchUrls from './getFetchUrls'
 import * as integrityHelpers from './integrityHelpers'
 import * as internalUrlsCreators from './internalUrlsCreators'
-import * as jsonHelpers from './jsonHelpers'
 import * as moduleIdHelpers from './moduleIdHelpers'
 import * as validator from './validator'
 import * as versionHelpers from './versionHelpers'
@@ -13,7 +12,6 @@ import * as versionHelpers from './versionHelpers'
 export {
   qs,
   integrityHelpers,
-  jsonHelpers,
   internalUrlsCreators,
   accessTokenHelpers,
   validator,

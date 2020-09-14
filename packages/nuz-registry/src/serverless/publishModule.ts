@@ -1,4 +1,3 @@
-import { jsonHelpers } from '@nuz/utils'
 import { Express } from 'express'
 import fs from 'fs'
 import multer from 'multer'
@@ -39,8 +38,8 @@ export const execute: ServerlessRoute = (
     const { authorization: token } = request.headers
     const { module: id, data: _data, options: _options } = request.body
 
-    const data = jsonHelpers.parse(_data)
-    const options = jsonHelpers.parse(_options) || {}
+    const data = JSON.parse(_data)
+    const options = JSON.parse(_options) || {}
     const files = (request as any).files.map((item) =>
       Object.assign(item, { path: undefined, tempPath: item.path }),
     )

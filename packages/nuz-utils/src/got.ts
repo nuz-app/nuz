@@ -1,7 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 
-import * as jsonHelpers from './jsonHelpers'
-
 export type GotRequestConfig = AxiosRequestConfig
 
 async function got<R = AxiosResponse<any>>(
@@ -22,7 +20,7 @@ async function got<R = AxiosResponse<any>>(
       }
 
       throw new Error(
-        `There was an error returning from the server, details: ${jsonHelpers.stringify(
+        `There was an error returning from the server, details: ${JSON.stringify(
           error.response.data?.error,
         )}`,
       )
