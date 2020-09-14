@@ -1,6 +1,6 @@
 import { SHARED_CONFIG_KEY } from '@nuz/shared'
-import { jsonHelpers } from '@nuz/utils'
 import type LRUCache from 'lru-cache'
+import serialize from 'serialize-javascript'
 
 import appendQueryToUrl, {
   AppendQueryToUrlConfiguration,
@@ -171,9 +171,9 @@ export function defineSharedConfig(configuration: any): DefinedElement {
     priority: Priorities.high,
     type: 'text/javascript',
     dangerouslySetInnerHTML: {
-      __html: `window['${SHARED_CONFIG_KEY}'] = ${jsonHelpers.stringify(
-        configuration,
-      )};`,
+      __html: `window['${SHARED_CONFIG_KEY}'] = ${serialize(configuration, {
+        isJSON: true,
+      })}`,
     },
   })
 }
