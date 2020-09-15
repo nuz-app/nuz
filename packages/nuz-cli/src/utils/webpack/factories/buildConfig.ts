@@ -26,7 +26,7 @@ import {
   InternalConfiguration,
   NamedConfiguration,
 } from '../../../types'
-import checkIsPackageInstalled from '../../checkIsPackageInstalled'
+import checkIsPackageUsed from '../../checkIsPackageUsed'
 import * as compilerName from '../../compilerName'
 import getSystemPaths from '../../getSystemPaths'
 import setExternals from '../helpers/setExternals'
@@ -303,7 +303,7 @@ function webpackConfigFactory(
     config.externals.push(sharedExternals)
   }
 
-  const nextIsInstalled = checkIsPackageInstalled('next', dir)
+  const nextIsInstalled = checkIsPackageUsed('next', dir)
   if (nextIsInstalled) {
     const sharedNextModules = [
       'next/dynamic',
@@ -426,7 +426,7 @@ function webpackConfigFactory(
 
   // Set typescript loader to transplie ts
   if (feature.typescript) {
-    const typescriptIsInstalled = checkIsPackageInstalled('typescript', dir)
+    const typescriptIsInstalled = checkIsPackageUsed('typescript', dir)
     if (!typescriptIsInstalled) {
       throw new Error('Install `typescript` to use Typescript!')
     }

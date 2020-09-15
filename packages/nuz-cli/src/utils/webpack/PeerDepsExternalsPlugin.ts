@@ -12,9 +12,9 @@ function getPeerDependencies(
 ) {
   try {
     const moduleDir = dir || process.cwd()
-    const pkgJson = getPackageJsonInDirectory(moduleDir)
+    const packageJson = getPackageJsonInDirectory(moduleDir)
 
-    return Object.keys(pkgJson.peerDependencies).reduce(
+    return Object.keys(packageJson.peerDependencies).reduce(
       (acc, key) =>
         exclude.includes(key)
           ? acc

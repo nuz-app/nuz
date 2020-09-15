@@ -3,7 +3,7 @@ import webpack from 'webpack'
 
 import * as paths from '../../../paths'
 import { FeaturesUsed, NamedConfiguration } from '../../../types'
-import checkIsPackageInstalled from '../../checkIsPackageInstalled'
+import checkIsPackageUsed from '../../checkIsPackageUsed'
 import getBrowserslist from '../../getBrowserslist'
 
 export interface StyleLoadersOptions {
@@ -98,8 +98,8 @@ const styleLoadersFactory = ({
   })
 
   if (feature.sass) {
-    const nodeSassIsInstalled = checkIsPackageInstalled('node-sass', dir)
-    const dartSassIsInstalled = checkIsPackageInstalled('dart-sass', dir)
+    const nodeSassIsInstalled = checkIsPackageUsed('node-sass', dir)
+    const dartSassIsInstalled = checkIsPackageUsed('dart-sass', dir)
     const sassIsInstalled = nodeSassIsInstalled || dartSassIsInstalled
     if (!sassIsInstalled) {
       throw new Error('Install `node-sass` or `dart-sass` to use Sass!')
@@ -121,7 +121,7 @@ const styleLoadersFactory = ({
   }
 
   if (feature.less) {
-    const lessIsInstalled = checkIsPackageInstalled('less', dir)
+    const lessIsInstalled = checkIsPackageUsed('less', dir)
     if (!lessIsInstalled) {
       throw new Error('Install `less` to use Less!')
     }
