@@ -67,8 +67,8 @@ class Config {
       warn('No default user found, creating new default profile...')
 
       //
-      const defaultTemplatePath = path.join(
-        paths.tool + `/templates/root/users/${ROOT_USER_DEFAULT_DIRECTORY}`,
+      const defaultTemplatePath = paths.resolveRootTemplate(
+        `users/${ROOT_USER_DEFAULT_DIRECTORY}`,
       )
       await fs.copy(defaultTemplatePath, resolveDefaultConfig)
     }
@@ -103,16 +103,11 @@ class Config {
     //
     const rootDirectoryIsEixsted = await fs.existsSync(resolveRootDirectory)
     if (!rootDirectoryIsEixsted) {
-      const resolveRootTemplateDirectory = path.join(
-        paths.tool,
-        'templates/root',
-      )
-
       info('Initializing the configuration directory in the local...')
 
       // Copy root directory from template
       // of current `@nuz/cli` version
-      await fs.copy(resolveRootTemplateDirectory, resolveRootDirectory)
+      await fs.copy(paths.resolveRootTemplate(), resolveRootDirectory)
     }
 
     //
