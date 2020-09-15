@@ -106,22 +106,29 @@ export function resolveNodeModules(id: string, directory?: string): string {
 /**
  * Resolve relative path in the tool templates directory
  */
-export function resolveTemplate(...rest: string[]): string {
+export function resolveTemplates(...rest: string[]): string {
   return path.join(tool, 'templates', ...rest)
+}
+
+/**
+ * Resolve relative path in the tool examples directory
+ */
+export function resolveExamples(...rest: string[]): string {
+  return path.join(tool, 'examples', ...rest)
 }
 
 /**
  * Resolve relative path in the module template directory
  */
 export function resolveModuleTemplate(...rest: string[]): string {
-  return resolveTemplate('module', ...rest)
+  return resolveTemplates('module', ...rest)
 }
 
 /**
  * Resolve relative path in the root template directory
  */
 export function resolveRootTemplate(...rest: string[]): string {
-  return resolveTemplate('root', ...rest)
+  return resolveTemplates('root', ...rest)
 }
 
 /**
@@ -146,10 +153,17 @@ export function resolveTsConfigFile(directory: string): string {
 }
 
 /**
+ * Resolve `nuz-env.d.ts` file in the directory
+ */
+export function resolveGlobalTypesFile(directory: string): string {
+  return path.resolve(directory, 'nuz-env.d.ts')
+}
+
+/**
  * Resolve README.md file in the directory
  */
 export function resolveReadmeFile(directory: string): string {
-  return path.resolve(directory, 'readme.md')
+  return path.resolve(directory, 'README.md')
 }
 
 /**

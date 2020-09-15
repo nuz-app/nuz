@@ -1,4 +1,5 @@
 import { deferedPromise } from '@nuz/utils'
+import fs from 'fs-extra'
 import inquirer from 'inquirer'
 import path from 'path'
 import ProgressBar from 'progress'
@@ -9,162 +10,161 @@ import checkIsOnline from '../../utils/checkIsOnline'
 import checkIsTemplateExisted from '../../utils/checkIsTemplateExisted'
 import checkIsYarnInstalled from '../../utils/checkIsYarnInstalled'
 import createQuestions from '../../utils/createQuestions'
+import * as dependenciesHelpers from '../../utils/dependenciesHelpers'
 import downloadAndExtractTemplate from '../../utils/downloadAndExtractTemplate'
-import * as fs from '../../utils/fs'
-import getCurrentNodeScript from '../../utils/getCurrentNodeScript'
 import * as gitHelpers from '../../utils/gitHelpers'
-import installPackages from '../../utils/installPackages'
-import * as localTemplatesHelpers from '../../utils/localTemplatesHelpers'
+import normalizePackageName from '../../utils/normalizePackageName'
 import print, { info, log, warn } from '../../utils/print'
 
-import cloneFilesIfNotFound from './utils/cloneFilesIfNotFound'
+import ensureImportantsFiles from './utils/ensureImportantsFiles'
 import generateTemplate from './utils/generateTemplate'
+import printGuideForModule from './utils/printGuideForModule'
 import updatePackageJson from './utils/updatePackageJson'
 
-const getNameQuestion = () => ({
-  type: 'string',
-  name: 'name',
-  message: `What is your module named?`,
-  validate: (value: string) => !!value,
-})
+const INITIAL_COMMIT_MESSAGE = 'Initialized by `@nuz/cli`'
 
-const getVersionQuestion = () => ({
-  type: 'string',
-  name: 'version',
-  message: `Starting version?`,
-  default: '0.1.0',
-})
+interface ModuelCreateOptions
+  extends Arguments<{ name?: string; template?: string }> {}
 
-const getTemplateQuestion = () => ({
-  type: 'string',
-  name: 'template',
-  message: `What template you want to use?`,
-  default: false,
-})
-
-const getOverrideDirectoryQuestion = (dir: string) => ({
-  type: 'confirm',
-  name: 'isOverried',
-  default: true,
-  message: `Directory already exists, do you want to override it at ${print.link(
-    dir,
-  )}?`,
-})
-
-const printGuideForModule = (name: string, useYarn: boolean) => {
-  log(`Successfully created ${print.name(name)} module, accessed by command:`)
-  log(print.dim('$ '), print.cyan(`cd ${name}`))
-  log()
-  log('Inside that directory, you can run several commands')
-  log()
-  log(print.dim(`Starts the development server:`))
-  log(print.dim('$ '), print.cyan(getCurrentNodeScript('dev', useYarn)))
-  log()
-  log(print.dim(`Builds the app for production:`))
-  log(print.dim('$ '), print.cyan(getCurrentNodeScript('build', useYarn)))
-  log()
-  log(print.dim(`File serving and directory listing:`))
-  log(print.dim('$ '), print.cyan(getCurrentNodeScript('serve', useYarn)))
-  log()
-  log(print.dim('We suggest that you begin by typing:'))
-  log(
-    print.dim('$ '),
-    print.cyan(`cd ${name} && ${getCurrentNodeScript('dev', useYarn)}`),
-  )
-  log()
-  log(print.dim('Happy coding!'))
-  log()
-}
-
-async function create({
-  name,
-  template,
-}: Arguments<{ name?: string; template?: string }>) {
-  const cwd = paths.cwd
-
-  const isOnline = await checkIsOnline()
-  if (!isOnline) {
-    throw new Error('Network unavailable, try it later!')
-  }
-
-  const restQuestions = [
-    !name && getNameQuestion(),
-    getVersionQuestion(),
-    !template && getTemplateQuestion(),
-  ].filter(Boolean) as inquirer.Answers[]
-  const result = Object.assign(
-    { name, template },
-    await createQuestions(restQuestions),
+async function create(options: ModuelCreateOptions): Promise<any> {
+  const { name: _name, template: _template } = options
+  //
+  const answers = Object.assign(
+    { name: _name, template: _template },
+    await createQuestions(
+      [
+        !_name && {
+          type: 'string',
+          name: 'name',
+          message: `What is your module named?`,
+          validate: (value: string) => !!value,
+        },
+        {
+          type: 'string',
+          name: 'version',
+          message: `Starting version?`,
+          default: '0.1.0',
+        },
+        !_template && {
+          type: 'string',
+          name: 'template',
+          message: `What template you want to use?`,
+          default: false,
+        },
+      ].filter(Boolean) as inquirer.Answers[],
+    ),
   ) as {
     name: string
     version: string
     template: string
   }
-
-  if (!result || !result.name || !result.version) {
+  if (!answers || !answers.name || !answers.version) {
     throw new Error(
-      'Please fill in enough information to be able to create the module',
+      'Please fill in enough information to be able to create new module',
     )
   }
 
-  info(
-    `Start creating new ${print.name(result.name)} module, version ${print.blue(
-      result.version,
-    )}!`,
-  )
+  const currentWorkingDirectory = paths.cwd
+  const name = answers.name as any
+  const normalizedName = normalizePackageName(name)
+  const directory = path.join(currentWorkingDirectory, normalizedName)
+  const isOnline = await checkIsOnline()
 
-  const dir = path.join(cwd, result.name)
-  const dirIsExisted = fs.exists(dir)
-  if (dirIsExisted) {
+  info(
+    `Start creating new ${print.name(
+      answers.name,
+    )} module, version ${print.blue(answers.version)}!`,
+  )
+  log()
+
+  //
+  const directoryIsExisted = fs.existsSync(directory)
+  if (directoryIsExisted) {
     const { isOverried } = await createQuestions<{ isOverried: boolean }>([
-      getOverrideDirectoryQuestion(dir),
+      {
+        type: 'confirm',
+        name: 'isOverried',
+        default: true,
+        message: `Directory already exists, do you want to override it at ${print.link(
+          directory,
+        )} ?`,
+      },
     ])
+
+    //
     if (!isOverried) {
       return
     }
-
-    info(`Emptying directory at ${print.link(dir)}`)
-    await fs.emptyDir(dir)
-  } else {
-    info(`Creating new directory at ${print.link(dir)}`)
-    await fs.create(dir)
   }
 
-  const isUseTemplate = !!result.template
-  if (isUseTemplate) {
-    const templateIsExistedInLocal = localTemplatesHelpers.exists(
-      result.template,
+  //
+  if (directoryIsExisted) {
+    info(
+      `Cleaning the directory before initialization at ${print.link(
+        directory,
+      )}...`,
     )
-    if (templateIsExistedInLocal) {
-      info(`Find the existing ${print.name(result.template)} template locally`)
+    log()
 
+    //
+    await fs.emptyDir(directory)
+  } else {
+    info(`Creating new directory at ${print.link(directory)}...`)
+    log()
+
+    //
+    await fs.ensureDir(directory)
+  }
+
+  const { template } = answers
+
+  const isUseTemplate = !!template
+  if (isUseTemplate) {
+    const resolveExampleDirectory = paths.resolveExamples(template)
+
+    if (fs.existsSync(resolveExampleDirectory)) {
+      info(
+        `Find the existing ${print.name(answers.template)} template locally...`,
+      )
       info(
         `Starting to clone the ${print.name(
-          result.template,
-        )} template to create ${print.name(result.name)} module`,
+          answers.template,
+        )} template to create ${print.name(answers.name)} module...`,
       )
-      await localTemplatesHelpers.clone(result.template, dir)
-    }
+      log()
 
-    if (!templateIsExistedInLocal) {
-      const templateIsExistedOnRemote = await checkIsTemplateExisted(
-        result.template,
-      )
-      if (!templateIsExistedOnRemote) {
+      //
+      await fs.copy(resolveExampleDirectory, directory, {
+        dereference: true,
+        recursive: true,
+      })
+    } else {
+      //
+      if (!isOnline) {
         throw new Error(
-          `Cannot find ${print.name(result.template)} template on Github`,
+          'The example could not be found on Github because the desktop is currently offline.',
+        )
+      }
+
+      //
+      const templateIsExisted = await checkIsTemplateExisted(template)
+      if (!templateIsExisted) {
+        throw new Error(
+          `Cannot find ${print.name(template)} template on Github`,
         )
       }
 
       info(
         `Downloading ${print.name(
-          result.template,
-        )} template, this might take a moment`,
+          template,
+        )} template, this might take a moment...`,
       )
+      log()
 
+      //
       const downloadDefered = deferedPromise<boolean>()
       await Promise.all([
-        downloadAndExtractTemplate(dir, result.template, (response) => {
+        downloadAndExtractTemplate(directory, template, (response) => {
           const totalLength = response.headers['content-length']
 
           const progressBar = new ProgressBar(
@@ -186,9 +186,10 @@ async function create({
 
       info(
         `Use the downloaded ${print.name(
-          result.template,
-        )} template to create ${print.name(result.name)} module`,
+          template,
+        )} template to create ${print.name(answers.name)} module.`,
       )
+      log()
     }
   }
 
@@ -196,35 +197,65 @@ async function create({
     info(
       `Answer below questions to generate new template for ${print.name(
         name,
-      )} module`,
+      )} module.`,
     )
-    await generateTemplate(dir, result)
+    log()
+
+    //
+    await generateTemplate(directory, answers)
   }
 
-  info(`Preparing important files for new module`)
-  await cloneFilesIfNotFound(dir, ['.gitignore', 'package.json'])
-  await updatePackageJson(dir, result)
+  info(`Preparing important files for new module...`)
+  log()
 
+  //
+  await ensureImportantsFiles(directory, ['.gitignore', 'package.json'])
+
+  //
+  await updatePackageJson(directory, answers)
+
+  //
   const useYarn = checkIsYarnInstalled()
-  const nameManagerTool = useYarn ? 'Yarn' : 'Npm'
+
   info(
     `Installing packages by ${print.blue(
-      nameManagerTool,
-    )}, this might take a couple of minutes`,
+      useYarn ? 'Yarn' : 'NPM',
+    )}, this might take a couple of minutes...`,
   )
+  log()
 
-  const installed = await installPackages(dir, { useYarn })
-  if (installed.failed) {
-    throw new Error('An error occurred while installing dependencies')
+  //
+  if (isOnline) {
+    const installed = await dependenciesHelpers.install(directory, { useYarn })
+    if (installed.failed) {
+      warn(
+        'There was an error in the dependencies installation process, try again before starting.',
+      )
+      log()
+    }
+  } else {
+    warn(
+      `Skip installing dependencies because you\'re not connected to the internet try again before starting.`,
+    )
+    log()
   }
 
-  const isGitInitialized = gitHelpers.initial(dir)
+  const isGitInitialized = gitHelpers.initialize(
+    directory,
+    INITIAL_COMMIT_MESSAGE,
+  )
   if (!isGitInitialized) {
-    warn(`Initializing Git for module failed`)
+    warn(
+      `Git has not been initialized, it is possible that the module is in workspaces.`,
+    )
+    log()
   }
 
   info(`Successfully installed dependencies for the module`)
-  printGuideForModule(result.name, useYarn)
+  log()
+
+  //
+  printGuideForModule(name, useYarn)
 
   return true
 }

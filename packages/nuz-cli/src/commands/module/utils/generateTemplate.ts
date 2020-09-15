@@ -1,157 +1,165 @@
+import fs from 'fs-extra'
 import glob from 'glob'
 import path from 'path'
 
 import * as paths from '../../../paths'
 import createQuestions from '../../../utils/createQuestions'
-import * as fs from '../../../utils/fs'
 import print from '../../../utils/print'
 
-const CONFIG_FILE = `
+const CONFIGURATION_TEMPLATE = `
 // Main fields load from './package.json'
 // Such as: name, version, library, source -> input, main -> output.
 
 module.exports = ({content})
 `
 
-const mapStyleToDependencies = {
+const stylingMap = {
   none: {},
   css: {},
   sass: { 'node-sass': '^4.13.0' },
   less: { less: '^3.11.0' },
 }
 
-const getQuestions = (name: string) => [
-  {
-    type: 'list',
-    name: 'language',
-    default: 'Javascirpt',
-    message: `Which ${print.bold('language')} using for ${print.name(
-      name,
-    )} module?`,
-    choices: ['javascript', 'typescript'],
-  },
-  {
-    type: 'list',
-    name: 'style',
-    default: 'css',
-    message: `Which ${print.bold('stylesheet language')} using for ${print.name(
-      name,
-    )} module?`,
-    choices: ['none', 'css', 'sass', 'less'],
-  },
-]
+interface GenerateTemplateConfig {
+  name: string
+  version: string
+  library?: string
+}
 
-const generateTemplate = async (
-  dir: string,
-  {
-    name,
-    version,
-    library,
-  }: { name: string; version: string; library?: string },
-) => {
-  const result = await createQuestions<{ language: string; style: string }>(
-    getQuestions(name),
-  )
-  const useTypescript = result.language === 'typescript'
+async function generateTemplate(
+  directory: string,
+  config: GenerateTemplateConfig,
+): Promise<boolean> {
+  const { name, version, library } = config
+
+  //
+  const answers = await createQuestions<{ language: string; style: string }>([
+    {
+      type: 'list',
+      name: 'language',
+      default: 'Javascirpt',
+      message: `Which ${print.bold('language')} using for ${print.name(
+        name,
+      )} module?`,
+      choices: ['javascript', 'typescript'],
+    },
+    {
+      type: 'list',
+      name: 'style',
+      default: 'css',
+      message: `Which ${print.bold(
+        'stylesheet language',
+      )} using for ${print.name(name)} module?`,
+      choices: ['none', 'css', 'sass', 'less'],
+    },
+  ])
+
+  //
+  const useTypescript = answers.language === 'typescript'
   const scriptExtension = useTypescript ? 'tsx' : 'jsx'
 
-  // Clone default module to dir
-  const defaultModule = path.join(paths.tool + '/templates/module')
-  await fs.copy(defaultModule, dir)
+  //
+  const resolveInputFile = `src/index.${scriptExtension}`
+  const resolveOutputFile = `dist/index.js`
 
-  const inputPath = `src/index.${scriptExtension}`
-  const outputPath = `dist/index.js`
+  //
+  await fs.copy(paths.resolveTemplates('module'), directory)
 
-  // Copy copy based on style from example folder
-  const usedComponentPath = path.join(dir, `src/examples/Hello-${result.style}`)
-  const distComponentPath = path.join(dir, 'src/components/Hello')
-  await fs.copy(usedComponentPath, distComponentPath)
+  //
+  await fs.copy(
+    path.join(directory, `src/examples/Hello-${answers.style}`),
+    path.join(directory, 'src/components/Hello'),
+  )
 
-  // Clean example folder
-  const examplePath = path.join(dir, 'src/examples')
-  await fs.remove(examplePath)
+  //
+  await fs.remove(path.join(directory, 'src/examples'))
 
-  // Write `package.json` file for module
-  const packageJsonPath = path.join(dir, 'package.json')
-  const packageJson = Object.assign({ name, version }, library && { library }, {
-    source: inputPath,
-    main: outputPath,
-    scripts: {
-      dev: 'nuz dev --port 4000',
-      build: 'nuz build',
-      serve: 'nuz serve --port 4000',
-    },
-    dependencies: {},
-    devDependencies: Object.assign(
-      {
-        '@nuz/cli': 'latest',
-        '@nuz/core': 'latest',
-      },
-      useTypescript && {
-        '@types/node': '^12.12.21',
-        '@types/react': '^16.9.16',
-        '@types/react-dom': '^16.9.4',
-        typescript: '^3.8.3',
-      },
-      mapStyleToDependencies[result.style] || {},
-      {
-        react: '^16.12.0',
-        'react-dom': '^16.12.0',
-      },
+  //
+  const resolvePackageJson = paths.resolvePackageJson(directory)
+  await fs.writeFile(
+    resolvePackageJson,
+    JSON.stringify(
+      Object.assign({ name, version }, library && { library }, {
+        source: resolveInputFile,
+        main: resolveOutputFile,
+        scripts: {
+          dev: 'nuz dev',
+          build: 'nuz build',
+          serve: 'nuz serve',
+        },
+        dependencies: {},
+        devDependencies: Object.assign(
+          {
+            '@nuz/cli': 'latest',
+            '@nuz/core': 'latest',
+          },
+          useTypescript && {
+            '@types/node': '^12.12.21',
+            '@types/react': '^16.9.16',
+            '@types/react-dom': '^16.9.4',
+            typescript: '^3.8.3',
+          },
+          stylingMap[answers.style] || {},
+          {
+            react: '^16.12.0',
+            'react-dom': '^16.12.0',
+          },
+        ),
+        peerDependencies: {
+          '@nuz/core': '*',
+          react: '*',
+          'react-dom': '*',
+        },
+      }),
+      null,
+      2,
     ),
-    peerDependencies: {
-      '@nuz/core': '*',
-      react: '*',
-      'react-dom': '*',
-    },
-  })
-  fs.writeJson(packageJsonPath, packageJson)
-
-  // Write `nuz.config.js` config file for module
-  const moduleConfig = {
-    feature: true,
-    publicPath: '/',
-  }
-  const dataConfig = CONFIG_FILE.replace(
-    '{content}',
-    JSON.stringify(moduleConfig, null, 2),
-  )
-  const configPath = path.join(dir, 'nuz.config.js')
-  fs.writeSync(configPath, dataConfig)
-
-  // Update `README.md` file
-  const readmePath = path.join(dir, 'README.md')
-  fs.writeSync(
-    readmePath,
-    fs.read(readmePath).toString('utf8').replace('{module-name}', name),
   )
 
+  //
+  const resolveReadmeFile = paths.resolveReadmeFile(directory)
+  const updatedReadmeFile = await fs
+    .readFileSync(resolveReadmeFile, {
+      encoding: 'utf8',
+    })
+    .replace('{module-name}', name)
+  await fs.writeFile(resolveReadmeFile, updatedReadmeFile)
+
+  //
   if (!useTypescript) {
-    // Remove `tsconfig.json` file if not using Typescript
-    const tsconfigPath = path.join(dir, 'tsconfig.json')
+    const tsconfigPath = path.join(directory, 'tsconfig.json')
     await fs.remove(tsconfigPath)
-
-    // Rename extension files
-    const matches = glob.sync(dir + '/src/**/*.tsx')
-    const promise = matches.map((match) =>
-      fs.move(match, match.replace('.tsx', `.${scriptExtension}`)),
-    )
-    await Promise.all(promise)
   }
 
-  // Remove unused `index` script file
-  const pubicIndexPath = path.join(
-    dir,
-    'public',
-    useTypescript ? 'index.js' : 'index.ts',
+  //
+  if (!useTypescript || answers.style === 'none') {
+    await fs.remove(paths.resolveGlobalTypesFile(directory))
+  }
+
+  //
+  const filesWillBeRemoved = glob.sync(
+    '{src,public}/**/*.' + useTypescript ? '{js,jsx}' : '{ts,tsx}',
+    {
+      cwd: directory,
+    },
   )
-  await fs.remove(pubicIndexPath)
+  await Promise.all((filesWillBeRemoved || []).map((file) => fs.remove(file)))
 
-  // Remove styles types if not used
-  const typePath = path.join(dir, 'nuz-env.d.ts')
-  if (!useTypescript || result.style === 'none') {
-    await fs.remove(typePath)
-  }
+  //
+  await fs.writeFile(
+    paths.resolveInternalConfig(directory, true) as string,
+    CONFIGURATION_TEMPLATE.replace(
+      '{content}',
+      JSON.stringify(
+        {
+          feature: true,
+          publicPath: '/',
+        },
+        null,
+        2,
+      ),
+    ),
+  )
 
   return true
 }

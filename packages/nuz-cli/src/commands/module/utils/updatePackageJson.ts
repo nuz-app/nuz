@@ -1,7 +1,8 @@
-import { getPackageJsonInDirectory } from '@nuz/utils'
-import path from 'path'
+import { pick } from '@nuz/utils'
+import fs from 'fs-extra'
 
-import * as fs from '../../../utils/fs'
+import * as paths from '../../../paths'
+import readPackageJson from '../../../utils/readPackageJson'
 
 interface ModuleInfo {
   name: string
@@ -9,21 +10,26 @@ interface ModuleInfo {
   library?: string
 }
 
-const updatePackageJson = async (dir: string, info: ModuleInfo) => {
-  const packageJsonPath = path.join(dir, 'package.json')
-  const packageJson = getPackageJsonInDirectory(dir) || {}
+async function updatePackageJson(
+  directory: string,
+  info: ModuleInfo,
+): Promise<any> {
+  const resolvePackageJson = paths.resolvePackageJson(directory)
+  const packageJson = readPackageJson(resolvePackageJson)
 
-  const {
-    name: _name,
-    library: _library,
-    version: _version,
-    ...rest
-  } = packageJson
   const { name, library, version } = info
 
-  fs.writeJson(
-    packageJsonPath,
-    Object.assign({ name, version }, library && { library }, rest),
+  await fs.writeFile(
+    resolvePackageJson,
+    JSON.stringify(
+      Object.assign(
+        { name, version },
+        library && { library },
+        pick(packageJson, ['name', 'library', 'version']),
+      ),
+      null,
+      2,
+    ),
   )
 }
 
