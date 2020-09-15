@@ -6,38 +6,55 @@ import { ROOT_USER_DEFAULT_DIRECTORY } from '../../lib/const'
 import print, { info, success } from '../../utils/print'
 import timer from '../../utils/timer'
 
-async function logoutFromUser({
-  username: _username,
-}: Arguments<{ username: string }>) {
-  const isLogoutOther = !!_username
-  const currentUser = isLogoutOther && (await Config.whoami())
+interface UserLogoutFromUserOptions extends Arguments<{ username: string }> {}
+
+async function logoutFromUser(
+  options: UserLogoutFromUserOptions,
+): Promise<boolean> {
+  const { username: selectedUsername } = options
+
+  const isLogoutOther = !!selectedUsername
+  const currentUsername = (isLogoutOther &&
+    (await Config.whoami()).username) as string
   if (isLogoutOther) {
-    info(`Switching to ${print.name(_username)} account...`)
-    await Config.use(_username)
+    info(`Switching to ${print.name(selectedUsername)} account...`)
+
+    // Switch to the account want to sign out of.
+    await Config.use(selectedUsername)
   }
 
-  const authentication = await Config.readAuthentication()
-  const { id, username, token } = authentication
+  const { id, username, token } = await Config.readAuthentication()
 
+  // Check if the account is special, it will report an error.
   if (username === ROOT_USER_DEFAULT_DIRECTORY) {
-    throw new Error('Unable to logout because you use the default profile')
+    throw new Error(`Can't log out because this is the default account.`)
   }
 
   const tick = timer()
-  await Worker.logoutFromUser(id, token)
-  info(`Logged out of ${print.name(username)} account`)
 
+  // Proceed to log out of your account
+  try {
+    await Worker.logoutFromUser(id, token)
+    // tslint:disable-next-line: no-empty
+  } catch (error) {}
+
+  info(`Logged out of ${print.name(username)} account`)
   if (isLogoutOther) {
-    info(`Switching back to ${print.name((currentUser as any).username)}...`)
-    await Config.use((currentUser as any).username)
-  } else {
-    await Config.use(ROOT_USER_DEFAULT_DIRECTORY)
+    info(`Switching back to ${print.name(currentUsername)}...`)
   }
 
+  // Switch back to the current account or the default account
+  await Config.use(
+    isLogoutOther ? currentUsername : ROOT_USER_DEFAULT_DIRECTORY,
+  )
+
   info(`Deleting ${print.name(username)} work folder...`)
+
+  // Delete information about the account just signed out
   await Config.delete(username)
 
   success(`Done in ${print.time(tick())}.`)
+
   return true
 }
 

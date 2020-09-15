@@ -13,8 +13,8 @@ import logoutFromUser from './logoutFromUser'
 import useAs from './useAs'
 import whoami from './whoami'
 
-export const setCommands = (yargs) => {
-  yargs.command('user', 'Manage user', (child) => {
+export function setCommands(yargs): void {
+  yargs.command('user', 'Manage user', function (child) {
     child.usage('usage: $0 user <item> [options]')
 
     child.command('whoami', 'Who I am?', (yarg) => yarg, wrapCommand(whoami))
@@ -64,7 +64,7 @@ export const setCommands = (yargs) => {
       wrapCommand(useAs),
     )
 
-    child.command('token', 'Manage token of user', (schild) => {
+    child.command('token', 'Manage token of user', function (schild): void {
       schild.usage('usage: $0 user token <type> [options]')
 
       schild.command(
@@ -84,7 +84,7 @@ export const setCommands = (yargs) => {
       showHelpIfInvalid(schild, schild.argv, 3, 4)
     })
 
-    child.command('my', 'Show my list', (schild) => {
+    child.command('my', 'Show my list', function (schild): void {
       schild.usage('usage: $0 user my <type> [options]')
 
       schild.command(

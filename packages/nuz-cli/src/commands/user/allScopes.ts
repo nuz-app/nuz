@@ -4,9 +4,12 @@ import print, { info, pretty, success } from '../../utils/print'
 import timer from '../../utils/timer'
 
 async function allScopes() {
+  // // Check permissions before executing
   const authentication = await Config.requireAs()
 
   const tick = timer()
+
+  //
   const request = await Worker.getAllScopesOfUser(authentication.id)
   const scopes = request?.data?.scopes
 
@@ -17,6 +20,7 @@ async function allScopes() {
   )
   info(pretty(scopes))
   success(`Done in ${print.time(tick())}.`)
+
   return true
 }
 

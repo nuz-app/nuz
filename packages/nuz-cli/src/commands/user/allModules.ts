@@ -3,10 +3,13 @@ import Worker from '../../classes/Worker'
 import print, { info, pretty, success } from '../../utils/print'
 import timer from '../../utils/timer'
 
-async function allModules() {
+async function allModules(): Promise<boolean> {
+  // Check permissions before executing
   const authentication = await Config.requireAs()
 
   const tick = timer()
+
+  //
   const request = await Worker.getAllModulesOfUser(authentication.id)
   const modules = request?.data?.modules
 
@@ -17,6 +20,7 @@ async function allModules() {
   )
   info(pretty(modules))
   success(`Done in ${print.time(tick())}.`)
+
   return true
 }
 
