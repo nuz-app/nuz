@@ -180,5 +180,5 @@ export function resolvePublicDirectory(
  * Resolve in the root directory
  */
 export function resolveRootDirectory(...rest: string[]): string {
-  return path.join(os.homedir(), ...rest)
+  return path.join(os.homedir(), '.nuz', ...rest)
 }
