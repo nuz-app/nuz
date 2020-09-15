@@ -7,8 +7,8 @@ import * as paths from '../paths'
 import readPackageJson from './readPackageJson'
 
 function snapshotReport<T = any>(directory: string): T {
-  const pkgJson = readPackageJson(paths.resolvePackageJson(directory))
-  const details = pick(pkgJson, [
+  const packageJson = readPackageJson(directory)
+  const details = pick(packageJson, [
     'description',
     'homepage',
     'bugs',
