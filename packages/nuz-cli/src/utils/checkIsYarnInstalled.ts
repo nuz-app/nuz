@@ -1,6 +1,6 @@
 import { execSync } from 'child_process'
 
-function checkIsYarnInstalled() {
+function checkIsYarnInstalled(): boolean {
   try {
     execSync('yarnpkg --version', { stdio: 'ignore' })
     return true

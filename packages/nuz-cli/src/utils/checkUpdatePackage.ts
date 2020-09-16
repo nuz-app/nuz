@@ -6,7 +6,7 @@ import checkIsYarnInstalled from './checkIsYarnInstalled'
 import print, { error, log } from './print'
 import readPackageJson from './readPackageJson'
 
-async function checkUpdatePackage() {
+async function checkUpdatePackage(): Promise<void> {
   const packageJson = readPackageJson(paths.tool)
 
   let update: Result | null = null

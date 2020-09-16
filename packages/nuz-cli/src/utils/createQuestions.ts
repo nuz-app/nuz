@@ -1,7 +1,9 @@
 import * as inquirer from 'inquirer'
 
-const createQuestions = <T = unknown>(
+function createQuestions<T = unknown>(
   questions: inquirer.Answers[],
-): Promise<T> => inquirer.prompt(questions).then((answer) => answer) as any
+): Promise<T> {
+  return inquirer.prompt(questions).then((answer) => answer) as any
+}
 
 export default createQuestions
