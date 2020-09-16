@@ -3,27 +3,36 @@ import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
-import print, { info, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log } from '../../utils/print'
 
-async function addCollaborator({
-  scope,
-  user,
-  type = CollaboratorTypes.contributor,
-}: Arguments<{ scope: string; user: string; type: CollaboratorTypes }>) {
+interface ScopeAddCollaboratorOptions
+  extends Arguments<{ scope: string; user: string; type: CollaboratorTypes }> {}
+
+async function addCollaborator(
+  options: ScopeAddCollaboratorOptions,
+): Promise<boolean> {
+  const { scope, user, type } = Object.assign(
+    { type: CollaboratorTypes.contributor },
+    options,
+  )
+
+  // Check permissions before executing.
   await Config.requireAs(UserAccessTokenTypes.fullAccess)
 
-  const tick = timer()
+  // Create a request to perform this action.
   const request = await Worker.addCollaboratorToScope(scope, {
     id: user,
     type,
   })
-
   const scopeId = request?.data?._id
+
   info(
-    `Added ${print.name(user)} to scope ${print.name(scopeId)} successfully!`,
+    `User ${print.name(user)} has been added to the scope ${print.name(
+      scopeId,
+    )} successfully!`,
   )
-  success(`Done in ${print.time(tick())}.`)
+  log()
+
   return true
 }
 

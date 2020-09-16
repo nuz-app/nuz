@@ -3,18 +3,23 @@ import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
-import print, { info, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log } from '../../utils/print'
 
-async function createScope({ name }: Arguments<{ name: string }>) {
+interface ScopeCreateScopeOptions extends Arguments<{ name: string }> {}
+
+async function createScope(options: ScopeCreateScopeOptions): Promise<boolean> {
+  const { name } = options
+
+  // Check permissions before executing.
   await Config.requireAs(UserAccessTokenTypes.fullAccess)
 
-  const tick = timer()
+  // Create a request to perform this action.
   const request = await Worker.createScope(name)
   const scopeId = request?.data?._id
 
-  info(`Created ${print.name(scopeId)} scope successfully!`)
-  success(`Done in ${print.time(tick())}.`)
+  info(`The scope ${print.name(scopeId)} was created successfully!`)
+  log()
+
   return true
 }
 

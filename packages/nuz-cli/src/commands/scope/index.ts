@@ -5,11 +5,12 @@ import addCollaborator from './addCollaborator'
 import createScope from './createScope'
 import deleteScope from './deleteScope'
 import getDetails from './getDetails'
+import listCollaborators from './listCollaborators'
 import removeCollaborator from './removeCollaborator'
 import updateCollaborator from './updateCollaborator'
 
-export const setCommands = (yargs) => {
-  yargs.command('scope', 'Manage scope', (child) => {
+export function setCommands(yargs): void {
+  yargs.command('scope', 'Manage scope', function (child): void {
     child.usage('usage: $0 scope <item> [options]')
 
     child.command(
@@ -33,7 +34,9 @@ export const setCommands = (yargs) => {
       wrapCommand(deleteScope),
     )
 
-    child.command('collaborator', 'Manage collaborator of scope', (schild) => {
+    child.command('collaborator', 'Manage collaborator of scope', function (
+      schild,
+    ): void {
       schild.usage('usage: $0 scope collaborator <type> [options]')
 
       schild.command(
@@ -55,6 +58,13 @@ export const setCommands = (yargs) => {
         'Remove collaborator from the scope',
         (yarg) => yarg,
         wrapCommand(removeCollaborator),
+      )
+
+      schild.command(
+        'list <scope>',
+        'List collaborators of the scope',
+        (yarg) => yarg,
+        wrapCommand(listCollaborators),
       )
 
       showHelpIfInvalid(schild, schild.argv, 3, 4)

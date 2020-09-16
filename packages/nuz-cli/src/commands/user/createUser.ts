@@ -1,7 +1,6 @@
 import Worker from '../../classes/Worker'
 import createQuestions from '../../utils/createQuestions'
-import print, { info, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log } from '../../utils/print'
 
 import * as questions from './lib/questions'
 import loginAsUser from './loginAsUser'
@@ -33,19 +32,19 @@ async function register(): Promise<boolean> {
     throw new Error('Verification password is not correct.')
   }
 
-  const tick = timer()
-
-  //
+  // Create a request to perform this action.
   await Worker.createUser({ email, name, username, password })
 
-  info(`Successfully created ${print.name(username)} user account`)
+  info(`User ${print.name(username)} has been successfully registered!`)
+  log()
+
+  //
   if (autoLogin) {
-    info('Signing in to account...')
+    info('Signing in to the new user...')
+    log()
 
     //
     await loginAsUser({ username, password } as any)
-  } else {
-    success(`Done in ${print.time(tick())}.`)
   }
 
   return true

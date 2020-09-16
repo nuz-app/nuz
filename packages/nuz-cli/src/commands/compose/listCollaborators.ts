@@ -1,8 +1,7 @@
 import { Arguments } from 'yargs'
 
 import Worker from '../../classes/Worker'
-import print, { info, log, pretty, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log, pretty } from '../../utils/print'
 
 interface ComposeListCollaboratorsOptions
   extends Arguments<{ compose: string }> {}
@@ -12,16 +11,16 @@ async function listCollaborators(
 ): Promise<boolean> {
   const { compose: id } = options
 
-  const tick = timer()
-
-  //
+  // Create a request to perform this action.
   const request = await Worker.getCollaboratorsOfCompose(id)
   const composeId = request?.data?._id
   const collaborators = request?.data?.collaborators
 
-  info(`Collaborators of ${print.name(composeId)} compose`)
-  log(pretty(collaborators))
-  success(`Done in ${print.time(tick())}.`)
+  info(
+    `The compose ${print.name(composeId)} collaborators are`,
+    pretty(collaborators),
+  )
+  log()
 
   return true
 }

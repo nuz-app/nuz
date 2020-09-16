@@ -1,8 +1,7 @@
 import { Arguments } from 'yargs'
 
 import Worker from '../../classes/Worker'
-import print, { info, log, pretty, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log, pretty } from '../../utils/print'
 
 interface ComposeGetDetailsOptions
   extends Arguments<{
@@ -14,26 +13,24 @@ async function getDetails(options: ComposeGetDetailsOptions): Promise<boolean> {
   const { compose: id, fields } = options
 
   if (!id || !fields) {
-    throw new Error('Missing compose id or fields to get the compose details.')
+    throw new Error('Missing information to get the compose details.')
   }
 
-  const tick = timer()
-
-  //
+  // Create a request to perform this action.
   const request = await Worker.getCompose(
     id,
     (!fields || fields.length) === 0 ? undefined : fields,
   )
   const details = request?.data?.compose
 
-  if (!details) {
-    info(`Not found ${print.name(id)} compose`)
-  } else {
-    info(`Details of ${print.name(id)} compose`)
-    log(pretty(details))
-  }
-
-  success(`Done in ${print.time(tick())}.`)
+  const isNotFound = !details
+  info.apply(
+    info,
+    isNotFound
+      ? [`The compose ${print.name(id)} is not found.`]
+      : [`The compose ${print.name(id)} details is`, pretty(details)],
+  )
+  log()
 
   return true
 }

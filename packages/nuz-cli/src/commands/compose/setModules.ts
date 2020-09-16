@@ -4,8 +4,7 @@ import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
-import print, { info, pretty, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log, pretty } from '../../utils/print'
 
 interface ComposeSetModulesOptions
   extends Arguments<{ compose: string; modules: string[] }> {}
@@ -13,7 +12,7 @@ interface ComposeSetModulesOptions
 async function setModules(options: ComposeSetModulesOptions): Promise<boolean> {
   const { compose, modules: _modules } = options
 
-  // Check permissions before executing
+  // Check permissions before executing.
   await Config.requireAs(UserAccessTokenTypes.fullAccess)
 
   //
@@ -23,15 +22,12 @@ async function setModules(options: ComposeSetModulesOptions): Promise<boolean> {
     return Object.assign(acc, { [id]: version })
   }, {})
 
-  const tick = timer()
-
-  //
+  // Create a request to perform this action.
   const request = await Worker.setModulesForCompose(compose, modules)
   const composeId = request?.data?._id
 
-  info('Compose id', print.name(composeId))
-  info(pretty(modules))
-  success(`Done in ${print.time(tick())}.`)
+  info(`The compose ${print.name(composeId)} set modules`, pretty(modules))
+  log()
 
   return true
 }

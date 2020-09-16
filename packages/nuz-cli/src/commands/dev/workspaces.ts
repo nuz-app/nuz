@@ -19,7 +19,7 @@ import detectFeaturesUsed from '../../utils/detectFeaturesUsed'
 import getModuleAssetsOnly from '../../utils/getModuleAssetsOnly'
 import getSystemPaths from '../../utils/getSystemPaths'
 import prepareUrls from '../../utils/prepareUrls'
-import print, { info, pretty } from '../../utils/print'
+import print, { info, log, pretty } from '../../utils/print'
 import * as processHelpers from '../../utils/process'
 import requireInternalConfig from '../../utils/requireInternalConfig'
 import createWebpackConfig from '../../utils/webpack/factories/buildConfig'
@@ -44,7 +44,7 @@ async function devWorkspaces(options: DevWorkspacesOptions): Promise<boolean> {
 
   const workspaces = _workspaces ?? internalConfig.workspaces
   if (!Array.isArray(workspaces)) {
-    throw new Error('Provide `workspaces` field to starts workspaces mode')
+    throw new Error('Provide `workspaces` field to starts workspaces mode.')
   }
 
   // Get the require fields to create compiler
@@ -65,6 +65,7 @@ async function devWorkspaces(options: DevWorkspacesOptions): Promise<boolean> {
 
   clearConsole()
   info('Cleaning up the directories before proceeding...')
+  log()
 
   // Empty output directory
   await fs.emptyDir(resolveOutputDirectory)
@@ -142,9 +143,12 @@ async function devWorkspaces(options: DevWorkspacesOptions): Promise<boolean> {
   )
 
   info(
-    `Found ${print.bold(internalModulesKeys.length)} module(s) in workspaces`,
+    `Found ${print.bold(
+      internalModulesKeys.length,
+    )} module(s) in workspaces...`,
   )
   info('Linking module(s)', pretty(internalModulesKeys))
+  log()
 
   const compiler = createCompiler({
     appName: internalConfig.name ?? '??',
@@ -171,10 +175,10 @@ async function devWorkspaces(options: DevWorkspacesOptions): Promise<boolean> {
 
       const internalModuleData = internalModulesData[internalModuleName]
       if (!internalModuleData) {
-        throw Error(
+        throw new Error(
           `Not found internal module data by ${JSON.stringify(
             internalModuleName,
-          )}`,
+          )}.`,
         )
       }
 

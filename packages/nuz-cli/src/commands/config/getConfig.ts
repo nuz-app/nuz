@@ -3,7 +3,7 @@ import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
 import { ConfigurationFields } from '../../types'
-import print, { info, pretty } from '../../utils/print'
+import print, { info, log, pretty } from '../../utils/print'
 
 const CONFIGURATION_FIELDS = Object.values<string>(ConfigurationFields)
 
@@ -26,7 +26,8 @@ async function getConfig(options: ConfigGetConfigOptions): Promise<boolean> {
   const configuration = await Config.readConfiguration()
   const values = pick(configuration, keys)
 
-  info(pretty(values))
+  info('Current configuration information', pretty(values))
+  log()
 
   return true
 }

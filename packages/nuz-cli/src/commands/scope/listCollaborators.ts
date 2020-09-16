@@ -1,19 +1,26 @@
 import { Arguments } from 'yargs'
 
 import Worker from '../../classes/Worker'
-import print, { info, log, pretty, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log, pretty } from '../../utils/print'
 
-async function listCollaborators({ scope: id }: Arguments<{ scope: string }>) {
-  const tick = timer()
+interface ScopeListCollaboratorsOptions extends Arguments<{ scope: string }> {}
+
+async function listCollaborators(
+  options: ScopeListCollaboratorsOptions,
+): Promise<boolean> {
+  const { scope: id } = options
+
+  // Create a request to perform this action.
   const request = await Worker.getCollaboratorsOfScope(id)
-
   const scopeId = request?.data?._id
   const collaborators = request?.data?.collaborators
 
-  info(`Collaborators of ${print.name(scopeId)} scope`)
-  log(pretty(collaborators))
-  success(`Done in ${print.time(tick())}.`)
+  info(
+    `The scope ${print.name(scopeId)} collaborators are`,
+    pretty(collaborators),
+  )
+  log()
+
   return true
 }
 

@@ -3,8 +3,7 @@ import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
-import print, { info, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log } from '../../utils/print'
 
 interface ComposeCreateComposeOptions extends Arguments<{ name: string }> {}
 
@@ -13,17 +12,15 @@ async function createCompose(
 ): Promise<boolean> {
   const { name } = options
 
-  // Check permissions before executing
+  // Check permissions before executing.
   await Config.requireAs(UserAccessTokenTypes.fullAccess)
 
-  const tick = timer()
-
-  //
+  // Create a request to perform this action.
   const request = await Worker.createCompose(name)
   const composeId = request?.data?._id
 
-  info(`Created ${print.name(composeId)} compose successfully!`)
-  success(`Done in ${print.time(tick())}.`)
+  info(`The compose ${print.name(composeId)} was created successfully!`)
+  log()
 
   return true
 }

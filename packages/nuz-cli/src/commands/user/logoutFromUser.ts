@@ -3,8 +3,7 @@ import { Arguments } from 'yargs'
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
 import { ROOT_USER_DEFAULT_DIRECTORY } from '../../lib/const'
-import print, { info, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log } from '../../utils/print'
 
 interface UserLogoutFromUserOptions extends Arguments<{ username: string }> {}
 
@@ -17,7 +16,8 @@ async function logoutFromUser(
   const currentUsername = (isLogoutOther &&
     (await Config.whoami()).username) as string
   if (isLogoutOther) {
-    info(`Switching to ${print.name(selectedUsername)} account...`)
+    info(`Switching to ${print.name(selectedUsername)} account.`)
+    log()
 
     // Switch to the account want to sign out of.
     await Config.use(selectedUsername)
@@ -27,33 +27,34 @@ async function logoutFromUser(
 
   // Check if the account is special, it will report an error.
   if (username === ROOT_USER_DEFAULT_DIRECTORY) {
-    throw new Error(`Can't log out because this is the default account.`)
+    throw new Error(`Can't sign out of default account.`)
   }
 
-  const tick = timer()
-
-  // Proceed to log out of your account
   try {
+    // Create a request to perform this action.
     await Worker.logoutFromUser(id, token)
     // tslint:disable-next-line: no-empty
   } catch (error) {}
 
-  info(`Logged out of ${print.name(username)} account`)
+  info(`Successfully logged out of your ${print.name(username)} account.`)
+  log()
+
+  //
   if (isLogoutOther) {
-    info(`Switching back to ${print.name(currentUsername)}...`)
+    info(`Switching back to ${print.name(currentUsername)} account.`)
+    log()
   }
 
-  // Switch back to the current account or the default account
+  // Switch back to the current account or the default account.
   await Config.use(
     isLogoutOther ? currentUsername : ROOT_USER_DEFAULT_DIRECTORY,
   )
 
-  info(`Deleting ${print.name(username)} work folder...`)
+  info(`Deleting working directory of ${print.name(username)} account.`)
+  log()
 
-  // Delete information about the account just signed out
+  // Delete information about the account just signed out.
   await Config.delete(username)
-
-  success(`Done in ${print.time(tick())}.`)
 
   return true
 }

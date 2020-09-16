@@ -4,8 +4,7 @@ import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
 import { AuthenticationFields, ConfigurationFields } from '../../types'
 import createQuestions from '../../utils/createQuestions'
-import print, { info, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log } from '../../utils/print'
 import setConfig from '../config/setConfig'
 
 import * as questions from './lib/questions'
@@ -59,11 +58,10 @@ async function loginAsUser(options: UserLoginAsUserOptions): Promise<boolean> {
     registry = configuration[ConfigurationFields.registry]
   }
 
-  info(`Logging in to the registry server at ${print.bold(registry)}`)
+  info(`Logging in to the registry server at ${print.dim(registry)}.`)
+  log()
 
-  const tick = timer()
-
-  //
+  // Create a request to perform this action.
   const request = await Worker.loginAsUser(username as string, password)
   const userId = request?.data?._id
   const accessToken = request?.data?.accessToken
@@ -97,8 +95,8 @@ async function loginAsUser(options: UserLoginAsUserOptions): Promise<boolean> {
     value: staticOrigin,
   } as any)
 
-  info(`Login successfully to ${print.name(username)} account!`)
-  success(`Done in ${print.time(tick())}.`)
+  info(`Successfully logged in to your ${print.name(username)} account.`)
+  log()
 
   return true
 }

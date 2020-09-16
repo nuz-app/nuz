@@ -4,7 +4,7 @@ import { Arguments } from 'yargs'
 
 import * as paths from '../../paths'
 import getOutputDirectory from '../../utils/getOutputDirectory'
-import print, { info } from '../../utils/print'
+import print, { info, log } from '../../utils/print'
 import * as processHelpers from '../../utils/process'
 import requireInternalConfig from '../../utils/requireInternalConfig'
 import serve from '../../utils/serve'
@@ -26,6 +26,7 @@ async function _serve(options: ServeMainOptions): Promise<boolean> {
 
   clearConsole()
   info('Preparing to service static resources...')
+  log()
 
   const server = serve(
     Object.assign({}, internalConfig.serve, {
@@ -33,7 +34,8 @@ async function _serve(options: ServeMainOptions): Promise<boolean> {
       directory: outputDirectory,
     }),
   )
-  info(`Server was created to files serving for the module`)
+  info(`Server was created to files serving for the module.`)
+  log()
 
   processHelpers.onExit(() => {
     server.close()

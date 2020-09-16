@@ -17,7 +17,7 @@ import createQuestions from '../../utils/createQuestions'
 import detectFeaturesUsed from '../../utils/detectFeaturesUsed'
 import getSystemPaths from '../../utils/getSystemPaths'
 import prepareUrls from '../../utils/prepareUrls'
-import { info, pretty } from '../../utils/print'
+import { info, log, pretty } from '../../utils/print'
 import * as processHelpers from '../../utils/process'
 import requireInternalConfig from '../../utils/requireInternalConfig'
 import createWebpackConfig from '../../utils/webpack/factories/buildConfig'
@@ -82,18 +82,20 @@ async function standalone(options: DevStandaloneOptions): Promise<boolean> {
 
     if (!canUsePublicDirectory()) {
       throw new Error(
-        'Some required files were not found in the public directory',
+        'Some required files were not found in the public directory.',
       )
     }
   }
 
   clearConsole()
   info('Cleaning up the directories before proceeding...')
+  log()
 
   // Empty output directory
   await fs.emptyDir(outputPaths.directory)
 
   info('Identified features used', pretty(featuresUsed))
+  log()
 
   //
   const webpackConfig = createWebpackConfig(

@@ -1,35 +1,37 @@
 import { Arguments } from 'yargs'
 
 import Worker from '../../classes/Worker'
-import print, { info, log, pretty, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log, pretty } from '../../utils/print'
 
-async function getDetails({
-  module: id,
-  fields,
-}: Arguments<{
-  module: string
-  fields: string[]
-}>) {
+interface ModuleGetDetailsOptions
+  extends Arguments<{
+    module: string
+    fields: string[]
+  }> {}
+
+async function getDetails(options: ModuleGetDetailsOptions): Promise<boolean> {
+  const { module: id, fields } = options
+
   if (!id || !fields) {
-    throw new Error('Missing module id or fields to get details of module')
+    throw new Error('Missing information to get the module.')
   }
 
-  const tick = timer()
+  // Create a request to perform this action.
   const request = await Worker.getModule(
     id,
     (!fields || fields.length) === 0 ? undefined : fields,
   )
-
   const details = request?.data?.module
-  if (!details) {
-    info(`Not found ${print.name(id)} module`)
-  } else {
-    info(`Details of ${print.name(id)} module`)
-    log(pretty(details))
-  }
 
-  success(`Done in ${print.time(tick())}.`)
+  const isNotFound = !details
+  info.apply(
+    info,
+    isNotFound
+      ? [`The module ${print.name(id)} is not found.`]
+      : [`The module ${print.name(id)} details is`, pretty(details)],
+  )
+  log()
+
   return true
 }
 

@@ -5,6 +5,7 @@ import addCollaborator from './addCollaborator'
 import createCompose from './createCompose'
 import deleteCompose from './deleteCompose'
 import getDetails from './getDetails'
+import listCollaborators from './listCollaborators'
 import removeCollaborator from './removeCollaborator'
 import removeModules from './removeModules'
 import setModules from './setModules'
@@ -59,6 +60,13 @@ export function setCommands(yargs: any): void {
         'Remove collaborator from the compose',
         (yarg) => yarg,
         wrapCommand(removeCollaborator),
+      )
+
+      schild.command(
+        'list <compose>',
+        'List collaborators of the compose',
+        (yarg) => yarg,
+        wrapCommand(listCollaborators),
       )
 
       showHelpIfInvalid(schild, schild.argv, 3, 4)

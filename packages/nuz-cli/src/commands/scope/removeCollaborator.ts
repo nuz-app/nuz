@@ -3,25 +3,30 @@ import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
-import print, { info, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log } from '../../utils/print'
 
-async function removeCollaborator({
-  scope,
-  user,
-}: Arguments<{ scope: string; user: string }>) {
+interface ScopeRemoveCollaboratorOptions
+  extends Arguments<{ scope: string; user: string }> {}
+
+async function removeCollaborator(
+  options: ScopeRemoveCollaboratorOptions,
+): Promise<boolean> {
+  const { scope, user } = options
+
+  // Check permissions before executing.
   await Config.requireAs(UserAccessTokenTypes.fullAccess)
 
-  const tick = timer()
+  // Create a request to perform this action.
   const request = await Worker.removeCollaboratorFromScope(scope, user)
-
   const scopeId = request?.data?._id
+
   info(
-    `Removed ${print.name(user)} from scope ${print.name(
+    `User ${print.name(user)} has been removed from the scope ${print.name(
       scopeId,
     )} successfully!`,
   )
-  success(`Done in ${print.time(tick())}.`)
+  log()
+
   return true
 }
 

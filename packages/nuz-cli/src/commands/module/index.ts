@@ -11,7 +11,7 @@ import setDeprecate from './setDeprecate'
 import updateCollaborator from './updateCollaborator'
 
 export function setCommands(yargs): void {
-  yargs.command('module', 'Manage module', (child) => {
+  yargs.command('module', 'Manage module', function (child) {
     child.usage('usage: $0 module <item> [options]')
 
     child.command(
@@ -41,43 +41,41 @@ export function setCommands(yargs): void {
       wrapCommand(publish),
     )
 
-    child.command(
-      'collaborator',
-      'Manage collaborator of module',
-      function setCollaborator(schild) {
-        schild.usage('usage: $0 module collaborator <type> [options]')
+    child.command('collaborator', 'Manage collaborator of module', function (
+      schild,
+    ) {
+      schild.usage('usage: $0 module collaborator <type> [options]')
 
-        schild.command(
-          'add <module> <user> [type]',
-          'Add collaborator to the module',
-          (yarg) => yarg,
-          wrapCommand(addCollaborator),
-        )
+      schild.command(
+        'add <module> <user> [type]',
+        'Add collaborator to the module',
+        (yarg) => yarg,
+        wrapCommand(addCollaborator),
+      )
 
-        schild.command(
-          'update <module> <user> <type>',
-          'Update collaborator of the module',
-          (yarg) => yarg,
-          wrapCommand(updateCollaborator),
-        )
+      schild.command(
+        'update <module> <user> <type>',
+        'Update collaborator of the module',
+        (yarg) => yarg,
+        wrapCommand(updateCollaborator),
+      )
 
-        schild.command(
-          'remove <module> <user>',
-          'Remove collaborator from the module',
-          (yarg) => yarg,
-          wrapCommand(removeCollaborator),
-        )
+      schild.command(
+        'remove <module> <user>',
+        'Remove collaborator from the module',
+        (yarg) => yarg,
+        wrapCommand(removeCollaborator),
+      )
 
-        schild.command(
-          'list <module>',
-          'List collaborators of the module',
-          (yarg) => yarg,
-          wrapCommand(listCollaborators),
-        )
+      schild.command(
+        'list <module>',
+        'List collaborators of the module',
+        (yarg) => yarg,
+        wrapCommand(listCollaborators),
+      )
 
-        showHelpIfInvalid(schild, schild.argv, 3, 4)
-      },
-    )
+      showHelpIfInvalid(schild, schild.argv, 3, 4)
+    })
 
     child.command(
       'deprecate <module> <versions> [deprecate]',

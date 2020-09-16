@@ -14,10 +14,9 @@ import createQuestions from '../../utils/createQuestions'
 import getFilesBufferOnly from '../../utils/getFilesBufferOnly'
 import getModuleAssetsOnly from '../../utils/getModuleAssetsOnly'
 import getOutputDirectory from '../../utils/getOutputDirectory'
-import print, { info, success } from '../../utils/print'
+import print, { info, log } from '../../utils/print'
 import requireInternalConfig from '../../utils/requireInternalConfig'
 import snapshotReport from '../../utils/snapshotReport'
-import timer from '../../utils/timer'
 import optimized from '../build/optimized'
 
 interface ModulePublishOptions
@@ -43,7 +42,7 @@ async function publish(options: ModulePublishOptions): Promise<boolean> {
     : assetsUrlHelpers.createOrigin(name, version, staticOrigin)
 
   if (!checkIsHaveSlash(publicPath)) {
-    throw new Error('The public path needs have slash at end')
+    throw new Error('The public path needs have slash at end.')
   }
 
   // Confirm version before publish new module
@@ -70,7 +69,7 @@ async function publish(options: ModulePublishOptions): Promise<boolean> {
   const resolvedStatsFile = path.join(outputDirectory, STATS_FILENAME)
   if (!fs.existsSync(resolvedStatsFile)) {
     throw new Error(
-      `Not found ${JSON.stringify(STATS_FILENAME)} file in output directory`,
+      `Not found ${JSON.stringify(STATS_FILENAME)} file in output directory.`,
     )
   }
 
@@ -79,14 +78,13 @@ async function publish(options: ModulePublishOptions): Promise<boolean> {
       name,
     )} module...`,
   )
+  log()
 
   // Get the information needed to publish
   const details = snapshotReport(directory)
   const stats = fs.readJsonSync(resolvedStatsFile)
   const assets = getModuleAssetsOnly(stats, { md5sum: true })
   const filesBuffer = getFilesBufferOnly(stats)
-
-  const tick = timer()
 
   // Request to publish the new version
   const request = await Worker.publishModule(
@@ -109,7 +107,7 @@ async function publish(options: ModulePublishOptions): Promise<boolean> {
   const moduleId = request?.data?._id
 
   info(`Published module ${moduleId} was successfully!`)
-  success(`Done in ${print.time(tick())}.`)
+  log()
 
   return true
 }

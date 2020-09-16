@@ -14,7 +14,7 @@ import useAs from './useAs'
 import whoami from './whoami'
 
 export function setCommands(yargs): void {
-  yargs.command('user', 'Manage user', function (child) {
+  yargs.command('user', 'Manage user', function (child): void {
     child.usage('usage: $0 user <item> [options]')
 
     child.command('whoami', 'Who I am?', (yarg) => yarg, wrapCommand(whoami))

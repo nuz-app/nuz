@@ -3,18 +3,21 @@ import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
-import print, { info, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log } from '../../utils/print'
 
-async function deleteScope({ name }: Arguments<{ name: string }>) {
+async function deleteScope({
+  name,
+}: Arguments<{ name: string }>): Promise<boolean> {
+  // Check permissions before executing.
   await Config.requireAs(UserAccessTokenTypes.fullAccess)
 
-  const tick = timer()
+  // Create a request to perform this action.
   const request = await Worker.deleteScope(name)
   const scopeId = request?.data?._id
 
-  info(`Deleted ${print.name(scopeId)} scope successfully!`)
-  success(`Done in ${print.time(tick())}.`)
+  info(`The scope ${print.name(scopeId)} was deleted successfully!`)
+  log()
+
   return true
 }
 

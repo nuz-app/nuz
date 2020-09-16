@@ -3,29 +3,33 @@ import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
-import print, { info, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log } from '../../utils/print'
 
-async function updateCollaborator({
-  scope,
-  user,
-  type,
-}: Arguments<{ scope: string; user: string; type: CollaboratorTypes }>) {
+interface ScopeUpdateCollaboratorOptions
+  extends Arguments<{ scope: string; user: string; type: CollaboratorTypes }> {}
+
+async function updateCollaborator(
+  options: ScopeUpdateCollaboratorOptions,
+): Promise<boolean> {
+  const { scope, user, type } = options
+
+  // Check permissions before executing.
   await Config.requireAs(UserAccessTokenTypes.fullAccess)
 
-  const tick = timer()
+  // Create a request to perform this action.
   const request = await Worker.updateCollaboratorOfScope(scope, {
     id: user,
     type,
   })
-
   const scopeId = request?.data?._id
+
   info(
-    `Updated ${print.name(user)} info in scope ${print.name(
+    `User ${print.name(user)} has been updated in the scope ${print.name(
       scopeId,
     )} successfully!`,
   )
-  success(`Done in ${print.time(tick())}.`)
+  log()
+
   return true
 }
 

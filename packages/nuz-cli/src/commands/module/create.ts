@@ -28,6 +28,7 @@ interface ModuelCreateOptions
 
 async function create(options: ModuelCreateOptions): Promise<any> {
   const { name: _name, template: _template } = options
+
   //
   const answers = Object.assign(
     { name: _name, template: _template },
@@ -60,7 +61,7 @@ async function create(options: ModuelCreateOptions): Promise<any> {
   }
   if (!answers || !answers.name || !answers.version) {
     throw new Error(
-      'Please fill in enough information to be able to create new module',
+      'Please fill in enough information to be able to create new module.',
     )
   }
 
@@ -73,7 +74,7 @@ async function create(options: ModuelCreateOptions): Promise<any> {
   info(
     `Start creating new ${print.name(
       answers.name,
-    )} module, version ${print.blue(answers.version)}!`,
+    )} module, version ${print.blue(answers.version)}...`,
   )
   log()
 
@@ -150,7 +151,7 @@ async function create(options: ModuelCreateOptions): Promise<any> {
       const templateIsExisted = await checkIsTemplateExisted(template)
       if (!templateIsExisted) {
         throw new Error(
-          `Cannot find ${print.name(template)} template on Github`,
+          `Cannot find ${print.name(template)} template on Github.`,
         )
       }
 
@@ -251,7 +252,7 @@ async function create(options: ModuelCreateOptions): Promise<any> {
     log()
   }
 
-  info(`Successfully installed dependencies for the module`)
+  info(`Successfully installed dependencies for the module!`)
   log()
 
   //

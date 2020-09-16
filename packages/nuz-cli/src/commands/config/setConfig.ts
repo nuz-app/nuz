@@ -3,7 +3,7 @@ import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
 import { ConfigurationFields } from '../../types'
-import print, { success } from '../../utils/print'
+import print, { log, success } from '../../utils/print'
 
 const CONFIGURATION_FIELDS = Object.values<string>(ConfigurationFields)
 
@@ -46,10 +46,11 @@ async function setConfig(options: ConfigSetConfigOptions): Promise<boolean> {
   await Config.writeConfiguration(configuration)
 
   success(
-    `Set ${print.bold(key)} value with ${print.bold(
+    `Updated ${print.dim(key)} field with ${print.dim(
       configuration[key],
-    )} successfully!`,
+    )} value successfully.!`,
   )
+  log()
 
   return true
 }

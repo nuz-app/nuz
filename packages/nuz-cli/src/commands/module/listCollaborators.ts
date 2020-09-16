@@ -1,21 +1,27 @@
 import { Arguments } from 'yargs'
 
 import Worker from '../../classes/Worker'
-import print, { info, log, pretty, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log, pretty } from '../../utils/print'
 
-async function listCollaborators({
-  module: id,
-}: Arguments<{ module: string }>) {
-  const tick = timer()
+interface ModuleListCollaboratorsOptions
+  extends Arguments<{ module: string }> {}
+
+async function listCollaborators(
+  options: ModuleListCollaboratorsOptions,
+): Promise<boolean> {
+  const { module: id } = options
+
+  // Create a request to perform this action.
   const request = await Worker.getCollaboratorsOfModule(id)
-
   const moduleId = request?.data?._id
   const collaborators = request?.data?.collaborators
 
-  info(`Collaborators of ${print.name(moduleId)} module`)
-  log(pretty(collaborators))
-  success(`Done in ${print.time(tick())}.`)
+  info(
+    `The module ${print.name(moduleId)} collaborators are`,
+    pretty(collaborators),
+  )
+  log()
+
   return true
 }
 

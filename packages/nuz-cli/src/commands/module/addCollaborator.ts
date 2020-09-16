@@ -3,27 +3,40 @@ import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
-import print, { info, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log } from '../../utils/print'
 
-async function addCollaborator({
-  module: id,
-  user,
-  type = CollaboratorTypes.contributor,
-}: Arguments<{ module: string; user: string; type: CollaboratorTypes }>) {
+interface ModuleAddCollaboratorOptions
+  extends Arguments<{
+    module: string
+    user: string
+    type: CollaboratorTypes
+  }> {}
+
+async function addCollaborator(
+  options: ModuleAddCollaboratorOptions,
+): Promise<boolean> {
+  const { module: id, user, type } = Object.assign(
+    { type: CollaboratorTypes.contributor },
+    options,
+  )
+
+  // Check permissions before executing.
   await Config.requireAs(UserAccessTokenTypes.fullAccess)
 
-  const tick = timer()
+  // Create a request to perform this action.
   const request = await Worker.addCollaboratorToModule(id, {
     id: user,
     type,
   })
-
   const moduleId = request?.data?._id
+
   info(
-    `Added ${print.name(user)} to module ${print.name(moduleId)} successfully!`,
+    `User ${print.name(user)} has been added to the module ${print.name(
+      moduleId,
+    )} successfully!`,
   )
-  success(`Done in ${print.time(tick())}.`)
+  log()
+
   return true
 }
 

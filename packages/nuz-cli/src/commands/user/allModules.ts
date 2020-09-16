@@ -1,25 +1,22 @@
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
-import print, { info, pretty, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log, pretty } from '../../utils/print'
 
 async function allModules(): Promise<boolean> {
-  // Check permissions before executing
+  // Check permissions before executing.
   const authentication = await Config.requireAs()
 
-  const tick = timer()
-
-  //
+  // Create a request to perform this action.
   const request = await Worker.getAllModulesOfUser(authentication.id)
   const modules = request?.data?.modules
 
   info(
-    `Modules list of ${print.name(authentication.username)}, ${print.bold(
+    `User ${print.name(authentication.username)} are related to ${print.bold(
       modules.length,
-    )} items`,
+    )}  module(s), including...`,
+    pretty(modules),
   )
-  info(pretty(modules))
-  success(`Done in ${print.time(tick())}.`)
+  log()
 
   return true
 }

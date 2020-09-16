@@ -3,8 +3,7 @@ import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
-import print, { info, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log } from '../../utils/print'
 
 interface ComposeAddCollaboratorOptions
   extends Arguments<{
@@ -21,12 +20,10 @@ async function addCollaborator(
     options,
   )
 
-  // Check permissions before executing
+  // Check permissions before executing.
   await Config.requireAs(UserAccessTokenTypes.fullAccess)
 
-  const tick = timer()
-
-  //
+  // Create a request to perform this action.
   const request = await Worker.addCollaboratorToCompose(compose, {
     id: user,
     type,
@@ -34,11 +31,11 @@ async function addCollaborator(
   const composeId = request?.data?._id
 
   info(
-    `Added ${print.name(user)} to compose ${print.name(
+    `User ${print.name(user)} has been added to the compose ${print.name(
       composeId,
     )} successfully!`,
   )
-  success(`Done in ${print.time(tick())}.`)
+  log()
 
   return true
 }

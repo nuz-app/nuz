@@ -1,11 +1,12 @@
 import Config from '../../classes/Config'
-import { info, pretty } from '../../utils/print'
+import { info, log, pretty } from '../../utils/print'
 
 async function listUsers(): Promise<boolean> {
   //
   const users = await Config.getUsersLogged()
 
-  info('List users in work folder', pretty(users))
+  info('List of available users', pretty(users))
+  log()
 
   return true
 }

@@ -10,7 +10,7 @@ import builder from '../../utils/builder'
 import detectFeaturesUsed from '../../utils/detectFeaturesUsed'
 import getBuildOutputInformation from '../../utils/getBuildOutputInformation'
 import getOutputDirectory from '../../utils/getOutputDirectory'
-import print, { info, pretty, success } from '../../utils/print'
+import print, { info, log, pretty, success } from '../../utils/print'
 import printBuildOutputMessages from '../../utils/printBuildOutputMessages'
 import requireInternalConfig from '../../utils/requireInternalConfig'
 import webpackConfigFactory from '../../utils/webpack/factories/buildConfig'
@@ -36,11 +36,13 @@ async function optimized(options: BuildOptimizedOptions): Promise<boolean> {
 
   clearConsole()
   info('Cleaning up the directories before proceeding...')
+  log()
 
   // Empty output directory
   fs.emptyDirSync(outputDirectory)
 
   info('Identified features used', pretty(featuresUsed))
+  log()
 
   //
   const buildConfig = webpackConfigFactory(
@@ -55,7 +57,8 @@ async function optimized(options: BuildOptimizedOptions): Promise<boolean> {
   )
 
   const compile = builder(buildConfig as webpack.Configuration)
-  info('Compiler was created for this module')
+  info('Compiler was created for this module.')
+  log()
 
   //
   const buildOutput = await compile
@@ -70,8 +73,8 @@ async function optimized(options: BuildOptimizedOptions): Promise<boolean> {
   )
 
   //
-  success(`${print.name(name)} module was built successfully!`)
-  info(`Output file integrity is ${print.blueBright(integrity)}`)
+  success(`Module ${print.name(name)} was built successfully!`)
+  info(`Output file integrity is ${print.blueBright(integrity)}.`)
 
   return true
 }

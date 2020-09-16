@@ -3,8 +3,7 @@ import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
 import Worker from '../../classes/Worker'
-import print, { info, success } from '../../utils/print'
-import timer from '../../utils/timer'
+import print, { info, log } from '../../utils/print'
 
 interface ComposeRemoveCollaboratorOptions
   extends Arguments<{ compose: string; user: string }> {}
@@ -14,21 +13,19 @@ async function removeCollaborator(
 ): Promise<boolean> {
   const { compose, user } = options
 
-  // Check permissions before executing
+  // Check permissions before executing.
   await Config.requireAs(UserAccessTokenTypes.fullAccess)
 
-  const tick = timer()
-
-  //
+  // Create a request to perform this action.
   const request = await Worker.removeCollaboratorFromScope(compose, user)
   const composeId = request?.data?._id
 
   info(
-    `Removed ${print.name(user)} from compose ${print.name(
+    `User ${print.name(user)} has been removed from the compose ${print.name(
       composeId,
     )} successfully!`,
   )
-  success(`Done in ${print.time(tick())}.`)
+  log()
 
   return true
 }

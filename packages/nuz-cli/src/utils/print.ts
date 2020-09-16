@@ -24,16 +24,20 @@ Object.defineProperty(printer, 'time', {
 
 export const log = console.log
 
-export const info = (...rest: any[]) =>
-  console.log(`${printer.dim('[i]')}`, ...rest)
+export function info(...rest: any[]): any {
+  return console.log(`${printer.dim('[i]')}`, ...rest)
+}
 
-export const success = (...rest: any[]) =>
-  console.log(`${printer.greenBright('[s]')}`, ...rest)
+export function success(...rest: any[]): any {
+  return console.log(`${printer.greenBright('[s]')}`, ...rest)
+}
 
-export const warn = (...rest: any[]) =>
-  console.warn(`${printer.yellow('[w]')}`, ...rest)
+export function warn(...rest: any[]): any {
+  return console.warn(`${printer.yellow('[w]')}`, ...rest)
+}
 
-export const error = (...rest: any[]) =>
-  console.error(`${printer.red('[e]')}`, ...rest)
+export function error(...rest: any[]): any {
+  return console.error(`${printer.red('[e]')}`, ...rest)
+}
 
 export default printer as Printer
