@@ -24,7 +24,7 @@ export {
 export { default as checkIsProductionMode } from './checkIsProductionMode'
 export { default as checkIsObject } from './checkIsObject'
 export { default as checkIsUrlOk } from './checkIsUrlOk'
-export { default as got, GotRequestConfig } from './got'
+export { default as got, GotRequestConfig, GotResponse } from './got'
 export { default as compareFilesByHash } from './compareFilesByHash'
 export { default as generateLocalCertificate } from './generateLocalCertificate'
 export { default as loadLocalCertificate } from './loadLocalCertificate'

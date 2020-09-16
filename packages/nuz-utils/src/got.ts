@@ -2,7 +2,9 @@ import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 
 export type GotRequestConfig = AxiosRequestConfig
 
-async function got<R = AxiosResponse<any>>(
+export type GotResponse<T = any> = AxiosResponse<T>
+
+async function got<R = GotResponse<any>>(
   config: AxiosRequestConfig,
 ): Promise<R> {
   try {

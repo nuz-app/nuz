@@ -1,5 +1,5 @@
 import { UserAccessTokenTypes } from '@nuz/shared'
-import { GotRequestConfig, got } from '@nuz/utils'
+import { GotRequestConfig, GotResponse, got } from '@nuz/utils'
 import FormData from 'form-data'
 import fs from 'fs'
 
@@ -50,7 +50,12 @@ class Worker {
     return caller.bind(this)
   }
 
-  static async createUser({ name, email, username, password }) {
+  static async createUser({
+    name,
+    email,
+    username,
+    password,
+  }): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.createUser(this.endpoint), {
         data: { data: { email, name, username, password } },
@@ -58,7 +63,10 @@ class Worker {
     )
   }
 
-  static async loginAsUser(username: string, password: string) {
+  static async loginAsUser(
+    username: string,
+    password: string,
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.loginUser(this.endpoint), {
         data: { username, password },
@@ -66,11 +74,16 @@ class Worker {
     )
   }
 
-  static async logoutFromUser(id: string, token: string) {
+  static async logoutFromUser(
+    id: string,
+    token: string,
+  ): Promise<GotResponse<any>> {
     return this.deleteTokenFromUser(id, this.token)
   }
 
-  static async createTokenForUser(requiredType: UserAccessTokenTypes) {
+  static async createTokenForUser(
+    requiredType: UserAccessTokenTypes,
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.createTokenForUser(this.endpoint, this.token), {
         data: { type: requiredType },
@@ -78,7 +91,10 @@ class Worker {
     )
   }
 
-  static async deleteTokenFromUser(id: string, token: string) {
+  static async deleteTokenFromUser(
+    id: string,
+    token: string,
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.deleteTokenFromUser(this.endpoint), {
         data: { id, token },
@@ -86,7 +102,7 @@ class Worker {
     )
   }
 
-  static async getAllComposeOfUser(user: string) {
+  static async getAllComposeOfUser(user: string): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.getAllComposeOfUser(this.endpoint), {
         params: { user },
@@ -94,7 +110,7 @@ class Worker {
     )
   }
 
-  static async getAllScopesOfUser(user: string) {
+  static async getAllScopesOfUser(user: string): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.getAllScopesOfUser(this.endpoint), {
         params: { user },
@@ -102,7 +118,7 @@ class Worker {
     )
   }
 
-  static async getAllModulesOfUser(user: string) {
+  static async getAllModulesOfUser(user: string): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.getAllModulesOfUser(this.endpoint), {
         params: { user },
@@ -113,7 +129,10 @@ class Worker {
   /**
    * Get a scope
    */
-  static async getScope(scope: string, fields?: string[]) {
+  static async getScope(
+    scope: string,
+    fields?: string[],
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.getScope(this.endpoint, this.token), {
         params: { scope, fields },
@@ -124,7 +143,7 @@ class Worker {
   /**
    * Create a scope
    */
-  static async createScope(name: string) {
+  static async createScope(name: string): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.createScope(this.endpoint, this.token), {
         data: { data: { name } },
@@ -135,7 +154,7 @@ class Worker {
   /**
    * Delete a scope
    */
-  static async deleteScope(scope: string) {
+  static async deleteScope(scope: string): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.deleteScope(this.endpoint, this.token), {
         data: { scope },
@@ -146,7 +165,9 @@ class Worker {
   /**
    * Get all collaborators of the scope
    */
-  static async getCollaboratorsOfScope(scope: string) {
+  static async getCollaboratorsOfScope(
+    scope: string,
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(
         apiUrls.getCollaboratorsOfScope(this.endpoint, this.token),
@@ -160,7 +181,10 @@ class Worker {
   /**
    * Add a collaborator to the scope
    */
-  static async addCollaboratorToScope(scope: string, collaborator: any) {
+  static async addCollaboratorToScope(
+    scope: string,
+    collaborator: any,
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.addCollaboratorToScope(this.endpoint, this.token), {
         data: { scope, collaborator },
@@ -171,7 +195,10 @@ class Worker {
   /**
    * Update a collaborator of the scope
    */
-  static async updateCollaboratorOfScope(scope: string, collaborator: any) {
+  static async updateCollaboratorOfScope(
+    scope: string,
+    collaborator: any,
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(
         apiUrls.updateCollaboratorOfScope(this.endpoint, this.token),
@@ -188,7 +215,7 @@ class Worker {
   static async removeCollaboratorFromScope(
     scope: string,
     collaborator: string,
-  ) {
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(
         apiUrls.removeCollaboratorFromScope(this.endpoint, this.token),
@@ -202,7 +229,10 @@ class Worker {
   /**
    * Get a module
    */
-  static async getModule(module: string, fields?: string[]) {
+  static async getModule(
+    module: string,
+    fields?: string[],
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.getModule(this.endpoint, this.token), {
         params: { module, fields },
@@ -218,7 +248,7 @@ class Worker {
     data: any,
     files: fs.ReadStream[],
     options?: any,
-  ) {
+  ): Promise<GotResponse<any>> {
     const form = new FormData()
     files.forEach((file, idx) => form.append(`files`, file))
     form.append('module', id)
@@ -242,7 +272,7 @@ class Worker {
     module: string,
     version: string,
     deprecate: string | undefined,
-  ) {
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.setDeprecateForModule(this.endpoint, this.token), {
         data: { module, version, deprecate },
@@ -253,7 +283,9 @@ class Worker {
   /**
    * Get all collaborators of the module
    */
-  static async getCollaboratorsOfModule(module: string) {
+  static async getCollaboratorsOfModule(
+    module: string,
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(
         apiUrls.getCollaboratorsOfModule(this.endpoint, this.token),
@@ -267,7 +299,10 @@ class Worker {
   /**
    * Add a collaborator to the module
    */
-  static async addCollaboratorToModule(module: string, collaborator: any) {
+  static async addCollaboratorToModule(
+    module: string,
+    collaborator: any,
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(
         apiUrls.addCollaboratorToModule(this.endpoint, this.token),
@@ -281,7 +316,10 @@ class Worker {
   /**
    * Update a collaborator of the module
    */
-  static async updateCollaboratorOfModule(module: string, collaborator: any) {
+  static async updateCollaboratorOfModule(
+    module: string,
+    collaborator: any,
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(
         apiUrls.updateCollaboratorOfModule(this.endpoint, this.token),
@@ -298,7 +336,7 @@ class Worker {
   static async removeCollaboratorFromModule(
     module: string,
     collaborator: string,
-  ) {
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(
         apiUrls.removeCollaboratorFromModule(this.endpoint, this.token),
@@ -312,7 +350,10 @@ class Worker {
   /**
    * Get a compose
    */
-  static async getCompose(compose: string, fields?: string[]) {
+  static async getCompose(
+    compose: string,
+    fields?: string[],
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.getCompose(this.endpoint, this.token), {
         params: { compose, fields },
@@ -323,7 +364,10 @@ class Worker {
   /**
    * Create a compose
    */
-  static async createCompose(name: string, modules?: { [id: string]: string }) {
+  static async createCompose(
+    name: string,
+    modules?: { [id: string]: string },
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.createCompose(this.endpoint, this.token), {
         data: { data: { name, modules } },
@@ -334,7 +378,7 @@ class Worker {
   /**
    * Delete a compose
    */
-  static async deleteCompose(compose: string) {
+  static async deleteCompose(compose: string): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.deleteCompose(this.endpoint, this.token), {
         data: { compose },
@@ -345,7 +389,9 @@ class Worker {
   /**
    * Get all collaborators of the compose
    */
-  static async getCollaboratorsOfCompose(compose: string) {
+  static async getCollaboratorsOfCompose(
+    compose: string,
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(
         apiUrls.getCollaboratorsOfCompose(this.endpoint, this.token),
@@ -359,7 +405,10 @@ class Worker {
   /**
    * Add a collaborator to the compose
    */
-  static async addCollaboratorToCompose(compose: string, collaborator: any) {
+  static async addCollaboratorToCompose(
+    compose: string,
+    collaborator: any,
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(
         apiUrls.addCollaboratorToCompose(this.endpoint, this.token),
@@ -373,7 +422,10 @@ class Worker {
   /**
    * Update a collaborator of the compose
    */
-  static async updateCollaboratorOfCompose(compose: string, collaborator: any) {
+  static async updateCollaboratorOfCompose(
+    compose: string,
+    collaborator: any,
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(
         apiUrls.updateCollaboratorOfCompose(this.endpoint, this.token),
@@ -390,7 +442,7 @@ class Worker {
   static async removeCollaboratorFromCompose(
     compose: string,
     collaborator: string,
-  ) {
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(
         apiUrls.removeCollaboratorFromCompose(this.endpoint, this.token),
@@ -407,7 +459,7 @@ class Worker {
   static async setModulesForCompose(
     compose: string,
     modules: { [id: string]: string },
-  ) {
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(apiUrls.setModulesForCompose(this.endpoint, this.token), {
         data: { compose, modules },
@@ -418,7 +470,10 @@ class Worker {
   /**
    * Remove modules from the compose
    */
-  static async removeModulesForCompose(compose: string, moduleIds: string[]) {
+  static async removeModulesForCompose(
+    compose: string,
+    moduleIds: string[],
+  ): Promise<GotResponse<any>> {
     return got(
       Object.assign(
         apiUrls.removeModulesFromCompose(this.endpoint, this.token),
