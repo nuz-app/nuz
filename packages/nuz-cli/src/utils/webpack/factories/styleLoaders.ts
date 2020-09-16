@@ -7,7 +7,7 @@ import checkIsPackageUsed from '../../checkIsPackageUsed'
 import getBrowserslist from '../../getBrowserslist'
 
 export interface StyleLoadersOptions {
-  dir: string
+  directory: string
   dev: boolean
   sourceMap: boolean
   feature: Partial<FeaturesUsed>
@@ -15,17 +15,19 @@ export interface StyleLoadersOptions {
   modules?: boolean | 'auto' | RegExp
 }
 
-const styleLoadersFactory = ({
-  dir,
-  dev,
-  feature,
-  names,
-  modules = 'auto',
-  sourceMap,
-}: StyleLoadersOptions): webpack.Loader[] => {
+function createStyleLoaders(options: StyleLoadersOptions): webpack.Loader[] {
+  const {
+    directory,
+    dev,
+    feature,
+    names,
+    modules = 'auto',
+    sourceMap,
+  } = options
+
   const resolveModule = (moduleId: string) =>
-    paths.resolveNodeModules(moduleId, dir)
-  const browserslist = getBrowserslist({ dir, dev })
+    paths.resolveNodeModules(moduleId, directory)
+  const browserslist = getBrowserslist({ directory, dev })
   const loaders = [] as webpack.Loader[]
 
   // Set ExtractCssChunks loader for preprocessor
@@ -47,7 +49,7 @@ const styleLoadersFactory = ({
         modules: !modules
           ? false
           : {
-              context: dir,
+              context: directory,
               auto:
                 modules === true
                   ? undefined
@@ -98,8 +100,8 @@ const styleLoadersFactory = ({
   })
 
   if (feature.sass) {
-    const nodeSassIsInstalled = checkIsPackageUsed('node-sass', dir)
-    const dartSassIsInstalled = checkIsPackageUsed('dart-sass', dir)
+    const nodeSassIsInstalled = checkIsPackageUsed('node-sass', directory)
+    const dartSassIsInstalled = checkIsPackageUsed('dart-sass', directory)
     const sassIsInstalled = nodeSassIsInstalled || dartSassIsInstalled
     if (!sassIsInstalled) {
       throw new Error('Install `node-sass` or `dart-sass` to use Sass!')
@@ -112,8 +114,8 @@ const styleLoadersFactory = ({
         {
           sourceMap,
           implementation: dartSassIsInstalled
-            ? require(paths.resolveNodeModules('dart-sass', dir))
-            : require(paths.resolveNodeModules('node-sass', dir)),
+            ? require(paths.resolveNodeModules('dart-sass', directory))
+            : require(paths.resolveNodeModules('node-sass', directory)),
         },
         feature.sass === true ? {} : feature.sass,
       ),
@@ -121,7 +123,7 @@ const styleLoadersFactory = ({
   }
 
   if (feature.less) {
-    const lessIsInstalled = checkIsPackageUsed('less', dir)
+    const lessIsInstalled = checkIsPackageUsed('less', directory)
     if (!lessIsInstalled) {
       throw new Error('Install `less` to use Less!')
     }
@@ -139,4 +141,4 @@ const styleLoadersFactory = ({
   return loaders
 }
 
-export default styleLoadersFactory
+export default createStyleLoaders

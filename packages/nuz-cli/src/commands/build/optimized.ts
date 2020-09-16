@@ -49,7 +49,7 @@ async function optimized(options: BuildOptimizedOptions): Promise<boolean> {
     {
       dev,
       cache,
-      dir: directory,
+      directory,
       module: name,
       config: internalConfig,
     },

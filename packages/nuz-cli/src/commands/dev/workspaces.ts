@@ -111,7 +111,7 @@ async function devWorkspaces(options: DevWorkspacesOptions): Promise<boolean> {
           dev,
           cache,
           module: moduleName,
-          dir: resolveInternalModule,
+          directory: resolveInternalModule,
           config: Object.assign({}, internalModuleConfig, {
             publicPath: internalModulePublicPath,
             output: internalModuleOutputFile,

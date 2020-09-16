@@ -1,10 +1,17 @@
 import browserslist from 'browserslist'
 
-const getBrowserslist = ({ dir, dev }: { dir: string; dev: boolean }) => {
+interface BrowserlistOptions {
+  directory: string
+  dev: boolean
+}
+
+function getBrowserslist(options: BrowserlistOptions): string[] {
+  const { directory, dev } = options
+
   let browsers = ['default']
   try {
     browsers = browserslist.loadConfig({
-      path: dir,
+      path: directory,
       env: dev ? 'development' : 'production',
     })
   } catch {

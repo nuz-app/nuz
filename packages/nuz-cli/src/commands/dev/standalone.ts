@@ -102,7 +102,7 @@ async function standalone(options: DevStandaloneOptions): Promise<boolean> {
     {
       dev,
       cache,
-      dir: directory,
+      directory,
       module: internalConfig.name,
       config: Object.assign({}, internalConfig, {
         input: publicScriptIndexPath,

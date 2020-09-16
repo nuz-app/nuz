@@ -1,5 +1,4 @@
 import { MODULE_ASSET_SIZE_LIMIT, MODULE_TOTAL_SIZE_LIMIT } from '@nuz/shared'
-import crypto from 'crypto'
 import ExtractCssChunks from 'extract-css-chunks-webpack-plugin'
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
 import os from 'os'
@@ -14,6 +13,13 @@ import {
   JSON_EXTENSIONS,
   JS_EXTENSIONS,
   LESS_EXTENSIONS,
+  LOADER_FONT_REGEXP,
+  LOADER_IMAGE_MINIFY_REGEXP,
+  LOADER_IMAGE_REGEXP,
+  LOADER_JAVASCRIPT_REGEXP,
+  LOADER_SVG_REGEXP,
+  LOADER_TEXT_REGEXP,
+  LOADER_TYPESCRIPT_REGEXP,
   SASS_EXTENSIONS,
   STATS_FILENAME,
   TS_EXTENSIONS,
@@ -21,23 +27,24 @@ import {
 import * as paths from '../../../paths'
 import {
   AnalyzerConfiguration,
-  ExperimentalConfiguration,
   FeaturesUsed,
   InternalConfiguration,
-  NamedConfiguration,
 } from '../../../types'
 import checkIsPackageUsed from '../../checkIsPackageUsed'
 import * as compilerName from '../../compilerName'
+import generateModuleId from '../../generateModuleId'
 import getSystemPaths from '../../getSystemPaths'
+import createNamedConfiguration from '../helpers/createNamedConfiguration'
+import createRule from '../helpers/createRule'
 import setExternals from '../helpers/setExternals'
 import PeerDepsExternalsPlugin from '../PeerDepsExternalsPlugin'
 
 import styleLoadersFactory from './styleLoaders'
 
-export interface FactoryConfig {
+export interface FactoryConfiguration {
   ci?: boolean
   module?: string
-  dir: string
+  directory: string
   dev: boolean
   cache: boolean
   config: InternalConfiguration
@@ -46,77 +53,6 @@ export interface FactoryConfig {
 export interface FactoryOptions {
   injectReact?: boolean
   showProcess?: boolean
-}
-
-const TYPESCRIPT_REGEXP = /.tsx?/i
-const JAVASCRIPT_REGEXP = /.m?jsx?/i
-const IMAGE_REGEXP = /\.(png|jpe?g|gif)$/i
-const SVG_REGEXP = /\.svg$/i
-const IMAGE_MINIFY_REGEXP = /(\.min\.(png|jpe?g|gif|svg))$/i
-const TEXT_REGEXP = /\.txt$/i
-const FONT_REGEXP = /\.(woff|woff2|eot|ttf|otf)$/i
-
-function generateModuleId(name: string): string {
-  return crypto.createHash('md4').update(name).digest('hex').substr(0, 4)
-}
-
-function ruleFactory(
-  test: RegExp,
-  exclude?: RegExp,
-  use?: any[],
-): webpack.RuleSetRule & { use: webpack.RuleSetUseItem[] } {
-  return {
-    test,
-    exclude,
-    use: use || [],
-  }
-}
-
-const defaultConfig = {
-  isolated: false,
-  publicPath: '/',
-  format: 'umd' as webpack.LibraryTarget,
-  experimental: {},
-  externals: {},
-  alias: {},
-}
-
-const defaultExperimental: ExperimentalConfiguration = {
-  multiThread: false,
-}
-
-function defaultNamesFactory({
-  id,
-  dev,
-}: {
-  id: string
-  dev: boolean
-}): NamedConfiguration {
-  return {
-    imageMinifiedFilename: (resourcePath: string) => {
-      const imageAllowMinify = IMAGE_MINIFY_REGEXP.test(resourcePath)
-      if (imageAllowMinify) {
-        const filename = path
-          .basename(resourcePath)
-          .replace(IMAGE_MINIFY_REGEXP, '')
-
-        return dev
-          ? `${filename}.[contenthash:8].min.[ext]`
-          : `${filename}.[contenthash].min.[ext]`
-      }
-
-      return dev ? `[name].[contenthash:8].[ext]` : `[name].[contenthash].[ext]`
-    },
-    chunkFilename: () => '[name]-[contenthash].js',
-    cssLocalIdentName: () =>
-      dev ? `${id}-[name]-[local]-[hash:base64:6]` : `${id}-[contenthash:5]`,
-    cssFilename: () =>
-      dev ? 'styles/[name].css' : 'styles/[name].[contenthash:8].css',
-    cssChunkFilename: () =>
-      dev
-        ? 'styles/[name].chunk.css'
-        : 'styles/[name].[contenthash:8].chunk.css',
-  }
 }
 
 export type WebpackConfiguration = NonNullable<
@@ -139,18 +75,21 @@ export type WebpackConfiguration = NonNullable<
   >
 >
 
-function webpackConfigFactory(
-  {
-    dev,
-    dir,
-    cache = true,
-    ci = false,
-    module = '~',
-    config: moduleConfig,
-  }: FactoryConfig,
-  feature: Partial<FeaturesUsed> = {},
-  { showProcess = true, injectReact = false }: FactoryOptions = {},
+function createWebpackConfig(
+  _config: FactoryConfiguration,
+  featuresUsed: Partial<FeaturesUsed> = {},
+  options: FactoryOptions = {},
 ): WebpackConfiguration {
+  const {
+    dev,
+    directory,
+    cache,
+    ci,
+    module,
+    config: moduleConfiguration,
+  } = Object.assign({ module: '~', ci: false, cache: true }, _config)
+
+  //
   const {
     isolated,
     library,
@@ -165,17 +104,37 @@ function webpackConfigFactory(
     names: namesCustomer,
     webpack: webpackCustomer,
     experimental: experimentalCustomer,
-  } = Object.assign({}, defaultConfig, moduleConfig)
+  } = Object.assign(
+    {
+      isolated: false,
+      publicPath: '/',
+      format: 'umd' as webpack.LibraryTarget,
+      experimental: {},
+      externals: {},
+      alias: {},
+    },
+    moduleConfiguration,
+  )
 
+  //
+  const { showProcess, injectReact } = Object.assign(
+    {
+      showProcess: true,
+      injectReact: false,
+    },
+    options,
+  )
+
+  //
   const experimental = Object.assign(
-    {},
-    defaultExperimental,
+    {
+      multiThread: false,
+    },
     experimentalCustomer,
   )
   const id = generateModuleId(module)
   const names = Object.assign(
-    {},
-    defaultNamesFactory({ id, dev }),
+    createNamedConfiguration({ id, dev }),
     namesCustomer,
   )
 
@@ -183,8 +142,8 @@ function webpackConfigFactory(
   const mode = dev ? 'development' : 'production'
   const sourceMap = true
   const bail = !dev
-  const inputs = getSystemPaths(dir, input)
-  const outputs = getSystemPaths(dir, output)
+  const inputs = getSystemPaths(directory, input)
+  const outputs = getSystemPaths(directory, output)
   const distChunkFilename = names.chunkFilename()
   const umdNamedDefine = format === 'umd'
   const scriptType = 'text/javascript'
@@ -195,7 +154,7 @@ function webpackConfigFactory(
   const statsFilename = STATS_FILENAME
   const name = compilerName.get(module)
 
-  const extensions = feature.typescript
+  const extensions = featuresUsed.typescript
     ? [...TS_EXTENSIONS, ...JS_EXTENSIONS, ...JSON_EXTENSIONS]
     : [...JS_EXTENSIONS, ...JSON_EXTENSIONS]
 
@@ -214,7 +173,7 @@ function webpackConfigFactory(
     : false
 
   function resolveModule(moduleId: string) {
-    return paths.resolveNodeModules(moduleId, dir)
+    return paths.resolveNodeModules(moduleId, directory)
   }
 
   const config = {
@@ -224,7 +183,7 @@ function webpackConfigFactory(
     target,
     devtool: false,
     cache: cacheConfig,
-    context: dir,
+    context: directory,
     entry: inputs.path,
     output: {
       // Ref https://github.com/webpack/webpack/issues/959#issuecomment-546506221
@@ -285,7 +244,7 @@ function webpackConfigFactory(
   ]
   config.plugins.push(...sourceMapsPlugins)
 
-  if (!injectReact && feature.react) {
+  if (!injectReact && featuresUsed.react) {
     // tslint:disable-next-line: prettier
     (config.externals as webpack.ExternalsElement[]).push({
       react: setExternals('react', isolated),
@@ -303,8 +262,8 @@ function webpackConfigFactory(
     config.externals.push(sharedExternals)
   }
 
-  const nextIsInstalled = checkIsPackageUsed('next', dir)
-  if (nextIsInstalled) {
+  const useNext = checkIsPackageUsed('next', directory)
+  if (useNext) {
     const sharedNextModules = [
       'next/dynamic',
       'next/router',
@@ -323,8 +282,10 @@ function webpackConfigFactory(
   }
 
   // Config babel and typescript to transplie scripts
-  const scriptRule = ruleFactory(
-    feature.typescript ? TYPESCRIPT_REGEXP : JAVASCRIPT_REGEXP,
+  const scriptRule = createRule(
+    featuresUsed.typescript
+      ? LOADER_TYPESCRIPT_REGEXP
+      : LOADER_JAVASCRIPT_REGEXP,
     /node_modules/,
   )
 
@@ -358,7 +319,7 @@ function webpackConfigFactory(
             exclude: ['transform-typeof-symbol'],
           },
         ],
-        feature.react && [
+        featuresUsed.react && [
           resolveModule('@babel/preset-react'),
           {
             // Adds component stack to warning messages
@@ -419,25 +380,27 @@ function webpackConfigFactory(
         // [require.resolve('@babel/plugin-transform-react-display-name')],
         // This plugin transforms ECMAScript modules to CommonJS.
         [resolveModule('@babel/plugin-transform-modules-commonjs')],
-        [resolveModule('@babel/plugin-syntax-dynamic-import')],
+        [resolveModule('babel-plugin-dynamic-import-node')],
       ],
     },
   })
 
   // Set typescript loader to transplie ts
-  if (feature.typescript) {
-    const typescriptIsInstalled = checkIsPackageUsed('typescript', dir)
+  if (featuresUsed.typescript) {
+    const typescriptIsInstalled = checkIsPackageUsed('typescript', directory)
     if (!typescriptIsInstalled) {
-      throw new Error('Install `typescript` to use Typescript!')
+      throw new Error(
+        `Typescript cannot be found, please install \`typescript\` it to use.`,
+      )
     }
 
-    const tsconfigPath = path.join(dir, 'tsconfig.json')
+    const tsconfigPath = path.join(directory, 'tsconfig.json')
 
     scriptRule.use.push({
       loader: resolveModule('ts-loader'),
       options: {
         configFile: tsconfigPath,
-        context: dir,
+        context: directory,
         colors: !ci,
         compilerOptions: { sourceMap },
         happyPackMode: true,
@@ -460,17 +423,17 @@ function webpackConfigFactory(
   config.module.rules.push(scriptRule)
 
   const shouldUseIncludeStyles = [
-    feature.css,
-    feature.postcss,
-    feature.less,
-    feature.sass,
+    featuresUsed.css,
+    featuresUsed.postcss,
+    featuresUsed.less,
+    featuresUsed.sass,
   ].some(Boolean)
   if (shouldUseIncludeStyles) {
     const supportedStyleExtensions = ([] as any[])
       .concat(
-        feature.css && CSS_EXTENSIONS,
-        feature.sass && SASS_EXTENSIONS,
-        feature.less && LESS_EXTENSIONS,
+        featuresUsed.css && CSS_EXTENSIONS,
+        featuresUsed.sass && SASS_EXTENSIONS,
+        featuresUsed.less && LESS_EXTENSIONS,
       )
       .filter(Boolean)
 
@@ -480,14 +443,14 @@ function webpackConfigFactory(
       `(${regularStyleExtensions.join('|')})$`,
     )
     const regularStyleLoaders = styleLoadersFactory({
-      dir,
+      directory,
       dev,
       sourceMap,
-      feature,
-      modules: feature.modules || 'auto',
+      feature: featuresUsed,
+      modules: featuresUsed.modules || 'auto',
       names,
     })
-    const regularStyleRule = ruleFactory(
+    const regularStyleRule = createRule(
       regularStyleRegexp,
       undefined,
       regularStyleLoaders,
@@ -506,7 +469,7 @@ function webpackConfigFactory(
   }
 
   // Optimized images in production mode
-  const optimizedImagesRule = ruleFactory(IMAGE_MINIFY_REGEXP)
+  const optimizedImagesRule = createRule(LOADER_IMAGE_MINIFY_REGEXP)
   optimizedImagesRule.enforce = 'pre'
   optimizedImagesRule.use.push(
     ...([
@@ -514,7 +477,7 @@ function webpackConfigFactory(
         loader: resolveModule('cache-loader'),
         options: {
           cacheDirectory: cacheDirectories.images,
-          cacheContext: dir,
+          cacheContext: directory,
         },
       },
       {
@@ -545,13 +508,13 @@ function webpackConfigFactory(
   config.module.rules.push(optimizedImagesRule)
 
   // Config `url-loader` and `file-loader` to use images files
-  const imagesRule = ruleFactory(IMAGE_REGEXP)
+  const imagesRule = createRule(LOADER_IMAGE_REGEXP)
   const imagesLoader = {
     loader: resolveModule('url-loader'),
     options: {
       limit: 5 * 1024,
       fallback: resolveModule('file-loader'),
-      context: dir,
+      context: directory,
       emitFile: true,
       outputPath: 'images',
       name: names.imageMinifiedFilename,
@@ -562,7 +525,7 @@ function webpackConfigFactory(
   config.module.rules.push(imagesRule)
 
   // Config loaders to use svg files as components and image files
-  const svgRule = ruleFactory(SVG_REGEXP)
+  const svgRule = createRule(LOADER_SVG_REGEXP)
   svgRule.use.push(
     {
       loader: resolveModule('@svgr/webpack'),
@@ -573,7 +536,7 @@ function webpackConfigFactory(
   config.module.rules.push(svgRule)
 
   // Config `raw-loader` to use txt files
-  const textRule = ruleFactory(TEXT_REGEXP)
+  const textRule = createRule(LOADER_TEXT_REGEXP)
   textRule.use.push({
     loader: resolveModule('raw-loader'),
   })
@@ -581,7 +544,7 @@ function webpackConfigFactory(
   config.module.rules.push(textRule)
 
   // Config `file-loader` to use font files
-  const fontRule = ruleFactory(FONT_REGEXP)
+  const fontRule = createRule(LOADER_FONT_REGEXP)
   fontRule.use.push({
     loader: resolveModule('file-loader'),
   })
@@ -591,7 +554,7 @@ function webpackConfigFactory(
   // Set peers deps as externals
   config.plugins.push(
     new PeerDepsExternalsPlugin(
-      dir,
+      directory,
       isolated,
       !injectReact ? [] : ['react', 'react-dom'],
     ),
@@ -675,7 +638,7 @@ function webpackConfigFactory(
     const customConfig = webpackCustomer(config as WebpackConfiguration)
 
     if (!customConfig.output) {
-      throw new Error('Webpack config is missing output field')
+      throw new Error('Webpack configuration returned incorrectly.')
     }
 
     return customConfig
@@ -684,4 +647,4 @@ function webpackConfigFactory(
   return config as WebpackConfiguration
 }
 
-export default webpackConfigFactory
+export default createWebpackConfig
