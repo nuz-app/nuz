@@ -4,14 +4,15 @@ import * as paths from '../paths'
 
 import checkIsYarnInstalled from './checkIsYarnInstalled'
 import print, { error, log } from './print'
+import readPackageJson from './readPackageJson'
 
 async function checkUpdatePackage() {
-  const pkg = require(paths.resolvePackageJson(paths.tool))
+  const packageJson = readPackageJson(paths.tool)
 
   let update: Result | null = null
 
   try {
-    update = await checkForUpdate(pkg, {
+    update = await checkForUpdate(packageJson, {
       interval: 1800000, // 12h
       distTag: 'latest',
     })
