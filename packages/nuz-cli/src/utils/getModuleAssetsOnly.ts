@@ -1,15 +1,17 @@
-import { hashFile } from '@nuz/utils'
+import { hashFile, integrityHelpers } from '@nuz/utils'
 import path from 'path'
 import webpack from 'webpack'
 
 export interface PickOptions {
   md5sum?: boolean
+  integrity?: 'sha384'
 }
 
 export interface PickResouce {
   url: string
   path: string
   md5sum: string | undefined
+  integrity: string | undefined
 }
 
 export interface PickOutput {
@@ -41,15 +43,22 @@ function getModuleAssetsOnly(
     path: string
     url: string
     md5sum: string | undefined
+    integrity: string | undefined
   } {
-    const { md5sum } = Object.assign({ md5sum: true }, options)
+    const { md5sum, integrity } = Object.assign(
+      { md5sum: true, integrity: 'sha384' },
+      options,
+    )
+
+    const resolveFile = path.join(outputPath as string, file)
 
     return {
       path: file,
       url: publicPath + file,
-      md5sum: md5sum
-        ? hashFile(path.join(outputPath as string, file), 'md5')
+      integrity: integrity
+        ? integrityHelpers.file(resolveFile, integrity)
         : undefined,
+      md5sum: md5sum ? hashFile(resolveFile, 'md5') : undefined,
     }
   }
 
