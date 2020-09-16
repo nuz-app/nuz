@@ -1,4 +1,4 @@
-import { getPackageJsonInDirectory } from '@nuz/utils'
+import readPackageJson from '../readPackageJson'
 
 import setExternals from './helpers/setExternals'
 
@@ -6,13 +6,13 @@ import setExternals from './helpers/setExternals'
 const ExternalModuleFactoryPlugin = require('webpack/lib/ExternalModuleFactoryPlugin')
 
 function getPeerDependencies(
-  dir: string | undefined,
+  directory: string | undefined,
   isolated: boolean,
   exclude: string[] = [],
 ) {
   try {
-    const moduleDir = dir || process.cwd()
-    const packageJson = getPackageJsonInDirectory(moduleDir)
+    const resolveModuleDirectory = directory || process.cwd()
+    const packageJson = readPackageJson(resolveModuleDirectory)
 
     return Object.keys(packageJson.peerDependencies).reduce(
       (acc, key) =>

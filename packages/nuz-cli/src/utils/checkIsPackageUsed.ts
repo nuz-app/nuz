@@ -1,8 +1,7 @@
-import { getPackageJsonInDirectory } from '@nuz/utils'
+import readPackageJson from './readPackageJson'
 
-function checkIsPackageUsed(name: string, directory: string): boolean {
-  const packageJson = getPackageJsonInDirectory(directory)
-
+function checkIsPackageUsed(id: string, directory: string): boolean {
+  const packageJson = readPackageJson(directory)
   const allDependencies = Object.assign(
     {},
     packageJson.dependencies,
@@ -11,7 +10,7 @@ function checkIsPackageUsed(name: string, directory: string): boolean {
   )
   const keys = Object.keys(allDependencies)
 
-  return keys.includes(name)
+  return keys.includes(id)
 }
 
 export default checkIsPackageUsed
