@@ -32,12 +32,34 @@ export function setCommands(yargs): void {
       'publish [fallback]',
       'Publish version for the module',
       (yarg) =>
-        yarg.option('self-hosted', {
-          describe: 'Is publish as self hosted',
-          type: 'boolean',
-          default: false,
-          required: false,
-        }),
+        yarg
+          .option('self-hosted', {
+            describe: 'Is publish as self hosted',
+            type: 'boolean',
+            default: false,
+            required: false,
+          })
+          .option('yes', {
+            describe: 'Publish without confirmation',
+            type: 'boolean',
+            default: false,
+            required: false,
+          })
+          .option('token', {
+            describe: 'Override authentication token',
+            type: 'string',
+            required: false,
+          })
+          .option('registry', {
+            describe: 'Override registry service endpoint',
+            type: 'string',
+            required: false,
+          })
+          .option('static', {
+            describe: 'Override static origin value',
+            type: 'string',
+            required: false,
+          }),
       wrapCommand(publish),
     )
 

@@ -130,7 +130,10 @@ class Config {
   }
 
   static async writeConfiguration(data: ConfigurationData): Promise<any> {
-    return fs.writeJson(configPaths.configuration, data)
+    return fs.writeFile(
+      configPaths.configuration,
+      JSON.stringify(data, null, 2),
+    )
   }
 
   static async readAuthentication(
@@ -160,7 +163,10 @@ class Config {
       })
     }
 
-    return fs.writeJson(configPaths.authentication, updated)
+    return fs.writeFile(
+      configPaths.authentication,
+      JSON.stringify(updated, null, 2),
+    )
   }
 
   static async requireAs(

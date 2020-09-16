@@ -11,92 +11,86 @@ import * as questions from './lib/questions'
 
 interface UserLoginAsUserOptions
   extends Arguments<{
-    username?: string
-    password?: string
     registry?: string
   }> {}
 
 async function loginAsUser(options: UserLoginAsUserOptions): Promise<boolean> {
-  const {
-    username: _username,
-    password: _password,
-    registry: _registry,
-  } = options
+  const { registry: _registry } = options
 
-  const isFilled = !!(_username && _password)
-  const answers =
-    !isFilled &&
-    (await createQuestions<{ username: string; password: string }>(
-      [
-        !_username && questions.username,
-        !_password && questions.password,
-      ].filter(Boolean) as any[],
-    ))
-  const { username, password } = Object.assign(
-    { username: _username, password: _password },
-    answers,
-  )
+  const { username, password } = await createQuestions<{
+    username: string
+    password: string
+  }>([questions.username, questions.password].filter(Boolean) as any[])
 
   if (!username || !password) {
     throw new Error('Missing information to login.')
   }
 
-  const isUseNewRegistry = !_registry
-  let registry = _registry
+  //
+  const restore = Worker.backup()
+
+  const registry =
+    _registry ||
+    (await Config.readConfiguration())[ConfigurationFields.registry]
 
   //
-  if (!isUseNewRegistry) {
-    await setConfig({
-      key: ConfigurationFields.registry,
-      value: registry,
-    } as any)
-  }
-
-  //
-  if (isUseNewRegistry) {
-    const configuration = await Config.readConfiguration()
-    registry = configuration[ConfigurationFields.registry]
-  }
+  await Worker.set({
+    endpoint: registry,
+  })
 
   info(`Logging in to the registry server at ${print.dim(registry)}.`)
   log()
 
-  // Create a request to perform this action.
-  const request = await Worker.loginAsUser(username as string, password)
-  const userId = request?.data?._id
-  const accessToken = request?.data?.accessToken
-  const staticOrigin = request?.data?.static
-  // const providedType = request?.data?.providedType
+  try {
+    // Create a request to perform this action.
+    const request = await Worker.loginAsUser(username as string, password)
+    const userId = request?.data?._id
+    const accessToken = request?.data?.accessToken
+    const staticOrigin = request?.data?.static
+    // const providedType = request?.data?.providedType
 
-  if (!userId || !accessToken) {
-    throw new Error('The received data is not correct, please try again later.')
+    if (!userId || !accessToken) {
+      throw new Error(
+        'The received data is not correct, please try again later.',
+      )
+    }
+
+    //
+    await Config.create(username)
+
+    //
+    await Config.use(username)
+
+    //
+    const authentication = await Config.readAuthentication()
+    authentication[AuthenticationFields.id] = userId
+    authentication[AuthenticationFields.username] = username
+    authentication[AuthenticationFields.token] = accessToken.value
+    authentication[AuthenticationFields.type] = accessToken.type
+    authentication[AuthenticationFields.loggedAt] = new Date()
+
+    //
+    await Config.writeAuthentication(authentication)
+
+    //
+    await setConfig({
+      key: ConfigurationFields.static,
+      value: staticOrigin,
+    } as any)
+
+    //
+    await setConfig({
+      key: ConfigurationFields.registry,
+      value: registry,
+    } as any)
+
+    info(`Successfully logged in to your ${print.name(username)} account.`)
+    log()
+  } catch (err) {
+    restore()
+
+    throw err
   }
-
-  //
-  await Config.create(username)
-
-  //
-  await Config.use(username)
-
-  //
-  const authentication = await Config.readAuthentication()
-  authentication[AuthenticationFields.id] = userId
-  authentication[AuthenticationFields.username] = username
-  authentication[AuthenticationFields.token] = accessToken.value
-  authentication[AuthenticationFields.type] = accessToken.type
-  authentication[AuthenticationFields.loggedAt] = new Date()
-
-  //
-  await Config.writeAuthentication(authentication)
-
-  //
-  await setConfig({
-    key: ConfigurationFields.static,
-    value: staticOrigin,
-  } as any)
-
-  info(`Successfully logged in to your ${print.name(username)} account.`)
-  log()
 
   return true
 }

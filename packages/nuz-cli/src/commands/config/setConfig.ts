@@ -3,7 +3,7 @@ import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
 import { ConfigurationFields } from '../../types'
-import print, { log, success } from '../../utils/print'
+import print, { log, success, warn } from '../../utils/print'
 
 const CONFIGURATION_FIELDS = Object.values<string>(ConfigurationFields)
 
@@ -40,6 +40,13 @@ async function setConfig(options: ConfigSetConfigOptions): Promise<boolean> {
     configuration[key] = new URL(value).origin + slash
   } else {
     configuration[key] = value
+  }
+
+  if (key === ConfigurationFields.registry) {
+    warn(
+      `Change ${ConfigurationFields.registry} field can have many other effects.`,
+    )
+    log()
   }
 
   //

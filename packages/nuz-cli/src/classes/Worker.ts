@@ -5,13 +5,49 @@ import fs from 'fs'
 
 import * as apiUrls from '../utils/apiUrls'
 
+interface WorkerConfig {
+  token: string
+  endpoint: string
+}
+
 class Worker {
   static endpoint: string
   static token: string
 
   static async prepare(endpoint: string, token: string): Promise<void> {
-    this.endpoint = endpoint
-    this.token = token
+    this.set({
+      endpoint,
+      token,
+    })
+  }
+
+  static set(config: Partial<WorkerConfig>): void {
+    const { endpoint, token } = config
+
+    if (typeof endpoint === 'string') {
+      this.endpoint = endpoint
+    }
+
+    if (typeof token === 'string') {
+      this.token = token
+    }
+  }
+
+  static get(): WorkerConfig {
+    return {
+      token: this.token,
+      endpoint: this.endpoint,
+    }
+  }
+
+  static backup(): () => Promise<void> {
+    const current = this.get()
+
+    async function caller(this: typeof Worker) {
+      this.set(current)
+    }
+
+    return caller.bind(this)
   }
 
   static async createUser({ name, email, username, password }) {
@@ -178,18 +214,19 @@ class Worker {
    * Publish version for the module
    */
   static async publishModule(
-    module: string,
+    id: string,
     data: any,
     files: fs.ReadStream[],
     options?: any,
   ) {
     const form = new FormData()
     files.forEach((file, idx) => form.append(`files`, file))
-    form.append('module', module)
+    form.append('module', id)
     form.append('data', JSON.stringify(data))
     form.append('options', JSON.stringify(options))
 
     const api = apiUrls.publishModule(this.endpoint, this.token)
+
     return got(
       Object.assign(api, {
         data: form,

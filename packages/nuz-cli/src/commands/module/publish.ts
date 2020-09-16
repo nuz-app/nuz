@@ -20,13 +20,24 @@ import snapshotReport from '../../utils/snapshotReport'
 import optimized from '../build/optimized'
 
 interface ModulePublishOptions
-  extends Arguments<{ fallback: string; selfHosted: boolean; yes: boolean }> {}
+  extends Arguments<{
+    fallback: string
+    selfHosted: boolean
+    yes: boolean
+    registry: string
+    token: string
+    static: string
+  }> {}
 
 async function publish(options: ModulePublishOptions): Promise<boolean> {
-  const { fallback, selfHosted, yes } = Object.assign(
-    { selfHosted: false, yes: false },
-    options,
-  )
+  const {
+    fallback,
+    selfHosted,
+    yes,
+    registry: _registry,
+    token: _token,
+    static: _static,
+  } = Object.assign({ selfHosted: false, yes: false }, options)
 
   const directory = paths.cwd
   const internalConfig = requireInternalConfig(directory, true)
@@ -34,9 +45,8 @@ async function publish(options: ModulePublishOptions): Promise<boolean> {
 
   const { name, library, version } = internalConfig
 
-  const staticOrigin = (await Config.readConfiguration())[
-    ConfigurationFields.static
-  ]
+  const staticOrigin =
+    _static || (await Config.readConfiguration())[ConfigurationFields.static]
   const publicPath = selfHosted
     ? internalConfig.publicPath
     : assetsUrlHelpers.createOrigin(name, version, staticOrigin)
@@ -86,28 +96,46 @@ async function publish(options: ModulePublishOptions): Promise<boolean> {
   const assets = getModuleAssetsOnly(stats, { md5sum: true })
   const filesBuffer = getFilesBufferOnly(stats)
 
-  // Request to publish the new version
-  const request = await Worker.publishModule(
-    name,
-    {
-      version,
-      library,
-      details,
-      resolve: assets.resolve,
-      files: assets.files,
-      format: ModuleFormats.umd,
-    },
-    filesBuffer,
-    {
-      fallback,
-      selfHosted,
-      static: staticOrigin,
-    },
-  )
-  const moduleId = request?.data?._id
+  const restore = Worker.backup()
 
-  info(`Published module ${moduleId} was successfully!`)
-  log()
+  //
+  await Worker.set({
+    endpoint: _registry,
+    token: _token,
+  })
+
+  try {
+    // Request to publish the new version
+    const request = await Worker.publishModule(
+      name,
+      {
+        version,
+        library,
+        details,
+        resolve: assets.resolve,
+        files: assets.files,
+        format: ModuleFormats.umd,
+      },
+      filesBuffer,
+      {
+        fallback,
+        selfHosted,
+        static: staticOrigin,
+      },
+    )
+    const moduleId = request?.data?._id
+
+    //
+    await restore()
+
+    info(`Publish module ${moduleId} was successfully!`)
+    log()
+  } catch (err) {
+    //
+    await restore()
+
+    throw err
+  }
 
   return true
 }

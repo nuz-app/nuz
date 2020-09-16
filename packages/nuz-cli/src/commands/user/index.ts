@@ -20,7 +20,7 @@ export function setCommands(yargs): void {
     child.command('whoami', 'Who I am?', (yarg) => yarg, wrapCommand(whoami))
 
     child.command(
-      'login [username]',
+      'login',
       'Login user account',
       (yarg) =>
         yarg.option('registry', {
