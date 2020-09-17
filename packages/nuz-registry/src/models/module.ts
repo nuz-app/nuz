@@ -95,5 +95,6 @@ schema.index(
   },
 )
 
-export const createModel = (connection: Connection): Model<ModuleDocument> =>
-  connection.model(collection, schema)
+export function createModel(connection: Connection): Model<ModuleDocument> {
+  return connection.model(collection, schema)
+}

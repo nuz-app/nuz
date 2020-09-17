@@ -12,11 +12,13 @@ export const name = 'fetchModule'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.get(
     '/fetch/module',
-    onRoute(async (request, response) => {
+    onRoute(async function (request, response) {
       const { id } = request.query
 
       if (!id) {
-        throw new Error('Missing module id to fetch data')
+        throw new Error(
+          'There are not enough fields of information required to process the request.',
+        )
       }
 
       let idEnsured = id as string
@@ -25,8 +27,11 @@ export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
         idEnsured = moduleIdHelpers.create(parsed.module, MODULE_LATEST_TAG)
       }
 
-      const item = await worker.fetchModule(idEnsured)
-      response.json(item)
+      //
+      const result = await worker.fetchModule(idEnsured)
+
+      //
+      response.json(result)
 
       return true
     }),

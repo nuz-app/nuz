@@ -10,16 +10,21 @@ export const name = 'getCollaboratorsOfModule'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.get(
     '/module/collaborators',
-    onRoute(async (request, response) => {
+    onRoute(async function (request, response) {
       const { module: id } = request.query
 
-      const formIsMissing = !id
-      if (formIsMissing) {
-        throw new Error('Form is missing fields')
+      if (!id) {
+        throw new Error(
+          'There are not enough fields of information required to process the request.',
+        )
       }
-      const item = await worker.getCollaboratorsOfModule(id as string)
 
-      response.json(item)
+      //
+      const result = await worker.getCollaboratorsOfModule(id as string)
+
+      //
+      response.json(result)
+
       return true
     }),
   )

@@ -64,7 +64,7 @@ class User {
       throw new Error('Username is not existed')
     }
 
-    const isMatched = user.comparePassword(password)
+    const isMatched = user.verifyPassword(password)
     if (!isMatched) {
       throw new Error('Password is invalid')
     }

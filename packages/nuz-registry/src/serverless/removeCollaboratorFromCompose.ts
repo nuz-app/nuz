@@ -10,22 +10,26 @@ export const name = 'removeCollaboratorFromCompose'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.delete(
     '/compose/collaborator',
-    onRoute(async (request, response) => {
+    onRoute(async function (request, response) {
       const { authorization: token } = request.headers
       const { compose, collaboratorId } = request.body
 
-      const formIsMissing = !token || !compose || !collaboratorId
-      if (formIsMissing) {
-        throw new Error('Form is missing fields')
+      if (!token || !compose || !collaboratorId) {
+        throw new Error(
+          'There are not enough fields of information required to process the request.',
+        )
       }
 
-      const item = await worker.removeCollaboratorFromCompose(
+      //
+      const result = await worker.removeCollaboratorFromCompose(
         token as string,
         compose,
         collaboratorId,
       )
 
-      response.json(item)
+      //
+      response.json(result)
+
       return true
     }),
   )

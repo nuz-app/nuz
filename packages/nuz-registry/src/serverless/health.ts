@@ -10,8 +10,10 @@ export const name = 'health'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.get(
     '/health',
-    onRoute(async (request, response) => {
+    onRoute(async function (request, response) {
+      //
       response.status(200).json({ isOk: true })
+
       return true
     }),
   )

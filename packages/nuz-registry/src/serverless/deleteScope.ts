@@ -10,18 +10,22 @@ export const name = 'deleteScope'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.delete(
     '/scope',
-    onRoute(async (request, response) => {
+    onRoute(async function (request, response) {
       const { authorization: token } = request.headers
       const { scope } = request.body
 
-      const formIsMissing = !token || !scope
-      if (formIsMissing) {
-        throw new Error('Form is missing fields')
+      if (!token || !scope) {
+        throw new Error(
+          'There are not enough fields of information required to process the request.',
+        )
       }
 
-      const item = await worker.deleteScope(token as string, scope)
+      //
+      const result = await worker.deleteScope(token as string, scope)
 
-      response.json(item)
+      //
+      response.json(result)
+
       return true
     }),
   )

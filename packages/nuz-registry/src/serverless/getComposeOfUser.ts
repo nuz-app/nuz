@@ -10,16 +10,21 @@ export const name = 'getComposeOfUser'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.get(
     '/user/composes',
-    onRoute(async (request, response) => {
+    onRoute(async function (request, response) {
       const { user: id } = request.query
 
-      const formIsMissing = !id
-      if (formIsMissing) {
-        throw new Error('Missing user id to get the composes')
+      if (!id) {
+        throw new Error(
+          'There are not enough fields of information required to process the request.',
+        )
       }
-      const result = await worker.getComposeOfUser(id as string)
 
-      response.json({ user: id, composes: result })
+      //
+      const resulr = await worker.getComposeOfUser(id as string)
+
+      //
+      response.json({ user: id, composes: resulr })
+
       return true
     }),
   )

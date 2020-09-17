@@ -10,10 +10,12 @@ export const name = 'root'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.get(
     '/',
-    onRoute(async (request, response) => {
+    onRoute(async function (request, response) {
+      //
       response
         .status(200)
-        .json({ _: 'The registry server of Nuz. Welcome to Nuz ecosystem!' })
+        .json({ _: 'The registry server of Nuz. Welcome to Nuz project.' })
+
       return true
     }),
   )

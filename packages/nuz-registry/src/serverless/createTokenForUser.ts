@@ -10,18 +10,22 @@ export const name = 'createUser'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.post(
     '/user/token',
-    onRoute(async (request, response) => {
+    onRoute(async function (request, response) {
       const { authorization: token } = request.headers
       const { type } = request.body
 
-      const formIsMissing = !token || !type
-      if (formIsMissing) {
-        throw new Error('Form is missing fields')
+      if (!token || !type) {
+        throw new Error(
+          'There are not enough fields of information required to process the request.',
+        )
       }
 
-      const item = await worker.createTokenForUser(token as string, type)
+      //
+      const result = await worker.createTokenForUser(token as string, type)
 
-      response.json(item)
+      //
+      response.json(result)
+
       return true
     }),
   )

@@ -10,23 +10,27 @@ export const name = 'deprecateModule'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.put(
     '/module/deprecate',
-    onRoute(async (request, response) => {
+    onRoute(async function (request, response) {
       const { authorization: token } = request.headers
-      const { module, version, deprecate } = request.body
+      const { module: id, version, deprecate } = request.body
 
-      const formIsMissing = !token || !module || !version
-      if (formIsMissing) {
-        throw new Error('Form is missing fields')
+      if (!token || !id || !version) {
+        throw new Error(
+          'There are not enough fields of information required to process the request.',
+        )
       }
 
-      const item = await worker.deprecateModule(
+      //
+      const result = await worker.deprecateModule(
         token as string,
-        module,
+        id,
         version,
         deprecate,
       )
 
-      response.json(item)
+      //
+      response.json(result)
+
       return true
     }),
   )

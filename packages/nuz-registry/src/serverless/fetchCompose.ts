@@ -10,16 +10,21 @@ export const name = 'fetchCompose'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.get(
     '/fetch/compose',
-    onRoute(async (request, response) => {
+    onRoute(async function (request, response) {
       const { compose } = request.query
 
-      const formIsMissing = !compose
-      if (formIsMissing) {
-        throw new Error('Missing compose id to fetch data')
+      if (!compose) {
+        throw new Error(
+          'There are not enough fields of information required to process the request.',
+        )
       }
 
-      const item = await worker.fetchCompose(compose as string)
-      response.json(item)
+      //
+      const result = await worker.fetchCompose(compose as string)
+
+      //
+      response.json(result)
+
       return true
     }),
   )

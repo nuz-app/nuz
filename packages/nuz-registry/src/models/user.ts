@@ -65,10 +65,11 @@ schema.pre('save', function save(next) {
   next()
 })
 
-schema.methods.comparePassword = function compare(password: string) {
+schema.methods.verifyPassword = function compare(password: string) {
   const user = this as UserDocument
   return passwordHelpers.compare(password, user.password)
 }
 
-export const createModel = (connection: Connection): Model<UserDocument> =>
-  connection.model(collection, schema)
+export function createModel (connection: Connection): Model<UserDocument> {
+  return connection.model(collection, schema)
+}

@@ -66,7 +66,7 @@ export interface UserDocument extends Document, UserModel {
   _id: UserId
   createdAt: Date
   updatedAt: Date
-  comparePassword: (password: string) => boolean
+  verifyPassword: (password: string) => boolean
 }
 
 /**

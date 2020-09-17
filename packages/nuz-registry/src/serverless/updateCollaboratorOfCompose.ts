@@ -12,31 +12,33 @@ export const name = 'updateCollaboratorOfCompose'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.put(
     '/compose/collaborator',
-    onRoute(async (request, response) => {
+    onRoute(async function (request, response) {
       const { authorization: token } = request.headers
-      const { compose, collaborator } = request.body
+      const { compose: id, collaborator } = request.body
 
-      const formIsMissing = !token || !compose || !collaborator
-      if (formIsMissing) {
-        throw new Error('Form is missing fields')
+      if (!token || !id || !collaborator) {
+        throw new Error(
+          'There are not enough fields of information required to process the request.',
+        )
       }
 
-      const collaboratorIsInvalid =
+      if (
         !collaboratorTypesHelpers.validate(collaborator.type) ||
         !collaborator.id
-      if (collaboratorIsInvalid) {
-        throw new Error('Collaborator is invalid')
+      ) {
+        throw new Error('Incorrect collaborator information required.')
       }
 
-      const collaboratorId = collaborator.id
-
-      const item = await worker.updateCollaboratorOfCompose(
+      //
+      const result = await worker.updateCollaboratorOfCompose(
         token as string,
-        compose,
-        { id: collaboratorId, type: collaborator.type as CollaboratorTypes },
+        id,
+        { id: collaborator.id, type: collaborator.type as CollaboratorTypes },
       )
 
-      response.json(item)
+      //
+      response.json(result)
+
       return true
     }),
   )

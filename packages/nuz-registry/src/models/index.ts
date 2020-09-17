@@ -5,9 +5,11 @@ import * as Module from './module'
 import * as Scope from './scope'
 import * as User from './user'
 
-export const createModels = (connection: Connection) => ({
-  User: User.createModel(connection),
-  Module: Module.createModel(connection),
-  Compose: Compose.createModel(connection),
-  Scope: Scope.createModel(connection),
-})
+export function createModels(connection: Connection) {
+  return {
+    User: User.createModel(connection),
+    Module: Module.createModel(connection),
+    Compose: Compose.createModel(connection),
+    Scope: Scope.createModel(connection),
+  }
+}

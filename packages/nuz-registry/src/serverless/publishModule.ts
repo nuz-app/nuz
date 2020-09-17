@@ -34,7 +34,7 @@ export const execute: ServerlessRoute = (
     )
 
   const onFiles = upload.array('files')
-  const onPublish = onRoute(async (request, response) => {
+  const onPublish = onRoute(async function (request, response) {
     const { authorization: token } = request.headers
     const { module: id, data: _data, options: _options } = request.body
 
@@ -47,7 +47,9 @@ export const execute: ServerlessRoute = (
     const formIsMissing = !token || !id || !data
     if (formIsMissing) {
       cleanUp(files)
-      throw new Error('Form is missing fields')
+      throw new Error(
+        'There are not enough fields of information required to process the request.',
+      )
     }
 
     try {

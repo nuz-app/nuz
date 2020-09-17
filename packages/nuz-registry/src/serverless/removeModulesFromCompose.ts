@@ -10,28 +10,30 @@ export const name = 'removeModulesFromCompose'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.delete(
     '/compose/modules',
-    onRoute(async (request, response) => {
+    onRoute(async function (request, response) {
       const { authorization: token } = request.headers
-      const { compose, moduleIds } = request.body
+      const { compose: id, moduleIds } = request.body
 
-      const formIsMissing = !token || !compose || !moduleIds
-      if (formIsMissing) {
-        throw new Error('Form is missing fields')
+      if (!token || !id || !moduleIds) {
+        throw new Error(
+          'There are not enough fields of information required to process the request.',
+        )
       }
 
-      const moduleIdsIsInvalid =
-        !Array.isArray(moduleIds) || moduleIds.length === 0
-      if (moduleIdsIsInvalid) {
-        throw new Error('Modules is invalid')
+      if (!Array.isArray(moduleIds) || moduleIds.length === 0) {
+        throw new Error('Incorrect modules information required.')
       }
 
-      const item = await worker.removeModulesFromCompose(
+      //
+      const result = await worker.removeModulesFromCompose(
         token as string,
-        compose,
+        id,
         moduleIds,
       )
 
-      response.json(item)
+      //
+      response.json(result)
+
       return true
     }),
   )

@@ -11,27 +11,30 @@ export const name = 'setModulesForCompose'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.put(
     '/compose/modules',
-    onRoute(async (request, response) => {
+    onRoute(async function (request, response) {
       const { authorization: token } = request.headers
       const { compose, modules: moduleAsObject } = request.body
 
-      const formIsMissing = !token || !compose || !moduleAsObject
-      if (formIsMissing) {
-        throw new Error('Form is missing fields')
+      if (!token || !compose || !moduleAsObject) {
+        throw new Error(
+          'There are not enough fields of information required to process the request.',
+        )
       }
 
-      const modulesIsInvalid = !checkIsObject(moduleAsObject)
-      if (modulesIsInvalid) {
-        throw new Error('Modules is invalid')
+      if (!checkIsObject(moduleAsObject)) {
+        throw new Error('Incorrect modules information required.')
       }
 
-      const item = await worker.setModulesForCompose(
+      //
+      const result = await worker.setModulesForCompose(
         token as string,
         compose,
         moduleAsObject,
       )
 
-      response.json(item)
+      //
+      response.json(result)
+
       return true
     }),
   )

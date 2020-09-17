@@ -10,22 +10,26 @@ export const name = 'removeCollaboratorFromModule'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.delete(
     '/module/collaborator',
-    onRoute(async (request, response) => {
+    onRoute(async function (request, response) {
       const { authorization: token } = request.headers
-      const { module, collaboratorId } = request.body
+      const { module: id, collaboratorId } = request.body
 
-      const formIsMissing = !token || !module || !collaboratorId
-      if (formIsMissing) {
-        throw new Error('Form is missing fields')
+      if (!token || !id || !collaboratorId) {
+        throw new Error(
+          'There are not enough fields of information required to process the request.',
+        )
       }
 
-      const item = await worker.removeCollaboratorFromModule(
+      //
+      const result = await worker.removeCollaboratorFromModule(
         token as string,
-        module,
+        id,
         collaboratorId,
       )
 
-      response.json(item)
+      //
+      response.json(result)
+
       return true
     }),
   )

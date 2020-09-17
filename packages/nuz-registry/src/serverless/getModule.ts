@@ -10,16 +10,21 @@ export const name = 'getModule'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.get(
     '/module',
-    onRoute(async (request, response) => {
+    onRoute(async function (request, response) {
       const { module: id, fields } = request.query
 
-      const formIsMissing = !id
-      if (formIsMissing) {
-        throw new Error('Missing module id')
+      if (!id) {
+        throw new Error(
+          'There are not enough fields of information required to process the request.',
+        )
       }
-      const item = await worker.getModule(id as string, fields)
 
-      response.json({ module: item })
+      //
+      const result = await worker.getModule(id as string, fields)
+
+      //
+      response.json({ module: result })
+
       return true
     }),
   )
