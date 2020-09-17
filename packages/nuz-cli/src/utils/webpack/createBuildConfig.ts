@@ -41,6 +41,7 @@ import { ParsedInternalConfig } from '../requireInternalConfig'
 
 import createStyleLoaders from './createStyleLoaders'
 import setExternals from './setExternals'
+import PeerDepsExternalsPlugin from './PeerDepsExternalsPlugin'
 
 export interface FactoryConfiguration {
   ci?: boolean
@@ -854,6 +855,9 @@ function createWebpackConfig(
           // The formatter is invoked directly in WebpackDevServerUtils during development
           formatter: !dev ? typescriptFormatter : undefined,
         }),
+
+      // Set `peerDependencies` to externals for webpack configuration.
+      new PeerDepsExternalsPlugin(directory, internalConfig.isolated),
 
       !dev &&
         new BundleAnalyzerPlugin({
