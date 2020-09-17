@@ -1,9 +1,9 @@
-function pick<T = any>(data: any, picks: string[]): T {
+function omit<T = any>(data: any, skips: string[]): T {
   const result = {} as any
   const keys = Object.keys(data || {})
 
   for (const key of keys) {
-    if (picks.includes(key)) {
+    if (!skips.includes(key)) {
       result[key] = data[key]
     }
   }
@@ -11,4 +11,4 @@ function pick<T = any>(data: any, picks: string[]): T {
   return result as T
 }
 
-export default pick
+export default omit

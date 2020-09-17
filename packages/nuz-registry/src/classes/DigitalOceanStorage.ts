@@ -5,7 +5,7 @@ import throat from 'throat'
 import util from 'util'
 
 import { ModuleId } from '../types'
-import { TransformFile } from '../utils/validateAndTransformFiles'
+import { TransformFile } from '../utils/ensureUploadedFiles'
 
 import Storage, { UploadFilesData } from './Storage'
 

@@ -18,11 +18,11 @@ import {
   CreateComposeData,
   CreateScopeData,
   CreateUserData,
+  DatabaseConfiguration,
   Models,
   ModuleAsObject,
   ModuleDocument,
   ModuleId,
-  MongoConfig,
   PublishModuleData,
   PublishOptions,
   Resource,
@@ -40,10 +40,8 @@ import checkIsCollaboratorIncludes from '../utils/checkIsCollaboratorIncludes'
 import checkIsNewCompose from '../utils/checkIsNewCompose'
 import checkIsNewScope from '../utils/checkIsNewScope'
 import createMongoConnection from '../utils/createMongoConnection'
-import pickAndParseModule from '../utils/pickAndParseModule'
-import validateAndTransformFiles, {
-  TransformFile,
-} from '../utils/validateAndTransformFiles'
+import ensureUploadedFiles from '../utils/ensureUploadedFiles'
+import getModuleAllowsOnly from '../utils/getModuleAllowsOnly'
 
 import Cache, {
   SetComposeCacheFactoryFn,
@@ -52,46 +50,70 @@ import Cache, {
 import Storage from './Storage'
 
 class Worker {
-  private readonly _connection: Connection
-  private readonly _models: Models
-  private readonly _services: Services
-  private readonly _cache: Cache
-  private readonly _storageType: StorageTypes
-  private readonly _storage: Storage | null
-  private readonly _static: string | null
-
-  constructor(config: MongoConfig, options: WorkerOptions) {
-    const { url } = config
-
-    if (!url) {
-      throw new Error('Mongo URL is required!')
-    }
-
-    this._connection = createMongoConnection(url)
-    this._models = createModels(this._connection)
-    this._services = createServices(this._models)
-
-    this._cache = options?.cache
-    this._storageType = options?.storageType as StorageTypes
-    this._storage = options?.storage
-    this._static = options?.static
-      ? (ensureOriginSlash(options.static) as string)
-      : null
-  }
-
-  checkIsUseStorage(selfHosted: boolean) {
-    return (
-      this._storageType === StorageTypes.provided ||
-      (this._storageType === StorageTypes.full && !selfHosted)
-    )
-  }
+  /**
+   * The MongoDB connection
+   */
+  private readonly connection: Connection
 
   /**
-   * Prepare for worker
+   * The document models
    */
-  async prepare() {
-    // do something great!
+  private readonly models: Models
+
+  /**
+   * The services worker
+   */
+  private readonly services: Services
+
+  /**
+   * The cache resolver
+   */
+  private readonly cacheResolver: Cache
+
+  /**
+   * Storage type
+   */
+  private readonly storageType: StorageTypes
+
+  /**
+   * Storage instance
+   */
+  private readonly storageInstance: Storage | null
+
+  /**
+   * CDN information
+   */
+  private readonly cdn: string | null
+
+  constructor(db: DatabaseConfiguration, options: WorkerOptions) {
+    if (!db || !db.url) {
+      throw new Error(
+        'Database configuration is not correct, please check again.',
+      )
+    }
+
+    // Make connection to the database and models for it.
+    this.connection = createMongoConnection(db.url)
+    this.models = createModels(this.connection)
+
+    // Use models to create the services.
+    this.services = createServices(this.models)
+
+    // Retained if the system uses cache resolver.
+    this.cacheResolver = options?.cache
+
+    const { storage } = options
+
+    // Configure and set up storage.
+    this.storageType = storage.type as StorageTypes
+    this.storageInstance = storage.worker
+
+    // Based on the storage type used will set the CDN information.
+    this.cdn = options?.cdn ? (ensureOriginSlash(options.cdn) as string) : null
   }
+
+  // tslint:disable-next-line: no-empty
+  async prepare(): Promise<void> {}
 
   /**
    * Get all modules in scopes
@@ -101,28 +123,21 @@ class Worker {
     fields?: any,
     limit?: number,
   ) {
-    const result = await this._services.Module.getAllInScopes(
-      scopeIds,
-      fields,
-      limit,
-    )
-    return result
+    return this.services.Module.getAllInScopes(scopeIds, fields, limit)
   }
 
   /**
    * Get a module by id
    */
   async getModule(moduleId: ModuleId, fields?: any) {
-    const module = await this._services.Module.findOne(moduleId, fields)
-    return module
+    return this.services.Module.findOne(moduleId, fields)
   }
 
   /**
    * Get the modules by ids
    */
   async getModules(moduleIds: ModuleId[], fields?: any) {
-    const modules = await this._services.Module.find(moduleIds, fields)
-    return modules
+    return this.services.Module.find(moduleIds, fields)
   }
 
   /**
@@ -132,145 +147,166 @@ class Worker {
     tokenId: TokenId,
     moduleId: ModuleId,
     data: PublishModuleData,
-    filesUploaded: any[],
+    uploadedFiles: any[],
     options: PublishOptions,
   ) {
-    // tslint:disable-next-line: prefer-const
-    let { fallback, selfHosted, static: staticOrigin } = Object.assign(
-      {},
-      options,
-    )
-    // tslint:disable-next-line: prefer-const
-    let { version, resolve, files } = data
+    const { fallback, selfHosted } = Object.assign({}, options)
 
-    const isUseStorage =
-      this._storageType === StorageTypes.provided ||
-      (this._storageType === StorageTypes.full && !selfHosted)
-    const filesAndSizes = isUseStorage
-      ? validateAndTransformFiles(filesUploaded, data.files, {
+    const { version, resolve, files: temporaryFiles } = data
+
+    //
+    let allowsFallback = fallback
+    const isNotSelfHosted =
+      this.storageType === StorageTypes.provided ||
+      (this.storageType === StorageTypes.full && !selfHosted)
+
+    // const staticIsNotMatched =
+    //   ensureOriginSlash(staticOrigin as string) !==
+    //   ensureOriginSlash(this._static as string)
+    // const staticIsAllowed =
+    //   this._storageType !== StorageTypes.self && staticIsNotMatched
+    // if (staticIsAllowed) {
+    //   throw new Error(
+    //     `Static origin is not allowed by the registry server, allowed ${this._static}`,
+    //   )
+    // }
+
+    //
+    const { files, sizes } = isNotSelfHosted
+      ? ensureUploadedFiles(uploadedFiles, temporaryFiles, {
           id: moduleId,
           version,
           resolve,
         })
       : { files: [], sizes: null }
 
-    files = filesAndSizes.files as TransformFile[]
-
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.publish,
     )
 
-    const module = await this.verifyCollaboratorOfModule(
+    //
+    const parsedId = moduleIdHelpers.parser(moduleId)
+    const selectedModule = await this.verifyCollaboratorOfModule(
       moduleId,
-      user._id,
+      currentUser._id,
       CollaboratorTypes.contributor,
       false,
     )
-    const parsedId = moduleIdHelpers.parser(moduleId)
 
-    const staticIsNotMatched =
-      ensureOriginSlash(staticOrigin as string) !==
-      ensureOriginSlash(this._static as string)
-    const staticIsAllowed =
-      this._storageType !== StorageTypes.self && staticIsNotMatched
-    if (staticIsAllowed) {
-      throw new Error(
-        `Static origin is not allowed by the registry server, allowed ${this._static}`,
-      )
-    }
-
-    const moduleIsEixsted = !!module
+    const moduleIsEixsted = !!selectedModule
     if (!moduleIsEixsted) {
+      // Check the validity of the module id.
       if (!parsedId) {
-        throw new Error(`${moduleId} is invalid module id`)
+        throw new Error(`${moduleId} is not a valid module id.`)
       }
 
-      const shouldVerifyScope = parsedId && parsedId.scope
-      if (shouldVerifyScope) {
-        const scope = await this.verifyCollaboratorOfScope(
+      // If the module is in scope,
+      // must check the authority of the current user in that scope.
+      if (parsedId.scope) {
+        const selectedScope = await this.verifyCollaboratorOfScope(
           parsedId.scope,
-          user._id,
+          currentUser._id,
           CollaboratorTypes.contributor,
         )
 
-        data.scope = scope._id
+        data.scope = selectedScope._id
       }
 
+      // This module id check only appears when creating a new module.
       if (!validator.moduleId(moduleId)) {
         throw new Error(
-          'Module id is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", length allows 6-72 characters included scope!',
+          'Module id is invalid, contains only "a-z0-9-_" characters, start and end with "a-z0-9", length allows 6-72 characters included scope.',
         )
       }
     } else {
-      // Check is version published
-      const versionId = versionHelpers.encode(version)
-      const versionIsExisted = module?.versions?.has(versionId)
+      // Check if this version has been previously published.
+      const versionIsExisted = selectedModule?.versions?.has(
+        versionHelpers.encode(version),
+      )
       if (versionIsExisted) {
         throw new Error(
-          `Module ${moduleId} was published version ${version} before!`,
+          `Version ${version} of the ${moduleId} module was published earlier.`,
         )
       }
 
-      // Ensure fallback for the new version
-      if (!fallback) {
-        const list = Array.from<string>(
-          module?.versions?.keys() || [],
+      // Make sure that the system will try to select
+      // the appropriate version for `fallback`.
+      if (!allowsFallback) {
+        const allVersions = Array.from<string>(
+          selectedModule?.versions?.keys() || [],
         ).map((item) => versionHelpers.decode(item))
 
-        if (list.length > 0) {
-          list.push(version)
+        if (allVersions.length > 0) {
+          allVersions.push(version)
         }
 
-        const ordered = versionHelpers.order(list, true)
-        const idx = ordered.indexOf(version) + 1
-        fallback = ordered[idx] || undefined
+        const orderedVersions = versionHelpers.order(allVersions, true)
+        allowsFallback =
+          orderedVersions[orderedVersions.indexOf(version) + 1] || undefined
       }
     }
 
-    if (isUseStorage) {
-      await this._storage?.uploadFiles({ id: moduleId, version }, files)
+    if (isNotSelfHosted) {
+      // Proceed to upload the files to CDNs.
+      await this.storageInstance?.uploadFiles({ id: moduleId, version }, files)
 
-      const bindStaticUrl = async (item: Resource) => {
-        const url = await this._storage?.createUrl(moduleId, version, item.path)
+      // Update the url and additional security information
+      // for the resource before it is written to the database.
+      await Promise.all(
+        [...files, ...resolve.styles, resolve.main].map(
+          async (item: Resource) => {
+            // Generate url for resources when uploaded to CDNs.
+            const url = await this.storageInstance?.createUrl(
+              moduleId,
+              version,
+              item.path,
+            )
 
-        let integrity
-        try {
-          integrity = url && ((await integrityHelpers.url(url)) as string)
-        } catch {
-          throw new Error(
-            `Can't get integrity of file, make sure the file was uploaded to the CDNs, url: ${url}.`,
-          )
-        }
+            let integrity
+            try {
+              integrity =
+                item.integrity ||
+                (url && ((await integrityHelpers.url(url)) as string))
+            } catch {
+              throw new Error(
+                `Can't get integrity of file, make sure the file was uploaded to the CDNs, url: ${url}.`,
+              )
+            }
 
-        Object.assign(item, { url, integrity })
-      }
-
-      const promises = Promise.all(
-        [...files, ...resolve.styles, resolve.main].map(bindStaticUrl),
+            Object.assign(item, { url, integrity })
+          },
+        ),
       )
-      await promises
     }
 
-    const transformed = {
+    const updatedModule = {
       ...data,
       files,
-      sizes: filesAndSizes.sizes as VersionSizes,
+      sizes: sizes as VersionSizes,
       resolve,
     }
 
     const publishedResult = !moduleIsEixsted
-      ? await this._services.Module.create(user._id, moduleId, transformed, {
-          fallback,
-        })
-      : await this._services.Module.addVersion(
-          user._id,
+      ? await this.services.Module.create(
+          currentUser._id,
           moduleId,
-          transformed,
-          { fallback },
+          updatedModule,
+          {
+            fallback,
+          },
+        )
+      : await this.services.Module.addVersion(
+          currentUser._id,
+          moduleId,
+          updatedModule,
+          {
+            fallback,
+          },
         )
 
-    this._cache?.clearAllRefsToModule(moduleId)
+    this.cacheResolver?.clearAllRefsToModule(moduleId)
 
     return publishedResult
   }
@@ -279,7 +315,9 @@ class Worker {
    * Unpublish a module
    */
   async unpublishModule() {
-    throw new Error(`Module can't be unpublish by policy`)
+    throw new Error(
+      `The module cannot be unpublished because it violates the policy.`,
+    )
   }
 
   /**
@@ -291,54 +329,56 @@ class Worker {
     version: string,
     deprecate: string | null,
   ) {
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.publish,
     )
 
-    const module = await this.verifyCollaboratorOfModule(
+    //
+    const selectedModule = await this.verifyCollaboratorOfModule(
       moduleId,
-      user._id,
+      currentUser._id,
       CollaboratorTypes.contributor,
       false,
     )
 
-    const versions = Array.from<string>(module.versions.keys()).map((item) =>
-      versionHelpers.decode(item),
-    )
+    //
+    const versions = Array.from<string>(
+      selectedModule.versions.keys(),
+    ).map((item) => versionHelpers.decode(item))
 
+    //
     const satisfies = versionHelpers.getSatisfies(versions, version)
     if (satisfies.length === 0) {
       throw new Error(`Not found satisfies version with ${version}`)
     }
 
-    const result = this._services.Module.setDeprecate(
-      module._id,
+    //
+    return this.services.Module.setDeprecate(
+      selectedModule._id,
       satisfies,
       deprecate,
     )
-    return result
   }
 
   /**
    * Get collaborators of the module
    */
   async getCollaboratorsOfModule(moduleId: ModuleId) {
-    const reuslt = await this._services.Module.listCollaborators(moduleId)
-    return reuslt
+    return this.services.Module.listCollaborators(moduleId)
   }
 
   /**
    * Get all modules of the user
    */
   async getModulesOfUser(userId: UserId) {
-    const reuslt = await this._services.Module.getAllOf(userId, {
+    return this.services.Module.getAllOf(userId, {
       _id: 1,
       name: 1,
       scope: 1,
       createdAt: 1,
     })
-    return reuslt
   }
 
   /**
@@ -350,22 +390,23 @@ class Worker {
     requiredType: CollaboratorTypes,
     throwIfNotFound?: boolean,
   ) {
-    const fields = {
-      _id: 1,
-      name: 1,
-      collaborators: 1,
-      versions: 1,
-      createdAt: 1,
-    }
-    const result = await this._services.Module.verifyCollaborator(
+    return this.services.Module.verifyCollaborator(
       {
         id: moduleId,
         userId,
         requiredType,
       },
-      { throwIfNotFound, fields },
+      {
+        throwIfNotFound,
+        fields: {
+          _id: 1,
+          name: 1,
+          collaborators: 1,
+          versions: 1,
+          createdAt: 1,
+        },
+      },
     )
-    return result
   }
 
   /**
@@ -376,30 +417,33 @@ class Worker {
     moduleId: ModuleId,
     collaborator: AddCollaboratorData,
   ) {
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const module = (await this.verifyCollaboratorOfModule(
+    //
+    const selectedModule = (await this.verifyCollaboratorOfModule(
       moduleId,
-      user._id,
+      currentUser._id,
       CollaboratorTypes.maintainer,
     )) as ModuleDocument
 
-    const found = checkIsCollaboratorIncludes(
-      module.collaborators,
+    //
+    const selectedCollaborator = checkIsCollaboratorIncludes(
+      selectedModule.collaborators,
       collaborator.id,
     )
-    if (found) {
-      throw new Error('Collaborator already exists in the Module')
+    if (selectedCollaborator) {
+      throw new Error(`Collaborator already exists in this module.`)
     }
 
-    const reuslt = await this._services.Module.addCollaborator(
-      module._id,
+    //
+    return this.services.Module.addCollaborator(
+      selectedModule._id,
       collaborator,
     )
-    return reuslt
   }
 
   /**
@@ -410,40 +454,46 @@ class Worker {
     moduleId: ModuleId,
     collaborator: AddCollaboratorData,
   ) {
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const module = (await this.verifyCollaboratorOfModule(
+    //
+    const selectedModule = (await this.verifyCollaboratorOfModule(
       moduleId,
-      user._id,
+      currentUser._id,
       CollaboratorTypes.maintainer,
     )) as ModuleDocument
 
-    const isAllowToSet = checkIsCollaboratorAllowSet(
-      module.collaborators,
-      user._id,
-      collaborator.type,
-    )
-    if (!isAllowToSet) {
-      throw new Error('Permission denied')
+    //
+    if (
+      !checkIsCollaboratorAllowSet(
+        selectedModule.collaborators,
+        currentUser._id,
+        collaborator.type,
+      )
+    ) {
+      throw new Error(
+        'Collaborator does not have permission to take this action.',
+      )
     }
 
-    const found = checkIsCollaboratorIncludes(
-      module.collaborators,
+    const selectedCollaborator = checkIsCollaboratorIncludes(
+      selectedModule.collaborators,
       collaborator.id,
     )
-    if (!found) {
-      throw new Error('Collaborator not exists in the Module')
+    if (!selectedCollaborator) {
+      throw new Error(`Collaborator already exists in this module.`)
     }
 
-    const reuslt = await this._services.Module.updateCollaborator(
-      module._id,
+    //
+    return this.services.Module.updateCollaborator(
+      selectedModule._id,
       collaborator.id,
       collaborator.type,
     )
-    return reuslt
   }
 
   /**
@@ -454,22 +504,24 @@ class Worker {
     moduleId: ModuleId,
     collaboratorId: UserId,
   ) {
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const module = (await this.verifyCollaboratorOfModule(
+    //
+    const selectedModule = (await this.verifyCollaboratorOfModule(
       moduleId,
-      user._id,
+      currentUser._id,
       CollaboratorTypes.maintainer,
     )) as ModuleDocument
 
-    const reuslt = await this._services.Module.removeCollaborator(
-      module._id,
+    //
+    return this.services.Module.removeCollaborator(
+      selectedModule._id,
       collaboratorId,
     )
-    return reuslt
   }
 
   /**
@@ -477,32 +529,42 @@ class Worker {
    */
   async createUser(data: CreateUserData) {
     if (!validator.email(data.email)) {
-      throw new Error('Email is invalid!')
-    } else if (!validator.name(data.name)) {
-      throw new Error('Name is invalid. Length allows 4-32 characters!')
-    } else if (!validator.username(data.username)) {
-      throw new Error(
-        'Username is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", length allows 4-24 characters!',
-      )
-    } else if (!validator.password(data.password)) {
-      throw new Error('Password is invalid. Length allows >=8 characters!')
+      throw new Error(`Email is invalid.`)
     }
 
-    const result = await this._services.User.create(data)
-    return pick(result, ['_id', 'name', 'email', 'username', 'createdAt'])
+    if (!validator.name(data.name)) {
+      throw new Error(`Name is invalid, length allows 4-32 characters.`)
+    }
+
+    if (!validator.username(data.username)) {
+      throw new Error(
+        `Username is invalid, contains only "a-z0-9-_" characters, start and end with "a-z0-9", length allows 4-24 characters!`,
+      )
+    }
+
+    if (!validator.password(data.password)) {
+      throw new Error(`Password is invalid, length allows >=8 characters.`)
+    }
+
+    //
+    const createdUser = await this.services.User.create(data)
+
+    //
+    return pick(createdUser, ['_id', 'name', 'email', 'username', 'createdAt'])
   }
 
   /**
    * Update information of the user
    */
   async updateUser(tokenId: TokenId, data: UpdateUserData) {
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const result = await this._services.User.update(user._id, data)
-    return result
+    //
+    return this.services.User.update(currentUser._id, data)
   }
 
   /**
@@ -512,26 +574,17 @@ class Worker {
   async deleteUser() {}
 
   /**
-   * Get server config
-   */
-  async getConfig() {
-    return {
-      static: this._static,
-      storageType: this._storageType,
-    }
-  }
-
-  /**
    * Login to a user
    */
   async loginUser(username: string, password: string) {
-    const user = await this._services.User.login(username, password)
+    //
+    const currentUser = await this.services.User.login(username, password)
 
-    const result = await this._services.User.createToken(
-      user._id,
+    //
+    return this.services.User.createToken(
+      currentUser._id,
       UserAccessTokenTypes.fullAccess,
     )
-    return result
   }
 
   /**
@@ -541,13 +594,14 @@ class Worker {
     tokenId: TokenId,
     requiredType: UserAccessTokenTypes,
   ) {
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const result = await this._services.User.createToken(user._id, requiredType)
-    return result
+    //
+    return this.services.User.createToken(currentUser._id, requiredType)
   }
 
   /**
@@ -557,32 +611,31 @@ class Worker {
     tokenId: TokenId,
     requiredType: UserAccessTokenTypes,
   ) {
-    const result = await this._services.User.verifyToken(tokenId, requiredType)
-    return result
+    //
+    return this.services.User.verifyToken(tokenId, requiredType)
   }
 
   /**
    * Delete a token from the user
    */
   async deleteTokenFromUser(userId: UserId, tokenId: TokenId) {
-    const result = await this._services.User.deleteToken(userId, tokenId)
-    return result
+    //
+    return this.services.User.deleteToken(userId, tokenId)
   }
 
   /**
    * Get a compose by id
    */
   async getCompose(composeId: ComposeId, fields?: any) {
-    const compose = await this._services.Compose.findOne(composeId, fields)
-    return compose
+    //
+    return this.services.Compose.findOne(composeId, fields)
   }
 
   /**
    * Get the composes by ids
    */
   async getAllCompose(composeIds: ComposeId[], fields?: any) {
-    const composes = await this._services.Compose.find(composeIds, fields)
-    return composes
+    return this.services.Compose.find(composeIds, fields)
   }
 
   /**
@@ -593,64 +646,73 @@ class Worker {
 
     if (!validator.composeId(name)) {
       throw new Error(
-        'Compose id/name is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", length allows 4-24 characters!',
+        'Compose id is invalid, contains only "a-z0-9-_" characters, start and end with "a-z0-9", length allows 4-24 characters.',
       )
     }
 
+    //
     const modules = !modulesAsObject
       ? []
-      : this._services.Compose.convertModulesToArray(modulesAsObject)
+      : this.services.Compose.convertModulesToArray(modulesAsObject)
 
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const result = await this._services.Compose.create(user._id, {
+    //
+    const createdCompose = await this.services.Compose.create(currentUser._id, {
       name,
       modules,
     })
-    return pick(result, ['_id', 'name', 'modules'])
+
+    //
+    return pick(createdCompose, ['_id', 'name', 'modules'])
   }
 
   /**
    * Delete a compose
    */
   async deleteCompose(tokenId: TokenId, composeId: ComposeId) {
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const compose = await this.verifyCollaboratorOfCompose(
+    //
+    const selectedCompose = await this.verifyCollaboratorOfCompose(
       composeId,
-      user._id,
+      currentUser._id,
       CollaboratorTypes.maintainer,
     )
 
-    const isNewCompose = checkIsNewCompose(compose.createdAt)
-    if (!isNewCompose) {
-      throw new Error(`Compose can't be deleted by policy`)
+    //
+    if (!checkIsNewCompose(selectedCompose.createdAt)) {
+      throw new Error(
+        `The compose cannot be deleted because it violates the policy.`,
+      )
     }
 
-    const result = await this._services.Compose.delete(compose._id)
-    return result
+    //
+    return this.services.Compose.delete(selectedCompose._id)
   }
 
   /**
    * Get collaborators of the compose
    */
   async getCollaboratorsOfCompose(composeId: ComposeId) {
-    const reuslt = await this._services.Compose.listCollaborators(composeId)
-    return reuslt
+    //
+    return this.services.Compose.listCollaborators(composeId)
   }
 
   /**
    * Get all composes of the user
    */
   async getComposeOfUser(userId: UserId) {
-    const reuslt = await this._services.Compose.getAllOf(userId)
-    return reuslt
+    //
+    return this.services.Compose.getAllOf(userId)
   }
 
   /**
@@ -661,12 +723,12 @@ class Worker {
     userId: UserId,
     requiredType: CollaboratorTypes,
   ) {
-    const result = await this._services.Compose.verifyCollaborator({
+    //
+    return this.services.Compose.verifyCollaborator({
       id: composeId,
       userId,
       requiredType,
     })
-    return result
   }
 
   /**
@@ -677,30 +739,34 @@ class Worker {
     composeId: ComposeId,
     collaborator: AddCollaboratorData,
   ) {
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const compose = await this.verifyCollaboratorOfCompose(
+    //
+    const selectedCompose = await this.verifyCollaboratorOfCompose(
       composeId,
-      user._id,
+      currentUser._id,
       CollaboratorTypes.maintainer,
     )
 
-    const found = checkIsCollaboratorIncludes(
-      compose.collaborators,
-      collaborator.id,
-    )
-    if (found) {
-      throw new Error('Collaborator already exists in the Compose')
+    //
+    if (
+      checkIsCollaboratorIncludes(
+        selectedCompose.collaborators,
+        collaborator.id,
+      )
+    ) {
+      throw new Error(`Collaborator already exists in this compose.`)
     }
 
-    const reuslt = await this._services.Compose.addCollaborator(
-      compose._id,
+    //
+    return this.services.Compose.addCollaborator(
+      selectedCompose._id,
       collaborator,
     )
-    return reuslt
   }
 
   /**
@@ -711,40 +777,48 @@ class Worker {
     composeId: ComposeId,
     collaborator: AddCollaboratorData,
   ) {
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const compose = await this.verifyCollaboratorOfCompose(
+    //
+    const selectedCompose = await this.verifyCollaboratorOfCompose(
       composeId,
-      user._id,
+      currentUser._id,
       CollaboratorTypes.maintainer,
     )
 
-    const isAllowToSet = checkIsCollaboratorAllowSet(
-      compose.collaborators,
-      user._id,
-      collaborator.type,
-    )
-    if (!isAllowToSet) {
-      throw new Error('Permission denied')
+    //
+    if (
+      !checkIsCollaboratorAllowSet(
+        selectedCompose.collaborators,
+        currentUser._id,
+        collaborator.type,
+      )
+    ) {
+      throw new Error(
+        'Collaborator does not have permission to take this action.',
+      )
     }
 
-    const found = checkIsCollaboratorIncludes(
-      compose.collaborators,
-      collaborator.id,
-    )
-    if (!found) {
-      throw new Error('Collaborator not exists in the Compose')
+    //
+    if (
+      !checkIsCollaboratorIncludes(
+        selectedCompose.collaborators,
+        collaborator.id,
+      )
+    ) {
+      throw new Error(`Collaborator is not exists in this compose.`)
     }
 
-    const reuslt = await this._services.Compose.updateCollaborator(
-      compose._id,
+    //
+    return this.services.Compose.updateCollaborator(
+      selectedCompose._id,
       collaborator.id,
       collaborator.type,
     )
-    return reuslt
   }
 
   /**
@@ -755,22 +829,24 @@ class Worker {
     composeId: ComposeId,
     collaboratorId: UserId,
   ) {
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const compose = await this.verifyCollaboratorOfCompose(
+    //
+    const selectedCompose = await this.verifyCollaboratorOfCompose(
       composeId,
-      user._id,
+      currentUser._id,
       CollaboratorTypes.maintainer,
     )
 
-    const reuslt = await this._services.Compose.removeCollaborator(
-      compose._id,
+    //
+    return this.services.Compose.removeCollaborator(
+      selectedCompose._id,
       collaboratorId,
     )
-    return reuslt
   }
 
   /**
@@ -781,25 +857,32 @@ class Worker {
     composeId: ComposeId,
     modulesAsObject: ModuleAsObject,
   ) {
-    const modules = this._services.Compose.convertModulesToArray(
-      modulesAsObject,
-    )
+    //
+    const modules = this.services.Compose.convertModulesToArray(modulesAsObject)
 
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const compose = await this.verifyCollaboratorOfCompose(
+    //
+    const selectedCompose = await this.verifyCollaboratorOfCompose(
       composeId,
-      user._id,
+      currentUser._id,
       CollaboratorTypes.maintainer,
     )
 
-    const result = await this._services.Compose.addModules(compose._id, modules)
+    //
+    const updated = await this.services.Compose.addModules(
+      selectedCompose._id,
+      modules,
+    )
 
-    this._cache?.deleteCompose(compose._id)
-    return result
+    //
+    this.cacheResolver?.deleteCompose(selectedCompose._id)
+
+    return updated
   }
 
   /**
@@ -810,40 +893,43 @@ class Worker {
     composeId: ComposeId,
     moduleIds: ModuleId[],
   ) {
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const compose = await this.verifyCollaboratorOfCompose(
+    //
+    const selectedCompose = await this.verifyCollaboratorOfCompose(
       composeId,
-      user._id,
+      currentUser._id,
       CollaboratorTypes.maintainer,
     )
 
-    const result = await this._services.Compose.removeModules(
-      compose._id,
+    //
+    const deleted = await this.services.Compose.removeModules(
+      selectedCompose._id,
       moduleIds,
     )
 
-    this._cache?.deleteCompose(compose._id)
-    return result
+    //
+    this.cacheResolver?.deleteCompose(selectedCompose._id)
+
+    return deleted
   }
 
   /**
    * Get a scope by id
    */
   async getScope(scopeId: ScopeId, fields?: any) {
-    const scope = await this._services.Scope.findOne(scopeId, fields)
-    return scope
+    return this.services.Scope.findOne(scopeId, fields)
   }
 
   /**
    * Get the scopes by ids
    */
   async getScopes(scopeIds: ScopeId[], fields?: any) {
-    const scopes = await this._services.Scope.find(scopeIds, fields)
-    return scopes
+    return this.services.Scope.find(scopeIds, fields)
   }
 
   /**
@@ -854,68 +940,76 @@ class Worker {
 
     if (!validator.scopeId(name)) {
       throw new Error(
-        'Scope id/name is invalid. Contains only "a-z0-9-_" characters, starting and ending with "a-z0-9", length allows 4-24 characters!',
+        'Scope id is invalid, contains only "a-z0-9-_" characters, start and end with "a-z0-9", length allows 4-24 characters.',
       )
     }
 
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const result = await this._services.Scope.create(user._id, {
+    //
+    const createdScope = await this.services.Scope.create(currentUser._id, {
       name,
     })
-    return pick(result, ['_id', 'name', 'modules'])
+
+    //
+    return pick(createdScope, ['_id', 'name', 'modules'])
   }
 
   /**
    * Delete a scope
    */
   async deleteScope(tokenId: TokenId, scopeId: ScopeId) {
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const scope = await this.verifyCollaboratorOfScope(
+    //
+    const selectedScope = await this.verifyCollaboratorOfScope(
       scopeId,
-      user._id,
+      currentUser._id,
       CollaboratorTypes.maintainer,
     )
 
-    const isNewScope = checkIsNewScope(scope.createdAt)
-    if (!isNewScope) {
-      throw new Error(`Scope can't be deleted by policy`)
+    if (!checkIsNewScope(selectedScope.createdAt)) {
+      throw new Error(
+        `The scope cannot be deleted because it violates the policy.`,
+      )
     }
 
-    const modulesPublished = await this.getAllModulesInScopes(
+    //
+    const selectedModules = await this.getAllModulesInScopes(
       [scopeId],
       { _id: 1 },
       1,
     )
-    if (modulesPublished.length > 0) {
-      throw new Error(`Scope can't be deleted by policy`)
+    if (selectedModules.length > 0) {
+      throw new Error(
+        `The scope cannot be deleted because it violates the policy.`,
+      )
     }
 
-    const result = await this._services.Scope.delete(scope._id)
-    return result
+    //
+    return this.services.Scope.delete(selectedScope._id)
   }
 
   /**
    * Get collaborators of the scope
    */
   async getCollaboratorsOfScope(scopeId: ScopeId) {
-    const reuslt = await this._services.Scope.listCollaborators(scopeId)
-    return reuslt
+    return this.services.Scope.listCollaborators(scopeId)
   }
 
   /**
    * Get all scopes of the user
    */
   async getScopesOfUser(userId: UserId) {
-    const reuslt = await this._services.Scope.getAllOf(userId)
-    return reuslt
+    return this.services.Scope.getAllOf(userId)
   }
 
   /**
@@ -926,12 +1020,11 @@ class Worker {
     userId: UserId,
     requiredType: CollaboratorTypes,
   ) {
-    const result = await this._services.Scope.verifyCollaborator({
+    return this.services.Scope.verifyCollaborator({
       id: scopeId,
       userId,
       requiredType,
     })
-    return result
   }
 
   /**
@@ -942,30 +1035,28 @@ class Worker {
     scopeId: ScopeId,
     collaborator: AddCollaboratorData,
   ) {
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const scope = await this.verifyCollaboratorOfScope(
+    //
+    const selectedScope = await this.verifyCollaboratorOfScope(
       scopeId,
-      user._id,
+      currentUser._id,
       CollaboratorTypes.maintainer,
     )
 
-    const found = checkIsCollaboratorIncludes(
-      scope.collaborators,
-      collaborator.id,
-    )
-    if (found) {
-      throw new Error('Collaborator already exists in the Scope')
+    //
+    if (
+      checkIsCollaboratorIncludes(selectedScope.collaborators, collaborator.id)
+    ) {
+      throw new Error(`Collaborator already exists in this scope.`)
     }
 
-    const reuslt = await this._services.Scope.addCollaborator(
-      scope._id,
-      collaborator,
-    )
-    return reuslt
+    //
+    return this.services.Scope.addCollaborator(selectedScope._id, collaborator)
   }
 
   /**
@@ -976,40 +1067,45 @@ class Worker {
     scopeId: ScopeId,
     collaborator: AddCollaboratorData,
   ) {
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const scope = await this.verifyCollaboratorOfScope(
+    //
+    const selectedScope = await this.verifyCollaboratorOfScope(
       scopeId,
-      user._id,
+      currentUser._id,
       CollaboratorTypes.maintainer,
     )
 
-    const isAllowToSet = checkIsCollaboratorAllowSet(
-      scope.collaborators,
-      user._id,
-      collaborator.type,
-    )
-    if (!isAllowToSet) {
-      throw new Error('Permission denied')
+    //
+    if (
+      !checkIsCollaboratorAllowSet(
+        selectedScope.collaborators,
+        currentUser._id,
+        collaborator.type,
+      )
+    ) {
+      throw new Error(
+        'Collaborator does not have permission to take this action.',
+      )
     }
 
-    const found = checkIsCollaboratorIncludes(
-      scope.collaborators,
-      collaborator.id,
-    )
-    if (!found) {
-      throw new Error('Collaborator not exists in the Scope')
+    //
+    if (
+      !checkIsCollaboratorIncludes(selectedScope.collaborators, collaborator.id)
+    ) {
+      throw new Error(`Collaborator is not exists in this scope.`)
     }
 
-    const reuslt = await this._services.Scope.updateCollaborator(
-      scope._id,
+    //
+    return this.services.Scope.updateCollaborator(
+      selectedScope._id,
       collaborator.id,
       collaborator.type,
     )
-    return reuslt
   }
 
   /**
@@ -1020,62 +1116,70 @@ class Worker {
     scopeId: ScopeId,
     collaboratorId: UserId,
   ) {
-    const user = await this.verifyTokenOfUser(
+    //
+    const currentUser = await this.verifyTokenOfUser(
       tokenId,
       UserAccessTokenTypes.fullAccess,
     )
 
-    const scope = await this.verifyCollaboratorOfScope(
+    //
+    const selectedScope = await this.verifyCollaboratorOfScope(
       scopeId,
-      user._id,
+      currentUser._id,
       CollaboratorTypes.maintainer,
     )
 
-    const reuslt = await this._services.Scope.removeCollaborator(
-      scope._id,
+    //
+    return this.services.Scope.removeCollaborator(
+      selectedScope._id,
       collaboratorId,
     )
-    return reuslt
   }
 
   /**
    * Fetch compose
    */
   async fetchCompose(composeId: ComposeId) {
-    let factoryCache: SetComposeCacheFactoryFn | undefined
+    let setCache: SetComposeCacheFactoryFn | undefined
 
-    if (this._cache) {
-      const { data: cached, factory } = await this._cache.lookupCompose(
+    if (this.cacheResolver) {
+      const { data: cached, factory } = await this.cacheResolver.lookupCompose(
         composeId,
       )
+
+      //
       if (cached) {
         return cached
       }
 
-      factoryCache = factory
+      setCache = factory
     }
 
-    const compose = await this.getCompose(composeId, {
+    //
+    const selectedCompose = await this.getCompose(composeId, {
       name: 1,
       modules: 1,
     })
-    if (!compose) {
-      throw new Error(`Compose ${composeId} is not found`)
+    if (!selectedCompose) {
+      throw new Error(`Could not find compose ${composeId}.`)
     }
 
-    const moduleIds = (compose?.modules || []).map((item) => item.id)
+    //
+    const moduleIds = (selectedCompose?.modules || []).map((item) => item.id)
     const modules = await this.getModules(moduleIds, {
       _id: 1,
       tags: 1,
       versions: 1,
     })
 
+    //
     const warnings: any[] = []
     const parsedModules = {}
 
-    for (const item of compose.modules) {
+    //
+    for (const item of selectedCompose.modules) {
       try {
-        parsedModules[item.id] = pickAndParseModule(item, modules)
+        parsedModules[item.id] = getModuleAllowsOnly(item, modules)
       } catch (error) {
         warnings.push({
           id: item.id,
@@ -1087,8 +1191,10 @@ class Worker {
     }
 
     const data = { modules: parsedModules, warnings }
-    if (factoryCache) {
-      await factoryCache(data, moduleIds)
+
+    //
+    if (setCache) {
+      await setCache(data, moduleIds)
     }
 
     return data
@@ -1098,46 +1204,66 @@ class Worker {
    * Fetch module
    */
   async fetchModule(id: string) {
-    const parsed = moduleIdHelpers.parser(id)
-    const { module: moduleId, version } = parsed
+    const { module: moduleId, version } = moduleIdHelpers.parser(id)
 
+    //
     if (!validator.moduleId(moduleId)) {
-      throw new Error('Module id is invalid')
+      throw new Error(`Module id ${moduleId} is invalid.`)
     }
 
+    //
     if (
       !versionHelpers.checkIsValid(version) &&
       version !== MODULE_LATEST_TAG
     ) {
-      throw new Error('Version module is invalid')
+      throw new Error('Invalid module version.')
     }
 
-    let factoryCache: SetModuleCacheFactoryFn | undefined
+    let setCache: SetModuleCacheFactoryFn | undefined
 
-    if (this._cache) {
-      const { data: cached, factory } = await this._cache.lookupModule(id)
+    if (this.cacheResolver) {
+      const { data: cached, factory } = await this.cacheResolver.lookupModule(
+        id,
+      )
+
+      //
       if (cached) {
         return cached
       }
 
-      factoryCache = factory
+      setCache = factory
     }
 
-    const module = await this.getModule(moduleId, {
+    //
+    const selectedModule = await this.getModule(moduleId, {
       name: 1,
       tags: 1,
       versions: 1,
     })
-    if (!module) {
-      throw new Error(`Module ${moduleId} is not found`)
+    if (!selectedModule) {
+      throw new Error(`Module id ${moduleId} is not found.`)
     }
 
-    const data = pickAndParseModule({ id: moduleId, version }, [module])
-    if (factoryCache) {
-      await factoryCache(data)
+    const data = getModuleAllowsOnly({ id: moduleId, version }, [
+      selectedModule,
+    ])
+
+    //
+    if (setCache) {
+      await setCache(data)
     }
 
     return data
+  }
+
+  /**
+   * Get server config
+   */
+  async getConfig() {
+    return {
+      cdn: this.cdn,
+      storageType: this.storageType,
+    }
   }
 }
 

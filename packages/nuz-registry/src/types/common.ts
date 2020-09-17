@@ -6,7 +6,7 @@ export interface Resource {
   path: string
   md5sum: string
   size: number
-  // integrity: string
+  integrity: string
 }
 
 export interface Collaborator {
@@ -27,7 +27,7 @@ export interface Schedule {}
 
 export interface VersionSizes {
   total: number
-  main: number
+  scripts: number
   styles: number
 }
 

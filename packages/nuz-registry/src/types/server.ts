@@ -1,45 +1,46 @@
-import compression from 'compression'
-
 import { StorageTypes } from './common'
 
 export enum DBTypes {
   mongodb = 'mongodb',
 }
 
-export interface MongoConfig {
+export interface DatabaseConfiguration {
   url: string
 }
 
 // tslint:disable-next-line: no-empty-interface
 export interface ServerlessOptions {}
 
-export interface HttpsConfig {
+export interface HttpsConfiguration {
   key: Buffer | string
   cert: Buffer | string
 }
 
 export interface ServerOptions {
-  db: MongoConfig
+  db: DatabaseConfiguration
+  storage: {
+    type: StorageTypes
+    worker?: any
+  }
   dev?: boolean
   cache?: any
-  https?: boolean | HttpsConfig
-  compression?: boolean | compression.CompressionOptions
+  https?: boolean | HttpsConfiguration
   serverless?: ServerlessOptions
-  storageType?: StorageTypes
-  storage?: any
-  static?: string
+  cdn?: string
 }
 
 export interface WorkerOptions {
-  storageType: StorageTypes
-  storage: any | null
-  static: string | null
+  storage: {
+    type: StorageTypes
+    worker?: any
+  }
+  cdn?: string
   cache?: any
 }
 
 export interface PublishOptions {
   fallback?: string
-  static?: string
+  cdn?: string
   schedule?: any
   selfHosted?: boolean
 }
