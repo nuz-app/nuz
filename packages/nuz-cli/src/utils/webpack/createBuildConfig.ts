@@ -123,7 +123,9 @@ function createWebpackConfig(
   const sassModuleRegex = /\.module\.(scss|sass)$/
 
   return {
+    //
     name: packageJson.name,
+    //
     mode: !dev ? 'production' : 'development',
     // Stop compilation early in production.
     bail: !dev,
@@ -136,7 +138,8 @@ function createWebpackConfig(
     // Configure output information.
     output: {
       // The build folder.
-      path: !dev ? resolveOutpuut.directory : undefined,
+      // path: !dev ? resolveOutpuut.directory : undefined,
+      path: resolveOutpuut.directory,
       // Add /* filename */ comments to generated require()s in the output.
       pathinfo: dev,
       // There will be one main bundle, and one file per asynchronous chunk.
@@ -774,8 +777,6 @@ function createWebpackConfig(
       // during a production build.
       // Otherwise React will be compiled in the very slow development mode.
       new webpack.DefinePlugin(environment.raw),
-      // This is necessary to emit hot updates (CSS and Fast Refresh):
-      // NOTE: dev && new webpack.HotModuleReplacementPlugin(),
       // Watcher doesn't work well if you mistype casing in a path so we use
       // a plugin that prints an error when you attempt to do this.
       // See https://github.com/facebook/create-react-app/issues/240

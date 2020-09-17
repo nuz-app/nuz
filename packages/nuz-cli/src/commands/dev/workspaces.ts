@@ -119,6 +119,10 @@ async function devWorkspaces(options: DevWorkspacesOptions): Promise<boolean> {
           directory: resolveInternalModule,
           internalConfig: Object.assign({}, internalModuleConfig, {
             publicPath: internalModulePublicPath,
+            publicUrlOrPath: paths.resolvePublicUrlOrPath(
+              false,
+              internalModulePublicPath,
+            ),
             output: internalModuleOutputFile,
           }),
         },
@@ -222,12 +226,17 @@ async function devWorkspaces(options: DevWorkspacesOptions): Promise<boolean> {
 
   const devServer = new WebpackDevServer(
     compiler,
-    createDevServerConfig({
-      publicUrlOrPath,
-      standalone: false,
-      ignored: [ignoredFiles(directory)],
-      contentBase: [resolveOutputDirectory],
-    }) as any,
+    Object.assign(
+      createDevServerConfig({
+        publicUrlOrPath,
+        standalone: false,
+        ignored: [ignoredFiles(directory)],
+        contentBase: [resolveOutputDirectory],
+      }) as any,
+      {
+        contentBasePublicPath: ['/'],
+      },
+    ),
   )
 
   const httpServer = devServer.listen(urls.port, urls.host, (err) => {
