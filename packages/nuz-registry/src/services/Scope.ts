@@ -17,30 +17,36 @@ class Scope extends Service<ScopeId> {
   async create(userId: UserId, data: CreateScopeData) {
     const { name } = data
 
-    const creator = { type: CollaboratorTypes.creator, id: userId }
-    const collaborators = [creator]
+    // Create a new scope instance.
+    const scope = new this.Collection({
+      name,
+      // The creator information is inserted first in the collaborators list.
+      collaborators: [{ type: CollaboratorTypes.creator, id: userId }],
+    })
 
-    const scope = new this.Collection({ name, collaborators })
     try {
+      // Inserted the new scope to database.
       await scope.save()
+
+      return scope
     } catch (error) {
       if (error.code === MONGOOSE_ERROR_CODES.UNIQUE_KEY_EXISTED) {
-        throw new Error('Scope is already existed')
+        throw new Error('Scope is already existed.')
       }
 
       throw error
     }
-
-    return scope
   }
 
   async delete(id: ScopeId) {
     const { ok, deletedCount } = await this.Collection.deleteOne({ _id: id })
+
     return { _id: id, ok, deleted: deletedCount }
   }
 }
 
-export const createService = (collection: Models['Scope']) =>
-  new Scope(collection)
+export function createService(collection: Models['Scope']) {
+  return new Scope(collection)
+}
 
 export default Scope

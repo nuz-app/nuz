@@ -35,13 +35,14 @@ import {
   VersionSizes,
   WorkerOptions,
 } from '../types'
-import verifyCollaboratorPermission from '../utils/verifyCollaboratorPermission'
-import findCollaborator from '../utils/findCollaborator'
 import checkIsNewCompose from '../utils/checkIsNewCompose'
 import checkIsNewScope from '../utils/checkIsNewScope'
+import convertModulesToArray from '../utils/convertModulesToArray'
 import createMongoConnection from '../utils/createMongoConnection'
 import ensureUploadedFiles from '../utils/ensureUploadedFiles'
+import findCollaborator from '../utils/findCollaborator'
 import getModuleAllowsOnly from '../utils/getModuleAllowsOnly'
+import verifyCollaboratorPermission from '../utils/verifyCollaboratorPermission'
 
 import Cache, {
   SetComposeCacheFactoryFn,
@@ -654,7 +655,7 @@ class Worker {
     //
     const modules = !modulesAsObject
       ? []
-      : this.services.Compose.convertModulesToArray(modulesAsObject)
+      : convertModulesToArray(modulesAsObject)
 
     //
     const currentUser = await this.verifyTokenOfUser(
@@ -754,12 +755,7 @@ class Worker {
     )
 
     //
-    if (
-      findCollaborator(
-        selectedCompose.collaborators,
-        collaborator.id,
-      )
-    ) {
+    if (findCollaborator(selectedCompose.collaborators, collaborator.id)) {
       throw new Error(`Collaborator already exists in this compose.`)
     }
 
@@ -805,12 +801,7 @@ class Worker {
     }
 
     //
-    if (
-      !findCollaborator(
-        selectedCompose.collaborators,
-        collaborator.id,
-      )
-    ) {
+    if (!findCollaborator(selectedCompose.collaborators, collaborator.id)) {
       throw new Error(`Collaborator is not exists in this compose.`)
     }
 
@@ -1050,9 +1041,7 @@ class Worker {
     )
 
     //
-    if (
-      findCollaborator(selectedScope.collaborators, collaborator.id)
-    ) {
+    if (findCollaborator(selectedScope.collaborators, collaborator.id)) {
       throw new Error(`Collaborator already exists in this scope.`)
     }
 
@@ -1095,9 +1084,7 @@ class Worker {
     }
 
     //
-    if (
-      !findCollaborator(selectedScope.collaborators, collaborator.id)
-    ) {
+    if (!findCollaborator(selectedScope.collaborators, collaborator.id)) {
       throw new Error(`Collaborator is not exists in this scope.`)
     }
 

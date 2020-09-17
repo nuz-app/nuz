@@ -37,12 +37,11 @@ class Module extends Service<ModuleId> {
       alias,
       details,
     } = data
-    const { fallback } = options || {}
 
-    const creator = { type: CollaboratorTypes.creator, id: userId }
-    const collaborators = [creator]
+    const { fallback } = Object.assign({}, options)
 
-    const versionInfo = {
+    // Created report version for the module.
+    const reportVersion = {
       version,
       library,
       format,
@@ -56,28 +55,34 @@ class Module extends Service<ModuleId> {
       publisher: userId,
     }
 
-    const versionId = versionHelpers.encode(versionInfo.version)
-    const versions = new Map([[versionId, versionInfo]])
+    // Created versions and tags maps.
+    const versions = new Map([
+      [versionHelpers.encode(reportVersion.version), reportVersion],
+    ])
     const tags = new Map([[MODULE_LATEST_TAG, version]])
 
-    const module = new this.Collection({
+    // Create a new module instance.
+    const instance = new this.Collection({
       name: moduleId,
       scope,
-      collaborators,
+      // The creator information is inserted first in the collaborators list.
+      collaborators: [{ type: CollaboratorTypes.creator, id: userId }],
       tags,
       versions,
     })
+
     try {
-      await module.save()
+      // Inserted the new module to database.
+      await instance.save()
+
+      return instance
     } catch (error) {
       if (error.code === MONGOOSE_ERROR_CODES.UNIQUE_KEY_EXISTED) {
-        throw new Error('Module is already existed')
+        throw new Error('Module is already existed.')
       }
 
       throw error
     }
-
-    return module
   }
 
   async addVersion(
@@ -97,9 +102,11 @@ class Module extends Service<ModuleId> {
       alias,
       details,
     } = data
+
     const { fallback } = options || {}
 
-    const versionInfo = {
+    // Created report version for the module.
+    const reportVersion = {
       version,
       library,
       format,
@@ -113,13 +120,15 @@ class Module extends Service<ModuleId> {
       publisher: userId,
     }
 
-    const versionId = versionHelpers.encode(versionInfo.version)
+    //
+    const versionId = versionHelpers.encode(reportVersion.version)
 
+    // Updated new version into the module document.
     await this.Collection.updateOne(
       { _id: moduleId },
       {
         $set: {
-          [`versions.${versionId}`]: versionInfo,
+          [`versions.${versionId}`]: reportVersion,
           [`tags.${MODULE_LATEST_TAG}`]: version,
         },
       },
@@ -133,36 +142,43 @@ class Module extends Service<ModuleId> {
     satisfies: string[],
     deprecate: string | null,
   ) {
-    const versionIds = satisfies.map((item) => versionHelpers.encode(item))
-    const updateFields = versionIds.reduce(
-      (acc, versionId) =>
-        Object.assign(acc, { [`versions.${versionId}.deprecated`]: deprecate }),
-      {},
-    )
+    // Look for satisfying versions and set deprecated message.
+    const updateFields = satisfies
+      .map((item) => versionHelpers.encode(item))
+      .reduce(
+        (acc, versionId) =>
+          Object.assign(acc, {
+            [`versions.${versionId}.deprecated`]: deprecate,
+          }),
+        {},
+      )
 
+    // Updated the module document.
     const { ok, nModified: mofitied } = await this.Collection.updateOne(
       { _id: id },
       { $set: updateFields },
     )
 
     if (mofitied === 0) {
-      throw new Error('There was an error during the update process')
+      throw new Error('There was an error during the update process.')
     }
 
     return { _id: id, mofitied, ok, versions: satisfies }
   }
 
   async getAllInScopes(scopeIds: ScopeId[], fields?: any, limit?: number) {
-    const result = await this.Collection.find(
+    const selectedModules = await this.Collection.find(
       { scope: { $in: scopeIds } },
       fields || { _id: 1 },
       !limit ? { limit: 1 } : { limit },
     )
-    return result
+
+    return selectedModules
   }
 }
 
-export const createService = (collection: Models['Module']) =>
-  new Module(collection)
+export function createService(collection: Models['Module']) {
+  return new Module(collection)
+}
 
 export default Module

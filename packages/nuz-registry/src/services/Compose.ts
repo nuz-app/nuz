@@ -1,4 +1,3 @@
-import { validator, versionHelpers } from '@nuz/utils'
 import { Types } from 'mongoose'
 
 import { MONGOOSE_ERROR_CODES } from '../lib/const'
@@ -7,7 +6,6 @@ import {
   ComposeId,
   CreateComposeData,
   Models,
-  ModuleAsObject,
   ModuleId,
   RequiredModule,
   UserId,
@@ -20,25 +18,6 @@ class Compose extends Service<ComposeId> {
     super(Collection)
   }
 
-  convertModulesToArray(modulesAsObject: ModuleAsObject) {
-    const modules = Object.entries(modulesAsObject).map(([id, version]) => ({
-      id,
-      version,
-    }))
-
-    for (const item of modules) {
-      if (!validator.moduleId(item.id)) {
-        throw new Error(`${item.id} is invalid module id`)
-      }
-
-      if (!versionHelpers.checkIsValid(item.version)) {
-        throw new Error(`${item.version} is invalid module version`)
-      }
-    }
-
-    return modules
-  }
-
   async create(
     userId: UserId,
     data: Omit<CreateComposeData, 'modules'> & {
@@ -47,64 +26,85 @@ class Compose extends Service<ComposeId> {
   ) {
     const { name, modules } = data
 
-    const creator = { type: CollaboratorTypes.creator, id: userId }
-    const collaborators = [creator]
+    // Create a new compose instance.
+    const compose = new this.Collection({
+      name,
+      // The creator information is inserted first in the collaborators list.
+      collaborators: [{ type: CollaboratorTypes.creator, id: userId }],
+      modules,
+    })
 
-    const compose = new this.Collection({ name, collaborators, modules })
     try {
+      // Inserted the new compose to database.
       await compose.save()
+
+      return compose
     } catch (error) {
       if (error.code === MONGOOSE_ERROR_CODES.UNIQUE_KEY_EXISTED) {
-        throw new Error('Compose is already existed')
+        throw new Error('Compose is already existed.')
       }
 
       throw error
     }
-
-    return compose
   }
 
   async delete(id: ComposeId) {
     const { ok, deletedCount } = await this.Collection.deleteOne({ _id: id })
+
     return { _id: id, ok, deleted: deletedCount }
   }
 
   async addModules(id: ComposeId, modules: RequiredModule[]) {
-    const compose = await this.Collection.findOne({ _id: id }, { modules: 1 })
-    if (!compose) {
+    const selectedCompose = await this.Collection.findOne(
+      { _id: id },
+      { modules: 1 },
+    )
+
+    //
+    if (!selectedCompose) {
       throw new Error('Compose is not found')
     }
 
+    // Processing and merging module information.
     const moduleIds = modules.map((item) => item.id)
-    const updatedModules = compose.modules.filter(
+    const updatedModules = selectedCompose.modules.filter(
       (item) => !moduleIds.includes(item.id),
     )
     updatedModules.push(...modules)
-    compose.modules = updatedModules as Types.Array<RequiredModule>
+    selectedCompose.modules = updatedModules as Types.Array<RequiredModule>
 
-    await compose.save()
+    // Updated modules information tothe compose
+    await selectedCompose.save()
 
     return { _id: id }
   }
 
   async removeModules(id: ComposeId, moduleIds: ModuleId[]) {
-    const compose = await this.Collection.findOne({ _id: id }, { modules: 1 })
-    if (!compose) {
+    const selectedCompose = await this.Collection.findOne(
+      { _id: id },
+      { modules: 1 },
+    )
+
+    //
+    if (!selectedCompose) {
       throw new Error('Compose is not found')
     }
 
-    const updatedModules = compose.modules.filter(
+    // Processing and merging module information.
+    const updatedModules = selectedCompose.modules.filter(
       (item) => !moduleIds.includes(item.id),
     )
-    compose.modules = updatedModules as Types.Array<RequiredModule>
+    selectedCompose.modules = updatedModules as Types.Array<RequiredModule>
 
-    await compose.save()
+    // Updated modules information tothe compose
+    await selectedCompose.save()
 
     return { _id: id }
   }
 }
 
-export const createService = (collection: Models['Compose']) =>
-  new Compose(collection)
+export function createService(collection: Models['Compose']) {
+  return new Compose(collection)
+}
 
 export default Compose

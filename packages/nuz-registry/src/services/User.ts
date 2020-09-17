@@ -18,41 +18,50 @@ class User {
   async create(data: CreateUserData) {
     const { email, name, username, password } = data
 
+    // Create a new user instance.
     const user = new this.Collection({ email, name, username, password })
+
+    //
     try {
+      // Inserted the new scope to database.
       await user.save()
+
+      return user
     } catch (error) {
       if (error.code === MONGOOSE_ERROR_CODES.UNIQUE_KEY_EXISTED) {
-        throw new Error('Username is already existed')
+        throw new Error('User is already existed.')
       }
 
       throw error
     }
-
-    return user
   }
 
   async update(id: UserId, data: UpdateUserData) {
-    const user = await this.Collection.findOne({ _id: id }, { _id: 1 })
-    if (!user) {
-      throw new Error('User is not found')
+    const selectedUser = await this.Collection.findOne({ _id: id }, { _id: 1 })
+
+    //
+    if (!selectedUser) {
+      throw new Error('User is not found.')
     }
 
+    // Check and update user information if valid.
     const keysOf = Object.keys(data)
     keysOf.forEach((key) => {
       const shouldBeUpdate = !!data[key] && UPDATE_FIELDS_ALLOWED.includes(key)
       if (shouldBeUpdate) {
-        user[key] = data[key]
+        selectedUser[key] = data[key]
       }
     })
 
-    await user.save()
+    // Updated the user document.
+    await selectedUser.save()
 
-    return { _id: user._id }
+    return { _id: selectedUser._id }
   }
 
   async login(username: string, password: string) {
-    const user = await this.Collection.findOne(
+    //
+    const selectedUser = await this.Collection.findOne(
       { username },
       {
         _id: 1,
@@ -60,73 +69,88 @@ class User {
         password: 1,
       },
     )
-    if (!user) {
-      throw new Error('Username is not existed')
+
+    //
+    if (!selectedUser) {
+      throw new Error('User is not existed.')
     }
 
-    const isMatched = user.verifyPassword(password)
-    if (!isMatched) {
-      throw new Error('Password is invalid')
+    //
+    if (!selectedUser.verifyPassword(password)) {
+      throw new Error('Password is invalid.')
     }
 
-    return { _id: user._id }
+    return { _id: selectedUser._id }
   }
 
   async verifyToken(token: string, requiredType: UserAccessTokenTypes) {
-    const user = await this.Collection.findOne(
+    const selectedUser = await this.Collection.findOne(
       { accessTokens: { $elemMatch: { value: token } } },
       { _id: 1, accessTokens: 1 },
     )
-    if (!user) {
-      throw new Error(`Invalid token`)
+
+    //
+    if (!selectedUser) {
+      throw new Error(`User's token is invalid or incorrect.`)
     }
 
-    const accessToken = user.accessTokens.find((item) => item.value === token)
-    if (!accessToken) {
-      throw new Error(`Not found token by value ${token}`)
-    }
-
-    const permissionIsDenied = !accessTokenHelpers.verify(
-      accessToken.type,
-      requiredType,
+    //
+    const accessToken = selectedUser.accessTokens.find(
+      (item) => item.value === token,
     )
-    if (permissionIsDenied) {
-      throw new Error('Permission denied')
+    if (!accessToken) {
+      throw new Error(`User's token is invalid or incorrect.`)
     }
 
-    return { _id: user._id }
+    //
+    const isDenied = !accessTokenHelpers.verify(accessToken.type, requiredType)
+    if (isDenied) {
+      throw new Error(
+        'The token does not have the authority to take this action.',
+      )
+    }
+
+    return { _id: selectedUser._id }
   }
 
   async createToken(id: UserId, requiredType: UserAccessTokenTypes) {
-    const value = genarateTokenId()
-    const accessToken = { value, type: requiredType }
+    // Create new token information for the user.
+    const accessToken = { value: genarateTokenId(), type: requiredType }
+
+    // Updated token to the user document.
     const { ok, nModified: mofitied } = await this.Collection.updateOne(
       { _id: id },
-      { $addToSet: { accessTokens: accessToken } },
+      {
+        $addToSet: {
+          accessTokens: accessToken,
+        },
+      },
     )
 
     if (mofitied === 0) {
-      throw new Error('User is not found')
+      throw new Error('User is not found.')
     }
 
     return { _id: id, mofitied, ok, accessToken }
   }
 
   async deleteToken(id: UserId, token: string) {
+    // Deleted token from the user document.
     const { ok, nModified: mofitied } = await this.Collection.updateOne(
       { _id: id },
       { $pull: { accessTokens: { value: token } } },
     )
 
     if (mofitied === 0) {
-      throw new Error('User is not found')
+      throw new Error('User is not found.')
     }
 
     return { _id: id, mofitied, ok }
   }
 }
 
-export const createService = (collection: Models['User']) =>
-  new User(collection)
+export function createService(collection: Models['User']) {
+  return new User(collection)
+}
 
 export default User

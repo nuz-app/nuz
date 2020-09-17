@@ -12,9 +12,11 @@ export type Services = {
   Scope: Scope.default
 }
 
-export const createServices = (db: Models): Services => ({
-  User: User.createService(db.User),
-  Module: Module.createService(db.Module),
-  Compose: Compose.createService(db.Compose),
-  Scope: Scope.createService(db.Scope),
-})
+export function createServices(db: Models): Services {
+  return {
+    User: User.createService(db.User),
+    Module: Module.createService(db.Module),
+    Compose: Compose.createService(db.Compose),
+    Scope: Scope.createService(db.Scope),
+  }
+}
