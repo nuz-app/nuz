@@ -850,7 +850,7 @@ class Worker {
     modulesAsObject: ModuleAsObject,
   ) {
     //
-    const modules = this.services.Compose.convertModulesToArray(modulesAsObject)
+    const modules = convertModulesToArray(modulesAsObject)
 
     //
     const currentUser = await this.verifyTokenOfUser(
