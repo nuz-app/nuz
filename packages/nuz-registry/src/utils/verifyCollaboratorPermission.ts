@@ -14,10 +14,7 @@ function verifyCollaboratorPermission(
   }
 
   //
-  return collaboratorTypeHelpers.verify(
-    selectedCollaborator.type,
-    requiredType,
-  )
+  return collaboratorTypeHelpers.verify(selectedCollaborator.type, requiredType)
 }
 
 export default verifyCollaboratorPermission

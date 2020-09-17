@@ -70,6 +70,6 @@ schema.methods.verifyPassword = function compare(password: string) {
   return passwordHelpers.compare(password, user.password)
 }
 
-export function createModel (connection: Connection): Model<UserDocument> {
+export function createModel(connection: Connection): Model<UserDocument> {
   return connection.model(collection, schema)
 }
