@@ -7,10 +7,15 @@ import Cache, {
   SetModuleCacheFactoryFn,
 } from './Cache'
 
-const CONFIG = {
-  COMPOSITION_TIMEOUT: 12 * 60 * 60 * 1000,
-  MODULE_TIMEOUT: 6 * 60 * 60 * 1000,
-}
+/**
+ * Configure cache storage time for the compose.
+ */
+const COMPOSE_CACHE_TIMEOUT = 12 * 60 * 60 * 1000
+
+/**
+ * Configure cache storage time for the module.
+ */
+const MODULE_CACHE_TIMEOUT = 6 * 60 * 60 * 1000
 
 type Timer = { [id: string]: NodeJS.Timeout }
 
@@ -47,26 +52,31 @@ class LocalCache implements Cache {
   public async prepare() {}
 
   public async clearAllRefsToModule(moduleId: ModuleId) {
-    const composeIds = Array.from((await this.getModuleRefs(moduleId)) || [])
-    for (const composeId of composeIds) {
-      this.deleteCompose(composeId)
-    }
+    // Clear all cache data of compose related to this module.
+    await Promise.all(
+      Array.from((await this.getModuleRefs(moduleId)) || []).map((composeId) =>
+        this.deleteCompose(composeId),
+      ),
+    )
 
-    this.deleteModule(moduleId)
-    this.deleteModuleRefs(moduleId)
+    // Clear all module cache data and reference paths.
+    await Promise.all([
+      this.deleteModule(moduleId),
+      this.deleteModuleRefs(moduleId),
+    ])
   }
 
   public async lookupCompose(composeId: ComposeId) {
-    const composeData = await this.getCompose(composeId)
-    if (composeData) {
-      return { data: composeData, factory: undefined }
+    const cached = await this.getCompose(composeId)
+    if (cached) {
+      return { data: cached, factory: undefined }
     }
 
     // Factory auto cache handler
     const factory: SetComposeCacheFactoryFn = async (
       data: any,
       deps: ModuleId[],
-      timeout: number = CONFIG.COMPOSITION_TIMEOUT,
+      timeout: number = COMPOSE_CACHE_TIMEOUT,
     ) => {
       this.setCompose(composeId, data)
 
@@ -95,15 +105,15 @@ class LocalCache implements Cache {
   }
 
   public async lookupModule(id: string) {
-    const moduleData = await this.getModule(id)
-    if (moduleData) {
-      return { data: moduleData, factory: undefined }
+    const cached = await this.getModule(id)
+    if (cached) {
+      return { data: cached, factory: undefined }
     }
 
     // Factory auto cache handler
     const factory: SetModuleCacheFactoryFn = async (
       data: any,
-      timeout: number = CONFIG.MODULE_TIMEOUT,
+      timeout: number = MODULE_CACHE_TIMEOUT,
     ) => {
       this.setModule(id, data)
 
@@ -135,8 +145,9 @@ class LocalCache implements Cache {
     fn: () => void,
     timeout: number,
   ) {
+    // Set a timeout to schedule your work and
+    // save a timeout address to delete as needed.
     this.clearTimeout(timer, id)
-
     timer[id] = setTimeout(fn, timeout)
   }
 

@@ -9,10 +9,17 @@ import { TransformFile } from '../utils/ensureUploadedFiles'
 
 import Storage, { UploadFilesData } from './Storage'
 
-const PERMISSION_FILE_UPLOAD = 'public-read'
-const PROMISES_LIMIT = 4
+const REQUIRE_UPLOAD_PERMISSION = 'public-read'
+const PROMISES_LIMIT = 5
+const REQUIRE_FIELDS = [
+  'origin',
+  'origin',
+  'bucket',
+  'accessKeyId',
+  'secretAccessKey',
+]
 
-const readFile = util.promisify(fs.readFile)
+const readFileAsync = util.promisify(fs.readFile)
 
 export interface DigitalOceanStorageConfig {
   origin: string
@@ -23,58 +30,31 @@ export interface DigitalOceanStorageConfig {
 }
 
 class DigitalOceanStorage implements Storage {
-  private readonly _bucket: string
-  private readonly _origin: string
-  private readonly _s3: aws.S3
+  private readonly bucket: string
+  private readonly cdn: string
+  private readonly s3: aws.S3
 
   constructor(config: DigitalOceanStorageConfig) {
     const { origin, endpoint, bucket, accessKeyId, secretAccessKey } = config
 
-    if (!origin) {
-      throw new Error(
-        // tslint:disable-next-line: prettier
-        'Can\'t be initial DigitalOceanStorage because missing `origin` value',
-      )
-    }
-
-    if (!endpoint) {
-      throw new Error(
-        // tslint:disable-next-line: prettier
-        'Can\'t be initial DigitalOceanStorage because missing `endpoint` value',
-      )
-    }
-
-    if (!bucket) {
-      throw new Error(
-        // tslint:disable-next-line: prettier
-        'Can\'t be initial DigitalOceanStorage because missing `bucket` value',
-      )
-    }
-
-    if (!accessKeyId) {
-      throw new Error(
-        // tslint:disable-next-line: prettier
-        'Can\'t be initial DigitalOceanStorage because missing `accessKeyId` value',
-      )
-    }
-
-    if (!secretAccessKey) {
-      throw new Error(
-        // tslint:disable-next-line: prettier
-        'Can\'t be initial DigitalOceanStorage because missing `secretAccessKey` value',
-      )
+    for (const field of REQUIRE_FIELDS) {
+      if (!config[field]) {
+        throw new Error(
+          `Cannot initialize Storage because ${field} field is missing.`,
+        )
+      }
     }
 
     let awsKit
     try {
       awsKit = require('aws-sdk')
     } catch {
-      throw new Error('Please install `aws-sdk` to use DigitalOceanStorage')
+      throw new Error('Worker is not ofund, please install `aws-sdk` to use.')
     }
 
-    this._origin = origin
-    this._bucket = bucket
-    this._s3 = new awsKit.S3({
+    this.cdn = origin
+    this.bucket = bucket
+    this.s3 = new awsKit.S3({
       endpoint,
       accessKeyId,
       secretAccessKey,
@@ -93,27 +73,29 @@ class DigitalOceanStorage implements Storage {
       )
     }
 
-    const promises = Promise.all(
+    return Promise.all(
       files.map(
         throat(PROMISES_LIMIT, async (file) =>
-          this._s3
+          this.s3
             .upload({
-              ACL: PERMISSION_FILE_UPLOAD,
-              Bucket: this._bucket,
+              ACL: REQUIRE_UPLOAD_PERMISSION,
+              Bucket: this.bucket,
               ContentType: file.mimeType,
               Key: file.key,
-              Body: await readFile(file.tempPath),
+              Body: await readFileAsync(file.tempPath),
             })
             .promise(),
         ),
       ),
     )
-
-    return promises
   }
 
-  async createUrl(moduleId: ModuleId, version: string, filename: string) {
-    return assetsUrlHelpers.create(moduleId, version, filename, this._origin)
+  async createUrl(
+    moduleId: ModuleId,
+    version: string,
+    filename: string,
+  ): Promise<string> {
+    return assetsUrlHelpers.create(moduleId, version, filename, this.cdn)
   }
 }
 
