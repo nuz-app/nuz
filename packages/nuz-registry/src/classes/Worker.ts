@@ -150,7 +150,7 @@ class Worker {
     uploadedFiles: any[],
     options: PublishOptions,
   ) {
-    const { fallback, selfHosted } = Object.assign({}, options)
+    const { fallback, selfHosted, cdn } = Object.assign({}, options)
 
     const { version, resolve, files: temporaryFiles } = data
 
@@ -160,16 +160,17 @@ class Worker {
       this.storageType === StorageTypes.provided ||
       (this.storageType === StorageTypes.full && !selfHosted)
 
-    // const staticIsNotMatched =
-    //   ensureOriginSlash(staticOrigin as string) !==
-    //   ensureOriginSlash(this._static as string)
-    // const staticIsAllowed =
-    //   this._storageType !== StorageTypes.self && staticIsNotMatched
-    // if (staticIsAllowed) {
-    //   throw new Error(
-    //     `Static origin is not allowed by the registry server, allowed ${this._static}`,
-    //   )
-    // }
+    // When building the system will use the public url
+    // to generate the url for the source map.
+    // This ensures the source map will exist properly.
+    if (
+      !isNotSelfHosted &&
+      ensureOriginSlash(cdn as string) !== ensureOriginSlash(this.cdn as string)
+    ) {
+      throw new Error(
+        `Using public url is not allowed, allowed from: ${this.cdn}.`,
+      )
+    }
 
     //
     const { files, sizes } = isNotSelfHosted
