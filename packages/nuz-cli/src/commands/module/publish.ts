@@ -56,9 +56,7 @@ async function publish(options: ModulePublishOptions): Promise<boolean> {
   const publicPath = selfHosted
     ? internalConfig.publicPath
     : assetsUrlHelpers.createOrigin(name, version, cdn)
-  console.log({ cdn, publicPath })
 
-  return false
   if (!checkIsHaveSlash(publicPath)) {
     throw new Error('The public path needs have slash at end.')
   }
