@@ -1,9 +1,9 @@
 import mongoose from 'mongoose'
 
-const createMongoConnection = (
+function createMongoConnection(
   url: string,
   options?: mongoose.ConnectionOptions,
-) => {
+) {
   const conn = mongoose.createConnection(
     url,
     Object.assign(
@@ -12,11 +12,11 @@ const createMongoConnection = (
     ),
   )
 
-  conn.once('open', () => {
+  conn.once('open', function () {
     console.log('[db]', 'Ready')
   })
 
-  conn.on('error', (error: Error) => {
+  conn.on('error', function (error: Error) {
     const isNetworkError = error.name === 'MongoNetworkError'
     console.error('[db]', 'An error occurred!')
 
@@ -25,15 +25,15 @@ const createMongoConnection = (
     }
   })
 
-  conn.on('connected', () => {
+  conn.on('connected', function () {
     console.log('[db]', 'Connected')
   })
 
-  conn.on('reconnected', () => {
+  conn.on('reconnected', function () {
     console.log('[db]', 'Reconnected')
   })
 
-  conn.on('disconnected', () => {
+  conn.on('disconnected', function () {
     console.log('[db]', 'Disconnected')
   })
 

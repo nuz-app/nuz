@@ -1,5 +1,7 @@
 import { Types } from 'mongoose'
 
-const ensureObjectId = (value: string) => Types.ObjectId(value)
+function ensureObjectId(value: string) {
+  return Types.ObjectId(value)
+}
 
 export default ensureObjectId

@@ -5,7 +5,7 @@ import os from 'os'
 import path from 'path'
 
 import Worker from '../classes/Worker'
-import onRoute from '../utils/onRoute'
+import wrapRoute from '../utils/wrapRoute'
 
 import { ServerlessConfig, ServerlessRoute } from './types'
 
@@ -34,7 +34,7 @@ export const execute: ServerlessRoute = (
     )
 
   const onFiles = upload.array('files')
-  const onPublish = onRoute(async function (request, response) {
+  const onPublish = wrapRoute(async function (request, response) {
     const { authorization: token } = request.headers
     const { module: id, data: _data, options: _options } = request.body
 

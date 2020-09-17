@@ -1,5 +1,7 @@
 import { TObjectId } from '../types'
 
-const compareObjectId = (id1: TObjectId, id2: TObjectId) => id1.equals(id2)
+function compareObjectId(a: TObjectId, b: TObjectId): boolean {
+  return a.equals(b)
+}
 
 export default compareObjectId

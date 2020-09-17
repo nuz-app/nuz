@@ -1,7 +1,7 @@
 import { Express } from 'express'
 
 import Worker from '../classes/Worker'
-import onRoute from '../utils/onRoute'
+import wrapRoute from '../utils/wrapRoute'
 
 import { ServerlessRoute } from './types'
 
@@ -10,7 +10,7 @@ export const name = 'fetchCompose'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.get(
     '/fetch/compose',
-    onRoute(async function (request, response) {
+    wrapRoute(async function (request, response) {
       const { compose } = request.query
 
       if (!compose) {

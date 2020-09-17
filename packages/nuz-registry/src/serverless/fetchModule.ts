@@ -3,7 +3,7 @@ import { moduleIdHelpers } from '@nuz/utils'
 import { Express } from 'express'
 
 import Worker from '../classes/Worker'
-import onRoute from '../utils/onRoute'
+import wrapRoute from '../utils/wrapRoute'
 
 import { ServerlessRoute } from './types'
 
@@ -12,7 +12,7 @@ export const name = 'fetchModule'
 export const execute: ServerlessRoute = (app: Express, worker: Worker) => {
   app.get(
     '/fetch/module',
-    onRoute(async function (request, response) {
+    wrapRoute(async function (request, response) {
       const { id } = request.query
 
       if (!id) {

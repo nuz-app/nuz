@@ -4,7 +4,7 @@ import {
   CollaboratorTypes,
   UserId,
 } from '../types'
-import * as collaboratorTypesHelpers from '../utils/collaboratorTypesHelpers'
+import * as collaboratorTypeHelpers from '../utils/collaboratorTypeHelpers'
 
 type VerifyCollaboratorParams<T> = {
   id: T
@@ -91,7 +91,7 @@ class Service<T> {
       throw new Error(`User does not include collaborators of ${modelName}`)
     }
 
-    const permissionIsDenied = !collaboratorTypesHelpers.verify(
+    const permissionIsDenied = !collaboratorTypeHelpers.verify(
       collaborator.type,
       requiredType,
     )

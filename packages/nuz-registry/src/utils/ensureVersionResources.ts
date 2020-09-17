@@ -2,7 +2,7 @@ import { integrityHelpers } from '@nuz/utils'
 
 import { Resource, VersionInfo } from '../types'
 
-const getOrVerifyIntegrity = async (item: string | Resource) => {
+async function getOrVerifyIntegrity(item: string | Resource) {
   const isObject = typeof item === 'object'
   const itemUrl = (item as any).url
 
@@ -22,16 +22,17 @@ const getOrVerifyIntegrity = async (item: string | Resource) => {
   }
 }
 
-const ensureVersionResources = async (_resolve: VersionInfo['resolve']) => {
+async function ensureVersionResources(_resolve: VersionInfo['resolve']) {
   const urls = [_resolve.main, ...(_resolve.styles || [])].filter(Boolean)
-  const promises = urls.map(getOrVerifyIntegrity)
-  const [main, ...styles] = await Promise.all(promises.filter(Boolean))
-  const resolve = {
+
+  const [main, ...styles] = await Promise.all(
+    urls.map(getOrVerifyIntegrity).filter(Boolean),
+  )
+
+  return {
     main,
     styles: styles.length > 0 ? styles : undefined,
   }
-
-  return resolve
 }
 
 export default ensureVersionResources

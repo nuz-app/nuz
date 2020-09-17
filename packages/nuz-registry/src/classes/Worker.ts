@@ -35,8 +35,8 @@ import {
   VersionSizes,
   WorkerOptions,
 } from '../types'
-import checkIsCollaboratorAllowSet from '../utils/checkIsCollaboratorAllowSet'
-import checkIsCollaboratorIncludes from '../utils/checkIsCollaboratorIncludes'
+import verifyCollaboratorPermission from '../utils/verifyCollaboratorPermission'
+import findCollaborator from '../utils/findCollaborator'
 import checkIsNewCompose from '../utils/checkIsNewCompose'
 import checkIsNewScope from '../utils/checkIsNewScope'
 import createMongoConnection from '../utils/createMongoConnection'
@@ -432,7 +432,7 @@ class Worker {
     )) as ModuleDocument
 
     //
-    const selectedCollaborator = checkIsCollaboratorIncludes(
+    const selectedCollaborator = findCollaborator(
       selectedModule.collaborators,
       collaborator.id,
     )
@@ -470,7 +470,7 @@ class Worker {
 
     //
     if (
-      !checkIsCollaboratorAllowSet(
+      !verifyCollaboratorPermission(
         selectedModule.collaborators,
         currentUser._id,
         collaborator.type,
@@ -481,7 +481,7 @@ class Worker {
       )
     }
 
-    const selectedCollaborator = checkIsCollaboratorIncludes(
+    const selectedCollaborator = findCollaborator(
       selectedModule.collaborators,
       collaborator.id,
     )
@@ -755,7 +755,7 @@ class Worker {
 
     //
     if (
-      checkIsCollaboratorIncludes(
+      findCollaborator(
         selectedCompose.collaborators,
         collaborator.id,
       )
@@ -793,7 +793,7 @@ class Worker {
 
     //
     if (
-      !checkIsCollaboratorAllowSet(
+      !verifyCollaboratorPermission(
         selectedCompose.collaborators,
         currentUser._id,
         collaborator.type,
@@ -806,7 +806,7 @@ class Worker {
 
     //
     if (
-      !checkIsCollaboratorIncludes(
+      !findCollaborator(
         selectedCompose.collaborators,
         collaborator.id,
       )
@@ -1051,7 +1051,7 @@ class Worker {
 
     //
     if (
-      checkIsCollaboratorIncludes(selectedScope.collaborators, collaborator.id)
+      findCollaborator(selectedScope.collaborators, collaborator.id)
     ) {
       throw new Error(`Collaborator already exists in this scope.`)
     }
@@ -1083,7 +1083,7 @@ class Worker {
 
     //
     if (
-      !checkIsCollaboratorAllowSet(
+      !verifyCollaboratorPermission(
         selectedScope.collaborators,
         currentUser._id,
         collaborator.type,
@@ -1096,7 +1096,7 @@ class Worker {
 
     //
     if (
-      !checkIsCollaboratorIncludes(selectedScope.collaborators, collaborator.id)
+      !findCollaborator(selectedScope.collaborators, collaborator.id)
     ) {
       throw new Error(`Collaborator is not exists in this scope.`)
     }
