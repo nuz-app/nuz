@@ -1,21 +1,23 @@
 {
-  "compilerOptions": {},
+  "compilerOptions": {
+    "module": "commonjs"
+  },
   "files": [],
   "references": [
     {
-      "path": "./packages/nuz-shared/tsconfig.json"
+      "path": "./packages/nuz-shared/tsconfig.dev.json"
     },
     {
-      "path": "./packages/nuz-utils/tsconfig.json"
+      "path": "./packages/nuz-utils/tsconfig.dev.json"
     },
     {
-      "path": "./packages/nuz-cli/tsconfig.json"
+      "path": "./packages/nuz-cli/tsconfig.dev.json"
     },
     {
-      "path": "./packages/nuz-core/tsconfig.json"
+      "path": "./packages/nuz-core/tsconfig.dev.json"
     },
     {
-      "path": "./packages/nuz-registry/tsconfig.json"
+      "path": "./packages/nuz-registry/tsconfig.dev.json"
     }
   ]
 }
