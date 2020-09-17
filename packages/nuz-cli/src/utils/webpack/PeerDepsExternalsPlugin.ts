@@ -1,6 +1,6 @@
 import readPackageJson from '../readPackageJson'
 
-import setExternals from './helpers/setExternals'
+import setExternals from './setExternals'
 
 // tslint:disable-next-line: no-var-requires
 const ExternalModuleFactoryPlugin = require('webpack/lib/ExternalModuleFactoryPlugin')
@@ -28,14 +28,14 @@ function getPeerDependencies(
 
 class PeerDepsExternalsPlugin {
   constructor(
-    private readonly dir: string | undefined,
+    private readonly directory: string | undefined,
     private readonly isolated: boolean,
     private readonly exclude: string[] = [],
   ) {}
 
   apply(compiler: any) {
     const peerDependencies = getPeerDependencies(
-      this.dir,
+      this.directory,
       this.isolated,
       this.exclude,
     )

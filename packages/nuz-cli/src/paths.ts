@@ -1,9 +1,9 @@
-import { checkIsProductionMode } from '@nuz/utils'
 import findCacheDir from 'find-cache-dir'
 import fs from 'fs-extra'
 import os from 'os'
 import path from 'path'
-import getPublicUrlOrPath from 'react-dev-utils/getPublicUrlOrPath'
+
+import ensureSlash from './utils/ensureSlash'
 
 /**
  * The path of the tool installed
@@ -39,6 +39,13 @@ export function resolveApp(directory: string, relative: string): string {
  */
 export function resolvePackageJson(directory: string): string {
   return path.resolve(directory, 'package.json')
+}
+
+/**
+ * Resolve source directory in the project
+ */
+export function resolveSourceDirectory(directory: string): string {
+  return path.resolve(directory, 'src')
 }
 
 /**
@@ -132,17 +139,10 @@ export function resolveRootTemplate(...rest: string[]): string {
 }
 
 /**
- * Get public url or path based on environment
- * in the directory
+ * Resolve `node_modules` directory in the directory
  */
-export function publicUrlOrPath(directory: string, publicUrl: string): string {
-  const packageJson = require(resolvePackageJson(directory))
-
-  return getPublicUrlOrPath(
-    !checkIsProductionMode(),
-    packageJson.homepage,
-    publicUrl,
-  )
+export function resolveNodeModulesDirectory(directory: string): string {
+  return path.resolve(directory, 'node_modules')
 }
 
 /**
@@ -181,4 +181,21 @@ export function resolvePublicDirectory(
  */
 export function resolveRootDirectory(...rest: string[]): string {
   return path.join(os.homedir(), '.nuz', ...rest)
+}
+
+/**
+ * Get public url or path based on environment
+ * in the directory
+ */
+export function resolvePublicUrlOrPath(
+  dev: boolean,
+  publicUrl: string,
+): string {
+  if (!dev) {
+    return ensureSlash(publicUrl)
+  }
+
+  // Only for development mode
+  const url = new URL(publicUrl, 'https://nuz.app')
+  return ensureSlash(url.pathname)
 }

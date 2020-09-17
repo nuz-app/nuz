@@ -1,4 +1,4 @@
-import { pick } from '@nuz/utils'
+import { omit } from '@nuz/utils'
 import fs from 'fs-extra'
 
 import * as paths from '../../../paths'
@@ -14,8 +14,11 @@ async function updatePackageJson(
   directory: string,
   info: ModuleInfo,
 ): Promise<any> {
+  //
+  readPackageJson.clearCaches(directory)
+
+  const packageJson = readPackageJson(directory)
   const resolvePackageJson = paths.resolvePackageJson(directory)
-  const packageJson = readPackageJson(resolvePackageJson)
 
   const { name, library, version } = info
 
@@ -25,7 +28,7 @@ async function updatePackageJson(
       Object.assign(
         { name, version },
         library && { library },
-        pick(packageJson, ['name', 'library', 'version']),
+        omit(packageJson, ['name', 'library', 'version']),
       ),
       null,
       2,

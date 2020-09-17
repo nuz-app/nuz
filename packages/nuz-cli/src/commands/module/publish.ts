@@ -39,18 +39,26 @@ async function publish(options: ModulePublishOptions): Promise<boolean> {
     static: _static,
   } = Object.assign({ selfHosted: false, yes: false }, options)
 
+  const dev = false
   const directory = paths.cwd
-  const internalConfig = requireInternalConfig(directory, true)
+  const internalConfig = requireInternalConfig({
+    dev,
+    directory,
+    required: true,
+  })
   const outputDirectory = getOutputDirectory(directory, internalConfig.output)
 
   const { name, library, version } = internalConfig
 
-  const staticOrigin =
+  const cdn =
     _static || (await Config.readConfiguration())[ConfigurationFields.static]
+
   const publicPath = selfHosted
     ? internalConfig.publicPath
-    : assetsUrlHelpers.createOrigin(name, version, staticOrigin)
+    : assetsUrlHelpers.createOrigin(name, version, cdn)
+  console.log({ cdn, publicPath })
 
+  return false
   if (!checkIsHaveSlash(publicPath)) {
     throw new Error('The public path needs have slash at end.')
   }
@@ -120,7 +128,7 @@ async function publish(options: ModulePublishOptions): Promise<boolean> {
       {
         fallback,
         selfHosted,
-        static: staticOrigin,
+        cdn,
       },
     )
     const moduleId = request?.data?._id

@@ -1,6 +1,7 @@
 import path from 'path'
 
 import * as paths from '../paths'
+import { InternalConfiguration } from '../types'
 
 import print from './print'
 import readPackageJson from './readPackageJson'
@@ -9,10 +10,22 @@ const REQUIRED = ['name', 'version', 'input', 'output']
 
 const internalsConfig = {} as any
 
-function requireInternalConfig<T = any>(
-  directory: string,
-  required: boolean,
-): T {
+export interface RequireInternalConfig {
+  directory: string
+  required: boolean
+  dev: boolean
+}
+
+export interface ParsedInternalConfig extends InternalConfiguration {
+  publicUrlOrPath: string
+  isolated: boolean
+}
+
+function requireInternalConfig(
+  config: RequireInternalConfig,
+): ParsedInternalConfig {
+  const { dev, required, directory } = config
+
   // Check if loaded internal for this directory
   // return previous value.
   if (internalsConfig[directory]) {
@@ -36,7 +49,7 @@ function requireInternalConfig<T = any>(
       {},
       { name, version, library, input, output },
       resolveInternalConfig && require(resolveInternalConfig),
-    )
+    ) as ParsedInternalConfig
 
     if (required) {
       for (const field of REQUIRED) {
@@ -49,6 +62,15 @@ function requireInternalConfig<T = any>(
         }
       }
     }
+
+    // Add customizations from environment variables.
+    internalConfig.publicUrlOrPath = paths.resolvePublicUrlOrPath(
+      dev,
+      process.env.PUBLIC_URL ?? internalConfig.publicPath ?? '/',
+    )
+
+    // Set defaults value
+    internalConfig.isolated = !!internalConfig.isolated
 
     // Memoized internal config value, using next time
     internalsConfig[directory] = internalConfig

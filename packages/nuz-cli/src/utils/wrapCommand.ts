@@ -13,7 +13,7 @@ function wrapCommand(caller: Caller): Caller {
       if (closed) {
         log(
           print.dim(
-            `[👌] Request was successful, duration ${print.bold(
+            `👌 Request was successful, duration ${print.bold(
               print.time(tick()),
             )}.`,
           ),
@@ -28,7 +28,7 @@ function wrapCommand(caller: Caller): Caller {
 
       log(
         print.dim(
-          `[💢] Request failed, duration ${print.bold(print.time(tick()))}.`,
+          `💢 Request failed, duration ${print.bold(print.time(tick()))}.`,
         ),
       )
       log()

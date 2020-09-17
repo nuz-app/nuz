@@ -87,6 +87,14 @@ async function generateTemplate(
           build: 'nuz build',
           serve: 'nuz serve',
         },
+        browserslist: {
+          production: ['>0.2%', 'not dead', 'not op_mini all'],
+          development: [
+            'last 1 chrome version',
+            'last 1 firefox version',
+            'last 1 safari version',
+          ],
+        },
         dependencies: {},
         devDependencies: Object.assign(
           {
@@ -138,9 +146,12 @@ async function generateTemplate(
 
   //
   const filesWillBeRemoved = glob.sync(
-    '{src,public}/**/*.' + useTypescript ? '{js,jsx}' : '{ts,tsx}',
+    !useTypescript
+      ? `{src,public}/**/*.{ts,tsx}`
+      : `{src,public}/**/*.{js,jsx}`,
     {
       cwd: directory,
+      absolute: true,
     },
   )
   await Promise.all((filesWillBeRemoved || []).map((file) => fs.remove(file)))

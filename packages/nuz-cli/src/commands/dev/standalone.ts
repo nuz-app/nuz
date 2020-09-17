@@ -20,8 +20,8 @@ import prepareUrls from '../../utils/prepareUrls'
 import { info, log, pretty } from '../../utils/print'
 import * as processHelpers from '../../utils/process'
 import requireInternalConfig from '../../utils/requireInternalConfig'
-import createWebpackConfig from '../../utils/webpack/factories/buildConfig'
-import createDevServerConfig from '../../utils/webpack/factories/devServerConfig'
+import createBuildConfig from '../../utils/webpack/createBuildConfig'
+import createDevServerConfig from '../../utils/webpack/createDevServerConfig'
 
 interface DevStandaloneOptions
   extends Arguments<{ port?: number; open?: string | boolean }> {}
@@ -34,20 +34,17 @@ async function standalone(options: DevStandaloneOptions): Promise<boolean> {
   const directory = paths.cwd
 
   // Get the information needed to start development mode
-  const internalConfig = requireInternalConfig(directory, true)
-  const publicUrlOrPath = paths.publicUrlOrPath(
+  const internalConfig = requireInternalConfig({
     directory,
-    internalConfig.publicPath,
-  )
-  const featuresUsed = detectFeaturesUsed(directory)
+    dev,
+    required: true,
+  })
+  const featuresUsed = detectFeaturesUsed(directory, dev)
   const outputPaths = getSystemPaths(directory, internalConfig.output)
   const publicDirectory = paths.resolvePublicDirectory(directory)
 
   // Get and ensure public script and html index files
-  const publicScriptIndexPath = path.join(
-    publicDirectory,
-    featuresUsed.typescript ? 'index.ts' : 'index.js',
-  )
+  const publicScriptIndexPath = path.join(publicDirectory, 'index.js')
   const publicHtmlIndexPath = path.join(publicDirectory, 'index.html')
 
   //
@@ -65,17 +62,17 @@ async function standalone(options: DevStandaloneOptions): Promise<boolean> {
       },
     ])
     if (answers.isConfirmed) {
-      const moduleTemplateDirectory = paths.resolveModuleTemplate('public')
-
       //
       await fs.copy(paths.resolveModuleTemplate('public'), publicDirectory, {
         recursive: true,
         dereference: true,
       })
+
+      //
       await fs.remove(
         path.join(
-          moduleTemplateDirectory,
-          !featuresUsed.typescript ? 'index.ts' : 'index.js',
+          publicDirectory,
+          !featuresUsed.typescript ? 'index.tsx' : 'index.jsx',
         ),
       )
     }
@@ -98,13 +95,12 @@ async function standalone(options: DevStandaloneOptions): Promise<boolean> {
   log()
 
   //
-  const webpackConfig = createWebpackConfig(
+  const webpackConfig = createBuildConfig(
     {
       dev,
       cache,
       directory,
-      module: internalConfig.name,
-      config: Object.assign({}, internalConfig, {
+      internalConfig: Object.assign({}, internalConfig, {
         input: publicScriptIndexPath,
       }),
     },
@@ -113,26 +109,40 @@ async function standalone(options: DevStandaloneOptions): Promise<boolean> {
   )
 
   webpackConfig.plugins?.push(
-    // @ts-ignore
-    new HtmlWebpackPlugin({
-      template: publicHtmlIndexPath,
-      // Inject all main scripts to template
-      inject: true,
-      // Errors details will be written into the HTML page
-      showErrors: true,
-      // Modern browsers support non blocking javascript loading ('defer') to
-      // improve the page startup performance.
-      scriptLoading: 'blocking',
-      // The file to write the HTML to
-      filename: 'index.html',
-      // Allows to control how chunks should be sorted before
-      // they are included to the HTML
-      chunksSortMode: 'auto',
-    }),
+    // Generates an `index.html` file with the <script> injected.
+    new HtmlWebpackPlugin(
+      Object.assign(
+        {
+          inject: true,
+          template: paths.resolvePublicDirectory(directory, 'index.html'),
+        },
+        !dev
+          ? {
+              minify: {
+                removeComments: true,
+                collapseWhitespace: true,
+                removeRedundantAttributes: true,
+                useShortDoctype: true,
+                removeEmptyAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                keepClosingSlash: true,
+                minifyJS: true,
+                minifyCSS: true,
+                minifyURLs: true,
+              },
+            }
+          : undefined,
+      ),
+    ),
+    // Makes some environment variables available in index.html.
+    // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
+    // <link rel="icon" href="%PUBLIC_URL%/favicon.ico">
+    // It will be an empty string unless you specify "homepage"
+    // in `package.json`, in which case it will be the pathname of that URL.
     new InterpolateHtmlPlugin(HtmlWebpackPlugin, {
       // Remove slash at end from `publicPath`
       // Example publicPath: `https://nuz.app/` -> `https://nuz.app`
-      PUBLIC_URL: publicUrlOrPath?.slice(0, -1) as string,
+      PUBLIC_URL: internalConfig.publicUrlOrPath.slice(0, -1) as string,
     }),
   )
 
@@ -160,7 +170,7 @@ async function standalone(options: DevStandaloneOptions): Promise<boolean> {
     compiler,
     createDevServerConfig({
       standalone: true,
-      publicUrlOrPath,
+      publicUrlOrPath: internalConfig.publicUrlOrPath,
       ignored: [ignoredFiles(directory)],
       contentBase: [publicDirectory],
     }) as any,

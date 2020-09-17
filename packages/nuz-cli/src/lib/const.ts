@@ -26,6 +26,7 @@ export const CHANGES_EMOJI = [
 ]
 
 export const STATS_FILENAME = 'stats.json'
+export const MANIFEST_FILENAME = 'manifest.json'
 
 export const GITHUB_ORGANIZATION = 'nuz-app'
 export const GITHUB_REPOSITORY = 'nuz'

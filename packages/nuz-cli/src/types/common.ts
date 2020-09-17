@@ -31,43 +31,76 @@ export interface ExperimentalConfiguration {
 
 export interface InternalConfiguration {
   /**
-   * Name of module
+   * The module name.
    */
   name: string
   /**
-   * Version of module
+   * The module version.
    */
   version: string
   /**
-   * Library name
+   * The library name
    */
   library: string
   /**
-   * Input file
+   * Path to the module input file.
    */
   input: string
   /**
-   * Output file
+   * Path to the module output file.
    */
   output: string
   /**
-   * Public path using in build, default: '/'
+   * Configure the public path for the module.
    */
   publicPath: string
   /**
-   * Extends externals module
+   * Set externals dependencies for the module.
    */
   externals?: webpack.ExternalsElement | webpack.ExternalsElement[]
   /**
-   * Enable feature by loader and plugins
+   * Set features used for the module.
    */
-  feature?: boolean | FeaturesUsed
+  featuresUsed?: boolean | FeaturesUsed
   /**
-   * Bundle analyzer for production mode
+   * Allows to output analyzer for the mobule.
    */
   analyzer?: boolean | AnalyzerConfiguration
   /**
-   * Allow to custom webpack config
+   * Configure the registry service information.
+   */
+  registry?: RegistryConfiguration
+  /**
+   * Configure workspaces paths for workspaces mode,
+   * only for the applocation.
+   */
+  workspaces?: string[]
+  /**
+   * Set shared dependencies for the module.
+   */
+  shared?: string[]
+  /**
+   * Configure experimental features.
+   */
+  experimental?: ExperimentalConfiguration
+  /**
+   * Is build module isolated configuration.
+   */
+  isolated?: boolean
+  /**
+   * Configure exports for the module.
+   */
+  alias?: { [name: string]: string }
+  /**
+   * Additional node modules paths
+   */
+  additionalNodeModules?: string[]
+  /**
+   * Allows to extends Webpack aliases
+   */
+  webpackAliases?: any
+  /**
+   * Allows to update Webpack configuration.
    */
   webpack?: (
     config: webpack.Configuration,
@@ -77,47 +110,6 @@ export interface InternalConfiguration {
       'name' | 'mode' | 'target' | 'entry' | 'output' | 'module'
     >
   >
-  /**
-   * Publish config
-   */
-  registry?: RegistryConfiguration
-  /**
-   * Workspace paths
-   */
-  workspace?: string[]
-  /**
-   * Shared dependencies module used
-   */
-  shared?: string[]
-  /**
-   * Serve config
-   * Config using for dev, serve and workspace mode
-   */
-  serve?: ServeConfiguration
-  /**
-   * Experimental
-   */
-  experimental?: ExperimentalConfiguration
-  /**
-   * Build isolated module
-   */
-  isolated?: boolean
-  /**
-   * Alias modules resolve
-   */
-  alias?: { [name: string]: string }
-  /**
-   * Filenames of webpack plugins
-   */
-  names?: Partial<NamedConfiguration>
-}
-
-export interface NamedConfiguration {
-  chunkFilename: () => string
-  cssLocalIdentName: () => string
-  cssFilename: () => string
-  cssChunkFilename: () => string
-  imageMinifiedFilename: (resourcePath: string) => string
 }
 
 export interface FeaturesUsed {
@@ -126,7 +118,6 @@ export interface FeaturesUsed {
   postcss: boolean | any
 
   css: boolean | any
-  modules: boolean | RegExp | 'auto'
   sass: boolean | any
   less: boolean | any
 }

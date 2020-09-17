@@ -13,7 +13,7 @@ import getOutputDirectory from '../../utils/getOutputDirectory'
 import print, { info, log, pretty, success } from '../../utils/print'
 import printBuildOutputMessages from '../../utils/printBuildOutputMessages'
 import requireInternalConfig from '../../utils/requireInternalConfig'
-import webpackConfigFactory from '../../utils/webpack/factories/buildConfig'
+import createBuildConfig from '../../utils/webpack/createBuildConfig'
 
 interface BuildOptimizedOptions extends Arguments<{ publicPath?: string }> {}
 
@@ -23,7 +23,11 @@ async function optimized(options: BuildOptimizedOptions): Promise<boolean> {
   const directory = paths.cwd
   const dev = false
   const cache = true
-  const internalConfig = requireInternalConfig(directory, true)
+  const internalConfig = requireInternalConfig({
+    directory,
+    dev,
+    required: true,
+  })
 
   // Override `publicPath` field in internal config
   if (typeof publicPath === 'string') {
@@ -31,10 +35,14 @@ async function optimized(options: BuildOptimizedOptions): Promise<boolean> {
   }
 
   // Detect features used and get output directory
-  const featuresUsed = detectFeaturesUsed(directory)
+  const featuresUsed = detectFeaturesUsed(directory, dev)
   const outputDirectory = getOutputDirectory(directory, internalConfig.output)
+  const name = internalConfig.name
 
   clearConsole()
+  info('Start building the module with optimization...')
+  log()
+
   info('Cleaning up the directories before proceeding...')
   log()
 
@@ -45,13 +53,12 @@ async function optimized(options: BuildOptimizedOptions): Promise<boolean> {
   log()
 
   //
-  const buildConfig = webpackConfigFactory(
+  const buildConfig = createBuildConfig(
     {
       dev,
       cache,
       directory,
-      module: name,
-      config: internalConfig,
+      internalConfig,
     },
     featuresUsed,
   )
@@ -73,8 +80,10 @@ async function optimized(options: BuildOptimizedOptions): Promise<boolean> {
   )
 
   //
+  log()
   success(`Module ${print.name(name)} was built successfully!`)
   info(`Output file integrity is ${print.blueBright(integrity)}.`)
+  log()
 
   return true
 }

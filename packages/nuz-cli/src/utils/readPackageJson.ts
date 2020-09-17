@@ -2,6 +2,8 @@ import fs from 'fs-extra'
 
 import * as paths from '../paths'
 
+import print from './print'
+
 export interface PackageJson {
   [key: string]: any
   name: string
@@ -15,14 +17,14 @@ let packageJsons = {} as { [key: string]: PackageJson }
 
 function readPackageJson(directory: string): PackageJson {
   if (!packageJsons[directory]) {
-    const packageJsonPath = paths.resolvePackageJson(directory)
-    if (!fs.existsSync(packageJsonPath)) {
+    const resolvePackageJson = paths.resolvePackageJson(directory)
+    if (!fs.existsSync(resolvePackageJson)) {
       throw new Error(
-        `Not found package.json file in directory at ${directory}`,
+        `Not found package.json file in directory at ${print.dim(directory)}.`,
       )
     }
 
-    packageJsons[directory] = require(packageJsonPath)
+    packageJsons[directory] = require(resolvePackageJson)
   }
 
   return packageJsons[directory]

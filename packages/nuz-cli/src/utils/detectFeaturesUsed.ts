@@ -22,23 +22,26 @@ function shouldEnable<T = any>(value: T, detector: () => T): T {
   return detector()
 }
 
-function detectFeaturesUsed(directory: string): FeaturesUsed {
-  const { feature } = requireInternalConfig(directory, true)
+function detectFeaturesUsed(directory: string, dev: boolean): FeaturesUsed {
+  const { featuresUsed } = requireInternalConfig({
+    directory,
+    dev,
+    required: true,
+  })
 
   // Turn off all configurations
-  if (feature === false) {
+  if (featuresUsed === false) {
     return {
       typescript: false,
       react: false,
       css: false,
-      modules: false,
       less: false,
       sass: false,
       postcss: false,
     }
   }
 
-  const used = (feature || {}) as FeaturesUsed
+  const used = (featuresUsed || {}) as FeaturesUsed
 
   // Detect Typescript using by `tsconfig.json` file
   const useTypescript = shouldEnable(used.typescript, (): boolean =>
@@ -62,7 +65,6 @@ function detectFeaturesUsed(directory: string): FeaturesUsed {
         }) || []
       ).length > 0,
   )
-  const useCssModules = shouldEnable(used.modules, (): any => 'auto')
 
   // Detect Less using by less files in the project
   const useLess = shouldEnable(
@@ -95,7 +97,6 @@ function detectFeaturesUsed(directory: string): FeaturesUsed {
     typescript: useTypescript,
     react: useReact,
     css: useCss,
-    modules: useCssModules,
     less: useLess,
     sass: useSass,
     postcss: usePostCss,

@@ -22,8 +22,8 @@ import prepareUrls from '../../utils/prepareUrls'
 import print, { info, log, pretty } from '../../utils/print'
 import * as processHelpers from '../../utils/process'
 import requireInternalConfig from '../../utils/requireInternalConfig'
-import createWebpackConfig from '../../utils/webpack/factories/buildConfig'
-import createDevServerConfig from '../../utils/webpack/factories/devServerConfig'
+import createBuildConfig from '../../utils/webpack/createBuildConfig'
+import createDevServerConfig from '../../utils/webpack/createDevServerConfig'
 
 interface DevWorkspacesOptions
   extends Arguments<{ port?: number; workspaces: string[]; open?: boolean }> {}
@@ -39,8 +39,12 @@ async function devWorkspaces(options: DevWorkspacesOptions): Promise<boolean> {
   const directory = paths.cwd
 
   // Get the information needed to start workspaces mode
-  const internalConfig = requireInternalConfig(directory, false)
-  const featuresUsed = detectFeaturesUsed(directory)
+  const internalConfig = requireInternalConfig({
+    directory,
+    dev,
+    required: false,
+  })
+  const featuresUsed = detectFeaturesUsed(directory, dev)
 
   const workspaces = _workspaces ?? internalConfig.workspaces
   if (!Array.isArray(workspaces)) {
@@ -79,12 +83,14 @@ async function devWorkspaces(options: DevWorkspacesOptions): Promise<boolean> {
     (acc, internalModulePath: string) => {
       // Get the information needed of internal module
       const resolveInternalModule = fs.realpathSync(internalModulePath)
-      const internalModuleConfig = requireInternalConfig(
-        resolveInternalModule,
-        true,
-      )
+      const internalModuleConfig = requireInternalConfig({
+        dev,
+        directory: resolveInternalModule,
+        required: true,
+      })
       const internalModulesFeaturesUsed = detectFeaturesUsed(
         resolveInternalModule,
+        dev,
       )
 
       const { name: moduleName } = internalModuleConfig
@@ -106,13 +112,12 @@ async function devWorkspaces(options: DevWorkspacesOptions): Promise<boolean> {
       const internalModulePublicPath = publicUrlOrPath + moduleName + '/'
 
       //
-      const webpackConfig = createWebpackConfig(
+      const webpackConfig = createBuildConfig(
         {
           dev,
           cache,
-          module: moduleName,
           directory: resolveInternalModule,
-          config: Object.assign({}, internalModuleConfig, {
+          internalConfig: Object.assign({}, internalModuleConfig, {
             publicPath: internalModulePublicPath,
             output: internalModuleOutputFile,
           }),

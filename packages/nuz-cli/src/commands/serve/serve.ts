@@ -14,8 +14,13 @@ export interface ServeMainOptions extends Arguments<{ port?: number }> {}
 async function _serve(options: ServeMainOptions): Promise<boolean> {
   const { port } = Object.assign({ port: 4000 }, options)
 
+  const dev = false
   const directory = paths.cwd
-  const internalConfig = requireInternalConfig(directory, true)
+  const internalConfig = requireInternalConfig({
+    directory,
+    dev,
+    required: true,
+  })
 
   const outputDirectory = getOutputDirectory(directory, internalConfig.output)
   if (!fs.existsSync(outputDirectory)) {
@@ -28,12 +33,10 @@ async function _serve(options: ServeMainOptions): Promise<boolean> {
   info('Preparing to service static resources...')
   log()
 
-  const server = serve(
-    Object.assign({}, internalConfig.serve, {
-      port,
-      directory: outputDirectory,
-    }),
-  )
+  const server = serve({
+    port,
+    directory: outputDirectory,
+  })
   info(`Server was created to files serving for the module.`)
   log()
 

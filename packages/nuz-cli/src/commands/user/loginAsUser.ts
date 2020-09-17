@@ -46,7 +46,7 @@ async function loginAsUser(options: UserLoginAsUserOptions): Promise<boolean> {
     const request = await Worker.loginAsUser(username as string, password)
     const userId = request?.data?._id
     const accessToken = request?.data?.accessToken
-    const staticOrigin = request?.data?.static
+    const cdn = request?.data?.cdn
     // const providedType = request?.data?.providedType
 
     if (!userId || !accessToken) {
@@ -75,7 +75,7 @@ async function loginAsUser(options: UserLoginAsUserOptions): Promise<boolean> {
     //
     await setConfig({
       key: ConfigurationFields.static,
-      value: staticOrigin,
+      value: cdn,
     } as any)
 
     //
