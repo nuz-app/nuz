@@ -29,7 +29,7 @@ export async function setCommands(yargs: any): Promise<any> {
 
   showHelpIfInvalid(yargs, yargs.argv, 1, 2)
 
-  await checkUpdate()
+  checkUpdate()
 
   return yargs
 }
