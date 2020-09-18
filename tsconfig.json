@@ -17,7 +17,10 @@
     "noUnusedLocals": true
   },
   "exclude": [
-    "**/examples/**"
+    "**/examples/**",
+    "**/node_modules/**",
+    "**/*.test.ts",
+    "**/*.spec.ts"
   ],
   "references": []
 }
