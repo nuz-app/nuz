@@ -25,7 +25,7 @@ Object.defineProperty(printer, 'time', {
 export const log = console.log
 
 export function info(...rest: any[]): any {
-  return console.log(printer.black.bgCyanBright(` i `), ...rest)
+  return console.log(printer.black.bgCyanBright(` info `), ...rest)
 }
 
 export function success(...rest: any[]): any {

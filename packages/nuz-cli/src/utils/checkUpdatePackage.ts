@@ -22,6 +22,7 @@ async function checkUpdatePackage(): Promise<void> {
 
   if (update) {
     const useYarn = checkIsYarnInstalled()
+
     log()
     log(
       `The latest available version is ${print.cyan(

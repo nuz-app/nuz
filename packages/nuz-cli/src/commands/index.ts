@@ -1,3 +1,4 @@
+import setUsage from '../utils/setUsage'
 import showHelpIfInvalid from '../utils/showHelpIfInvalid'
 
 import * as build from './build'
@@ -12,6 +13,8 @@ import checkUpdate from './tools/checkUpdate'
 import * as user from './user'
 
 export async function setCommands(yargs: any): Promise<any> {
+  setUsage(yargs, '$0')
+
   dev.setCommands(yargs)
   build.setCommands(yargs)
   serve.setCommands(yargs)
