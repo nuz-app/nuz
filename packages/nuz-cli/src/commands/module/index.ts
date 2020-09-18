@@ -1,3 +1,5 @@
+import print from '../../utils/print'
+import setUsage from '../../utils/setUsage'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 import wrapCommand from '../../utils/wrapCommand'
 
@@ -11,97 +13,99 @@ import setDeprecate from './setDeprecate'
 import updateCollaborator from './updateCollaborator'
 
 export function setCommands(yargs): void {
-  yargs.command('module', 'Manage module', function (child) {
-    child.usage('usage: $0 module <item> [options]')
+  yargs.command('module', print.dim('Manage module'), function (child) {
+    setUsage(child, '$0 module <item> [options]')
 
     child.command(
       'create [name] [template]',
-      'Create new module',
+      print.dim('Create new module'),
       (yarg) => yarg,
       wrapCommand(create),
     )
 
     child.command(
       'get <module> [fields..]',
-      'Get details of a module',
+      print.dim('Get details of a module'),
       (yarg) => yarg,
       wrapCommand(getDetails),
     )
 
     child.command(
       'publish [fallback]',
-      'Publish version for the module',
+      print.dim('Publish version for the module'),
       (yarg) =>
         yarg
           .option('self-hosted', {
-            describe: 'Is publish as self hosted',
+            describe: print.dim('Is publish as self hosted'),
             type: 'boolean',
             default: false,
             required: false,
           })
           .option('yes', {
-            describe: 'Publish without confirmation',
+            describe: print.dim('Publish without confirmation'),
             type: 'boolean',
             default: false,
             required: false,
           })
           .option('token', {
-            describe: 'Override authentication token',
+            describe: print.dim('Override authentication token'),
             type: 'string',
             required: false,
           })
           .option('registry', {
-            describe: 'Override registry service endpoint',
+            describe: print.dim('Override registry service endpoint'),
             type: 'string',
             required: false,
           })
           .option('static', {
-            describe: 'Override static origin value',
+            describe: print.dim('Override static origin value'),
             type: 'string',
             required: false,
           }),
       wrapCommand(publish),
     )
 
-    child.command('collaborator', 'Manage collaborator of module', function (
-      schild,
-    ) {
-      schild.usage('usage: $0 module collaborator <type> [options]')
+    child.command(
+      'collaborator',
+      print.dim('Manage collaborator of module'),
+      function (schild) {
+        setUsage(schild, '$0 module collaborator <type> [options]')
 
-      schild.command(
-        'add <module> <user> [type]',
-        'Add collaborator to the module',
-        (yarg) => yarg,
-        wrapCommand(addCollaborator),
-      )
+        schild.command(
+          'add <module> <user> [type]',
+          print.dim('Add collaborator to the module'),
+          (yarg) => yarg,
+          wrapCommand(addCollaborator),
+        )
 
-      schild.command(
-        'update <module> <user> <type>',
-        'Update collaborator of the module',
-        (yarg) => yarg,
-        wrapCommand(updateCollaborator),
-      )
+        schild.command(
+          'update <module> <user> <type>',
+          print.dim('Update collaborator of the module'),
+          (yarg) => yarg,
+          wrapCommand(updateCollaborator),
+        )
 
-      schild.command(
-        'remove <module> <user>',
-        'Remove collaborator from the module',
-        (yarg) => yarg,
-        wrapCommand(removeCollaborator),
-      )
+        schild.command(
+          'remove <module> <user>',
+          print.dim('Remove collaborator from the module'),
+          (yarg) => yarg,
+          wrapCommand(removeCollaborator),
+        )
 
-      schild.command(
-        'list <module>',
-        'List collaborators of the module',
-        (yarg) => yarg,
-        wrapCommand(listCollaborators),
-      )
+        schild.command(
+          'list <module>',
+          print.dim('List collaborators of the module'),
+          (yarg) => yarg,
+          wrapCommand(listCollaborators),
+        )
 
-      showHelpIfInvalid(schild, schild.argv, 3, 4)
-    })
+        showHelpIfInvalid(schild, schild.argv, 3, 4)
+      },
+    )
 
     child.command(
       'deprecate <module> <versions> [deprecate]',
-      'Deprecate a module',
+      print.dim('Deprecate a module'),
       (yarg) => yarg,
       wrapCommand(setDeprecate),
     )
@@ -111,14 +115,14 @@ export function setCommands(yargs): void {
 
   yargs.command(
     'create [name] [template]',
-    'Create new module [alias: module-create]',
+    print.dim('Create new module [alias: module-create]'),
     (yarg) => yarg,
     wrapCommand(create),
   )
 
   yargs.command(
     'publish [fallback]',
-    `Publish version for the module [alias: module-publish]`,
+    print.dim(`Publish version for the module [alias: module-publish]`),
     (yarg) => yarg,
     wrapCommand(publish),
   )

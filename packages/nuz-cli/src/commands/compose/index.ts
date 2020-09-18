@@ -1,3 +1,5 @@
+import print from '../../utils/print'
+import setUsage from '../../utils/setUsage'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 import wrapCommand from '../../utils/wrapCommand'
 
@@ -12,79 +14,83 @@ import setModules from './setModules'
 import updateCollaborator from './updateCollaborator'
 
 export function setCommands(yargs: any): void {
-  yargs.command('compose', 'Manage compose', function (child) {
-    child.usage('usage: $0 compose <item> [options]')
+  yargs.command('compose', print.dim('Manage compose'), function (child) {
+    setUsage(child, '$0 compose <item> [options]')
 
     child.command(
       'get <compose> [fields..]',
-      'Get details of a compose',
+      print.dim('Get details of a compose'),
       (yarg) => yarg,
       wrapCommand(getDetails),
     )
 
     child.command(
       'create <name>',
-      'Create a compose',
+      print.dim('Create a compose'),
       (yarg) => yarg,
       wrapCommand(createCompose),
     )
 
     child.command(
       'delete <name>',
-      'Delete a compose',
+      print.dim('Delete a compose'),
       (yarg) => yarg,
       wrapCommand(deleteCompose),
     )
 
-    child.command('collaborator', 'Manage collaborator of compose', function (
+    child.command(
+      'collaborator',
+      print.dim('Manage collaborator of compose'),
+      function (schild) {
+        setUsage(schild, '$0 collaborator collaborator <type> [options]')
+
+        schild.command(
+          'add <compose> <user> [type]',
+          print.dim('Add collaborator to the compose'),
+          (yarg) => yarg,
+          wrapCommand(addCollaborator),
+        )
+
+        schild.command(
+          'update <compose> <user> <type>',
+          print.dim('Update collaborator of the compose'),
+          (yarg) => yarg,
+          wrapCommand(updateCollaborator),
+        )
+
+        schild.command(
+          'remove <compose> <user>',
+          print.dim('Remove collaborator from the compose'),
+          (yarg) => yarg,
+          wrapCommand(removeCollaborator),
+        )
+
+        schild.command(
+          'list <compose>',
+          print.dim('List collaborators of the compose'),
+          (yarg) => yarg,
+          wrapCommand(listCollaborators),
+        )
+
+        showHelpIfInvalid(schild, schild.argv, 3, 4)
+      },
+    )
+
+    child.command('modules', print.dim('Manage modules of compose'), function (
       schild,
     ) {
-      schild.usage('usage: $0 compose collaborator <type> [options]')
-
-      schild.command(
-        'add <compose> <user> [type]',
-        'Add collaborator to the compose',
-        (yarg) => yarg,
-        wrapCommand(addCollaborator),
-      )
-
-      schild.command(
-        'update <compose> <user> <type>',
-        'Update collaborator of the compose',
-        (yarg) => yarg,
-        wrapCommand(updateCollaborator),
-      )
-
-      schild.command(
-        'remove <compose> <user>',
-        'Remove collaborator from the compose',
-        (yarg) => yarg,
-        wrapCommand(removeCollaborator),
-      )
-
-      schild.command(
-        'list <compose>',
-        'List collaborators of the compose',
-        (yarg) => yarg,
-        wrapCommand(listCollaborators),
-      )
-
-      showHelpIfInvalid(schild, schild.argv, 3, 4)
-    })
-
-    child.command('modules', 'Manage modules of compose', function (schild) {
-      schild.usage('usage: $0 compose modules <type> [options]')
+      setUsage(schild, '$0 modules modules <type> [options]')
 
       schild.command(
         'set <compose> <modules..>',
-        'Set modules for the compose',
+        print.dim('Set modules for the compose'),
         (yarg) => yarg,
         wrapCommand(setModules),
       )
 
       schild.command(
         'remove <compose> <moduleIds..>',
-        'Remove modules from the compose',
+        print.dim('Remove modules from the compose'),
         (yarg) => yarg,
         wrapCommand(removeModules),
       )

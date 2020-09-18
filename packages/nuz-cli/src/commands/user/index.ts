@@ -1,3 +1,5 @@
+import print from '../../utils/print'
+import setUsage from '../../utils/setUsage'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 import wrapCommand from '../../utils/wrapCommand'
 
@@ -14,14 +16,19 @@ import useAs from './useAs'
 import whoami from './whoami'
 
 export function setCommands(yargs): void {
-  yargs.command('user', 'Manage user', function (child): void {
-    child.usage('usage: $0 user <item> [options]')
+  yargs.command('user', print.dim('Manage user'), function (child): void {
+    setUsage(child, 'usage: $0 user <item> [options]')
 
-    child.command('whoami', 'Who I am?', (yarg) => yarg, wrapCommand(whoami))
+    child.command(
+      'whoami',
+      print.dim('Who I am?'),
+      (yarg) => yarg,
+      wrapCommand(whoami),
+    )
 
     child.command(
       'login',
-      'Login user account',
+      print.dim('Login user account'),
       (yarg) =>
         yarg.option('registry', {
           describe: 'Log into the specified registry',
@@ -33,28 +40,28 @@ export function setCommands(yargs): void {
 
     child.command(
       'logout [username]',
-      'Logout of user account',
+      print.dim('Logout of user account'),
       (yarg) => yarg,
       wrapCommand(logoutFromUser),
     )
 
     child.command(
       'register',
-      'Register a new user',
+      print.dim('Register a new user'),
       (yarg) => yarg,
       wrapCommand(createUser),
     )
 
     child.command(
       'list',
-      'List all users in work folder',
+      print.dim('List all users in work folder'),
       (yarg) => yarg,
       wrapCommand(listUsers),
     )
 
     child.command(
       'use <username>',
-      'Switch to using other user in work folder',
+      print.dim('Switch to using other user in work folder'),
       (yarg) =>
         yarg.positional('username', {
           describe: 'Username wants to use',
@@ -65,18 +72,18 @@ export function setCommands(yargs): void {
     )
 
     child.command('token', 'Manage token of user', function (schild): void {
-      schild.usage('usage: $0 user token <type> [options]')
+      setUsage(schild, '$0 user token <type> [options]')
 
       schild.command(
         'create <type>',
-        'Create a token for user',
+        print.dim('Create a token for user'),
         (yarg) => yarg,
         wrapCommand(createToken),
       )
 
       schild.command(
         'delete <token>',
-        'Delete a token from user',
+        print.dim('Delete a token from user'),
         (yarg) => yarg,
         wrapCommand(deleteToken),
       )
@@ -85,25 +92,25 @@ export function setCommands(yargs): void {
     })
 
     child.command('my', 'Show my list', function (schild): void {
-      schild.usage('usage: $0 user my <type> [options]')
+      setUsage(schild, '$0 user my <type> [options]')
 
       schild.command(
         'composes',
-        'List composes of current user',
+        print.dim('List composes of current user'),
         (yarg) => yarg,
         wrapCommand(allCompose),
       )
 
       schild.command(
         'scopes',
-        'List scopes of current user',
+        print.dim('List scopes of current user'),
         (yarg) => yarg,
         wrapCommand(allScopes),
       )
 
       schild.command(
         'modules',
-        'List modules of current user',
+        print.dim('List modules of current user'),
         (yarg) => yarg,
         wrapCommand(allModules),
       )
@@ -116,14 +123,14 @@ export function setCommands(yargs): void {
 
   yargs.command(
     'whoami',
-    'Who I am? [alias: user-whoami]',
+    print.dim('Who I am? [alias: user-whoami]'),
     (yarg) => yarg,
     wrapCommand(whoami),
   )
 
   yargs.command(
     'login [username]',
-    'Login user account [alias: user-login]',
+    print.dim('Login user account [alias: user-login]'),
     (yarg) =>
       yarg.option('registry', {
         describe: 'Log into the specified registry',
@@ -135,14 +142,14 @@ export function setCommands(yargs): void {
 
   yargs.command(
     'logout [username]',
-    'Logout of user account [alias: user-logout]',
+    print.dim('Logout of user account [alias: user-logout]'),
     (yarg) => yarg,
     wrapCommand(logoutFromUser),
   )
 
   yargs.command(
     'register',
-    'Register a new user [alias: user-register]',
+    print.dim('Register a new user [alias: user-register]'),
     (yarg) => yarg,
     wrapCommand(createUser),
   )

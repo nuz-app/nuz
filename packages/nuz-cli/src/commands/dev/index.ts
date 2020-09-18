@@ -1,5 +1,7 @@
 import { Arguments } from 'yargs'
 
+import print from '../../utils/print'
+import setUsage from '../../utils/setUsage'
 import wrapCommand from '../../utils/wrapCommand'
 
 import standalone from './standalone'
@@ -16,24 +18,27 @@ async function dev(argv: DevOptions): Promise<boolean> {
 export function setCommands(yargs): void {
   yargs.command(
     'dev',
-    'Start the development mode for the module(s)',
+    print.dim('Start the development mode for the module(s)'),
     (child) =>
-      child
-        .option('workspaces', {
-          describe: 'Use workspaces',
-          type: 'array',
-          required: false,
-        })
-        .option('port', {
-          describe: 'Serve port',
-          type: 'number',
-          required: false,
-        })
-        .option('open', {
-          describe: 'Open browser',
-          type: 'boolean',
-          required: false,
-        }),
+      setUsage(
+        child
+          .option('workspaces', {
+            describe: print.dim('Use workspaces'),
+            type: 'array',
+            required: false,
+          })
+          .option('port', {
+            describe: print.dim('Serve port'),
+            type: 'number',
+            required: false,
+          })
+          .option('open', {
+            describe: print.dim('Open browser'),
+            type: 'boolean',
+            required: false,
+          }),
+        '$0 dev',
+      ),
     wrapCommand(dev),
   )
 }
