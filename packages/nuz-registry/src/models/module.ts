@@ -44,13 +44,13 @@ const schema: Schema = new Schema(
           publisher: userIdSchema,
           createdAt: createdAtSchema,
           resolve: {
-            main: resolveResourceSchema,
+            script: resolveResourceSchema,
             styles: [resolveResourceSchema],
           },
           files: [detailsResourceSchema],
           sizes: {
             total: { type: Number, required: true, default: -1 },
-            main: { type: Number, required: true, default: -1 },
+            script: { type: Number, required: true, default: -1 },
             styles: { type: Number, required: true, default: -1 },
           },
           alias: { type: Schema.Types.Mixed, required: false },

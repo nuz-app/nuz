@@ -15,7 +15,7 @@ export interface PickResouce {
 }
 
 export interface PickOutput {
-  main: PickResouce
+  script: PickResouce
   styles: PickResouce[]
 }
 
@@ -62,7 +62,7 @@ function getModuleAssetsOnly(
     }
   }
 
-  const main = transformer(
+  const script = transformer(
     entrypointsAssets.find((item) => /\.js$/.test(item)) as string,
   )
   const styles = entrypointsAssets
@@ -74,7 +74,7 @@ function getModuleAssetsOnly(
   return {
     files,
     resolve: {
-      main,
+      script,
       styles,
     },
   }

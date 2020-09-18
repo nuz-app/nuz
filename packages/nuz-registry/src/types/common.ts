@@ -27,7 +27,7 @@ export interface Schedule {}
 
 export interface VersionSizes {
   total: number
-  scripts: number
+  script: number
   styles: number
 }
 
@@ -57,7 +57,7 @@ export type VersionInfo = {
   createdAt: Date
   format: ModuleFormats
   resolve: {
-    main: Resource
+    script: Resource
     styles: Resource[]
   }
   files: Resource[]

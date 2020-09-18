@@ -204,7 +204,7 @@ async function devWorkspaces(options: DevWorkspacesOptions): Promise<boolean> {
           library: internalModuleWebpackConfig.output.library,
           format: internalModuleWebpackConfig.output.libraryTarget,
           upstream: {
-            main: modulesAssetsOnly.resolve.main.url,
+            script: modulesAssetsOnly.resolve.script.url,
             styles: modulesAssetsOnly.resolve.styles.map((style) => style.url),
           },
         },

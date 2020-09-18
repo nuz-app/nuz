@@ -31,17 +31,17 @@ function ensureUrlAndIntegrity(
 function getResolvedUrls(
   resolve: string | UpstreamResolveConfig,
 ): {
-  main: any
+  script: Resource
   styles: Resource[]
 } {
-  const resolveUrls = { main: null as any, styles: [] as Resource[] }
+  const resolveUrls = { script: null as any, styles: [] as Resource[] }
 
   if (typeof resolve === 'string') {
-    resolveUrls.main = ensureUrlAndIntegrity(resolve)
+    resolveUrls.script = ensureUrlAndIntegrity(resolve)
   } else {
-    const { main, styles } = resolve as UpstreamResolveConfig
+    const { script, styles } = resolve as UpstreamResolveConfig
 
-    resolveUrls.main = ensureUrlAndIntegrity(main)
+    resolveUrls.script = ensureUrlAndIntegrity(script)
 
     if (styles) {
       resolveUrls.styles = styles
@@ -56,11 +56,11 @@ function getResolvedUrls(
 export function parse(
   resolve: UpstreamConfigAllowed,
 ): {
-  main: any
+  script: Resource
   styles: Resource[]
 } | null {
   const resolvedUrls = {
-    main: undefined as any,
+    script: undefined as any,
     styles: [] as Resource[],
   }
 
@@ -69,7 +69,7 @@ export function parse(
   }
 
   if (typeof resolve === 'string') {
-    resolvedUrls.main = { url: resolve, integrity: undefined }
+    resolvedUrls.script = { url: resolve, integrity: undefined }
     return resolvedUrls
   }
 

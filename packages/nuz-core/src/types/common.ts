@@ -33,7 +33,7 @@ export type UpstreamResolveResource = {
 }
 
 export type UpstreamResolveConfig = {
-  main: string | UpstreamResolveResource
+  script: string | UpstreamResolveResource
   styles: (string | UpstreamResolveResource)[]
 }
 

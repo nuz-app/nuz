@@ -69,14 +69,14 @@ function ensureUploadedFiles(
   }
 
   //
-  const scriptsPaths = [resolve.main.path]
+  const scriptPaths = [resolve.script.path]
   const stylesPaths = (resolve.styles || []).map((item) => item.path)
 
   //
   const ensuredFiles: TransformFile[] = []
   const sizes = {
     total: 0,
-    scripts: 0,
+    script: 0,
     styles: 0,
   }
 
@@ -101,8 +101,8 @@ function ensureUploadedFiles(
 
     // Updated size information.
     sizes.total += file.size
-    if (scriptsPaths.includes(file.path)) {
-      sizes.scripts += file.size
+    if (scriptPaths.includes(file.path)) {
+      sizes.script += file.size
     } else if (stylesPaths.includes(file.path)) {
       sizes.styles += file.size
     }

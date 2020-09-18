@@ -297,12 +297,12 @@ class Modules {
     }
 
     const { upstream } = item
-    const { main, styles } = requireHelpers.parse(upstream) || ({} as any)
+    const { script, styles } = requireHelpers.parse(upstream) || ({} as any)
 
     // Create preload script for the resource
-    const preloadScript = documentHelpers.preloadScript(main.url, {
+    const preloadScript = documentHelpers.preloadScript(script.url, {
       sourceMap: this.dev,
-      integrity: main.integrity,
+      integrity: script.integrity,
     })
 
     // Create preload styles for the resource
@@ -434,15 +434,21 @@ class Modules {
     )
 
     // Parse to get information about module styles and script
-    const { main, styles } = requireHelpers.parse(upstream) || {}
+    const { script, styles } = requireHelpers.parse(upstream) || {}
+
+    if (!script) {
+      throw new Error(
+        'The resolve information is incorrect, and cannot be used.',
+      )
+    }
 
     // Download module script content
     const code = await downloadResource(
-      main.url,
+      script.url,
       {
         resolver: this.cacheResolver,
         timeout,
-        integrity: main.integrity,
+        integrity: script.integrity,
         sourceMap: this.dev,
       },
       retries,
@@ -619,10 +625,17 @@ class Modules {
   private async optimizeConnection(): Promise<TagElement[]> {
     const loadedModules = Object.values(this.getLoadedModules(true))
     const urls = loadedModules.reduce((acc, item) => {
-      const { main, styles } = requireHelpers.parse(item?.upstream as any) || {}
+      const { script, styles } =
+        requireHelpers.parse(item?.upstream as any) || {}
+
+      if (!script) {
+        throw new Error(
+          'The resolve information is incorrect, and cannot be used.',
+        )
+      }
 
       return acc.concat(
-        ensureOrigin(main.url) as string,
+        ensureOrigin(script.url) as string,
         ...(styles || []).map(
           (style: any) => ensureOrigin(style.url) as string,
         ),

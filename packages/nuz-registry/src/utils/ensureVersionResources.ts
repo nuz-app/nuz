@@ -23,14 +23,14 @@ async function getOrVerifyIntegrity(item: string | Resource) {
 }
 
 async function ensureVersionResources(_resolve: VersionInfo['resolve']) {
-  const urls = [_resolve.main, ...(_resolve.styles || [])].filter(Boolean)
+  const urls = [_resolve.script, ...(_resolve.styles || [])].filter(Boolean)
 
-  const [main, ...styles] = await Promise.all(
+  const [script, ...styles] = await Promise.all(
     urls.map(getOrVerifyIntegrity).filter(Boolean),
   )
 
   return {
-    main,
+    script,
     styles: styles.length > 0 ? styles : undefined,
   }
 }

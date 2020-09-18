@@ -257,7 +257,7 @@ class Worker {
       // Update the url and additional security information
       // for the resource before it is written to the database.
       await Promise.all(
-        [...files, ...resolve.styles, resolve.main].map(
+        [...files, ...resolve.styles, resolve.script].map(
           async (item: Resource) => {
             // Generate url for resources when uploaded to CDNs.
             const url = await this.storageInstance?.createUrl(
