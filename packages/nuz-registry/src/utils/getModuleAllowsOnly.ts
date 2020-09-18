@@ -5,8 +5,13 @@ import { ModuleDocument, VersionInfo } from '../types'
 import getAllowsVersion from './getAllowsVersion'
 import getImportantFieldsOnly from './getImportantFieldsOnly'
 
+interface ModuleAllowsOnlyRequired {
+  id: string
+  version: string
+}
+
 function getModuleAllowsOnly(
-  required: { id: string; version: string },
+  required: ModuleAllowsOnlyRequired,
   modules: ModuleDocument[],
 ) {
   const selectedModule = modules.find((sub) => sub._id === required.id)

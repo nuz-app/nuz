@@ -35,12 +35,6 @@ export function setCommands(yargs): void {
       print.dim('Publish version for the module'),
       (yarg) =>
         yarg
-          .option('self-hosted', {
-            describe: print.dim('Is publish as self hosted'),
-            type: 'boolean',
-            default: false,
-            required: false,
-          })
           .option('yes', {
             describe: print.dim('Publish without confirmation'),
             type: 'boolean',

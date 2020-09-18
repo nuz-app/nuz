@@ -39,6 +39,7 @@ import checkIsNewCompose from '../utils/checkIsNewCompose'
 import checkIsNewScope from '../utils/checkIsNewScope'
 import convertModulesToArray from '../utils/convertModulesToArray'
 import createMongoConnection from '../utils/createMongoConnection'
+import ensureLocalFiles from '../utils/ensureLocalFiles'
 import ensureUploadedFiles from '../utils/ensureUploadedFiles'
 import findCollaborator from '../utils/findCollaborator'
 import getModuleAllowsOnly from '../utils/getModuleAllowsOnly'
@@ -151,15 +152,13 @@ class Worker {
     uploadedFiles: any[],
     options: PublishOptions,
   ) {
-    const { fallback, selfHosted, cdn } = Object.assign({}, options)
+    const { fallback, cdn } = Object.assign({}, options)
 
-    const { version, resolve, files: temporaryFiles } = data
+    const { version, resolve, files: localFiles } = data
 
     //
     let allowsFallback = fallback
-    const isNotSelfHosted =
-      this.storageType === StorageTypes.provided ||
-      (this.storageType === StorageTypes.full && !selfHosted)
+    const isNotSelfHosted = this.storageType === StorageTypes.provided
 
     // When building the system will use the public url
     // to generate the url for the source map.
@@ -175,12 +174,12 @@ class Worker {
 
     //
     const { files, sizes } = isNotSelfHosted
-      ? ensureUploadedFiles(uploadedFiles, temporaryFiles, {
+      ? ensureUploadedFiles(uploadedFiles, localFiles, {
           id: moduleId,
           version,
           resolve,
         })
-      : { files: [], sizes: null }
+      : ensureLocalFiles(localFiles, { resolve })
 
     //
     const currentUser = await this.verifyTokenOfUser(
@@ -254,8 +253,8 @@ class Worker {
       // Proceed to upload the files to CDNs.
       await this.storageInstance?.uploadFiles({ id: moduleId, version }, files)
 
-      // Update the url and additional security information
-      // for the resource before it is written to the database.
+      // Update the url for the resource
+      // before it is written to the database.
       await Promise.all(
         [...files, ...resolve.styles, resolve.script].map(
           async (item: Resource) => {
@@ -266,22 +265,33 @@ class Worker {
               item.path,
             )
 
-            let integrity
-            try {
-              integrity =
-                item.integrity ||
-                (url && ((await integrityHelpers.url(url)) as string))
-            } catch {
-              throw new Error(
-                `Can't get integrity of file, make sure the file was uploaded to the CDNs, url: ${url}.`,
-              )
-            }
-
-            Object.assign(item, { url, integrity })
+            Object.assign(item, { url })
           },
         ),
       )
     }
+
+    // Ensure additional security information
+    // before it is written to the database.
+    await Promise.all(
+      [...files, ...resolve.styles, resolve.script].map(
+        async (item: Resource) => {
+          let integrity
+          const url = item.url
+
+          try {
+            integrity =
+              item.integrity || ((await integrityHelpers.url(url)) as string)
+          } catch {
+            throw new Error(
+              `Can't get integrity of file, make sure the file was uploaded to the CDNs, url: ${url}.`,
+            )
+          }
+
+          Object.assign(item, { integrity })
+        },
+      ),
+    )
 
     const updatedModule = {
       ...data,

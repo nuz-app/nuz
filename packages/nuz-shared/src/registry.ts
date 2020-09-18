@@ -9,3 +9,8 @@ export enum CollaboratorTypes {
   maintainer = 'maintainer',
   contributor = 'contributor',
 }
+
+export enum StorageTypes {
+  self = 'self',
+  provided = 'provided',
+}

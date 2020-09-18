@@ -1,3 +1,4 @@
+import { StorageTypes } from '@nuz/shared'
 import { Arguments } from 'yargs'
 
 import Config from '../../classes/Config'
@@ -47,13 +48,15 @@ async function loginAsUser(options: UserLoginAsUserOptions): Promise<boolean> {
     const userId = request?.data?._id
     const accessToken = request?.data?.accessToken
     const cdn = request?.data?.cdn
-    // const providedType = request?.data?.providedType
+    const storageType = request?.data?.storageType
 
     if (!userId || !accessToken) {
       throw new Error(
         'The received data is not correct, please try again later.',
       )
     }
+
+    log()
 
     //
     await Config.create(username)
@@ -72,11 +75,20 @@ async function loginAsUser(options: UserLoginAsUserOptions): Promise<boolean> {
     //
     await Config.writeAuthentication(authentication)
 
-    //
-    await setConfig({
-      key: ConfigurationFields.static,
-      value: cdn,
-    } as any)
+    const isNotSelfHosted = storageType === StorageTypes.provided
+    if (isNotSelfHosted) {
+      //
+      await setConfig({
+        key: ConfigurationFields.static,
+        value: cdn,
+      } as any)
+    } else {
+      //
+      await setConfig({
+        key: ConfigurationFields.storageType,
+        value: storageType,
+      } as any)
+    }
 
     //
     await setConfig({

@@ -49,10 +49,14 @@ function throwsIfExceedSize(file: any): void {
 
 function ensureUploadedFiles(
   uploadedFiles: any[],
-  temporaryFiles: any[],
+  localFiles: any[],
   moduleInformation: { id: ModuleId; version: string; resolve: any },
 ): { files: TransformFile[]; sizes: VersionSizes } {
   const { id, version, resolve } = moduleInformation
+
+  if (!localFiles || localFiles.length === 0) {
+    throw new Error('Could not find any files information.')
+  }
 
   if (!uploadedFiles || uploadedFiles.length === 0) {
     throw new Error('Could not find any files uploaded.')
@@ -85,7 +89,7 @@ function ensureUploadedFiles(
     throwsIfExceedSize(file)
 
     const md5sum = hashFile(file.tempPath, 'md5')
-    const information = temporaryFiles.find((item) => md5sum === item.md5sum)
+    const information = localFiles.find((item) => md5sum === item.md5sum)
 
     // Updated file information.
     file.md5sum = md5sum
@@ -108,6 +112,9 @@ function ensureUploadedFiles(
     }
 
     ensuredFiles.push({
+      // Important information
+      // some fields (md5sum, integrity)
+      // may be null but it will be ensured later.
       url: file.url,
       path: file.path,
       size: file.size,

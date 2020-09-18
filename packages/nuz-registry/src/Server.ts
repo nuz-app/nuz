@@ -69,21 +69,16 @@ class Server {
     this.cacheResolver = cache
 
     // Configure and set up storage.
-    this.storageInstance = storage?.worker
+    this.storageInstance = storage.worker
     this.storageType =
-      storage?.type || this.storageInstance
-        ? StorageTypes.provided
-        : StorageTypes.self
+      storage.type ||
+      (this.storageInstance ? StorageTypes.provided : StorageTypes.self)
 
     // Based on the storage type used will set the CDN information.
     this.cdn = this.storageType === StorageTypes.self ? null : (cdn as string)
 
     // Make sure the storage configuration is correct.
-    if (
-      (storage?.type === StorageTypes.provided ||
-        storage?.type === StorageTypes.full) &&
-      !this.storageInstance
-    ) {
+    if (storage?.type === StorageTypes.provided && !this.storageInstance) {
       throw new Error(
         'Storage configuration is incorrect because there is missing worker for storage.',
       )

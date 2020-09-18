@@ -1,6 +1,8 @@
 import { CollaboratorTypes, ModuleFormats } from '@nuz/shared'
 import { Types } from 'mongoose'
 
+export { StorageTypes } from '@nuz/shared'
+
 export interface Resource {
   url: string
   path: string
@@ -73,9 +75,3 @@ export type VersionInfo = {
 }
 
 export type RequiredModule = { id: string; version: string }
-
-export enum StorageTypes {
-  self = 'self',
-  provided = 'provided',
-  full = 'full',
-}

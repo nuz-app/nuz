@@ -3,6 +3,7 @@ import { UserAccessTokenTypes } from '@nuz/shared'
 export enum ConfigurationFields {
   registry = 'registry',
   static = 'static',
+  storageType = 'storageType',
 }
 
 export interface ConfigurationData {

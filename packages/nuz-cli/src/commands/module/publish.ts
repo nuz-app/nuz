@@ -1,4 +1,4 @@
-import { ModuleFormats } from '@nuz/shared'
+import { ModuleFormats, StorageTypes } from '@nuz/shared'
 import { assetsUrlHelpers } from '@nuz/utils'
 import fs from 'fs-extra'
 import path from 'path'
@@ -22,7 +22,6 @@ import optimized from '../build/optimized'
 interface ModulePublishOptions
   extends Arguments<{
     fallback: string
-    selfHosted: boolean
     yes: boolean
     registry: string
     token: string
@@ -32,12 +31,11 @@ interface ModulePublishOptions
 async function publish(options: ModulePublishOptions): Promise<boolean> {
   const {
     fallback,
-    selfHosted,
     yes,
     registry: _registry,
     token: _token,
     static: _static,
-  } = Object.assign({ selfHosted: false, yes: false }, options)
+  } = Object.assign({ yes: false }, options)
 
   const dev = false
   const directory = paths.cwd
@@ -50,8 +48,10 @@ async function publish(options: ModulePublishOptions): Promise<boolean> {
 
   const { name, library, version } = internalConfig
 
-  const cdn =
-    _static || (await Config.readConfiguration())[ConfigurationFields.static]
+  const configuration = await Config.readConfiguration()
+  const cdn = _static || configuration[ConfigurationFields.static]
+  const selfHosted =
+    configuration[ConfigurationFields.static] === StorageTypes.self
 
   const publicPath = selfHosted
     ? internalConfig.publicPath
@@ -99,7 +99,10 @@ async function publish(options: ModulePublishOptions): Promise<boolean> {
   // Get the information needed to publish
   const details = snapshotReport(directory)
   const stats = fs.readJsonSync(resolvedStatsFile)
-  const assets = getModuleAssetsOnly(stats, { md5sum: true })
+  const assets = getModuleAssetsOnly(stats, {
+    md5sum: true,
+    integrity: 'sha384',
+  })
   const filesBuffer = getFilesBufferOnly(stats)
 
   const restore = Worker.backup()
@@ -125,7 +128,6 @@ async function publish(options: ModulePublishOptions): Promise<boolean> {
       filesBuffer,
       {
         fallback,
-        selfHosted,
         cdn,
       },
     )
@@ -134,6 +136,7 @@ async function publish(options: ModulePublishOptions): Promise<boolean> {
     //
     await restore()
 
+    log()
     info(`Publish module ${moduleId} was successfully!`)
     log()
   } catch (err) {

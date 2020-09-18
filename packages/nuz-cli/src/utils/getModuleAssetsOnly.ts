@@ -1,4 +1,5 @@
 import { hashFile, integrityHelpers } from '@nuz/utils'
+import fs from 'fs-extra'
 import path from 'path'
 import webpack from 'webpack'
 
@@ -10,6 +11,7 @@ export interface PickOptions {
 export interface PickResouce {
   url: string
   path: string
+  size: number
   md5sum: string | undefined
   integrity: string | undefined
 }
@@ -37,14 +39,7 @@ function getModuleAssetsOnly(
   }
 
   // Create a asset transform helper
-  function transformer(
-    file: string,
-  ): {
-    path: string
-    url: string
-    md5sum: string | undefined
-    integrity: string | undefined
-  } {
+  function transformer(file: string): PickResouce {
     const { md5sum, integrity } = Object.assign(
       { md5sum: true, integrity: 'sha384' },
       options,
@@ -54,6 +49,7 @@ function getModuleAssetsOnly(
 
     return {
       path: file,
+      size: fs.statSync(resolveFile).size,
       url: publicPath + file,
       integrity: integrity
         ? integrityHelpers.file(resolveFile, integrity)
