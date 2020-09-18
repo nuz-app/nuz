@@ -46,6 +46,6 @@
     "@types/spdy": "^3.4.4"
   },
   "optionalDependencies": {
-    "aws-sdk": "^2.751.0"
+    "aws-sdk": "^2.755.0"
   }
 }
