@@ -4,6 +4,7 @@ import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 import wrapCommand from '../../utils/wrapCommand'
 
 import checkUpdate from './checkUpdate'
+import status from './status'
 
 export function setCommands(yargs): void {
   yargs.command('tools', print.dim('Support tools'), function (child) {
@@ -16,6 +17,20 @@ export function setCommands(yargs): void {
       wrapCommand(checkUpdate),
     )
 
+    child.command(
+      'status',
+      print.dim('Check status'),
+      (yarg) => yarg,
+      wrapCommand(status),
+    )
+
     showHelpIfInvalid(child, child.argv, 2, 3)
   })
+
+  yargs.command(
+    'status',
+    print.dim('Check status [alias: tools-status]'),
+    (yarg) => yarg,
+    wrapCommand(status),
+  )
 }
