@@ -31,7 +31,7 @@ export function setCommands(yargs): void {
       print.dim('Sign in to your user'),
       (yarg) =>
         yarg.option('registry', {
-          describe: 'Specified the registry service want to sign in.',
+          describe: 'Specified the registry service want to sign in',
           type: 'string',
           required: false,
         }),
@@ -47,7 +47,7 @@ export function setCommands(yargs): void {
 
     child.command(
       'register',
-      print.dim('Create new user'),
+      print.dim('Create the new user'),
       (yarg) => yarg,
       wrapCommand(createUser),
     )
@@ -139,7 +139,7 @@ export function setCommands(yargs): void {
     print.dim('Sign in to your user [alias: user-login]'),
     (yarg) =>
       yarg.option('registry', {
-        describe: 'Specified the registry service want to sign in.',
+        describe: 'Specified the registry service want to sign in',
         type: 'string',
         required: false,
       }),

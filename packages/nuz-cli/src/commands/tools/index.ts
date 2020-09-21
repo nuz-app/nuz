@@ -12,14 +12,14 @@ export function setCommands(yargs): void {
 
     child.command(
       'check-update',
-      print.dim('Check update for package'),
+      print.dim('Check update for the package'),
       (yarg) => yarg,
       wrapCommand(checkUpdate),
     )
 
     child.command(
       'status',
-      print.dim('Check status'),
+      print.dim('Check the system status'),
       (yarg) => yarg,
       wrapCommand(status),
     )
@@ -29,7 +29,7 @@ export function setCommands(yargs): void {
 
   yargs.command(
     'status',
-    print.dim('Check status [alias: tools-status]'),
+    print.dim('Check the system status [alias: tools-status]'),
     (yarg) => yarg,
     wrapCommand(status),
   )
