@@ -1,7 +1,7 @@
 {
   "name": "@nuz/registry",
   "description": "A factory to create the registry server for the Nuz ecosystem",
-  "version": "1.0.0-beta.63",
+  "version": "1.0.0-beta.64",
   "repository": {
     "type": "git",
     "url": "https://github.com/nuz-app/nuz.git",
@@ -26,8 +26,8 @@
     "build": "rollup -c"
   },
   "dependencies": {
-    "@nuz/shared": "^1.0.0-beta.63",
-    "@nuz/utils": "^1.0.0-beta.63",
+    "@nuz/shared": "^1.0.0-beta.64",
+    "@nuz/utils": "^1.0.0-beta.64",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",

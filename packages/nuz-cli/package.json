@@ -1,7 +1,7 @@
 {
   "name": "@nuz/cli",
   "description": "The command-line interfaces to manage modules and interact with the registry server",
-  "version": "1.0.0-beta.63",
+  "version": "1.0.0-beta.64",
   "repository": {
     "type": "git",
     "url": "https://github.com/nuz-app/nuz.git",
@@ -44,8 +44,8 @@
     "@babel/preset-env": "^7.11.5",
     "@babel/preset-react": "^7.10.4",
     "@babel/preset-typescript": "^7.10.4",
-    "@nuz/shared": "^1.0.0-beta.63",
-    "@nuz/utils": "^1.0.0-beta.63",
+    "@nuz/shared": "^1.0.0-beta.64",
+    "@nuz/utils": "^1.0.0-beta.64",
     "@svgr/webpack": "^5.4.0",
     "babel-loader": "^8.1.0",
     "babel-plugin-dynamic-import-node": "^2.3.3",
@@ -107,7 +107,7 @@
     "yargs": "^16.0.3"
   },
   "devDependencies": {
-    "@nuz/registry": "^1.0.0-beta.63",
+    "@nuz/registry": "^1.0.0-beta.64",
     "@types/cli-table": "^0.3.0",
     "@types/compression": "^1.7.0",
     "@types/cors": "^2.8.7",
