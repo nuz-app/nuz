@@ -33,7 +33,9 @@ async function checkUpdatePackage(): Promise<void> {
     log(print.dim(`Install with the following command:`))
     log(
       print.dim('$ '),
-      useYarn ? 'yarn global add @nuz/cli' : 'npm install -g @nuz/cli',
+      useYarn
+        ? `yarn global add ${packageJson.name}`
+        : `npm install -g ${packageJson.name}`,
     )
     log()
     log()
