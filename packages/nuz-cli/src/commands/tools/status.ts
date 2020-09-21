@@ -36,7 +36,7 @@ async function status(): Promise<boolean> {
   const registryIsOk = await checkIsUrlOk(registryUrl)
   registryTable.push(
     { Endpoint: registryUrl },
-    { Type: configuration[ConfigurationFields.storageType] },
+    { Type: configuration[ConfigurationFields.storageType] ?? '-' },
     { Status: registryIsOk ? print.green('Online') : print.red('Offline') },
   )
 
