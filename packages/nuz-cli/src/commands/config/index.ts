@@ -8,7 +8,9 @@ import listConfig from './listConfig'
 import setConfig from './setConfig'
 
 export function setCommands(yargs) {
-  yargs.command('config', print.dim('Manage configuration'), function (child) {
+  yargs.command('config', print.dim('Manage the configuration'), function (
+    child,
+  ): void {
     setUsage(child, '$0 config <item> [options]')
 
     child.command(

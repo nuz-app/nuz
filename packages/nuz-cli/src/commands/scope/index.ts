@@ -12,7 +12,7 @@ import removeCollaborator from './removeCollaborator'
 import updateCollaborator from './updateCollaborator'
 
 export function setCommands(yargs): void {
-  yargs.command('scope', print.dim('Manage scope'), function (child): void {
+  yargs.command('scope', print.dim('Manage the scope'), function (child): void {
     setUsage(child, '$0 scope <item> [options]')
 
     child.command(

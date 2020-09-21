@@ -13,7 +13,7 @@ import setDeprecate from './setDeprecate'
 import updateCollaborator from './updateCollaborator'
 
 export function setCommands(yargs): void {
-  yargs.command('module', print.dim('Manage module'), function (child) {
+  yargs.command('module', print.dim('Manage the module'), function (child) {
     setUsage(child, '$0 module <item> [options]')
 
     child.command(

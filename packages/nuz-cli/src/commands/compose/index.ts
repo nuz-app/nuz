@@ -14,7 +14,7 @@ import setModules from './setModules'
 import updateCollaborator from './updateCollaborator'
 
 export function setCommands(yargs: any): void {
-  yargs.command('compose', print.dim('Manage compose'), function (child) {
+  yargs.command('compose', print.dim('Manage the compose'), function (child) {
     setUsage(child, '$0 compose <item> [options]')
 
     child.command(

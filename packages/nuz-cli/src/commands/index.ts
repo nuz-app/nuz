@@ -15,16 +15,19 @@ import * as user from './user'
 export async function setCommands(yargs: any): Promise<any> {
   setUsage(yargs, '$0')
 
+  //
   dev.setCommands(yargs)
   build.setCommands(yargs)
   serve.setCommands(yargs)
 
-  config.setCommands(yargs)
-  user.setCommands(yargs)
+  //
   scope.setCommands(yargs)
   modules.setCommands(yargs)
   compose.setCommands(yargs)
+  user.setCommands(yargs)
 
+  //
+  config.setCommands(yargs)
   tools.setCommands(yargs)
 
   showHelpIfInvalid(yargs, yargs.argv, 1, 2)
