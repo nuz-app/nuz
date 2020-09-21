@@ -24,10 +24,7 @@ async function setConfig(options: ConfigSetConfigOptions): Promise<boolean> {
     )
   }
 
-  if (
-    key === ConfigurationFields.registry ||
-    key === ConfigurationFields.cdn
-  ) {
+  if (key === ConfigurationFields.registry || key === ConfigurationFields.cdn) {
     if (!checkIsUrl(value)) {
       throw new Error(
         `${print.dim(value)} value set for field ${print.name(
