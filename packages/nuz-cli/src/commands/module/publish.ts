@@ -25,7 +25,7 @@ interface ModulePublishOptions
     yes: boolean
     registry: string
     token: string
-    static: string
+    cdn: string
   }> {}
 
 async function publish(options: ModulePublishOptions): Promise<boolean> {
@@ -34,7 +34,7 @@ async function publish(options: ModulePublishOptions): Promise<boolean> {
     yes,
     registry: _registry,
     token: _token,
-    static: _static,
+    cdn: _cdn,
   } = Object.assign({ yes: false }, options)
 
   const dev = false
@@ -49,9 +49,9 @@ async function publish(options: ModulePublishOptions): Promise<boolean> {
   const { name, library, version } = internalConfig
 
   const configuration = await Config.readConfiguration()
-  const cdn = _static || configuration[ConfigurationFields.static]
+  const cdn = _cdn || configuration[ConfigurationFields.cdn]
   const selfHosted =
-    configuration[ConfigurationFields.static] === StorageTypes.self
+    configuration[ConfigurationFields.cdn] === StorageTypes.self
 
   const publicPath = selfHosted
     ? internalConfig.publicPath

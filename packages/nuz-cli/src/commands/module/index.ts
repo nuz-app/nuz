@@ -18,21 +18,21 @@ export function setCommands(yargs): void {
 
     child.command(
       'create [name] [template]',
-      print.dim('Create new module'),
+      print.dim('Create the new module'),
       (yarg) => yarg,
       wrapCommand(create),
     )
 
     child.command(
       'get <module> [fields..]',
-      print.dim('Get details of a module'),
+      print.dim('Get module details'),
       (yarg) => yarg,
       wrapCommand(getDetails),
     )
 
     child.command(
       'publish [fallback]',
-      print.dim('Publish version for the module'),
+      print.dim('Publish the new module version'),
       (yarg) =>
         yarg
           .option('yes', {
@@ -51,8 +51,8 @@ export function setCommands(yargs): void {
             type: 'string',
             required: false,
           })
-          .option('static', {
-            describe: print.dim('Override static origin value'),
+          .option('cdn', {
+            describe: print.dim('Override CDN origin value'),
             type: 'string',
             required: false,
           }),
@@ -61,34 +61,34 @@ export function setCommands(yargs): void {
 
     child.command(
       'collaborator',
-      print.dim('Manage collaborator of module'),
+      print.dim('Manage the module collaborators'),
       function (schild) {
-        setUsage(schild, '$0 module collaborator <type> [options]')
+        setUsage(schild, '$0 collaborator collaborator <type> [options]')
 
         schild.command(
           'add <module> <user> [type]',
-          print.dim('Add collaborator to the module'),
+          print.dim('Add new collaborator to the list'),
           (yarg) => yarg,
           wrapCommand(addCollaborator),
         )
 
         schild.command(
           'update <module> <user> <type>',
-          print.dim('Update collaborator of the module'),
+          print.dim('Update the collaborator information'),
           (yarg) => yarg,
           wrapCommand(updateCollaborator),
         )
 
         schild.command(
           'remove <module> <user>',
-          print.dim('Remove collaborator from the module'),
+          print.dim('Remove a collaborator from the list'),
           (yarg) => yarg,
           wrapCommand(removeCollaborator),
         )
 
         schild.command(
           'list <module>',
-          print.dim('List collaborators of the module'),
+          print.dim('Show all collaborators in the list'),
           (yarg) => yarg,
           wrapCommand(listCollaborators),
         )
@@ -99,7 +99,7 @@ export function setCommands(yargs): void {
 
     child.command(
       'deprecate <module> <versions> [deprecate]',
-      print.dim('Deprecate a module'),
+      print.dim('Update the module deprecate'),
       (yarg) => yarg,
       wrapCommand(setDeprecate),
     )
@@ -109,14 +109,14 @@ export function setCommands(yargs): void {
 
   yargs.command(
     'create [name] [template]',
-    print.dim('Create new module [alias: module-create]'),
+    print.dim('Create the new module [alias: module-create]'),
     (yarg) => yarg,
     wrapCommand(create),
   )
 
   yargs.command(
     'publish [fallback]',
-    print.dim(`Publish version for the module [alias: module-publish]`),
+    print.dim(`Publish the new module version [alias: module-publish]`),
     (yarg) => yarg,
     wrapCommand(publish),
   )

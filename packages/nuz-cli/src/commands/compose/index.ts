@@ -19,14 +19,14 @@ export function setCommands(yargs: any): void {
 
     child.command(
       'get <compose> [fields..]',
-      print.dim('Get details of a compose'),
+      print.dim('Get compose details'),
       (yarg) => yarg,
       wrapCommand(getDetails),
     )
 
     child.command(
       'create <name>',
-      print.dim('Create a compose'),
+      print.dim('Create the new compose'),
       (yarg) => yarg,
       wrapCommand(createCompose),
     )
@@ -40,34 +40,34 @@ export function setCommands(yargs: any): void {
 
     child.command(
       'collaborator',
-      print.dim('Manage collaborator of compose'),
+      print.dim('Manage the compose collaborators'),
       function (schild) {
         setUsage(schild, '$0 collaborator collaborator <type> [options]')
 
         schild.command(
           'add <compose> <user> [type]',
-          print.dim('Add collaborator to the compose'),
+          print.dim('Add new collaborator to the list'),
           (yarg) => yarg,
           wrapCommand(addCollaborator),
         )
 
         schild.command(
           'update <compose> <user> <type>',
-          print.dim('Update collaborator of the compose'),
+          print.dim('Update the collaborator information'),
           (yarg) => yarg,
           wrapCommand(updateCollaborator),
         )
 
         schild.command(
           'remove <compose> <user>',
-          print.dim('Remove collaborator from the compose'),
+          print.dim('Remove a collaborator from the list'),
           (yarg) => yarg,
           wrapCommand(removeCollaborator),
         )
 
         schild.command(
           'list <compose>',
-          print.dim('List collaborators of the compose'),
+          print.dim('Show all collaborators in the list'),
           (yarg) => yarg,
           wrapCommand(listCollaborators),
         )
@@ -76,27 +76,29 @@ export function setCommands(yargs: any): void {
       },
     )
 
-    child.command('modules', print.dim('Manage modules of compose'), function (
-      schild,
-    ) {
-      setUsage(schild, '$0 modules modules <type> [options]')
+    child.command(
+      'modules',
+      print.dim('Manage the modules in a compose'),
+      function (schild) {
+        setUsage(schild, '$0 modules modules <type> [options]')
 
-      schild.command(
-        'set <compose> <modules..>',
-        print.dim('Set modules for the compose'),
-        (yarg) => yarg,
-        wrapCommand(setModules),
-      )
+        schild.command(
+          'set <compose> <modules..>',
+          print.dim('Add modules to the compose'),
+          (yarg) => yarg,
+          wrapCommand(setModules),
+        )
 
-      schild.command(
-        'remove <compose> <moduleIds..>',
-        print.dim('Remove modules from the compose'),
-        (yarg) => yarg,
-        wrapCommand(removeModules),
-      )
+        schild.command(
+          'remove <compose> <moduleIds..>',
+          print.dim('Remove modules from the compose'),
+          (yarg) => yarg,
+          wrapCommand(removeModules),
+        )
 
-      showHelpIfInvalid(schild, schild.argv, 3, 4)
-    })
+        showHelpIfInvalid(schild, schild.argv, 3, 4)
+      },
+    )
 
     showHelpIfInvalid(child, child.argv, 2, 3)
   })

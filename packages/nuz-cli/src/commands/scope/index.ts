@@ -17,14 +17,14 @@ export function setCommands(yargs): void {
 
     child.command(
       'get <scope> [fields..]',
-      print.dim('Get details of a scope'),
+      print.dim('Get compose details'),
       (yarg) => yarg,
       wrapCommand(getDetails),
     )
 
     child.command(
       'create <name>',
-      print.dim('Create a scope'),
+      print.dim('Create the new scope'),
       (yarg) => yarg,
       wrapCommand(createScope),
     )
@@ -38,34 +38,34 @@ export function setCommands(yargs): void {
 
     child.command(
       'collaborator',
-      print.dim('Manage collaborator of scope'),
-      function (schild): void {
-        setUsage(schild, '$0 scope collaborator <type> [options]')
+      print.dim('Manage the scope collaborators'),
+      function (schild) {
+        setUsage(schild, '$0 collaborator collaborator <type> [options]')
 
         schild.command(
           'add <scope> <user> [type]',
-          print.dim('Add collaborator to the scope'),
+          print.dim('Add new collaborator to the list'),
           (yarg) => yarg,
           wrapCommand(addCollaborator),
         )
 
         schild.command(
           'update <scope> <user> <type>',
-          print.dim('Update collaborator of the scope'),
+          print.dim('Update the collaborator information'),
           (yarg) => yarg,
           wrapCommand(updateCollaborator),
         )
 
         schild.command(
           'remove <scope> <user>',
-          print.dim('Remove collaborator from the scope'),
+          print.dim('Remove a collaborator from the list'),
           (yarg) => yarg,
           wrapCommand(removeCollaborator),
         )
 
         schild.command(
           'list <scope>',
-          print.dim('List collaborators of the scope'),
+          print.dim('Show all collaborators in the list'),
           (yarg) => yarg,
           wrapCommand(listCollaborators),
         )

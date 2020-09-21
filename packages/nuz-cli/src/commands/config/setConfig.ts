@@ -26,7 +26,7 @@ async function setConfig(options: ConfigSetConfigOptions): Promise<boolean> {
 
   if (
     key === ConfigurationFields.registry ||
-    key === ConfigurationFields.static
+    key === ConfigurationFields.cdn
   ) {
     if (!checkIsUrl(value)) {
       throw new Error(
@@ -36,7 +36,7 @@ async function setConfig(options: ConfigSetConfigOptions): Promise<boolean> {
       )
     }
 
-    const slash = key === ConfigurationFields.static ? '/' : ''
+    const slash = key === ConfigurationFields.cdn ? '/' : ''
     configuration[key] = new URL(value).origin + slash
   } else {
     configuration[key] = value

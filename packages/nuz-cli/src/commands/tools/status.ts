@@ -2,8 +2,9 @@ import { checkIsUrlOk } from '@nuz/utils'
 import Table from 'cli-table'
 
 import Config from '../../classes/Config'
-import { ConfigurationFields } from '../../types'
+import { AuthenticationFields, ConfigurationFields } from '../../types'
 import checkIsOnline from '../../utils/checkIsOnline'
+import formatLoggedAt from '../../utils/formatLoggedAt'
 import print, { info, log } from '../../utils/print'
 
 async function status(): Promise<boolean> {
@@ -13,19 +14,16 @@ async function status(): Promise<boolean> {
   const configuration = await Config.readConfiguration()
 
   const localTable = new Table()
-  const isLogged = !!authentication.token
+  const isLogged = !!authentication[AuthenticationFields.token]
   localTable.push(
     {
-      Is: isLogged ? print.blue(authentication.username) : 'Not logged in',
+      Is: isLogged
+        ? print.blue(authentication[AuthenticationFields.username])
+        : 'Not logged in',
     },
     {
       Logged: isLogged
-        ? authentication.loggedAt?.toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })
+        ? formatLoggedAt((authentication as any)[AuthenticationFields.loggedAt])
         : '-',
     },
     { Internet: isOnline ? print.green('Online') : 'Offline' },

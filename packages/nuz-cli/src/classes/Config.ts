@@ -125,8 +125,10 @@ class Config {
     await this.initialize()
   }
 
-  static async readConfiguration(): Promise<ConfigurationData> {
-    return fs.readJson(configPaths.configuration)
+  static async readConfiguration(
+    resolvePath?: string,
+  ): Promise<ConfigurationData> {
+    return fs.readJson(resolvePath ?? configPaths.configuration)
   }
 
   static async writeConfiguration(data: ConfigurationData): Promise<any> {
@@ -213,6 +215,9 @@ class Config {
         const authentication = await this.readAuthentication(
           path.join(item, ROOT_USER_AUTHENTICATION_FILENAME),
         )
+        const configuration = await this.readConfiguration(
+          path.join(item, ROOT_USER_CONFIGURATION_FILENAME),
+        )
 
         //
         Object.assign(users, {
@@ -220,6 +225,7 @@ class Config {
             id: authentication.id,
             username: authentication.username,
             loggedAt: authentication.loggedAt,
+            configuration,
           },
         })
       }

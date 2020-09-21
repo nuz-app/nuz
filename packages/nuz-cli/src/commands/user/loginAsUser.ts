@@ -79,16 +79,16 @@ async function loginAsUser(options: UserLoginAsUserOptions): Promise<boolean> {
     if (isNotSelfHosted) {
       //
       await setConfig({
-        key: ConfigurationFields.static,
+        key: ConfigurationFields.cdn,
         value: cdn,
       } as any)
-    } else {
-      //
-      await setConfig({
-        key: ConfigurationFields.storageType,
-        value: storageType,
-      } as any)
     }
+
+    //
+    await setConfig({
+      key: ConfigurationFields.storageType,
+      value: storageType,
+    } as any)
 
     //
     await setConfig({
