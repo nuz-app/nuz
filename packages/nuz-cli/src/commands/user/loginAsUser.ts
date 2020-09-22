@@ -15,6 +15,7 @@ interface UserLoginAsUserOptions
     registry?: string
     username?: string
     password?: string
+    force?: boolean
   }> {}
 
 async function loginAsUser(options: UserLoginAsUserOptions): Promise<boolean> {
@@ -22,7 +23,8 @@ async function loginAsUser(options: UserLoginAsUserOptions): Promise<boolean> {
     registry: _registry,
     username: _username,
     password: _password,
-  } = options
+    force,
+  } = Object.assign({ force: false }, options)
 
   const { username, password } =
     _username && _password
@@ -68,7 +70,24 @@ async function loginAsUser(options: UserLoginAsUserOptions): Promise<boolean> {
     log()
 
     //
-    await Config.create(username)
+    const isCreated = await Config.create(username)
+
+    // Is created `false` mean username is eixsted
+    if (!isCreated && !force) {
+      const configuration = await Config.readConfiguration()
+
+      //
+      if (configuration[ConfigurationFields.registry] === registry) {
+        info(
+          'This user already exists, use below command to switch to this user:',
+        )
+        log()
+        log(`$ nuz use ${username}`)
+        log()
+
+        return true
+      }
+    }
 
     //
     await Config.use(username)
@@ -108,7 +127,7 @@ async function loginAsUser(options: UserLoginAsUserOptions): Promise<boolean> {
     info(`Successfully logged in to your ${print.name(username)} account.`)
     log()
   } catch (err) {
-    restore()
+    await restore()
 
     throw err
   }

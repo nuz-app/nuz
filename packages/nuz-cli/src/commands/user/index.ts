@@ -30,11 +30,18 @@ export function setCommands(yargs): void {
       'login',
       print.dim('Sign in to your user'),
       (yarg) =>
-        yarg.option('registry', {
-          describe: 'Specified the registry service want to sign in',
-          type: 'string',
-          required: false,
-        }),
+        yarg
+          .option('registry', {
+            describe: 'Specified the registry service want to sign in',
+            type: 'string',
+            required: false,
+          })
+          .option('force', {
+            describe: 'Force sign in to user and regenerate token',
+            type: 'boolean',
+            default: false,
+            required: false,
+          }),
       wrapCommand(loginAsUser),
     )
 
@@ -62,12 +69,7 @@ export function setCommands(yargs): void {
     child.command(
       'use <username>',
       print.dim('Switch to another logged-in user'),
-      (yarg) =>
-        yarg.positional('username', {
-          describe: 'Username want to use',
-          type: 'string',
-          required: true,
-        }),
+      (yarg) => yarg,
       wrapCommand(useAs),
     )
 
@@ -158,5 +160,12 @@ export function setCommands(yargs): void {
     print.dim('Create new user [alias: user-register]'),
     (yarg) => yarg,
     wrapCommand(createUser),
+  )
+
+  yargs.command(
+    'use <username>',
+    print.dim('Switch to another logged-in user [alias: user-use]'),
+    (yarg) => yarg,
+    wrapCommand(useAs),
   )
 }
