@@ -183,7 +183,7 @@ class Config {
       throw new Error('You are not logged in, need to login to do this.')
     }
 
-    if (!id || !token || !type) {
+    if (!id || !token || !loggedType) {
       throw new Error(
         'Current configuration is invalid, user cannot be authenticated.',
       )
