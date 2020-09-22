@@ -1,4 +1,4 @@
-import checkForUpdate, { Result } from 'update-check'
+import checkForUpdate, { Result } from 'check-update-package'
 
 import * as paths from '../paths'
 

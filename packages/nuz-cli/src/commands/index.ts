@@ -1,3 +1,4 @@
+import checkUpdatePackage from '../utils/checkUpdatePackage'
 import setUsage from '../utils/setUsage'
 import showHelpIfInvalid from '../utils/showHelpIfInvalid'
 
@@ -9,10 +10,10 @@ import * as modules from './module'
 import * as scope from './scope'
 import * as serve from './serve'
 import * as tools from './tools'
-import checkUpdate from './tools/checkUpdate'
 import * as user from './user'
 
 export async function setCommands(yargs: any): Promise<any> {
+  //
   setUsage(yargs, '$0')
 
   //
@@ -30,9 +31,11 @@ export async function setCommands(yargs: any): Promise<any> {
   config.setCommands(yargs)
   tools.setCommands(yargs)
 
-  showHelpIfInvalid(yargs, yargs.argv, 1, 2)
+  //
+  checkUpdatePackage()
 
-  checkUpdate()
+  //
+  showHelpIfInvalid(yargs, yargs.argv, 1, 2)
 
   return yargs
 }
