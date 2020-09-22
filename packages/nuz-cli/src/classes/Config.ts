@@ -212,9 +212,12 @@ class Config {
     for (const item of match) {
       const isDefault = /\/(default)$/.test(item)
       if (!isDefault) {
+        //
         const authentication = await this.readAuthentication(
           path.join(item, ROOT_USER_AUTHENTICATION_FILENAME),
         )
+
+        //
         const configuration = await this.readConfiguration(
           path.join(item, ROOT_USER_CONFIGURATION_FILENAME),
         )

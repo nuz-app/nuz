@@ -1,9 +1,8 @@
 function pick<T = any>(data: any, picks: string[]): T {
   const result = {} as any
-  const keys = Object.keys(data || {})
 
-  for (const key of keys) {
-    if (picks.includes(key)) {
+  for (const key of picks) {
+    if (key in data) {
       result[key] = data[key]
     }
   }
