@@ -2,6 +2,7 @@ import print from '../../utils/print'
 import setUsage from '../../utils/setUsage'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 import wrapCommand from '../../utils/wrapCommand'
+import allCompose from '../user/allCompose'
 
 import addCollaborator from './addCollaborator'
 import createCompose from './createCompose'
@@ -16,6 +17,15 @@ import updateCollaborator from './updateCollaborator'
 export function setCommands(yargs: any): void {
   yargs.command('compose', print.dim('Manage the compose'), function (child) {
     setUsage(child, '$0 compose <item> [options]')
+
+    child.command(
+      'list',
+      print.dim(
+        'Show the list composes of current user [alias: user-my-composes]',
+      ),
+      (yarg) => yarg,
+      wrapCommand(allCompose),
+    )
 
     child.command(
       'get <compose> [fields..]',

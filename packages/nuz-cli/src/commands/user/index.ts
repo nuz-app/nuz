@@ -140,11 +140,18 @@ export function setCommands(yargs): void {
     'login [username]',
     print.dim('Sign in to your user [alias: user-login]'),
     (yarg) =>
-      yarg.option('registry', {
-        describe: 'Specified the registry service want to sign in',
-        type: 'string',
-        required: false,
-      }),
+      yarg
+        .option('registry', {
+          describe: 'Specified the registry service want to sign in',
+          type: 'string',
+          required: false,
+        })
+        .option('force', {
+          describe: 'Force sign in to user and regenerate token',
+          type: 'boolean',
+          default: false,
+          required: false,
+        }),
     wrapCommand(loginAsUser),
   )
 

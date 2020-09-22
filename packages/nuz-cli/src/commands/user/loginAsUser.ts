@@ -78,14 +78,8 @@ async function loginAsUser(options: UserLoginAsUserOptions): Promise<boolean> {
 
       //
       if (configuration[ConfigurationFields.registry] === registry) {
-        info(
-          'This user already exists, use below command to switch to this user:',
-        )
+        info('This user already exists, reused this working directory.')
         log()
-        log(`$ nuz use ${username}`)
-        log()
-
-        return true
       }
     }
 

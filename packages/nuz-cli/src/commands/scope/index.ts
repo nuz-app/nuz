@@ -2,6 +2,7 @@ import print from '../../utils/print'
 import setUsage from '../../utils/setUsage'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 import wrapCommand from '../../utils/wrapCommand'
+import allScopes from '../user/allScopes'
 
 import addCollaborator from './addCollaborator'
 import createScope from './createScope'
@@ -14,6 +15,13 @@ import updateCollaborator from './updateCollaborator'
 export function setCommands(yargs): void {
   yargs.command('scope', print.dim('Manage the scope'), function (child): void {
     setUsage(child, '$0 scope <item> [options]')
+
+    child.command(
+      'list',
+      print.dim('Show the list scopes of current user [alias: user-my-scopes]'),
+      (yarg) => yarg,
+      wrapCommand(allScopes),
+    )
 
     child.command(
       'get <scope> [fields..]',

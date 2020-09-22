@@ -2,6 +2,7 @@ import print from '../../utils/print'
 import setUsage from '../../utils/setUsage'
 import showHelpIfInvalid from '../../utils/showHelpIfInvalid'
 import wrapCommand from '../../utils/wrapCommand'
+import allModules from '../user/allModules'
 
 import addCollaborator from './addCollaborator'
 import create from './create'
@@ -15,6 +16,15 @@ import updateCollaborator from './updateCollaborator'
 export function setCommands(yargs): void {
   yargs.command('module', print.dim('Manage the module'), function (child) {
     setUsage(child, '$0 module <item> [options]')
+
+    child.command(
+      'list',
+      print.dim(
+        'Show the list modules of current user [alias: user-my-modules]',
+      ),
+      (yarg) => yarg,
+      wrapCommand(allModules),
+    )
 
     child.command(
       'create [name] [template]',
