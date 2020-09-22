@@ -13,15 +13,24 @@ import * as questions from './lib/questions'
 interface UserLoginAsUserOptions
   extends Arguments<{
     registry?: string
+    username?: string
+    password?: string
   }> {}
 
 async function loginAsUser(options: UserLoginAsUserOptions): Promise<boolean> {
-  const { registry: _registry } = options
+  const {
+    registry: _registry,
+    username: _username,
+    password: _password,
+  } = options
 
-  const { username, password } = await createQuestions<{
-    username: string
-    password: string
-  }>([questions.username, questions.password].filter(Boolean) as any[])
+  const { username, password } =
+    _username && _password
+      ? { username: _username, password: _password }
+      : await createQuestions<{
+          username: string
+          password: string
+        }>([questions.username, questions.password].filter(Boolean) as any[])
 
   if (!username || !password) {
     throw new Error('Missing information to login.')
