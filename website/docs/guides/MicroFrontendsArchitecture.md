@@ -13,9 +13,9 @@ The same Backend Monolith, The Frontend Monolith still meets some problems from 
 
 ## Why Micro Frontend matters?
 
-At this time, the new web applications having rich-features and grow up every day, the codebase and team members will be larger and larger. This makes the manage and scalability gets more difficult.
+At this time, the new web applications having rich-features and grow up every day, the codebase and team members will be larger and larger. This makes the manage and scalability get more difficult. 
 
-The transformation is needed if the business want to applied the new technologies, building many the features to compete, stuck at scalability or take many time don't necessary for the process at develop, maintain and release a feature or bugfix for the web application because codebase large, build time is long or dependent by another teams. Delayed to transform will be made the transform process in the future is harder and consuming resources.
+The transformation is needed if the business wants to apply the new technologies, building many the features to compete, stuck at scalability or take much time don't necessary for the process at developing, maintain and release a feature or bugfix for the web application because the codebase large, build time is long or dependent by another team. Delayed to transform will be made the transformation process in the future is harder and consuming resources.
 
 ## Benefits of Micro Frontend
 
@@ -23,15 +23,15 @@ A Micro Frontend leads to easier, faster, and more efficient front-end developme
 
 ### Independent deployment
 
-One of the key features of Micro Frontends is independent development. The team can be hosted each module or service has its own continuous delivery pipelines anywhere and by the self way.
+One of the key features of Micro Frontends is independent development. The team can be hosted each module or service has its own continuous delivery pipelines anywhere and by the self way. 
 
-These pipelines are responsible for building, testing, and deploying each module all the way to production. Therefore, teams can be autonomous in developing, correcting and releasing them freely without having to wait or be dependent on another party.
+These pipelines are responsible for building, testing, and deploying each module all the way to production. Therefore, teams can be autonomous in developing, correcting, and releasing them freely without having to wait or be dependent on another party.
 
 But remember, when an error occurs from a module or service it must be controlled and not affected by the other teams even on production.
 
 ### Better code management
 
-The use of Micro Frontends in development makes the codebase of each module or service small and can be distributed in many places, managed by the teams. Also because the codebase is small, debugging and maintenance is much easier, the code is cleaner, and unit testing of the modules will be more efficient.
+The use of Micro Frontends in development makes the codebase of each module or service small and can be distributed in many places, managed by the teams. Also because the codebase is small, debugging and maintenance are much easier, the code is cleaner, and unit testing of the modules will be more efficient.
 
 ### Autonomous teams
 
