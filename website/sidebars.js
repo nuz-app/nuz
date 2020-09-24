@@ -20,6 +20,7 @@ module.exports = {
     Guides: [
       'guides/create-new-module', 
       'guides/publish-a-module', 
+      'guides/micro-frontends-architecture', 
     ],
     Support: [
       'faq',
@@ -30,4 +31,4 @@ module.exports = {
       }
     ],
   },
-};
+}

@@ -28,6 +28,7 @@ Nuz is an [open-source](https://github.com/nuz-app/nuz) project, the runtime pac
 - ☁️ Provided [CDNs](../services/nuz-static) and [registry](../services/nuz-registry) public services on the cloud, it's free.
 - ✨ Build and share great things with everyone through [the registry](../services/nuz-registry).
 - 🎯 Fully support server-side with optimized options.
+- 💯 The solutions for [Micro Frontends Architecture](../guides/micro-frontends-architecture).
 
 ### Limitations
 
