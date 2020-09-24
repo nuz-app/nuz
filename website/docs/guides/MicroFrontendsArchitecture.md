@@ -50,6 +50,53 @@ There are many tutorials or examples of how Micro Frontends work, I have listed 
 - [Micro Frontend Architecture and Best Practices by XenonStack](https://www.xenonstack.com/insights/what-is-micro-frontend)
 - [Micro Frontends by Michael Geers](https://micro-frontends.org)
 
-## Nuz for Micro Frontends
+## Micro Frontends with Nuz
 
-Updating...
+Using Nuz to build a modern web application with Micro Frontends architecture. We built the best practices for this case, it easily applies to most current applications.
+
+The advantage of this approach is that you can easily choose the best current frameworks for app management, it's easy to get started with. Alternatively, you can also mirgate from these applications to the Micro Frontends architecture using Nuz if the current application builds on Monolith architecture.
+
+### Concepts
+
+:::note
+
+Everything that comes next will be a series of plans designed for the best integration with Nuz, which may not be required but you need to understand it.
+
+:::
+
+#### The application
+
+This is the main application, it is the framework for demonstrating the modules placed within it. The application is also a place to store routing, initialize and manage state, and rendering (also for the server).
+
+Recommended packages to create and build the application are:
+
+- [Next.js](#) - Suitable for building a high-performance web application that supports server-side rendering. 
+  - Fully compatible with Nuz, see the example [here](https://github.com/nuz-app/demo).
+  - See how to integrate [here](../introduction/getting-started#nextjs-application).
+- [Create React App](#) - Suitable for building a fast web application that doesn't require server-side rendering.
+  - Fully compatible with Nuz, the example will be updated soon!
+  - See how to integrate [here](../introduction/getting-started#react-application).
+
+If you already use Nuz with other packages, PRs are welcome.
+
+#### The module
+
+This is a component, module, library, or anything exports like Node.js require module as [Nuz module](../reference/module) format. It is often a web component to render and includes logic to fetch and interact with APIs.
+
+### Guides
+
+Traditionally, each component in an application is often stored in the same repository as a directory, rather than a monorepo or module published to NPM.
+
+To be able to dynamically use each module used in your web application, it is recommended that you try to keep it isolate and instead of publishing it to the NPM registry, approach and build it according to the Nuz standards and publish it to the [Nuz Registry](../services/nuz-registry) service (or similar registry service). Finally, let's use it as the normal dynamic Node.js module, see how to use it [here](../introduction/getting-started#usage). In addition to the modules that your enterprise develops and publishes, all other modules that are publicly published on the [Nuz Registry](../services/nuz-registry) service are available.
+
+Now the components on the thing's web application are dynamic, each team can develop, bugfix, and deploy themselves at any time without affecting the others. Everything is managed and controlled by Nuz and to better understand how Nuz works, you can read more documents.
+
+### Development
+
+In a development environment, you need to see the module directly how the module works and display in the application and constantly try and fix it, which requires a hot reload of the system and linking the module to resolve from local instead of online.
+
+To do this, need to use development mode in workspaces for the application and modules. Nuz now fully supports this, you can see more details [here](../reference/workspaces).
+
+## Conclusion
+
+The article will likely be updated in more detail in the future, but if you need it urgently you can create questions to be answered and guidance soon. 📮
