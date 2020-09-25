@@ -100,7 +100,7 @@ export function setCommands(yargs: any): void {
         )
 
         schild.command(
-          'remove <compose> <moduleIds..>',
+          'remove <compose> <module-ids..>',
           print.dim('Remove modules from the compose'),
           (yarg) => yarg,
           wrapCommand(removeModules),

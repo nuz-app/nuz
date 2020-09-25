@@ -25,7 +25,7 @@ export function setCommands(yargs): void {
 
     child.command(
       'get <scope> [fields..]',
-      print.dim('Get compose details'),
+      print.dim('Get scope details'),
       (yarg) => yarg,
       wrapCommand(getDetails),
     )
