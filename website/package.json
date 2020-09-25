@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "next",
+    "@docusaurus/plugin-ideal-image": "next",
     "@tsconfig/docusaurus": "^1.0.2",
     "@types/react": "^16.9.49",
     "@types/react-helmet": "^6.1.0",

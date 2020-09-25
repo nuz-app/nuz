@@ -1,7 +1,7 @@
-const GITHUB_ORG = 'nuz-app';
-const GITHUB_PROJECT = 'nuz';
+const GITHUB_ORG = 'nuz-app'
+const GITHUB_PROJECT = 'nuz'
 const GITHUB_URL = `https://github.com/${GITHUB_ORG}/${GITHUB_PROJECT}`
-const GITHUB_DEFAULT_BRANCH = 'next';
+const GITHUB_DEFAULT_BRANCH = 'next'
 
 module.exports = {
   title: 'Nuz',
@@ -127,23 +127,24 @@ module.exports = {
     ],
   ],
   plugins: [
-    // [
-    //   require.resolve('@docusaurus/plugin-sitemap'),
-    //   {
-    //     cacheTime: 600 * 1000,
-    //     changefreq: 'daily',
-    //     priority: 0.5,
-    //   },
-    // ],
-    // [
-    //   require.resolve('@docusaurus/plugin-ideal-image'),
-    //   {
-    //     quality: 85,
-    //     max: 1030, // max resized image's size.
-    //     min: 640, // min resized image's size. if original is lower, use that size.
-    //     steps: 2, // the max number of images generated between min and max (inclusive)
-    //   },
-    // ],
+    [
+      require.resolve('@docusaurus/plugin-sitemap'),
+      {
+        id: 'updated-sitemap',
+        cacheTime: 600 * 1000,
+        changefreq: 'daily', // will be changed to `weekly`, after updated document to stable.
+        priority: 0.5,
+      },
+    ],
+    [
+      require.resolve('@docusaurus/plugin-ideal-image'),
+      {
+        quality: 85,
+        max: 1280, // max resized image's size.
+        min: 640, // min resized image's size. if original is lower, use that size.
+        steps: 3, // the max number of images generated between min and max (inclusive)
+      },
+    ],
   ],
   stylesheets: [
     {
@@ -236,4 +237,4 @@ module.exports = {
     }
   ],
   onBrokenLinks: 'warn',
-};
+}
