@@ -134,6 +134,7 @@ module.exports = {
         cacheTime: 600 * 1000,
         changefreq: 'daily', // will be changed to `weekly`, after updated document to stable.
         priority: 0.5,
+        trailingSlash: false,
       },
     ],
     [
@@ -144,6 +145,29 @@ module.exports = {
         min: 640, // min resized image's size. if original is lower, use that size.
         steps: 3, // the max number of images generated between min and max (inclusive)
       },
+    ],
+    [
+      require.resolve('@docusaurus/plugin-pwa'),
+      {
+        offlineModeActivationStrategies: ['appInstalled', 'queryString'],
+        pwaHead: [
+          {
+            tagName: 'link',
+            rel: 'icon',
+            href: '/images/favicon-96x96.png',
+          },
+          {
+            tagName: 'meta',
+            name: 'theme-color',
+            content: 'rgb(103, 58, 183)',
+          },
+          {
+            tagName: 'link',
+            rel: 'manifest',
+            href: '/manifest.json',
+          }
+        ],
+      }
     ],
   ],
   stylesheets: [
@@ -230,11 +254,6 @@ module.exports = {
       href: '/images/favicon-16x16.png',
       type: 'image/png',
     },
-    {
-      rel: 'manifest',
-      href: '/images/manifest.json',
-      type: 'application/json'
-    }
   ],
   onBrokenLinks: 'warn',
 }
