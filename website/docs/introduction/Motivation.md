@@ -1,6 +1,18 @@
 ---
 id: motivation
 title: Motivation
+description: Nuz hopes to change the way of developing modern web applications with great things, write once and reuse it in any application, everything called a module and it's isolated to sharing, build a new application quickly by just to picks and use the shared modules, easy to maintain the application with many modules, update any modules just by a command.
+keywords:
+  - nuz
+  - architecture
+  - microfrontends
+  - web
+  - frontends
+  - motivation
+  - package-manager
+  - typescript
+  - javascript
+  - application
 ---
 
 As the requirements to build the web modern application have become increasingly complicated, our components and modules more than ever before. It's must be reuse in the cross-application, faster updates, and reduce unnecessary steps to updates the new version in each of the applications.

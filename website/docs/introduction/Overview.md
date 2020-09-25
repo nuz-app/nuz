@@ -1,6 +1,25 @@
 ---
 id: overview
 title: Overview
+description: Nuz is an open-source project, the runtime package manager to sharing packages such as components or libraries across the web application. Nuz hopes to change the way of developing modern web applications with great things.
+keywords:
+  - nuz
+  - react
+  - architecture
+  - registry
+  - cli
+  - microfrontends
+  - web
+  - typescript
+  - javascript
+  - standalone
+  - frontends
+  - runtime
+  - package-manager
+  - resolver
+  - require
+  - importer
+  - application
 ---
 
 ## What is Nuz?
