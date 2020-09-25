@@ -7,7 +7,8 @@
     "start": "env-cmd docusaurus start",
     "build": "env-cmd docusaurus build",
     "swizzle": "env-cmd docusaurus swizzle --typescript",
-    "deploy": "env-cmd docusaurus deploy"
+    "deploy": "env-cmd docusaurus deploy",
+    "serve": "env-cmd docusaurus serve"
   },
   "engines": {
     "node": "^10.13 || ^12 || ^14"
