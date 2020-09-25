@@ -4,7 +4,7 @@ const GITHUB_URL = `https://github.com/${GITHUB_ORG}/${GITHUB_PROJECT}`
 const GITHUB_DEFAULT_BRANCH = 'next'
 
 module.exports = {
-  title: 'Nuz',
+  title: 'Nuz · Docs',
   tagline: 'Nuz is an open-source project, the runtime package manager for web platform.',
   url: 'https://docs.nuz.app',
   baseUrl: '/',
