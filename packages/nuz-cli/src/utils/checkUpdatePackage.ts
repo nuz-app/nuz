@@ -15,6 +15,7 @@ async function checkUpdatePackage(): Promise<void> {
     update = await checkForUpdate(packageJson, {
       interval: 1800000, // 12h
       distTag: 'latest',
+      timeout: 4000,
     })
   } catch (err) {
     error(`Failed to check for updates: ${err}`)
