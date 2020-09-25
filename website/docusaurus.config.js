@@ -102,6 +102,7 @@ module.exports = {
     [
       '@docusaurus/preset-classic',
       {
+        // Will be passed to @docusaurus/plugin-content-docs (false to disable)
         docs: {
           // Set base path of document pages
           routeBasePath: '/',
@@ -114,29 +115,28 @@ module.exports = {
           // Display update time, ex: Last updated on <date>
           showLastUpdateTime: true,
         },
+        // Will be passed to @docusaurus/plugin-content-blog (false to disable)
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
           editUrl:
             `${GITHUB_URL}/edit/${GITHUB_DEFAULT_BRANCH}/website/blog/`,
         },
+        // Will be passed to @docusaurus/theme-classic.
         theme: {
           customCss: require.resolve('./src/css/base.css'),
         },
+        // Will be passed to @docusaurus/plugin-content-sitemap (false to disable)
+        sitemap: {
+          cacheTime: 600 * 1000, // 600 sec - cache purge period.
+          changefreq: 'daily',
+          priority: 0.5,
+          trailingSlash: false,
+        }
       },
     ],
   ],
   plugins: [
-    [
-      require.resolve('@docusaurus/plugin-sitemap'),
-      {
-        id: 'custom',
-        cacheTime: 600 * 1000, // 600 sec - cache purge period.
-        changefreq: 'daily',
-        priority: 0.5,
-        trailingSlash: false,
-      },
-    ],
     [
       require.resolve('@docusaurus/plugin-ideal-image'),
       {
