@@ -127,15 +127,16 @@ module.exports = {
     ],
   ],
   plugins: [
-    // [
-    //   require.resolve('@docusaurus/plugin-sitemap'),
-    //   {
-    //     id: 'updated-sitemap',
-    //     changefreq: 'daily', // will be changed to `weekly`, after updated document to stable.
-    //     priority: 0.5,
-    //     trailingSlash: false,
-    //   },
-    // ],
+    [
+      require.resolve('@docusaurus/plugin-sitemap'),
+      {
+        id: 'custom',
+        cacheTime: 600 * 1000, // 600 sec - cache purge period.
+        changefreq: 'daily',
+        priority: 0.5,
+        trailingSlash: false,
+      },
+    ],
     [
       require.resolve('@docusaurus/plugin-ideal-image'),
       {
