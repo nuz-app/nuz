@@ -9,6 +9,31 @@
     "url": "https://github.com/lamhieu-vk"
   },
   "default_locale": "en",
+  "start_url": "/?source=pwa",
+  "background_color": "#673ab7",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#673ab7",
+  "shortcuts": [
+    {
+      "name": "Introduction",
+      "short_name": "Introduction",
+      "description": "Introduction",
+      "url": "/introduction/overview?source=pwa"
+    },
+    {
+      "name": "Reference",
+      "short_name": "Reference",
+      "description": "Reference",
+      "url": "/reference/core?source=pwa"
+    },
+    {
+      "name": "FAQ",
+      "short_name": "FAQ",
+      "description": "FAQ",
+      "url": "/faq?source=pwa"
+    }
+  ],
   "icons": [
     {
       "src": "/images/android-icon-36x36.png",
