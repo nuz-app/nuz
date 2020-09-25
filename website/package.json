@@ -34,7 +34,7 @@
   "devDependencies": {
     "@docusaurus/module-type-aliases": "next",
     "@docusaurus/plugin-ideal-image": "next",
-    "@docusaurus/plugin-pwa": "^2.0.0-alpha.59",
+    "@docusaurus/plugin-pwa": "next",
     "@tsconfig/docusaurus": "^1.0.2",
     "@types/react": "^16.9.49",
     "@types/react-helmet": "^6.1.0",
