@@ -5,6 +5,8 @@ title: Micro-Frontends Architecture
 
 ## What is Micro Frontends?
 
+![Micro-Frontends Architecture](./assets/images/micro-frontends-cover.jpg)
+
 Micro Frontends architecture is a Microservices architecture approach to frontend web development. Micro Frontends allows building a feature-rich modern web application based on Microservices architecture.
 
 The same Backend Monolith, The Frontend Monolith still meets some problems from Monolith architecture. To resolve these problems, Micro Frontends was mentioned, use Micro Frontends for the application to helps all teams can be released the new features independently, grows teams, develop and maintain the features easier, keep the codebase small and operations stable.
