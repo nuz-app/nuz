@@ -6,7 +6,7 @@ In general, I see that there are many articles about Micro Frontends, very good 
 * [Micro Frontends - martinfowler.com](https://martinfowler.com/articles/micro-frontends.html).
 * [Introduction to micro frontends architecture](https://levelup.gitconnected.com/brief-introduction-to-micro-frontends-architecture-ec928c587727).
 * [Micro Frontends - micro-frontends.org](https://micro-frontends.org/).
-* [Micro-frontend Architecture in Action with six ways](https://dev.to/phodal/micro-frontend-architecture-in-action-4n60)
+* [Micro-frontend architecture in Action with six ways](https://dev.to/phodal/micro-frontend-architecture-in-action-4n60)
 * [The Strengths and Benefits of Micro Frontends](https://www.toptal.com/front-end/micro-frontends-strengths-benefits)
 * [Implementing a Frontend with Micro-Components](https://itnext.io/micro-frontend-941a5f1a3e72)
 * [Understanding Micro Frontends](https://hackernoon.com/understanding-micro-frontends-b1c11585a297)
