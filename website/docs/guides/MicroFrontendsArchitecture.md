@@ -21,6 +21,7 @@ import Image from '@theme/IdealImage';
   img={require('../../static/images/posts/micro-frontends-cover.jpg')} 
   alt="Micro-Frontends architecture"
 />
+<br />
 
 Micro Frontends architecture is a Microservices architecture approach to frontend web development. Micro Frontends allows building a feature-rich modern web application based on Microservices architecture.
 
@@ -115,10 +116,10 @@ This is the main application, it is the framework for demonstrating the modules 
 
 Recommended packages to create and build the application are:
 
-- [Next.js](#) - Suitable for building a high-performance web application that supports server-side rendering. 
+- [Next.js](https://nextjs.org/) - Suitable for building a high-performance web application that supports server-side rendering. 
   - Fully compatible with Nuz, see the example [here](https://github.com/nuz-app/demo).
   - See how to integrate [here](../introduction/getting-started#nextjs-application).
-- [Create React App](#) - Suitable for building a fast web application that doesn't require server-side rendering.
+- [Create React App](https://create-react-app.dev/) - Suitable for building a fast web application that doesn't require server-side rendering.
   - Fully compatible with Nuz, the example will be updated soon!
   - See how to integrate [here](../introduction/getting-started#react-application).
 
