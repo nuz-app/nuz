@@ -1,6 +1,22 @@
 ---
 id: cli
 title: Command-line interface (CLI)
+description: \@nuz\/cli is a command-line interfaces to manage modules and interact with the registry server.
+image: images/posts/cli-cover.png
+keywords:
+  - nuz
+  - cli
+  - dev
+  - build
+  - registry
+  - serve
+  - scope
+  - module
+  - compose
+  - user
+  - config
+  - tools
+  - status
 ---
 
 :::note
