@@ -24,9 +24,37 @@ import Image from '@theme/IdealImage';
 
 Micro Frontends architecture is a Microservices architecture approach to frontend web development. Micro Frontends allows building a feature-rich modern web application based on Microservices architecture.
 
-The same Backend Monolith, The Frontend Monolith still meets some problems from Monolith architecture. To resolve these problems, Micro Frontends was mentioned, use Micro Frontends for the application to helps all teams can be released the new features independently, grows teams, develop and maintain the features easier, keep the codebase small and operations stable.
+The same backend Monolith, the rrontend Monolith still meets some problems from Monolith architecture. To resolve these problems, Micro Frontends was mentioned, use Micro Frontends for the application to helps all teams can be released the new features independently, grows teams, develop and maintain the features easier, keep the codebase small and operations stable.
 
 > The concept of Micro Frontends is to think about the application that will be developed by the independent teams, each team having owned and managed a distinct area of business that it specializes in.
+
+### Example
+
+For example, the business developing a social network and having a homepage like Facebook.
+
+:::note
+
+This only is a example is being built to you easy to understand more about the concepts. May not be true of the corporate reality, Facebook.
+
+:::
+
+The enterprise follows workflows are product teams or tribe models. The backend based on the Microservices architecture, the frontends based on Micro Frontends architecture. The enterprise has the following groups of technologies and operations that are not available:
+
+- **@fb-products** the products team, they develop and managed the main business and features.
+- **@fb-ads** the advertisements team, they develop and managed the business and features related to advertisements.
+- **@fb-messages** the messages team, they develop and managed the business and features related to messages.
+- **@fb-feeds** the newsfeed team, they develop and managed the business and features related to newsfeed and timline.
+- **@fb-design-system** the design system team, they develop and managed the design system, pink color.
+
+<Image 
+  img={require('../../static/images/posts/micro-frontends-facebook.jpg')} 
+  alt="Micro-Frontends at Facebook"
+/>
+<br />
+
+The same Microservices, the frontend side will be its owner many components in the application interface, and each component is a service of the frontend side.
+
+Each team has their own mission, they have the right to decide the direction of their development and how their scope will bring the best quality. The backend side, will design APIs and optimize it best for frontend team, release new features or patches is also easier, not affected or dependent on other teams.
 
 ## Why Micro Frontend matters?
 
@@ -52,7 +80,7 @@ The use of Micro Frontends in development makes the codebase of each module or s
 
 ### Autonomous teams
 
-Dividing teams by features, each member of the team will understand the functionality of the feature better, thereby making it easy to come up with ideas as well as update to better carry products. In addition, when a team has a full range of technical members from Backend to Frontend, they manage their own things, so when it comes to making technical decisions, it's more optimal.
+Dividing teams by features, each member of the team will understand the functionality of the feature better, thereby making it easy to come up with ideas as well as update to better carry products. In addition, when a team has a full range of technical members from backend to Frontend, they manage their own things, so when it comes to making technical decisions, it's more optimal.
 
 ### Reusable modules
 
