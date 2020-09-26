@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://docs.nuz.app/blog</id>
+    <title>Nuz · Docs Blog</title>
+    <updated>2020-06-05T00:00:00.000Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://docs.nuz.app/blog"/>
+    <subtitle>Nuz · Docs Blog</subtitle>
+    <icon>https://docs.nuz.app/images/favicon.ico</icon>
+    <rights>Copyright © 2020 Nuz.</rights>
+    <entry>
+        <title type="html"><![CDATA[Welcome to Nuz]]></title>
+        <id>welcome</id>
+        <link href="https://docs.nuz.app/blog/welcome"/>
+        <updated>2020-06-05T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[...]]></summary>
+    </entry>
+</feed>

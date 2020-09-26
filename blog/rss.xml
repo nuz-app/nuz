@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+    <channel>
+        <title>Nuz · Docs Blog</title>
+        <link>https://docs.nuz.app/blog</link>
+        <description>Nuz · Docs Blog</description>
+        <lastBuildDate>Fri, 05 Jun 2020 00:00:00 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <copyright>Copyright © 2020 Nuz.</copyright>
+        <item>
+            <title><![CDATA[Welcome to Nuz]]></title>
+            <link>https://docs.nuz.app/blog/welcome</link>
+            <guid>welcome</guid>
+            <pubDate>Fri, 05 Jun 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[...]]></description>
+        </item>
+    </channel>
+</rss>
