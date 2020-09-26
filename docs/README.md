@@ -7,7 +7,7 @@ In general, I see that there are many articles about Micro Frontends, very good 
 * [Introduction to micro frontends architecture](https://levelup.gitconnected.com/brief-introduction-to-micro-frontends-architecture-ec928c587727).
 * [Micro Frontends - micro-frontends.org](https://micro-frontends.org/).
 * [Micro-frontend architecture in Action with six ways](https://dev.to/phodal/micro-frontend-architecture-in-action-4n60)
-* [The Strengths and Benefits of Micro Frontends](https://www.toptal.com/front-end/micro-frontends-strengths-benefits)
+* [The Strengths and Benefits of Micro Frontends](https://www.toptal.com/frontend/micro-frontends-strengths-benefits)
 * [Implementing a Frontend with Micro-Components](https://itnext.io/micro-frontend-941a5f1a3e72)
 * [Understanding Micro Frontends](https://hackernoon.com/understanding-micro-frontends-b1c11585a297)
 
@@ -27,7 +27,7 @@ See, this is the difference between traditional architecture and using Micro Fro
 ![image](https://user-images.githubusercontent.com/9839768/77920413-a6760700-72c8-11ea-927a-b2f520e967b8.png)
 
 ##### Micro Frontends
-Same advantages as for microservices, but with end-to-end teams if combined by microservices on back-end.
+Same advantages as for microservices, but with end-to-end teams if combined by microservices on backend.
 ![image](https://user-images.githubusercontent.com/9839768/77920665-f81e9180-72c8-11ea-8bf9-841e289c7ab8.png)
 
 *You can read more about this from [here](https://levelup.gitconnected.com/brief-introduction-to-micro-frontends-architecture-ec928c587727).*

@@ -72,7 +72,7 @@ More and more, contributing with us!
 
 ### For enterprise
 
-If your enterprise is organizing personnel towards product teams or want to build a modern web application based on Micro Frontends architecture for front-end to scalability and compatibility with Microservices architecture at the back-end. Nuz will help your enterprise resolve the problems when implementing it, all tech teams will working together, sharing everythins such as libraries, components, and tools using in cross the applications quickly and efficiencies.
+If your enterprise is organizing personnel towards product teams or want to build a modern web application based on Micro Frontends architecture for frontend to scalability and compatibility with Microservices architecture at the backend. Nuz will help your enterprise resolve the problems when implementing it, all tech teams will working together, sharing everythins such as libraries, components, and tools using in cross the applications quickly and efficiencies.
 
 - Everything called modules, isolated and the teams can manage their own repositories according to their authority.
 - The repository can contain appropriate module for unit testing, ci and cd, this helps keep the teams secure and helps the app's codebase be smaller, easier to manage and maintain.

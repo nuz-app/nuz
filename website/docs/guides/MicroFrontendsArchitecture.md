@@ -65,7 +65,7 @@ The transformation is needed if the business wants to apply the new technologies
 
 ## Benefits of Micro Frontend
 
-A Micro Frontend leads to easier, faster, and more efficient front-end development. But how does it do so? Here are some of the key advantages of Micro Frontends.
+A Micro Frontend leads to easier, faster, and more efficient frontend development. But how does it do so? Here are some of the key advantages of Micro Frontends.
 
 ### Independent deployment
 
@@ -91,7 +91,7 @@ With Micro Frontends, each component, module or service has to be independent, s
 
 There are many tutorials or examples of how Micro Frontends work, I have listed and updated below for references.
 
-- [The Strengths and Benefits of Micro Frontends by Bob Myers](https://www.toptal.com/front-end/micro-frontends-strengths-benefits)
+- [The Strengths and Benefits of Micro Frontends by Bob Myers](https://www.toptal.com/frontend/micro-frontends-strengths-benefits)
 - [Micro Frontends by Cam Jackson](https://martinfowler.com/articles/micro-frontends.html)
 - [Micro Frontend architecture and Best Practices by XenonStack](https://www.xenonstack.com/insights/what-is-micro-frontend)
 - [Micro Frontends by Michael Geers](https://micro-frontends.org)
