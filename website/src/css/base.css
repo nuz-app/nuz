@@ -21,6 +21,11 @@
   --ifm-heading-line-height: 1.25;
   
   --ifm-font-family-base: 'Nunito Sans', -apple-system, sans-serif;
+
+  --ifm-color-success: #81c784;
+  --ifm-color-info: #7986cb;
+  --ifm-color-warning: #ffb74d;
+  --ifm-color-danger: #e57373;
 }
 
 html[data-theme='dark'] {
