@@ -21,7 +21,7 @@ The difference between Nuz and the rest of the world is that Nuz is a dynamic pa
 
 More about its differences, instead of like any other manager, when you want to use a package, you need to install it first. By calling install, it downloads the package binaries from the registry to locally. Every time you call `require` or `import` it in the code, it will resolve the package locally, when you need to bundle your app, you need to bundle all the libraries locally into the app bundle and when you don't use it anymore, you need to delete it locally.
 
-With Nuz, you don't need to perform an installation before using it, it means you don't need to download binrary locally. Only when the `require` or` import` command is called will Nuz download and initialize the package. Tthat process is do at runtime and you don't need to bundle it in your app, when you need to update you don't need to bundle it again.
+With Nuz, you don't need to perform an installation before using it, it means you don't need to download binrary locally. Only when the `require` or `import` command is called will Nuz download and initialize the package. Tthat process is do at runtime and you don't need to bundle it in your app, when you need to update you don't need to bundle it again.
 
 ## How do it works?
 
