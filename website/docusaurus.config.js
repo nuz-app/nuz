@@ -111,7 +111,7 @@ module.exports = {
           editUrl:
             `${GITHUB_URL}/edit/${GITHUB_DEFAULT_BRANCH}/website/`,
           // Display update user, ex: Last updated by <Author Name>
-          showLastUpdateAuthor: true,
+          showLastUpdateAuthor: false,
           // Display update time, ex: Last updated on <date>
           showLastUpdateTime: true,
         },
@@ -121,6 +121,11 @@ module.exports = {
           // Please change this to your repo.
           editUrl:
             `${GITHUB_URL}/edit/${GITHUB_DEFAULT_BRANCH}/website/blog/`,
+          // Generate RSS & Atom feed.
+          feedOptions: {
+            type: 'all',
+            copyright: `Copyright © ${new Date().getFullYear()} Nuz.`,
+          },
         },
         // Will be passed to @docusaurus/theme-classic.
         theme: {
