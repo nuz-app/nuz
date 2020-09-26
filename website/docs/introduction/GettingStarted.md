@@ -1,6 +1,17 @@
 ---
 id: getting-started
 title: Getting started
+keywords:
+  - nuz
+  - import
+  - require
+  - loadable
+  - react
+  - nextjs
+  - application
+  - web
+  - usage
+  - tutorial
 ---
 
 ...
@@ -13,15 +24,17 @@ title: Getting started
 
 ...
 
-### Require a module
+### Require
 
 ...
 
-### Require React component
+### Loadable
 
 ...
 
 ## Integrate
+
+...
 
 ### React application
 
@@ -31,6 +44,6 @@ title: Getting started
 
 ...
 
-### Other application
+### Others
 
 If you already use Nuz for your application, PRs are welcome.
