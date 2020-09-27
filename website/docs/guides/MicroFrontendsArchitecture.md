@@ -89,7 +89,7 @@ With Micro Frontends, each component, module or service has to be independent, s
 
 ## How Micro Frontends works?
 
-There are many tutorials or examples of how Micro Frontends work, I have listed and updated below for references.
+There are many tutorials or examples of how Micro Frontends work, some articles refer below:
 
 - [The Strengths and Benefits of Micro Frontends by Bob Myers](https://www.toptal.com/frontend/micro-frontends-strengths-benefits)
 - [Micro Frontends by Cam Jackson](https://martinfowler.com/articles/micro-frontends.html)
