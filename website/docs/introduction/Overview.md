@@ -60,7 +60,7 @@ Recommended using Nuz services are [registry](../services/nuz-registry) and [sta
 
 Nuz hopes to change the way of developing modern web applications with great things.
 
-### For developder
+### For developer
 
 As a developer, build a lot of great things such as libraries, components and using them at many the applications. Releasing a patch or feature will take you a long time to update them in the app and rebuild it, then release the applications it to production, it may be but unnecessary operations. Nuz will help you eliminate those, you may not need to changes the code or do anything in your applications, just release a new module version, all applications will receive a affects immediately.
 
