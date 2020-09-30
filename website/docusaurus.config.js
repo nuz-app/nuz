@@ -8,6 +8,7 @@ module.exports = {
   tagline: 'Nuz is an open-source project, the runtime package manager for web platform.',
   url: 'https://docs.nuz.app',
   baseUrl: '/',
+  favicon: 'images/favicon.ico',
   organizationName: 'nuz-app', // Usually your GitHub org/user name.
   projectName: 'nuz', // Usually your repo name.
   themeConfig: {
