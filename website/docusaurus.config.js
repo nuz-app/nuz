@@ -120,7 +120,7 @@ module.exports = {
           showReadingTime: true,
           // Please change this to your repo.
           editUrl:
-            `${GITHUB_URL}/edit/${GITHUB_DEFAULT_BRANCH}/website/blog/`,
+            `${GITHUB_URL}/edit/${GITHUB_DEFAULT_BRANCH}/website/`,
           // Generate RSS & Atom feed.
           feedOptions: {
             type: 'all',
