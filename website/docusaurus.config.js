@@ -8,7 +8,6 @@ module.exports = {
   tagline: 'Nuz is an open-source project, the runtime package manager for web platform.',
   url: 'https://docs.nuz.app',
   baseUrl: '/',
-  favicon: 'images/favicon.ico',
   organizationName: 'nuz-app', // Usually your GitHub org/user name.
   projectName: 'nuz', // Usually your repo name.
   themeConfig: {
@@ -236,33 +235,28 @@ module.exports = {
       type: 'image/png',
     },
     {
-      rel: 'icon',
-      sizes: '192x192',
-      href: '/images/android-icon-192x192.png',
-      type: 'image/png',
-    },
-    {
-      rel: 'icon',
-      sizes: '32x32',
-      href: '/images/favicon-32x32.png',
-      type: 'image/png',
-    },
-    {
-      rel: 'icon',
-      sizes: '96x96',
-      href: '/images/favicon-96x96.png',
-      type: 'image/png',
-    },
-    {
-      rel: 'icon',
-      sizes: '16x16',
-      href: '/images/favicon-16x16.png',
+      rel: 'shortcut icon',
+      sizes: '36x36',
+      href: '/images/android-icon-36x36.png',
       type: 'image/png',
     },
     {
       rel: 'shortcut icon',
-      href: '/images/favicon.ico',
-      type: 'image/x-icon',
+      sizes: '48x48',
+      href: '/images/android-icon-48x48.png',
+      type: 'image/png',
+    },
+    {
+      rel: 'shortcut icon',
+      sizes: '72x72',
+      href: '/images/android-icon-72x72.png',
+      type: 'image/png',
+    },
+    {
+      rel: 'shortcut icon',
+      sizes: '96x96',
+      href: '/images/android-icon-96x96.png',
+      type: 'image/png',
     },
   ],
   onBrokenLinks: 'warn',
