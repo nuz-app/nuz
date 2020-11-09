@@ -139,6 +139,15 @@ export const setDeprecateForModule = (
   headers: { authorization },
 })
 
+export const setTagForModule = (
+  endpoint: string,
+  authorization: string,
+): RequestAPI => ({
+  url: `${endpoint}/module/tag`,
+  method: 'PUT',
+  headers: { authorization },
+})
+
 export const getCollaboratorsOfModule = (
   endpoint: string,
   authorization: string,
