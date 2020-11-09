@@ -281,6 +281,21 @@ class Worker {
   }
 
   /**
+   * Set tag for the module
+   */
+  static async setTagForModule(
+    module: string,
+    version: string,
+    tag: string,
+  ): Promise<GotResponse<any>> {
+    return got(
+      Object.assign(apiUrls.setTagForModule(this.endpoint, this.token), {
+        data: { module, version, tag },
+      }) as GotRequestConfig,
+    )
+  }
+
+  /**
    * Get all collaborators of the module
    */
   static async getCollaboratorsOfModule(

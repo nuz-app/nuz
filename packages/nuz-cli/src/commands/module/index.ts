@@ -114,6 +114,13 @@ export function setCommands(yargs): void {
       wrapCommand(setDeprecate),
     )
 
+    child.command(
+      'tag <module> <version> <tag>',
+      print.dim('Update the module tag'),
+      (yarg) => yarg,
+      wrapCommand(setDeprecate),
+    )
+
     showHelpIfInvalid(child, child.argv, 2, 3)
   })
 
