@@ -8,12 +8,12 @@ import print, { info, log } from '../../utils/print'
 interface ModuleSetTagOptions
   extends Arguments<{
     module: string
-    version: string
+    value: string
     tag: string
   }> {}
 
 async function setTag(options: ModuleSetTagOptions): Promise<boolean> {
-  const { module: id, version, tag } = options
+  const { module: id, value: version, tag } = options
 
   if (!id || !version || !tag) {
     throw new Error('Missing information to set tag for the module.')

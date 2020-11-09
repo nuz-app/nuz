@@ -116,7 +116,7 @@ export function setCommands(yargs): void {
     )
 
     child.command(
-      'tag <module> <version> <tag>',
+      'tag <module> <value> <tag>',
       print.dim('Update the module tag'),
       (yarg) => yarg,
       wrapCommand(setTag),
