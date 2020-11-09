@@ -203,6 +203,14 @@ Update the module deprecate.
 nuz module deprecate <module> <versions> [deprecate]
 ```
 
+### tag <module\> <version\> <tag\>
+
+Update the module tag.
+
+```bash
+nuz module tag <module> <version> <tag>
+```
+
 ## create \[name\] \[template\] 
 
 Alias: [module-create](#create-name-template).
