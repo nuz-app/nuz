@@ -1,14 +1,14 @@
 import { versionHelpers } from '@nuz/utils'
 
-function getAllowsVersion(tags, versions, required): string {
+function getAllowsVersion(tags, versions, required): string | null {
   //
   const tag = tags.get(required)
 
   //
-  const version = tag || versionHelpers.getMaxSatisfying(versions, required)
+  const version = versionHelpers.getMaxSatisfying(versions, tag ?? required)
 
   //
-  return tag || version
+  return version
 }
 
 export default getAllowsVersion
