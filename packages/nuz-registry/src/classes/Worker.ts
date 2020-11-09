@@ -367,11 +367,16 @@ class Worker {
     }
 
     //
-    return this.services.Module.setDeprecate(
+    const updated = this.services.Module.setDeprecate(
       selectedModule._id,
       satisfies,
       deprecate,
     )
+
+    //
+    this.cacheResolver?.clearAllRefsToModule(selectedModule._id)
+
+    return updated
   }
 
   /**
@@ -414,7 +419,16 @@ class Worker {
     }
 
     //
-    return this.services.Module.setTag(selectedModule._id, version, tag)
+    const updated = this.services.Module.setTag(
+      selectedModule._id,
+      version,
+      tag,
+    )
+
+    //
+    this.cacheResolver?.clearAllRefsToModule(selectedModule._id)
+
+    return updated
   }
 
   /**
