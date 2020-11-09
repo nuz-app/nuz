@@ -11,6 +11,7 @@ import listCollaborators from './listCollaborators'
 import publish from './publish'
 import removeCollaborator from './removeCollaborator'
 import setDeprecate from './setDeprecate'
+import setTag from './setTag'
 import updateCollaborator from './updateCollaborator'
 
 export function setCommands(yargs): void {
@@ -118,7 +119,7 @@ export function setCommands(yargs): void {
       'tag <module> <version> <tag>',
       print.dim('Update the module tag'),
       (yarg) => yarg,
-      wrapCommand(setDeprecate),
+      wrapCommand(setTag),
     )
 
     showHelpIfInvalid(child, child.argv, 2, 3)
