@@ -31,6 +31,7 @@ import * as removeCollaboratorFromScope from './removeCollaboratorFromScope'
 import * as removeModulesFromCompose from './removeModulesFromCompose'
 import * as root from './root'
 import * as setModulesForCompose from './setModulesForCompose'
+import * as setTagModule from './setTagModule'
 import * as updateCollaboratorOfCompose from './updateCollaboratorOfCompose'
 import * as updateCollaboratorOfModule from './updateCollaboratorOfModule'
 import * as updateCollaboratorOfScope from './updateCollaboratorOfScope'
@@ -70,6 +71,7 @@ export default [
   getModule,
   publishModule,
   deprecateModule,
+  setTagModule,
   getCollaboratorsOfModule,
   addCollaboratorToModule,
   removeCollaboratorFromModule,

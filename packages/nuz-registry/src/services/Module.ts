@@ -166,6 +166,23 @@ class Module extends Service<ModuleId> {
     return { _id: id, mofitied, ok, versions: satisfies }
   }
 
+  async setTag(id: ModuleId, version: string, tag: string) {
+    // Set tag version
+    const updateFields = { [`tags.${tag}`]: version }
+
+    // Updated the module document.
+    const { ok, nModified: mofitied } = await this.Collection.updateOne(
+      { _id: id },
+      { $set: updateFields },
+    )
+
+    if (mofitied === 0) {
+      throw new Error('There was an error during the update process.')
+    }
+
+    return { _id: id, mofitied, ok, version }
+  }
+
   async getAllInScopes(scopeIds: ScopeId[], fields?: any, limit?: number) {
     const selectedModules = await this.Collection.find(
       { scope: { $in: scopeIds } },

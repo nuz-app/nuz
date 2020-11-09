@@ -363,7 +363,7 @@ class Worker {
     //
     const satisfies = versionHelpers.getSatisfies(versions, version)
     if (satisfies.length === 0) {
-      throw new Error(`Not found satisfies version with ${version}`)
+      throw new Error(`Not found satisfies version with ${version}.`)
     }
 
     //
@@ -372,6 +372,49 @@ class Worker {
       satisfies,
       deprecate,
     )
+  }
+
+  /**
+   * Set tag for the module
+   */
+  async setTagModule(
+    tokenId: TokenId,
+    moduleId: ModuleId,
+    version: string,
+    tag: string,
+  ) {
+    //
+    const currentUser = await this.verifyTokenOfUser(
+      tokenId,
+      UserAccessTokenTypes.publish,
+    )
+
+    //
+    const selectedModule = await this.verifyCollaboratorOfModule(
+      moduleId,
+      currentUser._id,
+      CollaboratorTypes.contributor,
+      false,
+    )
+
+    //
+    if (tag === MODULE_LATEST_TAG) {
+      throw new Error(`Special tag setting of system not allow.`)
+    }
+
+    //
+    const versions = Array.from<string>(
+      selectedModule.versions.keys(),
+    ).map((item) => versionHelpers.decode(item))
+
+    //
+    const satisfies = versionHelpers.getSatisfies(versions, version)
+    if (satisfies.length === 0) {
+      throw new Error(`Not found satisfies version with ${version}.`)
+    }
+
+    //
+    return this.services.Module.setTag(selectedModule._id, version, tag)
   }
 
   /**
