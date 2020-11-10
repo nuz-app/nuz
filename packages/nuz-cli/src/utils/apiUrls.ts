@@ -4,15 +4,25 @@ interface RequestAPI {
   headers?: any
 }
 
+function getUrl(url: string): string {
+  try {
+    const parsed = new URL(url)
+
+    return parsed.href
+  } catch {
+    throw new Error(`Invalid URL using to calling API, received: ${url}.`)
+  }
+}
+
 // User
 
 export const createUser = (endpoint: string): RequestAPI => ({
-  url: `${endpoint}/user`,
+  url: getUrl(`${endpoint}/user`),
   method: 'POST',
 })
 
 export const loginUser = (endpoint: string): RequestAPI => ({
-  url: `${endpoint}/user/login`,
+  url: getUrl(`${endpoint}/user/login`),
   method: 'POST',
 })
 
@@ -20,28 +30,28 @@ export const createTokenForUser = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/user/token`,
+  url: getUrl(`${endpoint}/user/token`),
   method: 'POST',
   headers: { authorization },
 })
 
 export const deleteTokenFromUser = (endpoint: string): RequestAPI => ({
-  url: `${endpoint}/user/token`,
+  url: getUrl(`${endpoint}/user/token`),
   method: 'DELETE',
 })
 
 export const getAllComposeOfUser = (endpoint: string): RequestAPI => ({
-  url: `${endpoint}/user/composes`,
+  url: getUrl(`${endpoint}/user/composes`),
   method: 'GET',
 })
 
 export const getAllScopesOfUser = (endpoint: string): RequestAPI => ({
-  url: `${endpoint}/user/scopes`,
+  url: getUrl(`${endpoint}/user/scopes`),
   method: 'GET',
 })
 
 export const getAllModulesOfUser = (endpoint: string): RequestAPI => ({
-  url: `${endpoint}/user/modules`,
+  url: getUrl(`${endpoint}/user/modules`),
   method: 'GET',
 })
 
@@ -51,7 +61,7 @@ export const getScope = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/scope`,
+  url: getUrl(`${endpoint}/scope`),
   method: 'GET',
   headers: { authorization },
 })
@@ -60,7 +70,7 @@ export const createScope = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/scope`,
+  url: getUrl(`${endpoint}/scope`),
   method: 'POST',
   headers: { authorization },
 })
@@ -69,7 +79,7 @@ export const deleteScope = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/scope`,
+  url: getUrl(`${endpoint}/scope`),
   method: 'DELETE',
   headers: { authorization },
 })
@@ -78,7 +88,7 @@ export const getCollaboratorsOfScope = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/scope/collaborators`,
+  url: getUrl(`${endpoint}/scope/collaborators`),
   method: 'GET',
   headers: { authorization },
 })
@@ -87,7 +97,7 @@ export const addCollaboratorToScope = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/scope/collaborator`,
+  url: getUrl(`${endpoint}/scope/collaborator`),
   method: 'POST',
   headers: { authorization },
 })
@@ -96,7 +106,7 @@ export const updateCollaboratorOfScope = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/scope/collaborator`,
+  url: getUrl(`${endpoint}/scope/collaborator`),
   method: 'PUT',
   headers: { authorization },
 })
@@ -105,7 +115,7 @@ export const removeCollaboratorFromScope = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/scope/collaborator`,
+  url: getUrl(`${endpoint}/scope/collaborator`),
   method: 'DELETE',
   headers: { authorization },
 })
@@ -116,7 +126,7 @@ export const getModule = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/module`,
+  url: getUrl(`${endpoint}/module`),
   method: 'GET',
   headers: { authorization },
 })
@@ -125,7 +135,7 @@ export const publishModule = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/module`,
+  url: getUrl(`${endpoint}/module`),
   method: 'PUT',
   headers: { authorization },
 })
@@ -134,7 +144,7 @@ export const setDeprecateForModule = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/module/deprecate`,
+  url: getUrl(`${endpoint}/module/deprecate`),
   method: 'PUT',
   headers: { authorization },
 })
@@ -143,7 +153,7 @@ export const setTagForModule = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/module/tag`,
+  url: getUrl(`${endpoint}/module/tag`),
   method: 'PUT',
   headers: { authorization },
 })
@@ -152,7 +162,7 @@ export const getCollaboratorsOfModule = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/module/collaborators`,
+  url: getUrl(`${endpoint}/module/collaborators`),
   method: 'GET',
   headers: { authorization },
 })
@@ -161,7 +171,7 @@ export const addCollaboratorToModule = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/module/collaborator`,
+  url: getUrl(`${endpoint}/module/collaborator`),
   method: 'POST',
   headers: { authorization },
 })
@@ -170,7 +180,7 @@ export const updateCollaboratorOfModule = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/module/collaborator`,
+  url: getUrl(`${endpoint}/module/collaborator`),
   method: 'PUT',
   headers: { authorization },
 })
@@ -179,7 +189,7 @@ export const removeCollaboratorFromModule = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/module/collaborator`,
+  url: getUrl(`${endpoint}/module/collaborator`),
   method: 'DELETE',
   headers: { authorization },
 })
@@ -190,7 +200,7 @@ export const getCompose = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/compose`,
+  url: getUrl(`${endpoint}/compose`),
   method: 'GET',
   headers: { authorization },
 })
@@ -199,7 +209,7 @@ export const createCompose = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/compose`,
+  url: getUrl(`${endpoint}/compose`),
   method: 'POST',
   headers: { authorization },
 })
@@ -208,7 +218,7 @@ export const deleteCompose = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/compose`,
+  url: getUrl(`${endpoint}/compose`),
   method: 'DELETE',
   headers: { authorization },
 })
@@ -217,7 +227,7 @@ export const getCollaboratorsOfCompose = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/compose/collaborators`,
+  url: getUrl(`${endpoint}/compose/collaborators`),
   method: 'GET',
   headers: { authorization },
 })
@@ -226,7 +236,7 @@ export const addCollaboratorToCompose = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/compose/collaborator`,
+  url: getUrl(`${endpoint}/compose/collaborator`),
   method: 'POST',
   headers: { authorization },
 })
@@ -235,7 +245,7 @@ export const updateCollaboratorOfCompose = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/compose/collaborator`,
+  url: getUrl(`${endpoint}/compose/collaborator`),
   method: 'PUT',
   headers: { authorization },
 })
@@ -244,7 +254,7 @@ export const removeCollaboratorFromCompose = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/compose/collaborator`,
+  url: getUrl(`${endpoint}/compose/collaborator`),
   method: 'DELETE',
   headers: { authorization },
 })
@@ -253,7 +263,7 @@ export const setModulesForCompose = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/compose/modules`,
+  url: getUrl(`${endpoint}/compose/modules`),
   method: 'PUT',
   headers: { authorization },
 })
@@ -262,7 +272,7 @@ export const removeModulesFromCompose = (
   endpoint: string,
   authorization: string,
 ): RequestAPI => ({
-  url: `${endpoint}/compose/modules`,
+  url: getUrl(`${endpoint}/compose/modules`),
   method: 'DELETE',
   headers: { authorization },
 })
