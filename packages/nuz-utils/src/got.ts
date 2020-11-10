@@ -23,8 +23,10 @@ async function got<R = GotResponse<any>>(
 
       throw new Error(
         `There was an error returning from the server, details: ${JSON.stringify(
-          error.response.data?.error,
-        )}`,
+          error.response.data?.error ?? error.response.data ?? error.response,
+        )}. #${
+          (error.response.data?.error && '1') || error.response.data ? 2 : 3
+        }.`,
       )
     } else if (error.request) {
       /*
