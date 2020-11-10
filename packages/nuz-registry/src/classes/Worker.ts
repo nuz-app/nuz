@@ -407,6 +407,12 @@ class Worker {
       throw new Error(`Special tag setting of system not allow.`)
     }
 
+    if (!validator.tag(tag)) {
+      throw new Error(
+        'Tag is invalid, contains only "a-z0-9-_" characters, start and end with "a-z0-9", length allows 2-24 characters.',
+      )
+    }
+
     //
     const versions = Array.from<string>(
       selectedModule.versions.keys(),

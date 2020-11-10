@@ -10,11 +10,14 @@ function convertModulesToArray(modulesAsObject: ModuleAsObject) {
 
   for (const item of modules) {
     if (!validator.moduleId(item.id)) {
-      throw new Error(`${item.id} is invalid module id`)
+      throw new Error(`${item.id} is invalid module id.`)
     }
 
-    if (!versionHelpers.checkIsValid(item.version)) {
-      throw new Error(`${item.version} is invalid module version`)
+    if (
+      !versionHelpers.checkIsValid(item.version) &&
+      !validator.tag(item.version)
+    ) {
+      throw new Error(`${item.version} is invalid module version and tag.`)
     }
   }
 
