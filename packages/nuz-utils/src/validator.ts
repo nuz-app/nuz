@@ -62,3 +62,15 @@ export function moduleId(value: string): boolean {
     !/([^a-zA-Z0-9]{2})/.test(value)
   )
 }
+
+export const TAG_REGEXP = /([a-zA-Z0-9\-\_]+)$/
+
+export function tag(value: string): boolean {
+  return (
+    typeof value === 'string' &&
+    value.length >= 2 &&
+    value.length <= 24 &&
+    TAG_REGEXP.test(value) &&
+    !DENIED_REGEXP.test(value)
+  )
+}
