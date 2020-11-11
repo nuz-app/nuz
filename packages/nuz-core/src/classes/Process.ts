@@ -93,7 +93,7 @@ async function transformConfiguration<C extends BootstrapConfiguration>(
 class Processs {
   private readonly ready: DeferedPromise<boolean>
 
-  private scheduledToUpdate: boolean
+  private scheduledToUpdate: NodeJS.Timeout | undefined
 
   /**
    * Configuration manager
@@ -115,7 +115,7 @@ class Processs {
     this.ready = deferedPromise<boolean>()
 
     // Use to duplicated calls to update
-    this.scheduledToUpdate = false
+    this.scheduledToUpdate = undefined
   }
 
   private async update(): Promise<void> {
@@ -166,7 +166,7 @@ class Processs {
     this.ready.resolve(true)
   }
 
-  public async checkUpdate(cleanUp?: () => any): Promise<boolean> {
+  public async checkUpdate(cleanUp?: () => Promise<any>): Promise<boolean> {
     if (!this.configured) {
       throw new Error('The process did not run in sequence')
     }
@@ -175,16 +175,26 @@ class Processs {
       return false
     }
 
-    setTimeout(() => (this.scheduledToUpdate = false), CHECK_UPDATE_TIMEOUT)
-    this.scheduledToUpdate = true
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    this.scheduledToUpdate = setTimeout(async (): Promise<any> => {
+      // Hook to trigger on clean up step
+      if (typeof cleanUp === 'function') {
+        await cleanUp()
+      }
 
-    // Call to update configuration
-    await this.update()
+      try {
+        // Call to update configuration
+        await this.update()
+      } catch (error) {
+        console.error(
+          'An error occurred during the update process. Details: ',
+          error,
+        )
+      }
 
-    // Hook to trigger on clean up step
-    if (typeof cleanUp === 'function') {
-      cleanUp()
-    }
+      //
+      this.scheduledToUpdate = undefined
+    }, CHECK_UPDATE_TIMEOUT)
 
     return true
   }
