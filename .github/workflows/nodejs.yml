@@ -46,7 +46,7 @@ jobs:
         run: yarn run lint
 
       - name: Check commit message
-        uses: wagoid/commitlint-github-action@v2.1.1
+        uses: wagoid/commitlint-github-action@v2.1.2
 
   test:
     name: Test - ${{ matrix.os }} - Node v${{ matrix.node-version }}
