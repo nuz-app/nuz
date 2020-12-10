@@ -402,14 +402,16 @@ class Modules {
       )
     } catch (error) {
       throw new Error(
-        `An error occurred during module initialization, details: ${error.message}.`,
+        `An error occurred during module initialization of ${id} , details: ${error}.`,
       )
     }
 
     // Ensure exports default is exists
     if (!resolved.default) {
       throw new Error(
-        'Something wrong happened, the module initialized was not valid.',
+        `Something wrong happened, the module ${
+          id as string
+        } initialized was not valid.`,
       )
     }
 
