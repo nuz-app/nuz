@@ -28,11 +28,11 @@
   },
   "dependencies": {
     "@nuz/shared": "^1.0.0-beta.66",
-    "axios": "^0.20.0",
+    "axios": "^0.21.0",
     "qs": "^6.9.4",
     "selfsigned": "^1.10.8",
-    "semver": "^7.3.2",
-    "tslib": "^2.0.1"
+    "semver": "^7.3.4",
+    "tslib": "^2.0.3"
   },
   "devDependencies": {
     "@types/semver": "^7.3.4"

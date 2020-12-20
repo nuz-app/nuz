@@ -34,16 +34,16 @@
     "lru-cache": "^6.0.0",
     "node-fetch": "^2.6.1",
     "serialize-javascript": "^5.0.1",
-    "tslib": "^2.0.1",
-    "use-subscription": "^1.4.1",
-    "whatwg-fetch": "^3.4.1"
+    "tslib": "^2.0.3",
+    "use-subscription": "^1.5.1",
+    "whatwg-fetch": "^3.5.0"
   },
   "devDependencies": {
     "@types/lru-cache": "^5.1.0",
-    "@types/react": "^16.9.49",
-    "@types/react-dom": "^16.9.8",
+    "@types/react": "^16.14.2",
+    "@types/react-dom": "^16.9.10",
     "@types/serialize-javascript": "^4.0.0",
-    "@types/socket.io-client": "^1.4.33",
+    "@types/socket.io-client": "^1.4.34",
     "@types/use-subscription": "^1.0.0",
     "react": "^16.8.0",
     "react-dom": "^16.8.0"
@@ -53,8 +53,8 @@
     "react-dom": "*"
   },
   "optionalDependencies": {
-    "bufferutil": "^4.0.1",
-    "socket.io-client": "^2.3.0",
-    "utf-8-validate": "^5.0.2"
+    "bufferutil": "^4.0.2",
+    "socket.io-client": "^2.3.1",
+    "utf-8-validate": "^5.0.3"
   }
 }
