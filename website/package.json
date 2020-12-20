@@ -14,11 +14,11 @@
     "node": "^10.13 || ^12 || ^14"
   },
   "dependencies": {
-    "@docusaurus/core": "next",
-    "@docusaurus/preset-classic": "next",
+    "@docusaurus/core": "latest",
+    "@docusaurus/preset-classic": "latest",
     "classnames": "^2.2.6",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0"
   },
   "browserslist": {
     "production": [
@@ -33,15 +33,15 @@
     ]
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "next",
-    "@docusaurus/plugin-ideal-image": "next",
-    "@docusaurus/plugin-pwa": "next",
+    "@docusaurus/module-type-aliases": "latest",
+    "@docusaurus/plugin-ideal-image": "latest",
+    "@docusaurus/plugin-pwa": "latest",
     "@tsconfig/docusaurus": "^1.0.2",
-    "@types/react": "^16.9.50",
+    "@types/react": "^16.14.2",
     "@types/react-helmet": "^6.1.0",
-    "@types/react-router-dom": "^5.1.5",
+    "@types/react-router-dom": "^5.1.6",
     "env-cmd": "^10.1.0",
     "rimraf": "^3.0.2",
-    "typescript": "^4.0.3"
+    "typescript": "^4.1.3"
   }
 }
